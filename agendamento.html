@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Catálogo de serviços e agendamento on-line do Studio Jane Barreiros — Especialista em Loiros e Colorimetria Capilar em Santo André, SP." />
+  <meta name="theme-color" content="#0D0D0D" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Serviços &amp; Agendamento — Studio Jane Barreiros" />
+  <meta property="og:description" content="Escolha o tratamento desejado e agende seu horário com a nossa equipe no Studio Santo André." />
+  <meta property="og:locale" content="pt_BR" />
+
+  <title>Serviços &amp; Agendamento | Studio Jane Barreiros</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%92%87%3C/text%3E%3C/svg%3E" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Configuração do Tema (idêntica ao index.html) + Componentes -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream:       'rgb(var(--t-cream) / <alpha-value>)',
+            'cream-deep': 'rgb(var(--t-cream-deep) / <alpha-value>)',
+            'cream-soft': 'rgb(var(--t-cream-soft) / <alpha-value>)',
+            ink:         'rgb(var(--t-ink) / <alpha-value>)',
+            'ink-soft':  'rgb(var(--t-ink-soft) / <alpha-value>)',
+            muted:       'rgb(var(--t-muted) / <alpha-value>)',
+            gold:        'rgb(var(--t-gold) / <alpha-value>)',
+            'gold-dark': 'rgb(var(--t-gold-dark) / <alpha-value>)',
+            'gold-light':'rgb(var(--t-gold-light) / <alpha-value>)'
+          },
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans: ['Montserrat', '"Helvetica Neue"', 'Arial', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Aplica o tema salvo antes do render (evita flash) -->
+  <script>
+    try {
+      if (localStorage.getItem('jane-theme') === 'light') {
+        document.documentElement.classList.add('light');
+        var m = document.querySelector('meta[name="theme-color"]');
+        if (m) m.setAttribute('content', '#FBF6EC');
+      }
+    } catch (e) {}
+  </script>
+
+  <style type="text/tailwindcss">
+    @layer base {
+      html { scroll-behavior: smooth; }
+    }
+    @layer components {
+      .btn {
+        @apply inline-flex items-center justify-center gap-2 rounded-full px-7 py-4 text-sm font-semibold tracking-wide transition-all duration-300;
+      }
+      .btn-primary {
+        @apply shadow-lg hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0;
+      }
+      .btn-ghost-gold {
+        @apply border-2 border-gold text-gold-dark hover:bg-gold hover:text-white active:translate-y-0;
+      }
+      .eyebrow {
+        @apply inline-flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.3em] text-muted;
+      }
+      .eyebrow::before {
+        content: "";
+        @apply h-px w-9 bg-gold;
+      }
+      .nav-link {
+        @apply relative text-sm font-medium tracking-wide text-ink-soft transition-colors hover:text-ink;
+      }
+      .nav-link::after {
+        content: "";
+        @apply absolute -bottom-1 left-0 h-px w-0 bg-gold-dark transition-all duration-300;
+      }
+      .nav-link:hover::after {
+        @apply w-full;
+      }
+      .form-label {
+        @apply mb-2 block text-xs font-semibold uppercase tracking-[0.14em] text-ink-soft;
+      }
+      .form-input {
+        @apply w-full rounded-xl border border-gold/25 bg-cream-soft px-4 py-3.5 text-sm text-ink outline-none transition-all duration-200 placeholder:text-muted/70 focus:border-gold focus:bg-cream-deep focus:ring-2 focus:ring-gold/30;
+      }
+    }
+  </style>
+  <!-- Tema Preto & Dourado Luxo -->
+  <style>
+    :root {
+      --t-cream: 13 13 13;
+      --t-cream-deep: 26 26 26;
+      --t-cream-soft: 21 21 21;
+      --t-ink: 245 245 245;
+      --t-ink-soft: 201 194 184;
+      --t-muted: 168 162 154;
+      --t-gold: 212 175 55;
+      --t-gold-dark: 191 149 63;
+      --t-gold-light: 243 229 178;
+    }
+    html.light {
+      --t-cream: 250 246 238;
+      --t-cream-deep: 242 236 224;
+      --t-cream-soft: 255 255 255;
+      --t-ink: 38 33 25;
+      --t-ink-soft: 84 74 58;
+      --t-muted: 122 112 96;
+      --t-gold: 163 130 30;
+      --t-gold-dark: 122 90 15;
+      --t-gold-light: 196 160 52;
+    }
+    html.light h1, html.light h2, html.light h3 { color: #8A6A12; }
+    html.light h1 em, html.light h2 em, html.light h3 em { color: #A9811F; }
+    h1, h2, h3 { color: #D4AF37; }
+    h1 em, h2 em, h3 em { color: #EBCF7D; }
+    footer { border-top: 1px solid rgba(212, 175, 55, .35); }
+    .btn-primary, .btn-ghost-gold, .btn-gold, .btn-outline {
+      border: 1px solid rgba(122, 85, 20, .55) !important;
+      background-image: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%) !important;
+      color: #241805 !important;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, .35);
+      box-shadow: 0 4px 12px -4px rgba(140, 100, 25, .55) !important;
+    }
+    .btn-primary:hover, .btn-ghost-gold:hover, .btn-gold:hover, .btn-outline:hover {
+      scale: 1.05;
+      box-shadow: 0 0 18px 3px rgba(212, 175, 55, .6);
+      filter: brightness(1.05);
+    }
+
+    /* Horários indisponíveis (fechamento 19:00) — opaco/cinza e sem clique */
+    #horario-grid button:disabled {
+      opacity: .35;
+      filter: grayscale(.85);
+      cursor: not-allowed;
+      pointer-events: none;
+      border-color: rgba(var(--t-muted), .3);
+      color: rgba(var(--t-muted), .85);
+      box-shadow: none;
+    }
+  </style>
+</head>
+
+<body class="bg-cream text-ink font-sans antialiased selection:bg-gold selection:text-black">
+
+  <!-- ==============================================================
+       HEADER FIXO — idêntico ao index.html (identidade visual)
+  =============================================================== -->
+  <header class="fixed inset-x-0 top-0 z-50 border-b border-cream-deep bg-cream/85 backdrop-blur-md" id="site-header">
+    <div class="mx-auto flex h-20 max-w-6xl items-center justify-between px-5 lg:px-8">
+      <a href="index.html#hero" class="leading-none">
+        <span class="block font-serif text-xl font-bold tracking-[0.14em] text-gold sm:text-2xl">JANE BARREIROS</span>
+        <span class="mt-1.5 block text-[10px] uppercase tracking-[0.32em] text-muted">Studio &amp; Academia de Loiros</span>
+      </a>
+
+      <!-- Navegação Desktop -->
+      <nav class="hidden items-center gap-9 lg:flex" aria-label="Navegação principal">
+        <a href="index.html#sobre" class="nav-link">Sobre</a>
+        <a href="index.html#servicos" class="nav-link">Serviços</a>
+        <a href="#formulario-agendamento" class="nav-link">Agendamento</a>
+        <a href="index.html#curso" class="nav-link">Curso Online</a>
+        <a href="index.html#localizacao" class="nav-link">Localização</a>
+        <a href="#formulario-agendamento" class="btn btn-primary !py-3 !px-6 text-xs">Agendar Horário</a>
+      </nav>
+
+      <!-- Alternador de tema + Hambúrguer (Mobile) -->
+      <div class="flex items-center gap-2 lg:gap-3">
+        <button id="theme-toggle" type="button" aria-label="Alternar modo claro/escuro" class="flex h-10 w-10 items-center justify-center rounded-full border border-gold/40 text-gold-light transition-all duration-300 hover:border-gold hover:bg-gold hover:text-black">
+          <svg id="icon-lua" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg id="icon-sol" class="hidden h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        </button>
+        <button id="menu-btn" class="flex flex-col gap-[6px] p-2 lg:hidden" aria-label="Abrir menu de navegação" aria-expanded="false" aria-controls="mobile-menu">
+          <span class="block h-0.5 w-7 bg-ink transition-all duration-300"></span>
+          <span class="block h-0.5 w-7 bg-ink transition-all duration-300"></span>
+          <span class="block h-0.5 w-7 bg-ink transition-all duration-300"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Menu Mobile (Overlay) -->
+  <nav id="mobile-menu" class="fixed inset-0 z-40 hidden flex-col items-center justify-center gap-9 bg-cream/95 backdrop-blur-xl lg:hidden" aria-label="Menu mobile">
+    <a href="index.html#sobre" class="mobile-link font-serif text-2xl text-gold-light">Sobre</a>
+    <a href="index.html#servicos" class="mobile-link font-serif text-2xl text-gold-light">Serviços</a>
+    <a href="#formulario-agendamento" class="mobile-link font-serif text-2xl text-gold-light">Agendamento</a>
+    <a href="index.html#curso" class="mobile-link font-serif text-2xl text-gold-light">Curso Online</a>
+    <a href="index.html#localizacao" class="mobile-link font-serif text-2xl text-gold-light">Localização</a>
+    <a href="#formulario-agendamento" class="mobile-link btn btn-primary mt-2">Agendar Horário</a>
+  </nav>
+
+  <main>
+
+    <!-- ==============================================================
+         A) CABEÇALHO DA PÁGINA
+    =============================================================== -->
+    <section class="relative overflow-hidden pb-14 pt-32 lg:pb-20 lg:pt-44">
+      <div class="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-cream via-cream to-cream-deep"></div>
+      <div class="pointer-events-none absolute -top-24 -right-24 -z-10 h-96 w-96 rounded-full bg-gold/20 blur-3xl"></div>
+
+      <div class="mx-auto max-w-6xl px-5 lg:px-8">
+        <header class="mx-auto max-w-2xl text-center">
+          <p class="eyebrow inline-flex justify-center">Studio Santo André</p>
+          <h1 class="mt-5 font-serif text-4xl font-medium leading-tight sm:text-5xl">
+            Nossos Serviços <em class="italic">&amp; Agendamento</em>
+          </h1>
+          <p class="mt-5 font-light leading-relaxed text-muted">
+            Escolha o tratamento desejado e agende seu horário com a nossa equipe
+            no Studio Santo André.
+          </p>
+        </header>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         B) CATÁLOGO DE SERVIÇOS (grid renderizado via JS)
+    =============================================================== -->
+    <section class="scroll-mt-24 pb-20 lg:pb-28">
+      <div class="mx-auto max-w-6xl px-5 lg:px-8">
+        <header class="mx-auto max-w-2xl text-center">
+          <p class="eyebrow inline-flex justify-center">Salão Presencial</p>
+          <h2 class="mt-5 font-serif text-3xl font-semibold sm:text-4xl">Catálogo de Serviços</h2>
+          <p class="mt-4 font-light text-muted">Escolha um serviço abaixo e preencha o formulário para reservar seu horário.</p>
+        </header>
+
+        <!-- Grid de cards — preenchido pelo JavaScript -->
+        <div id="catalogo-servicos" class="mt-14 grid gap-7 sm:grid-cols-2 lg:grid-cols-3"></div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         C) FORMULÁRIO DE AGENDAMENTO FINAL
+    =============================================================== -->
+    <section id="formulario-agendamento" class="scroll-mt-24 bg-cream-deep py-20 lg:py-28">
+      <div class="mx-auto max-w-6xl px-5 lg:px-8">
+        <header class="mx-auto max-w-2xl text-center">
+          <p class="eyebrow inline-flex justify-center">Reserve seu horário</p>
+          <h2 class="mt-5 font-serif text-3xl font-semibold sm:text-4xl">Formulário de Agendamento</h2>
+          <p class="mt-4 font-light text-muted">Preencha os dados e confirme via WhatsApp. Retornaremos em breve para validar seu horário.</p>
+        </header>
+
+        <!-- Card branco do formulário -->
+        <div class="mx-auto mt-12 max-w-3xl rounded-2xl border border-gold/30 bg-cream-deep p-7 shadow-md md:p-10">
+
+          <!-- Campo 1 — Serviço (select preenchido via JS com os 23 serviços) -->
+          <div class="mb-7">
+            <label for="servico-select" class="form-label">Serviço desejado</label>
+            <select id="servico-select" name="servico" class="form-input appearance-none bg-no-repeat pr-10" style="background-image:url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"%23808080\" stroke-width=\"2\"><path d=\"M6 9l6 6 6-6\"/></svg>');background-position:right 1rem center;background-size:1.2rem;">
+              <option value="" disabled selected>Selecione o serviço…</option>
+            </select>
+          </div>
+
+          <!-- Campo 2 — Nome -->
+          <div class="mb-7">
+            <label for="nome-input" class="form-label">Nome completo do cliente</label>
+            <input id="nome-input" name="nome" type="text" class="form-input" placeholder="Digite seu nome completo" autocomplete="name" />
+          </div>
+
+          <!-- Campo 3 — Telefone/WhatsApp -->
+          <div class="mb-7">
+            <label for="telefone-input" class="form-label">Telefone / WhatsApp</label>
+            <input id="telefone-input" name="telefone" type="tel" class="form-input" placeholder="(11) 90000-0000" autocomplete="tel" inputmode="tel" />
+          </div>
+
+          <!-- Campo 4 — Data -->
+          <div class="mb-7">
+            <label for="data-input" class="form-label">Data desejada</label>
+            <input id="data-input" name="data" type="date" class="form-input" />
+          </div>
+
+          <!-- Campo 5 — Horário (grade de botões) -->
+          <div class="mb-2">
+            <span class="form-label">Horário desejado</span>
+            <p id="horario-erro" class="mb-2 hidden text-xs font-medium text-red-600">Selecione um horário para continuar.</p>
+            <p id="horario-aviso" class="mb-2 hidden text-xs font-light text-muted"></p>
+            <div id="horario-grid" class="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-10" role="radiogroup" aria-label="Horários disponíveis">
+              <!-- Botões de horário gerados via JS -->
+            </div>
+          </div>
+
+          <!-- Botão principal -->
+          <button id="confirmar-btn" type="button" class="btn btn-primary mt-8 w-full !py-4 text-base">
+            Confirmar e Enviar via WhatsApp
+          </button>
+          <p class="mt-4 text-center text-xs text-muted">Você será direcionado(a) ao WhatsApp do Studio com sua solicitação preenchida. Terça a Sábado: 09:00 às 18:00.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==============================================================
+       FOOTER — idêntico ao index.html
+  =============================================================== -->
+  <footer class="bg-cream-deep py-14 text-center text-muted">
+    <div class="mx-auto flex max-w-6xl flex-col items-center gap-7 px-5">
+      <a href="index.html#hero" class="leading-none">
+        <span class="block font-serif text-xl font-bold tracking-[0.14em] text-ink">JANE BARREIROS</span>
+        <span class="mt-1.5 block text-[10px] uppercase tracking-[0.32em] text-muted">Studio &amp; Academia de Loiros</span>
+      </a>
+      <nav class="flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm" aria-label="Navegação do rodapé">
+        <a href="index.html#sobre" class="transition-colors hover:text-gold-light">Sobre</a>
+        <a href="index.html#servicos" class="transition-colors hover:text-gold-light">Serviços</a>
+        <a href="#formulario-agendamento" class="transition-colors hover:text-gold-light">Agendamento</a>
+        <a href="index.html#curso" class="transition-colors hover:text-gold-light">Curso Online</a>
+        <a href="index.html#localizacao" class="transition-colors hover:text-gold-light">Localização</a>
+      </nav>
+      <p class="text-xs tracking-wide">© <span id="year">2026</span> Studio Jane Barreiros. Todos os direitos reservados.</p>
+      <div class="flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-xs">
+        <a href="javascript:void(0)" data-legal="termos" class="cursor-pointer transition-colors duration-300 hover:text-[#D4AF37]">Termos de Uso</a>
+        <span class="text-gold/40">|</span>
+        <a href="javascript:void(0)" data-legal="privacidade" class="cursor-pointer transition-colors duration-300 hover:text-[#D4AF37]">Política de Privacidade</a>
+        <span class="text-gold/40">|</span>
+        <a href="javascript:void(0)" data-legal="responsabilidade" class="cursor-pointer transition-colors duration-300 hover:text-[#D4AF37]">Termo de Responsabilidade</a>
+      </div>
+      <p class="mt-2 text-xs text-muted/80">Desenvolvido por <span class="pointer-events-none font-bold bg-gradient-to-r from-[#E045FF] via-[#8B5CF6] to-[#00F0FF] bg-clip-text text-transparent drop-shadow-[0_0_8px_rgba(0,240,255,0.3)]">Master Web Designer</span></p>
+    </div>
+  </footer>
+
+  <!-- ==============================================================
+       JAVASCRIPT PURO
+  =============================================================== -->
+  <script>
+    (function () {
+      'use strict';
+
+      /* ---------- Menu mobile (hambúrguer) ---------- */
+      var menuBtn = document.getElementById('menu-btn');
+      var mobileMenu = document.getElementById('mobile-menu');
+      var bars = menuBtn.querySelectorAll('span');
+
+      function toggleMenu(open) {
+        mobileMenu.classList.toggle('hidden', !open);
+        mobileMenu.classList.toggle('flex', open);
+        menuBtn.classList.toggle('open', open);
+        menuBtn.setAttribute('aria-expanded', String(open));
+        document.body.style.overflow = open ? 'hidden' : '';
+        bars[0].style.transform = open ? 'translateY(6px) rotate(45deg)' : '';
+        bars[1].style.opacity = open ? '0' : '1';
+        bars[2].style.transform = open ? 'translateY(-6px) rotate(-45deg)' : '';
+      }
+
+      menuBtn.addEventListener('click', function () {
+        toggleMenu(mobileMenu.classList.contains('hidden'));
+      });
+
+      document.querySelectorAll('.mobile-link').forEach(function (link) {
+        link.addEventListener('click', function () { toggleMenu(false); });
+      });
+
+      /* ---------- Dados dos 23 serviços ---------- */
+      var servicos = [
+        { nome: 'Alisamento orgânico', preco: 'A partir de R$ 200,00', duracao: '2h 55min', nota: 'Os valores são a partir, consulte nossos preços antes de agendar.' },
+        { nome: 'Botox', preco: 'A partir de R$ 130,00', duracao: '2h', nota: 'Valor a partir, depende do tamanho e quantidade de cabelo.' },
+        { nome: 'Corte', preco: 'A partir de R$ 50,00', duracao: '1h', nota: 'Lavar + cortar (Escova fica à parte).' },
+        { nome: 'Escova com chapinha', preco: 'A partir de R$ 50,00', duracao: '1h', nota: 'Valores a partir.' },
+        { nome: 'Hidratação', preco: 'A partir de R$ 50,00', duracao: '30min', nota: 'Sem escova.' },
+        { nome: 'Luzes', preco: 'A partir de R$ 450,00', duracao: '6h', nota: 'Luzes + tintura + tratamento + escova. Valores a partir, depende da quantidade que vai puxar no cabelo.' },
+        { nome: 'Luzes Masculino', preco: 'A partir de R$ 150,00', duracao: '1h 05min', nota: '' },
+        { nome: 'Matização para Loiros', preco: 'A partir de R$ 60,00', duracao: '30min', nota: '' },
+        { nome: "Mega Hair (Colocação - Cápsulas)", preco: 'Consulte', duracao: '6h', nota: 'A partir de 100 gramas + preparação das cápsulas (Colocação).' },
+        { nome: 'Mega Hair (Ponto Americano)', preco: 'Consulte', duracao: '1h', nota: '' },
+        { nome: 'Morena Iluminada', preco: 'A partir de R$ 450,00', duracao: '4h 50min', nota: 'Usamos mais tintas que o comum. Valor referente às mechas no papel personalizado + tratamentos + escova e finalização.' },
+        { nome: 'Pacote de Tratamento Robson Peluquero', preco: 'A partir de R$ 350,00', duracao: '30min (por sessão)', nota: 'Pacote com 4 sessões (1 mês de tratamento). Valor à vista (parcelamento tem juros da maquininha).' },
+        { nome: 'Progressiva Japonesa Liso Lambido', preco: 'A partir de R$ 140,00', duracao: '2h', nota: 'Valor a partir, depende do tamanho e quantidade do cabelo.' },
+        { nome: 'Progressiva Sem Formol', preco: 'A partir de R$ 200,00', duracao: '3h', nota: 'Valor a partir, depende do tamanho e quantidade do cabelo.' },
+        { nome: 'Reconstrução Robson Peluquero Carvão Ativado', preco: 'A partir de R$ 150,00', duracao: '1h', nota: 'Detox e reconstrói a fibra. Valor a partir.' },
+        { nome: 'Reconstrução Robson Peluquero', preco: 'A partir de R$ 100,00', duracao: '1h', nota: '' },
+        { nome: 'Reconstrução Robson Extreme', preco: 'A partir de R$ 100,00', duracao: '1h', nota: 'Valores a partir.' },
+        { nome: 'Reconstrução Robson Master Love', preco: 'A partir de R$ 100,00', duracao: '1h 20min', nota: 'Valores a partir.' },
+        { nome: 'Selagem', preco: 'A partir de R$ 150,00', duracao: '2h', nota: 'Valor a partir, depende do tamanho e quantidade do cabelo.' },
+        { nome: 'Teste de Mecha', preco: 'A partir de R$ 20,00', duracao: '2h', nota: '' },
+        { nome: 'Tintura com Tinta do Salão + Escova', preco: 'A partir de R$ 150,00', duracao: '1h 30min', nota: 'Valores a partir.' },
+        { nome: 'Tintura com Tinta da Cliente + Escova', preco: 'A partir de R$ 90,00', duracao: '1h 30min', nota: 'Valores a partir.' },
+        { nome: 'Tintura com Tinta do Salão Sem Escova', preco: 'A partir de R$ 80,00', duracao: '40min', nota: 'Valores a partir.' }
+      ];
+
+      /* ---------- Renderização dos cards ---------- */
+      var catalogo = document.getElementById('catalogo-servicos');
+
+      function renderCatalogo(lista) {
+        catalogo.innerHTML = '';
+        lista.forEach(function (svc) {
+        var destacado = !!svc.destaque;
+        var card = document.createElement('article');
+        card.className = 'group relative flex flex-col rounded-2xl border ' +
+          (destacado ? 'border-2 border-gold bg-cream-soft p-7 shadow-md' : 'border-gold/25 bg-cream-soft p-7 shadow-sm') +
+          ' transition-all duration-300 hover:-translate-y-1.5 hover:border-gold hover:shadow-md';
+
+        if (destacado) {
+          var selo = document.createElement('span');
+          selo.className = 'absolute right-4 top-4 rounded-full bg-gold px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-black';
+          selo.textContent = 'Destaque';
+          card.appendChild(selo);
+        }
+
+        var cabecalho = document.createElement('div');
+        cabecalho.className = 'flex items-start justify-between gap-4';
+
+        var nome = document.createElement('h3');
+        nome.className = 'font-serif text-lg font-semibold leading-snug';
+        nome.textContent = svc.nome;
+        cabecalho.appendChild(nome);
+
+        var duracaoBadge = document.createElement('span');
+        duracaoBadge.className = 'mt-1 shrink-0 rounded-full bg-gold/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-muted';
+        duracaoBadge.textContent = (svc.duracao.indexOf('por sessão') !== -1) ? svc.duracao : 'Duração: ' + svc.duracao;
+        cabecalho.appendChild(duracaoBadge);
+
+        card.appendChild(cabecalho);
+
+        var preco = document.createElement('p');
+        preco.className = 'mt-4 font-serif text-xl font-bold text-gold';
+        preco.textContent = svc.preco === 'Consulte' ? 'Preço: Consulte' : svc.preco;
+        card.appendChild(preco);
+
+        if (svc.nota) {
+          var nota = document.createElement('p');
+          nota.className = 'mt-2 text-xs font-light italic leading-relaxed text-muted';
+          nota.textContent = 'Nota: ' + svc.nota;
+          card.appendChild(nota);
+        }
+
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn btn-ghost-gold mt-6 self-start !px-5 !py-2.5 text-xs';
+        btn.textContent = 'Agendar este serviço';
+        btn.addEventListener('click', function () {
+          selecionarServico(svc.nome);
+        });
+        card.appendChild(btn);
+
+          catalogo.appendChild(card);
+        });
+      }
+
+      renderCatalogo(servicos);
+
+      /* ---------- Dropdown com os 23 serviços ---------- */
+      var servicoSelect = document.getElementById('servico-select');
+
+      function renderOptions(lista) {
+        servicoSelect.innerHTML = '<option value="" disabled selected>Selecione o serviço…</option>';
+        lista.forEach(function (svc) {
+          var opt = document.createElement('option');
+          opt.value = svc.nome;
+          opt.textContent = svc.nome;
+          servicoSelect.appendChild(opt);
+        });
+      }
+
+      renderOptions(servicos);
+
+      /* Recalcula os horários disponíveis ao trocar o serviço no formulário */
+      servicoSelect.addEventListener('change', function () {
+        atualizarHorarios(servicoSelect.value);
+      });
+
+      /* ---------- Selecionar serviço + rolar até o formulário ---------- */
+      var formulario = document.getElementById('formulario-agendamento');
+
+      function selecionarServico(nome) {
+        servicoSelect.value = nome;
+        // Destaque visual de que o campo foi preenchido
+        servicoSelect.classList.add('!border-gold', '!bg-cream-deep');
+        atualizarHorarios(nome);
+        formulario.scrollIntoView({ behavior: 'smooth' });
+      }
+
+      /* ---------- Grade de horários 09:00 → 18:00 ---------- */
+      var horarioGrid = document.getElementById('horario-grid');
+      var horarioSelecionado = '';
+
+      function buildHorarios() {
+        var horas = [];
+        for (var h = 9; h <= 18; h++) {
+          var hora = (h < 10 ? '0' + h : h);
+          horas.push(hora + ':00');
+        }
+        horas.forEach(function (valor) {
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.textContent = valor;
+          btn.setAttribute('data-hora', String(valor.split(':')[0]));
+          btn.className = 'rounded-xl border border-cream-deep bg-cream/50 px-3 py-2.5 text-sm font-medium text-ink-soft transition-all duration-200 hover:border-gold hover:bg-gold hover:text-black focus:outline-none focus:ring-2 focus:ring-gold/40';
+          btn.addEventListener('click', function () {
+            selecionarHorario(btn, valor);
+          });
+          horarioGrid.appendChild(btn);
+        });
+      }
+
+      function selecionarHorario(btn, valor) {
+        if (btn.disabled) return;
+        horarioSelecionado = valor;
+        document.getElementById('horario-erro').classList.add('hidden');
+        Array.from(horarioGrid.children).forEach(function (b) {
+          b.classList.remove('!bg-gold', '!text-black', '!border-gold');
+        });
+        btn.classList.add('!bg-gold', '!text-black', '!border-gold');
+      }
+
+      buildHorarios();
+
+      /* ---------- Validação por duração: fecha às 19:00 ----------
+         limiteInicio = 19:00 − duração do serviço. Horários que fariam
+         o serviço terminar após as 19:00 ficam desabilitados (opaco/cinza). */
+      var HORARIO_FECHAMENTO_MIN = 19 * 60;
+
+      function duracaoMinutos(svc) {
+        if (!svc) return 0;
+        if (typeof svc.duracao_min === 'number' && svc.duracao_min > 0) return svc.duracao_min;
+        var texto = String(svc.duracao || '');
+        var horas = parseInt((texto.match(/(\d+)\s*h/) || [null, 0])[1], 10) || 0;
+        var mins = parseInt((texto.match(/(\d+)\s*min/) || [null, 0])[1], 10) || 0;
+        return horas * 60 + mins;
+      }
+
+      function formatarDuracao(min) {
+        var h = Math.floor(min / 60);
+        var m = min % 60;
+        if (h === 0) return m + 'min';
+        if (m === 0) return h + 'h';
+        return h + 'h ' + m + 'min';
+      }
+
+      function formatarMinutos(min) {
+        var h = Math.floor(min / 60);
+        var m = min % 60;
+        return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+      }
+
+      function atualizarHorarios(servico) {
+        var svc = null;
+        for (var i = 0; i < servicos.length; i++) {
+          if (servicos[i].nome === servico) { svc = servicos[i]; break; }
+        }
+        var aviso = document.getElementById('horario-aviso');
+        var botoes = Array.from(horarioGrid.children);
+
+        if (!svc) {
+          botoes.forEach(function (btn) {
+            btn.disabled = false;
+          });
+          if (aviso) aviso.classList.add('hidden');
+          return;
+        }
+
+        var dur = duracaoMinutos(svc);
+        var limite = HORARIO_FECHAMENTO_MIN - dur;
+
+        botoes.forEach(function (btn) {
+          var hh = parseInt(btn.getAttribute('data-hora'), 10);
+          var disponivel = hh * 60 <= limite;
+          btn.disabled = !disponivel;
+          /* Se o horário selecionado ficou indisponível, limpa a seleção */
+          if (!disponivel && horarioSelecionado === btn.textContent) {
+            horarioSelecionado = '';
+            btn.classList.remove('!bg-gold', '!text-black', '!border-gold');
+          }
+        });
+
+        if (aviso) {
+          aviso.textContent = 'Duração ' + formatarDuracao(dur) +
+            ' · Último horário para começar: ' + formatarMinutos(limite);
+          aviso.classList.remove('hidden');
+        }
+      }
+
+      /* ---------- Validação: destaca campos obrigatórios ---------- */
+      function marcarErro(campo) {
+        campo.focus();
+        campo.classList.add('!ring-2', '!ring-red-400');
+        setTimeout(function () { campo.classList.remove('!ring-2', '!ring-red-400'); }, 2200);
+      }
+
+      /* ---------- Confirmação e envio via WhatsApp ---------- */
+      var nomeInput = document.getElementById('nome-input');
+      var telefoneInput = document.getElementById('telefone-input');
+      var dataInput = document.getElementById('data-input');
+      var confirmarBtn = document.getElementById('confirmar-btn');
+      var numeroWhats = '5511942212626';
+
+      function formatarData(valor) {
+        if (!valor) return 'não informada';
+        var partes = valor.split('-');
+        if (partes.length !== 3) return valor;
+        return partes[2] + '/' + partes[1] + '/' + partes[0];
+      }
+
+      confirmarBtn.addEventListener('click', function () {
+        var servico = servicoSelect.value;
+        var nome = nomeInput.value.trim();
+        var telefone = telefoneInput.value.trim();
+        var data = formatarData(dataInput.value);
+
+        if (!servico) {
+          marcarErro(servicoSelect);
+          return;
+        }
+        if (!nome) {
+          marcarErro(nomeInput);
+          return;
+        }
+        if (!telefone) {
+          marcarErro(telefoneInput);
+          return;
+        }
+        if (!dataInput.value) {
+          marcarErro(dataInput);
+          return;
+        }
+        if (!horarioSelecionado) {
+          document.getElementById('horario-erro').classList.remove('hidden');
+          horarioGrid.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          return;
+        }
+
+        // Mensagem formatada conforme especificação
+        var mensagem =
+          'Olá, Jane! Gostaria de agendar um horário:\n' +
+          '• Serviço: ' + servico + '\n' +
+          '• Nome: ' + nome + '\n' +
+          '• Telefone: ' + telefone + '\n' +
+          '• Data: ' + data + '\n' +
+          '• Horário: ' + horarioSelecionado;
+
+        var url = 'https://wa.me/' + numeroWhats + '?text=' + encodeURIComponent(mensagem);
+        window.open(url, '_blank');
+      });
+
+      /* ---------- Sombra do header ao rolar ---------- */
+      var header = document.getElementById('site-header');
+      function onScroll() {
+        header.classList.toggle('shadow-md', window.scrollY > 12);
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+
+      /* ---------- Ano dinâmico ---------- */
+      document.getElementById('year').textContent = new Date().getFullYear();
+
+      /* ---------- Carregar catálogo do content/site.json ----------
+         Se o JSON estiver disponível, ele prevalece sobre o array embutido
+         acima (fallback para quando o arquivo não puder ser lido). */
+      fetch('content/site.json?v=' + Date.now())
+        .then(function (res) {
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          return res.json();
+        })
+        .then(function (data) {
+          var lista = (data.servicos || []).slice().sort(function (a, b) {
+            return (a.ordem || 0) - (b.ordem || 0);
+          });
+          if (lista.length) {
+            servicos = lista;
+            renderCatalogo(lista);
+            renderOptions(lista);
+          }
+        })
+        .catch(function () {
+          // Fallback: mantém o array embutido já renderizado.
+        });
+    })();
+  </script>
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var meta = document.querySelector('meta[name="theme-color"]');
+      var btn = document.getElementById('theme-toggle');
+      var sol = document.getElementById('icon-sol');
+      var lua = document.getElementById('icon-lua');
+      function sync() {
+        var light = root.classList.contains('light');
+        if (sol) sol.classList.toggle('hidden', !light);
+        if (lua) lua.classList.toggle('hidden', light);
+        if (meta) meta.setAttribute('content', light ? '#FBF6EC' : '#0D0D0D');
+      }
+      if (btn) {
+        btn.addEventListener('click', function () {
+          root.classList.toggle('light');
+          try {
+            localStorage.setItem('jane-theme', root.classList.contains('light') ? 'light' : 'dark');
+          } catch (e) {}
+          sync();
+        });
+      }
+      sync();
+    })();
+  </script>
+
+  <!-- ==============================================================
+       MODAL LEGAL — Termos / Política / Responsabilidade
+  =============================================================== -->
+  <script>
+    (function () {
+      'use strict';
+
+      function iniciarConsentimento() {
+      /* ---------- Modal Legal ========== */
+      var legalModal = document.getElementById('modal-legal');
+      var legalTitulo = document.getElementById('modal-legal-titulo');
+      var legalCorpo = document.getElementById('modal-legal-corpo');
+
+      var legais = {
+        privacidade: {
+          titulo: 'Política de Privacidade & Proteção de Dados',
+          secao: [
+            {
+              t: '1. Quem Somos',
+              c: ['O Studio Jane Barreiros, localizado à Rua Rio Grande do Sul, 348, Santo André - SP, é o controlador dos dados pessoais tratados por meio deste site e atua em conformidade com a Lei Geral de Proteção de Dados Pessoais (Lei n. 13.709/2018 - LGPD).']
+            },
+            {
+              t: '2. Dados Coletados',
+              c: [
+                'Ao realizar o agendamento pelo nosso site, coletamos somente os dados indispensáveis ao atendimento: Nome, Telefone/WhatsApp, Serviço desejado e Data pretendida.',
+                'Também podemos receber informações complementares enviadas voluntariamente pela cliente por meio do nosso canal de WhatsApp ou de mensagens diretas.'
+              ]
+            },
+            {
+              t: '3. Finalidade do Tratamento',
+              c: [
+                'Os dados coletados são utilizados exclusivamente para: confirmar e gerenciar agendamentos; prestar atendimento e responder solicitações; recomendar serviços adequados ao perfil da cliente; e cumprir obrigações fiscais e legais quando aplicável.',
+                'Nunca utilizamos seus dados para finalidades não previstas nesta política.'
+              ]
+            },
+            {
+              t: '4. Uso do WhatsApp',
+              c: [
+                'Ao informar seu número de WhatsApp, você autoriza o Estúdio a entrar em contato para confirmação de agendamentos, lembretes e comunicação diretamente relacionada ao seu atendimento.',
+                'Você pode, a qualquer momento, solicitar a inclusão do seu número em nossa lista de não perturbe ou a exclusão de seus registros.'
+              ]
+            },
+            {
+              t: '5. Compartilhamento e Consentimento',
+              c: ['Seus dados não serão comercializados. Não compartilhamos informações com terceiros sem o seu consentimento, salvo quando exigido por lei, ordem judicial ou para cumprimento de obrigações regulatórias.']
+            },
+            {
+              t: '6. Armazenamento e Segurança',
+              c: [
+                'Adotamos medidas técnicas e organizacionais de segurança da informação, como controle de acesso e proteção em trânsito, para proteger seus dados contra acessos não autorizados, perda ou alteração.',
+                'Os dados são mantidos pelo prazo necessário ao cumprimento das finalidades desta política e eliminados ou anonimizados quando não mais necessários.'
+              ]
+            },
+            {
+              t: '7. Direitos do Titular (Art. 18 da LGPD)',
+              c: [
+                'Você pode, a qualquer momento e sem custo: solicitar acesso aos seus dados; corrigi-los quando incompletos ou desatualizados; solicitar anonimização, bloqueio ou eliminação de dados desnecessários; revogar o consentimento; e solicitar a portabilidade dos dados.',
+                'Para exercer esses direitos, entre em contato pelo nosso canal de atendimento informando seu nome e a solicitação desejada.'
+              ]
+            },
+            {
+              t: '8. Cookies',
+              c: ['Utilizamos cookies para personalizar e melhorar sua experiência de navegação, conforme o nosso aviso de cookies. Você pode optar por aceitar apenas os essenciais ou gerenciar as preferências pelo seu navegador.']
+            },
+            {
+              t: '9. Menores de Idade',
+              c: ['Este site não é direcionado a menores de 18 anos. Caso identifiquemos o tratamento de dados de menores, solicitaremos a autorização dos responsáveis legais.']
+            },
+            {
+              t: '10. Alterações desta Política',
+              c: ['Podemos atualizar esta Política para refletir mudanças legais ou em nossos processos. A versão vigente estará sempre disponível nesta página.']
+            },
+            {
+              t: '11. Fale Conosco',
+              c: ['Para dúvidas sobre o tratamento de dados ou para exercer seus direitos como titular, fale conosco pelo WhatsApp do Estúdio ou pelos nossos canais de atendimento.']
+            }
+          ]
+        },
+        termos: {
+          titulo: 'Termos e Condições de Uso do Website',
+          secao: [
+            {
+              t: '1. Aceitação dos Termos',
+              c: ['Ao acessar e utilizar o site do Studio Jane Barreiros, o usuário concorda expressamente em cumprir estes Termos e Condições de Uso, bem como toda a legislação brasileira aplicável. Caso não concorde com qualquer disposição, você deve interromper o uso do site.']
+            },
+            {
+              t: '2. Objeto do Site',
+              c: ['O site possui caráter institucional e comercial, destinado à apresentação dos serviços de colorimetria, mechas e tratamentos capilares, ao agendamento de horários e à divulgação do Curso Online do Estúdio.']
+            },
+            {
+              t: '3. Regras de Navegação',
+              c: ['O usuário compromete-se a utilizar o site de forma lícita e respeitosa, não praticando condutas que possam danificar, sobrecarregar ou comprometer a disponibilidade do serviço, como uso de bots, raspagem de dados, injeção de scripts ou tentativas de acesso não autorizado.']
+            },
+            {
+              t: '4. Serviços e Agendamentos',
+              c: ['As informações sobre serviços, valores e disponibilidade são apresentadas com caráter orientativo e podem ser atualizadas a qualquer momento. Os horários marcados dependem de confirmação da equipe do Estúdio.']
+            },
+            {
+              t: '5. Propriedade Intelectual',
+              c: [
+                'Todos os conteúdos deste site, incluindo fotografias, vídeos, textos, marcas, logotipos e identidade visual, pertencem ao Studio Jane Barreiros e estão protegidos pela Lei de Direitos Autorais (Lei n. 9.610/1998) e pela Lei de Propriedade Industrial (Lei n. 9.279/1996).',
+                'É proibida a reprodução, distribuição, modificação ou utilização desses conteúdos sem autorização prévia e por escrito do Estúdio.'
+              ]
+            },
+            {
+              t: '6. Conteúdo do Curso Online',
+              c: [
+                'O acesso ao Curso Online é pessoal e intransferível. As videoaulas, materiais de apoio, apostilas e demais conteúdos didáticos são de uso exclusivo do aluno.',
+                'É vedada a gravação, o compartilhamento, a revenda ou a disponibilização pública do conteúdo do curso, em qualquer formato ou mídia. A violação dessas regras sujeita o infrator às penalidades civis e criminais cabíveis.',
+                'O Estúdio não garante resultado financeiro ou profissional específico decorrente da realização do curso.'
+              ]
+            },
+            {
+              t: '7. Conduta do Usuário',
+              c: [
+                'O usuário não poderá: utilizar o site para fins ilícitos; enviar ou publicar conteúdo difamatório, ofensivo ou discriminatório; infringir direitos de terceiros; ou tentar acessar áreas restritas do sistema.',
+                'O descumprimento destas regras pode acarretar o bloqueio do acesso ao site e/ou ao curso, sem prejuízo das sanções legais.'
+              ]
+            },
+            {
+              t: '8. Links Externos',
+              c: ['O site pode conter links para redes sociais e serviços de terceiros. O Estúdio não se responsabiliza pelo conteúdo ou pelas práticas de privacidade desses serviços, orientando o usuário a consultar as respectivas políticas.']
+            },
+            {
+              t: '9. Limitação de Responsabilidade',
+              c: ['O Estúdio envidará esforços para manter o site atualizado e disponível, mas não se responsabiliza por instabilidades temporárias, indisponibilidades decorrentes de manutenção ou falhas em serviços de terceiros.']
+            },
+            {
+              t: '10. Alterações e Legislação Aplicável',
+              c: [
+                'Estes Termos podem ser atualizados a qualquer momento, sendo a versão vigente publicada nesta página.',
+                'Estes Termos são regidos pelas leis da República Federativa do Brasil, com foro na Comarca de Santo André/SP para dirimir eventuais controvérsias.'
+              ]
+            }
+          ]
+        },
+        responsabilidade: {
+          titulo: 'Termo de Responsabilidade & Procedimentos Técnicos',
+          secao: [
+            {
+              t: '1. Avaliação Prévia e Teste de Mecha Obrigatório',
+              c: [
+                'Todo procedimento que envolva descoloração, mechas, coloração ou mudança de cor exige avaliação técnica prévia e Teste de Mecha.',
+                'Caso a fibra capilar apresente incompatibilidade, fragilidade ou risco de corte químico, o Studio Jane Barreiros reserva-se o direito de recusar a química imediata e indicar um protocolo de recuperação capilar.'
+              ]
+            },
+            {
+              t: '2. Veracidade do Histórico Capilar',
+              c: [
+                'É responsabilidade da cliente informar com exatidão todo o histórico químico recente do cabelo, incluindo o uso de hena, tinturas de farmácia, alisamentos, progressivas, botox capilar, tonificantes e qualquer outro procedimento.',
+                'O ocultamento ou a falsidade dessas informações isenta o profissional e o Estúdio de responsabilidade por reações químicas imprevisíveis, resultados insatisfatórios ou danos aos fios.'
+              ]
+            },
+            {
+              t: '3. Condições de Saúde e Alergias',
+              c: [
+                'A cliente deve comunicar à equipe qualquer alergia, sensibilidade, lesão no couro cabeludo, gestação, lactação ou uso de medicamentos que possam influenciar o procedimento.',
+                'Em caso de dúvida, o procedimento poderá ser adiado ou indicada a avaliação de um profissional de saúde.'
+              ]
+            },
+            {
+              t: '4. Manutenção e Home Care',
+              c: [
+                'O resultado e a durabilidade da cor, da reconstrução ou do tratamento dependem do cumprimento das orientações de manutenção, do cronograma capilar e dos produtos Home Care recomendados pelo profissional.',
+                'A não observância dessas recomendações pode comprometer o resultado e não caracteriza garantia do serviço.'
+              ]
+            },
+            {
+              t: '5. Sobre o Conteúdo dos Cursos',
+              c: [
+                'O conteúdo disponibilizado nos cursos do Estúdio possui caráter didático e profissional. O uso é pessoal e intransferível, sendo vedada a distribuição, reprodução ou revenda do material.',
+                'O Estúdio não se responsabiliza pela aplicação do conteúdo didático em situações que exijam avaliação individualizada, devendo cada profissional realizar os testes e a avaliação prévia em suas clientes.'
+              ]
+            },
+            {
+              t: '6. Aceite e Contato',
+              c: [
+                'Ao realizar o agendamento, a cliente declara ter lido e compreendido este Termo de Responsabilidade, autorizando os procedimentos indicados pela equipe.',
+                'Em caso de dúvidas, a equipe do Studio Jane Barreiros está à disposição para esclarecimentos antes do início de qualquer procedimento.'
+              ]
+            }
+          ]
+        }
+      };
+
+      function showLegal(tipo) {
+        var item = legais[tipo];
+        if (!legalModal || !item) return;
+        legalTitulo.textContent = item.titulo;
+        legalCorpo.innerHTML = item.secao.map(function (s) {
+          var paragrafos = (s.c && s.c.length ? s.c : [s.c]).map(function (p) {
+            return '<p class="text-sm font-light leading-relaxed text-muted">' + p + '</p>';
+          }).join('');
+          return '<div class="border-l-2 border-gold/40 pl-4"><h4 class="font-serif text-base font-semibold text-gold-light">' + s.t + '</h4>' + paragrafos + '</div>';
+        }).join('');
+        legalModal.classList.remove('hidden');
+        legalModal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeLegal() {
+        if (!legalModal) return;
+        legalModal.classList.add('hidden');
+        legalModal.classList.remove('flex');
+        document.body.style.overflow = '';
+      }
+      if (legalModal) {
+        var legalFechar = document.getElementById('modal-legal-fechar');
+        if (legalFechar) legalFechar.addEventListener('click', closeLegal);
+        legalModal.addEventListener('click', function (e) { if (e.target === legalModal) closeLegal(); });
+        document.querySelectorAll('[data-legal]').forEach(function (btn) {
+          btn.addEventListener('click', function () { showLegal(btn.getAttribute('data-legal')); });
+        });
+      }
+
+      /* ---------- Banner de Cookies (LGPD) ---------- */
+      var cookieBanner = document.getElementById('cookie-banner');
+      var cookieAceitar = document.getElementById('cookie-aceitar');
+      var cookieRecusar = document.getElementById('cookie-recusar');
+
+      function esconderCookies() {
+        if (!cookieBanner) return;
+        cookieBanner.classList.add('opacity-0', '-translate-y-2');
+        setTimeout(function () {
+          cookieBanner.classList.add('hidden');
+          cookieBanner.classList.remove('flex');
+        }, 450);
+      }
+
+      try {
+        if (!localStorage.getItem('cookiesAceitos') && cookieBanner) {
+          cookieBanner.classList.remove('hidden');
+          cookieBanner.classList.add('flex');
+        }
+      } catch (e) {}
+
+      if (cookieAceitar) cookieAceitar.addEventListener('click', function () {
+        try { localStorage.setItem('cookiesAceitos', 'true'); } catch (e) {}
+        esconderCookies();
+      });
+      if (cookieRecusar) cookieRecusar.addEventListener('click', function () {
+        try { localStorage.setItem('cookiesAceitos', 'false'); } catch (e) {}
+        esconderCookies();
+      });
+      } // fim iniciarConsentimento
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', iniciarConsentimento);
+      } else {
+        iniciarConsentimento();
+      }
+    })();
+  </script>
+
+  <!-- Modal Legal -->
+  <div id="modal-legal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-black/80 p-5 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="modal-legal-titulo">
+    <button type="button" id="modal-legal-fechar" aria-label="Fechar modal" class="absolute right-5 top-5 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-gold/40 text-gold-light transition-all duration-300 hover:scale-105 hover:border-gold hover:bg-gold hover:text-black">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="relative max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-gold/30 bg-[#111111] p-8 text-ink shadow-[0_30px_80px_-20px_rgba(0,0,0,.9)] sm:p-10">
+      <h3 id="modal-legal-titulo" class="font-serif text-2xl font-semibold text-ink">Termos e Condições de Uso</h3>
+      <div id="modal-legal-corpo" class="mt-5 space-y-4 text-sm font-light leading-relaxed text-muted"></div>
+    </div>
+  </div>
+
+  <!-- Banner de Cookies (LGPD) -->
+  <div id="cookie-banner" class="fixed bottom-4 left-4 right-4 z-50 hidden flex-col gap-4 rounded-2xl border border-[#D4AF37]/40 bg-[#121212]/95 p-5 shadow-[0_20px_60px_-15px_rgba(0,0,0,.95)] backdrop-blur-md transition-all duration-500 ease-out sm:bottom-6 sm:left-auto sm:right-6 sm:max-w-md sm:p-6" role="region" aria-label="Aviso de cookies">
+    <p class="text-[13px] font-light leading-relaxed text-slate-300">
+      Utilizamos cookies para personalizar e melhorar sua experiência no site do Studio Jane Barreiros. Ao continuar navegando, você concorda com a nossa política de privacidade.
+    </p>
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <button type="button" id="cookie-aceitar" class="bg-gradient-to-r from-[#BF953F] via-[#FCF6BA] to-[#B38728] rounded-full px-6 py-2.5 text-sm font-semibold text-black shadow-[0_4px_20px_-6px_rgba(212,175,55,.6)] transition-all duration-300 hover:brightness-110">Aceitar</button>
+      <button type="button" id="cookie-recusar" class="text-xs font-semibold text-[#BF953F] transition-colors duration-300 hover:text-[#FCF6BA]">Apenas Essenciais</button>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,172 @@
+# ============================================================
+#  DECAP CMS — Studio Jane Barreiros
+#  Um único arquivo de dados: content/site.json
+#  Acesse: http://localhost:8001/admin
+#
+#  MODO DEV LOCAL:
+#  - O backend "proxy" aponta DIRETO para o decap-server local (porta 8082),
+#    que LÊ E GRAVA os arquivos reais do projeto (content/site.json) no disco.
+#  - Requisito: o proxy precisa estar ativo neste terminal (na pasta do projeto):
+#        node node_modules\decap-server\dist\index.js   (porta 8082)
+#  - Porta 8082: a 8081 já é usada por outro decap-server no seu computador.
+#  - Se o proxy estiver desligado, o painel não abre os dados (erro visível).
+#
+#  MUDANÇA IMPORTANTE: usamos "name: proxy" + "proxy_url" (e NÃO "local_backend")
+#  porque em versões recentes do Decap o "local_backend" pode cair silenciosamente
+#  para o backend "test-repo", que só grava no localStorage do navegador —
+#  por isso o site "não salvava".
+#
+#  PRODUÇÃO (após publicar no Netlify): troque o bloco backend por git-gateway:
+#      backend:
+#        name: git-gateway
+#        branch: main
+#  e deixe o Netlify Identity habilitado.
+# ============================================================
+
+backend:
+  name: proxy
+  proxy_url: http://localhost:8082/api/v1
+  branch: main
+
+# Publicação direta (sem fluxo de revisão). Para editar em rascunho:
+# publish_mode: editorial_workflow
+
+locale: 'pt'
+
+# Pasta única para fotos e vídeos (upload do Admin fica tudo aqui)
+media_folder: "Instagram"
+public_folder: "/Instagram"
+
+collections:
+  - name: "site"
+    label: "Studio Jane Barreiros"
+    description: "Edite todo o conteúdo do site em um único arquivo (content/site.json)."
+    files:
+      - name: "site"
+        label: "Conteúdo completo do site"
+        file: "content/site.json"
+        format: "json"
+
+        fields:
+          # ---------------- CONFIGURAÇÕES GERAIS ----------------
+          - label: "Configurações do Site"
+            name: "site"
+            widget: "object"
+            collapsed: true
+            fields:
+              - { label: "Nome da Marca", name: "nome", widget: "string", default: "Jane Barreiros" }
+              - { label: "Slogan", name: "slogan", widget: "string", default: "Transformando autoestima em identidade." }
+              - { label: "Etiqueta do logo", name: "logo_etiqueta", widget: "string", default: "Studio & Academia de Loiros" }
+              - { label: "WhatsApp (somente números)", name: "whatsapp_numero", widget: "string", default: "5511942212626" }
+              - { label: "WhatsApp (exibição)", name: "whatsapp_exibir", widget: "string", default: "(11) 94221-2626" }
+              - { label: "Link checkout Hotmart", name: "hotmart_checkout", widget: "string", default: "https://pay.hotmart.com/SEU_CODIGO_DE_PRODUTO" }
+              - { label: "Link agenda externa (apnt.app)", name: "link_agenda", widget: "string", default: "https://apnt.app/janebarreiros" }
+
+          # ---------------- HERO E SOBRE ----------------
+          - label: "Hero & Sobre"
+            name: "sobre"
+            widget: "object"
+            collapsed: true
+            fields:
+              - { label: "Eyebrow do Hero", name: "hero_eyebrow", widget: "string", default: "Studio Jane Barreiros · Santo André · SP" }
+              - { label: "Título do Hero", name: "hero_titulo", widget: "string", default: "Especialista em Loiros e Colorimetria Capilar" }
+              - { label: "Subtítulo do Hero", name: "hero_subtitulo", widget: "text", default: "Transformando autoestima em identidade através do loiro dos seus sonhos com saúde e confiança." }
+              - { label: "Foto principal (Edjane)", name: "hero_imagem", widget: "image", default: "assets/img/edjane-hero.svg" }
+              - { label: "Badge da foto", name: "hero_badge", widget: "string", default: "+ de 12 anos transformando cabelos e autoestima" }
+              - { label: "Apresentação", name: "apresentacao", widget: "text", default: "Apaixonada por transformar a autoestima das minhas clientes através de mechas perfeitas. Minha missão é proporcionar um atendimento personalizado, priorizando a saúde dos fios, a satisfação de cada cliente e a qualidade de cada transformação." }
+              - { label: "Trajetória", name: "trajetoria", widget: "text", default: "Minha trajetória começou de forma simples — de 2 cômodos no fundo de uma casa — até a estrutura completa do meu studio em Santo André. Cada etapa me ensinou que técnica, escuta e acolhimento caminham juntos." }
+              - { label: "Educadora", name: "educadora", widget: "text", default: "Hoje, além de atender, atuo como Educadora de cabeleireiros iniciantes, compartilhando tudo o que vivi e aprendi no universo dos loiros e da colorimetria para formar novos profissionais." }
+              - { label: "Citação", name: "citacao", widget: "string", default: "De 2 cômodos no fundo aos cabelos que você vê hoje: cada fio tem uma história, e eu ajudo a escrever a sua." }
+              - { label: "Anos de experiência", name: "stat_anos", widget: "number", default: 12, value_type: "int" }
+              - { label: "Clientes atendidas", name: "stat_clientes", widget: "number", default: 3000, value_type: "int" }
+
+          # ---------------- CATÁLOGO DE SERVIÇOS ----------------
+          - label: "Serviços"
+            name: "servicos"
+            widget: "list"
+            label_singular: "Serviço"
+            summary: "{{nome}} — {{preco}} ({{duracao}})"
+            fields:
+              - { label: "Ordem no catálogo", name: "ordem", widget: "number", value_type: "int", required: false }
+              - { label: "Nome do serviço", name: "nome", widget: "string" }
+              - { label: "Preço", name: "preco", widget: "string", hint: "Ex.: A partir de R$ 200,00" }
+              - { label: "Duração", name: "duracao", widget: "string", hint: "Ex.: 2h 55min" }
+              - { label: "Duração em minutos (para o limite de horário)", name: "duracao_min", widget: "number", value_type: "int", hint: "Ex.: 60 = 1h · 90 = 1h30 · 360 = 6h. Fechamento às 19h." }
+              - { label: "Observação / Nota", name: "nota", widget: "text", required: false }
+              - { label: "Destaque no card", name: "destaque", widget: "boolean", default: false, required: false }
+
+          # ---------------- SEÇÃO SIGA NO INSTAGRAM ----------------
+          - label: "Siga no Instagram"
+            name: "instagram"
+            widget: "object"
+            collapsed: true
+            fields:
+              - { label: "Usuário", name: "handle", widget: "string", default: "janebarreiros_" }
+              - { label: "URL do perfil", name: "url", widget: "string", default: "https://www.instagram.com/janebarreiros_" }
+              - { label: "Título da seção", name: "titulo", widget: "string", default: "Siga no Instagram" }
+              - { label: "Subtítulo", name: "subtitulo", widget: "text", default: "Dicas de loiros perfeitos, colorimetria e os bastidores do Studio Jane Barreiros." }
+              - label: "Cards do feed (fotos/vídeos)"
+                name: "posts"
+                widget: "list"
+                label_singular: "Card"
+                summary: "Card {{ordem}} — {{titulo}}"
+                hint: "Clique em \"Adicionar card\" para inserir mais fotos ou vídeos. Use o campo Nº do card para numerar (1, 2, 3...) e achar mais fácil. Um card mostra a foto; se você preencher o vídeo, o card toca o vídeo em movimento quanto entra na tela."
+                fields:
+                  - { label: "Nº do card", name: "ordem", widget: "number", value_type: "int", hint: "Use 1, 2, 3... para se achar na lista." }
+                  - { label: "Foto do card (opcional — vazio usa o logo do Instagram)", name: "imagem", widget: "image", required: false, default: "Instagram/instagram-logo.svg", hint: "Fica o logotipo do Instagram caso você deixe vazio. A foto é usada como capa do card e quando não houver vídeo." }
+                  - { label: "Vídeo (MP4/WebM) — vazio usa a foto ou o logo", name: "video", widget: "file", required: false, hint: "Se preenchido, o card toca o vídeo (mudo, em loop) quando entra na tela. Ex.: Instagram/videojane1.mp4" }
+                  - { label: "Título do card", name: "titulo", widget: "string", required: false, hint: "Pode deixar vazio — o card fica apenas com a foto/vídeo." }
+                  - { label: "Link do post/reel", name: "link", widget: "string", required: false, hint: "Cole aqui o link do post ou reel no Instagram — cada card abre o seu próprio link. Ex.: https://www.instagram.com/reel/.... Se deixar vazio, abre o perfil." }
+                  - { label: "Ocultar esta publicação?", name: "ocultar", widget: "boolean", default: false, required: false, hint: "Marque para esconder este card do site SEM excluí-lo. Útil para pausar uma publicação." }
+
+          # ---------------- CURSO ONLINE ----------------
+          - label: "Curso Online (Hotmart)"
+            name: "curso"
+            widget: "object"
+            collapsed: true
+            fields:
+              - { label: "Nome do curso", name: "nome", widget: "string", default: "Clube Loiros com Propósito" }
+              - { label: "Segmento", name: "segmento", widget: "string", default: "Infoproduto" }
+              - { label: "Descrição", name: "descricao", widget: "text", default: "Aprenda técnicas de clareamento, tonalização e recuperação capilar para cabeleireiros iniciantes e profissionais. Aulas práticas, diretas e aplicáveis no dia a dia do salão." }
+              - { label: "Preço", name: "preco", widget: "string", default: "R$ 47,99" }
+              - { label: "Parcelamento", name: "parcelas", widget: "string", default: "ou 6x de R$ 9,00" }
+              - { label: "Garantia", name: "garantia", widget: "string", default: "Garantia incondicional de 7 dias" }
+              - { label: "Acesso", name: "acesso", widget: "string", default: "Acesso em qualquer dispositivo" }
+              - { label: "Link do checkout (Hotmart)", name: "checkout", widget: "string", default: "https://pay.hotmart.com/SEU_CODIGO_DE_PRODUTO" }
+              - label: "Benefícios"
+                name: "beneficios"
+                widget: "list"
+                label_singular: "Benefício"
+                fields:
+                  - { label: "Benefício", name: "beneficio", widget: "string" }
+
+          # ---------------- REDES SOCIAIS ----------------
+          - label: "Redes Sociais"
+            name: "redes"
+            widget: "object"
+            collapsed: true
+            hint: "Central de links das redes sociais do site (ícones do rodapé). Deixe o link vazio para esconder o ícone da rede."
+            fields:
+              - { label: "Instagram — URL", name: "instagram_url", widget: "string", default: "https://www.instagram.com/janebarreiros_", hint: "Ex.: https://www.instagram.com/meuperfil" }
+              - { label: "Instagram — usuário (exibição)", name: "instagram_usuario", widget: "string", default: "janebarreiros_" }
+              - { label: "Facebook — URL", name: "facebook_url", widget: "string", default: "https://www.facebook.com/janebarreiros", hint: "Ex.: https://www.facebook.com/meuperfil" }
+              - { label: "Facebook — usuário (exibição)", name: "facebook_usuario", widget: "string", default: "janebarreiros" }
+              - { label: "Threads — URL", name: "threads_url", widget: "string", default: "https://www.threads.net/@janebarreiros_", hint: "Ex.: https://www.threads.net/@meuperfil" }
+              - { label: "LinkedIn — URL", name: "linkedin_url", widget: "string", default: "https://www.linkedin.com/in/janebarreiros", hint: "Ex.: https://www.linkedin.com/in/meuperfil" }
+              - { label: "TikTok — URL", name: "tiktok_url", widget: "string", default: "https://www.tiktok.com/@janebarreiros_", hint: "Ex.: https://www.tiktok.com/@meuperfil" }
+              - { label: "YouTube — URL", name: "youtube_url", widget: "string", default: "https://www.youtube.com/@janebarreiros", hint: "Ex.: https://www.youtube.com/@meucanal" }
+              - { label: "WhatsApp — URL", name: "whatsapp_url", widget: "string", default: "https://wa.me/5511942212626", hint: "Ex.: https://wa.me/5511999999999" }
+              - { label: "Telegram — URL", name: "telegram_url", widget: "string", default: "https://t.me/janebarreiros", hint: "Ex.: https://t.me/meuperfil" }
+
+          # ---------------- LOCALIZAÇÃO E CONTATO ----------------
+          - label: "Localização & Contato"
+            name: "contato"
+            widget: "object"
+            collapsed: true
+            fields:
+              - { label: "Logradouro", name: "endereco_logradouro", widget: "string", default: "Rua Rio Grande Do Sul, 348" }
+              - { label: "Cidade", name: "endereco_cidade", widget: "string", default: "Santo André — SP" }
+              - { label: "Horário (Terça a Sábado)", name: "horario_semana", widget: "string", default: "Terça a Sábado: 09:00 – 18:00" }
+              - { label: "Horário (Domingo/Segunda)", name: "horario_fim_de_semana", widget: "string", default: "Domingo e Segunda: Fechado" }
+              - { label: "Link WhatsApp (botões de agendamento)", name: "whatsapp_link", widget: "string", default: "https://wa.me/5511942212626?text=Ol%C3%A1!%20Quero%20agendar%20um%20atendimento%20no%20Studio%20Jane%20Barreiros.", hint: "Os links de Instagram/Facebook ficam só na seção \"Redes Sociais\"." }
+              - { label: "Embed do Google Maps (iframe src)", name: "mapa_embed", widget: "string", default: "https://www.google.com/maps?q=Rua+Rio+Grande+Do+Sul,+348+Santo+Andre,+SP&output=embed" }

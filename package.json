@@ -1,0 +1,12 @@
+{
+  "name": "studio-jane-barreiros",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Site do Studio Jane Barreiros com Decap CMS (administração local).",
+  "scripts": {
+    "cms": "decap-server"
+  },
+  "devDependencies": {
+    "decap-server": "^3.8.0"
+  }
+}
