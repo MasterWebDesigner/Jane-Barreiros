@@ -23,9 +23,10 @@
 #  e deixe o Netlify Identity habilitado.
 # ============================================================
 
+local_backend: true
 backend:
   name: proxy
-  proxy_url: http://localhost:8082/api/v1
+  proxy_url: http://localhost:8081/api/v1
   branch: main
 
 # Publicação direta (sem fluxo de revisão). Para editar em rascunho:
@@ -71,7 +72,7 @@ collections:
               - { label: "Eyebrow do Hero", name: "hero_eyebrow", widget: "string", default: "Studio Jane Barreiros · Santo André · SP" }
               - { label: "Título do Hero", name: "hero_titulo", widget: "string", default: "Especialista em Loiros e Colorimetria Capilar" }
               - { label: "Subtítulo do Hero", name: "hero_subtitulo", widget: "text", default: "Transformando autoestima em identidade através do loiro dos seus sonhos com saúde e confiança." }
-              - { label: "Foto principal (Edjane)", name: "hero_imagem", widget: "image", default: "assets/img/edjane-hero.svg" }
+              - { label: "Foto principal (Edjane)", name: "hero_imagem", widget: "image", default: "assets/img/jane.jpg" }
               - { label: "Badge da foto", name: "hero_badge", widget: "string", default: "+ de 12 anos transformando cabelos e autoestima" }
               - { label: "Apresentação", name: "apresentacao", widget: "text", default: "Apaixonada por transformar a autoestima das minhas clientes através de mechas perfeitas. Minha missão é proporcionar um atendimento personalizado, priorizando a saúde dos fios, a satisfação de cada cliente e a qualidade de cada transformação." }
               - { label: "Trajetória", name: "trajetoria", widget: "text", default: "Minha trajetória começou de forma simples — de 2 cômodos no fundo de uma casa — até a estrutura completa do meu studio em Santo André. Cada etapa me ensinou que técnica, escuta e acolhimento caminham juntos." }
@@ -113,7 +114,7 @@ collections:
                 hint: "Clique em \"Adicionar card\" para inserir mais fotos ou vídeos. Use o campo Nº do card para numerar (1, 2, 3...) e achar mais fácil. Um card mostra a foto; se você preencher o vídeo, o card toca o vídeo em movimento quanto entra na tela."
                 fields:
                   - { label: "Nº do card", name: "ordem", widget: "number", value_type: "int", hint: "Use 1, 2, 3... para se achar na lista." }
-                  - { label: "Foto do card (opcional — vazio usa o logo do Instagram)", name: "imagem", widget: "image", required: false, default: "Instagram/instagram-logo.svg", hint: "Fica o logotipo do Instagram caso você deixe vazio. A foto é usada como capa do card e quando não houver vídeo." }
+                  - { label: "Foto do card (opcional — vazio usa o logo do Instagram)", name: "imagem", widget: "image", required: false, default: "Instagram/Instagram.png", hint: "Fica o logotipo do Instagram caso você deixe vazio. A foto é usada como capa do card e quando não houver vídeo." }
                   - { label: "Vídeo (MP4/WebM) — vazio usa a foto ou o logo", name: "video", widget: "file", required: false, hint: "Se preenchido, o card toca o vídeo (mudo, em loop) quando entra na tela. Ex.: Instagram/videojane1.mp4" }
                   - { label: "Título do card", name: "titulo", widget: "string", required: false, hint: "Pode deixar vazio — o card fica apenas com a foto/vídeo." }
                   - { label: "Link do post/reel", name: "link", widget: "string", required: false, hint: "Cole aqui o link do post ou reel no Instagram — cada card abre o seu próprio link. Ex.: https://www.instagram.com/reel/.... Se deixar vazio, abre o perfil." }
