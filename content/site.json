@@ -270,38 +270,38 @@
     "posts": [
       {
         "ordem": 1,
-        "imagem": "Instagram/instagram-logo.svg",
+        "imagem": "Instagram/Instagram.png",
         "titulo": "",
         "link": "https://www.instagram.com/p/DCcI6JyOZnI/",
-        "video": "/Instagram/VideoJane1.mp4"
+        "video": "Instagram/VideoJane1.mp4"
       },
       {
         "ordem": 2,
-        "imagem": "Instagram/instagram-logo.svg",
+        "imagem": "Instagram/Instagram.png",
         "titulo": "",
         "link": "https://www.instagram.com/p/DCcI6JyOZnI/",
-        "video": "/Instagram/VideoJane2.mp4",
+        "video": "Instagram/VideoJane2.mp4",
         "ocultar": false
       },
       {
         "ordem": 3,
-        "imagem": "Instagram/instagram-logo.svg",
+        "imagem": "Instagram/Instagram.png",
         "titulo": "",
         "link": "https://www.instagram.com/p/DcCqTzQRwQ2/",
-        "video": "/Instagram/VideoJane3.mp4",
+        "video": "Instagram/VideoJane3.mp4",
         "ocultar": false
       },
       {
         "ordem": 4,
-        "imagem": "Instagram/instagram-logo.svg",
+        "imagem": "Instagram/Instagram.png",
         "titulo": "",
         "link": "https://www.instagram.com/p/DDXjQC5yCbT/",
-        "video": "/Instagram/VideoJane4.mp4",
+        "video": "Instagram/VideoJane4.mp4",
         "ocultar": false
       },
       {
         "ordem": 5,
-        "imagem": "https://www.instagram.com/p/DU9AR8Hkk-_/?img_index=1",
+        "imagem": "Instagram/Instagram.png",
         "titulo": "",
         "link": "https://www.instagram.com/p/Db9b3uLxtuO/",
         "video": "",
@@ -309,7 +309,7 @@
       },
       {
         "ordem": 6,
-        "imagem": "Instagram/instagram-logo.svg",
+        "imagem": "Instagram/Instagram.png",
         "titulo": "",
         "link": "https://www.instagram.com/p/DCcI6JyOZnI/",
         "video": "",
@@ -317,7 +317,7 @@
       },
       {
         "ordem": 7,
-        "imagem": "Instagram/instagram-logo.svg",
+        "imagem": "Instagram/Instagram.png",
         "titulo": "",
         "link": "https://www.instagram.com/janebarreiros_",
         "video": "",
@@ -325,7 +325,7 @@
       },
       {
         "ordem": 8,
-        "imagem": "Instagram/instagram-logo.svg",
+        "imagem": "Instagram/Instagram.png",
         "titulo": "",
         "link": "https://www.instagram.com/janebarreiros_",
         "video": "",
@@ -333,7 +333,7 @@
       },
       {
         "ordem": 9,
-        "imagem": "Instagram/instagram-logo.svg",
+        "imagem": "Instagram/Instagram.png",
         "titulo": "",
         "link": "https://www.instagram.com/p/Db9b3uLxtuO/",
         "video": "",
@@ -341,7 +341,7 @@
       },
       {
         "ordem": 10,
-        "imagem": "Instagram/instagram-logo.svg",
+        "imagem": "Instagram/Instagram.png",
         "titulo": "",
         "link": "https://www.instagram.com/p/DCcI6JyOZnI/",
         "video": "",
@@ -349,7 +349,7 @@
       },
       {
         "ordem": 11,
-        "imagem": "Instagram/instagram-logo.svg",
+        "imagem": "Instagram/Instagram.png",
         "titulo": "",
         "link": "https://www.instagram.com/janebarreiros_",
         "video": "",
@@ -357,7 +357,7 @@
       },
       {
         "ordem": 12,
-        "imagem": "Instagram/instagram-logo.svg",
+        "imagem": "Instagram/Instagram.png",
         "titulo": "",
         "link": "https://www.instagram.com/janebarreiros_",
         "video": "",
@@ -365,7 +365,7 @@
       },
       {
         "ordem": 13,
-        "imagem": "Instagram/instagram-logo.svg",
+        "imagem": "Instagram/Instagram.png",
         "titulo": "",
         "link": "https://www.instagram.com/p/Db9b3uLxtuO/",
         "video": "",
@@ -373,7 +373,7 @@
       },
       {
         "ordem": 14,
-        "imagem": "Instagram/instagram-logo.svg",
+        "imagem": "Instagram/Instagram.png",
         "titulo": "",
         "link": "https://www.instagram.com/p/DCcI6JyOZnI/",
         "video": "",
@@ -381,7 +381,7 @@
       },
       {
         "ordem": 15,
-        "imagem": "Instagram/instagram-logo.svg",
+        "imagem": "Instagram/Instagram.png",
         "titulo": "",
         "link": "https://www.instagram.com/janebarreiros_",
         "video": "",
@@ -389,7 +389,7 @@
       },
       {
         "ordem": 16,
-        "imagem": "Instagram/instagram-logo.svg",
+        "imagem": "Instagram/Instagram.png",
         "titulo": "",
         "link": "https://www.instagram.com/janebarreiros_",
         "video": "",
