@@ -844,7 +844,7 @@
             <p id="curso-parcelas" class="mt-1 text-sm text-muted">ou 6x de R$ 9,00</p>
             <p class="mt-4 text-sm text-ink-soft"><span id="curso-garantia">✓ Garantia incondicional de 7 dias</span></p>
             <p class="mt-2 text-sm text-ink-soft"><span id="curso-acesso">✓ Acesso em qualquer dispositivo</span></p>
-            <a id="curso-checkout" href="https://pay.hotmart.com/SEU_CODIGO_DE_PRODUTO" target="_blank" rel="noopener noreferrer" class="btn-gold mt-7 inline-flex w-full items-center justify-center gap-2 rounded-full px-7 py-4 text-sm font-semibold">
+            <a id="curso-checkout" href="curso-online.html" class="btn-gold mt-7 inline-flex w-full items-center justify-center gap-2 rounded-full px-7 py-4 text-sm font-semibold">
               Quero acessar o curso <span aria-hidden="true">→</span>
             </a>
           </div>
@@ -1188,7 +1188,6 @@
           setText('curso-garantia', '✔ ' + curso.garantia);
           setText('curso-acesso', '✔ ' + curso.acesso);
           setText('curso-descricao', curso.descricao);
-          setAttr('curso-checkout', 'href', curso.checkout);
 
           var beneficios = (curso.beneficios || []).map(function (b) {
             var texto = (b && b.beneficio != null) ? b.beneficio : b;

@@ -231,7 +231,7 @@
     }
   ],
   "curso": {
-    "checkout": "https://pay.hotmart.com/SEU_CODIGO_DE_PRODUTO",
+    "checkout": "curso-online.html",
     "garantia": "Garantia incondicional de 7 dias",
     "beneficios": [
       {
