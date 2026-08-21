@@ -122,27 +122,27 @@
       --t-gold-dark: 122 90 15;
       --t-gold-light: 196 160 52;
     }
-    html.light h1, html.light h2, html.light h3 { color: #B8860B; }
-    html.light h1 em, html.light h2 em, html.light h3 em { color: #C5A059; }
-    h1, h2, h3 { color: #C5A059; }
-    h1 em, h2 em, h3 em { color: #D4AF37; }
+    html.light h1, html.light h2, html.light h3 { color: #8A6A12; }
+    html.light h1 em, html.light h2 em, html.light h3 em { color: #A9811F; }
+    h1, h2, h3 { color: #D4AF37; }
+    h1 em, h2 em, h3 em { color: #EBCF7D; }
     footer { border-top: 1px solid rgba(212, 175, 55, .35); }
     .btn-primary, .btn-ghost-gold, .btn-gold, .btn-outline {
       border: 1px solid rgba(122, 85, 20, .55) !important;
-      background-image: linear-gradient(135deg, #D4AF37 0%, #F3E5AB 50%, #AA771C 100%) !important;
-      color: #0A0A0A !important;
+      background-image: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%) !important;
+      color: #241805 !important;
       text-shadow: 0 1px 0 rgba(255, 255, 255, .35);
       box-shadow: 0 4px 12px -4px rgba(140, 100, 25, .55) !important;
     }
     .btn-primary:hover, .btn-ghost-gold:hover, .btn-gold:hover, .btn-outline:hover {
       scale: 1.05;
-      box-shadow: 0 0 18px 3px rgba(197, 160, 89, .5);
+      box-shadow: 0 0 18px 3px rgba(212, 175, 55, .6);
       filter: brightness(1.05);
     }
     .check-gold {
-      background-image: linear-gradient(135deg, #D4AF37 0%, #F3E5AB 50%, #AA771C 100%) !important;
+      background-image: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%) !important;
       border: 1px solid rgba(122, 85, 20, .45);
-      color: #0A0A0A !important;
+      color: #241805 !important;
       box-shadow: 0 2px 6px -2px rgba(140, 100, 25, .5);
     }
     /* === Header + Footer sempre escuros (modo claro) === */
@@ -194,8 +194,8 @@
 
     /* ===== Pulse Gold ===== */
     @keyframes pulse-gold {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0.5), 0 4px 12px -4px rgba(140, 100, 25, .55); }
-      50% { box-shadow: 0 0 0 14px rgba(197, 160, 89, 0), 0 4px 12px -4px rgba(140, 100, 25, .55); }
+      0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.5), 0 4px 12px -4px rgba(140, 100, 25, .55); }
+      50% { box-shadow: 0 0 0 14px rgba(212, 175, 55, 0), 0 4px 12px -4px rgba(140, 100, 25, .55); }
     }
     .pulse-gold {
       animation: pulse-gold 2.2s ease-in-out infinite;
@@ -203,8 +203,8 @@
 
     /* ===== Video play button pulse ===== */
     @keyframes pulse-play {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0.6); }
-      50% { box-shadow: 0 0 0 16px rgba(197, 160, 89, 0); }
+      0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.6); }
+      50% { box-shadow: 0 0 0 16px rgba(212, 175, 55, 0); }
     }
     .pulse-play {
       animation: pulse-play 2s ease-in-out infinite;
@@ -271,7 +271,7 @@
     =============================================================== -->
     <section id="hero" class="relative overflow-hidden pb-20 pt-32 lg:pb-28 lg:pt-44">
       <div class="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-[#0A0A0A] via-[#111111] to-[#1A1A1A]"></div>
-      <div class="pointer-events-none absolute -top-24 -left-24 -z-10 h-96 w-96 rounded-full bg-gold/10 blur-3xl"></div>
+      <div class="pointer-events-none absolute -top-24 -left-24 -z-10 h-96 w-96 rounded-full bg-gold/15 blur-3xl"></div>
       <div class="pointer-events-none absolute -bottom-32 -right-32 -z-10 h-[500px] w-[500px] rounded-full bg-gold/10 blur-3xl"></div>
 
       <div class="mx-auto max-w-6xl px-5 lg:px-8">
