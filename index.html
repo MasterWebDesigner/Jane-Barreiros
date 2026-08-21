@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="scroll-smooth">
+<html lang="pt-BR" class="scroll-smooth light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Studio Jane Barreiros — Especialista em Loiros e Colorimetria Capilar em Santo André, SP. Agende seu horário e conheça o Clube Loiros com Propósito." />
-  <meta name="theme-color" content="#0D0D0D" />
+  <meta name="theme-color" content="#FBF6EC" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
@@ -53,10 +53,10 @@
   <!-- Aplica o tema salvo antes do render (evita flash) -->
   <script>
     try {
-      if (localStorage.getItem('jane-theme') === 'light') {
-        document.documentElement.classList.add('light');
+      if (localStorage.getItem('jane-theme') === 'dark') {
+        document.documentElement.classList.remove('light');
         var m = document.querySelector('meta[name="theme-color"]');
-        if (m) m.setAttribute('content', '#FBF6EC');
+        if (m) m.setAttribute('content', '#0D0D0D');
       }
     } catch (e) {}
   </script>
