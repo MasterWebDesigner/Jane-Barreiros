@@ -1,193 +1,1823 @@
-<div id="instagram-grid" class="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Studio Jane Barreiros — Especialista em Loiros e Colorimetria Capilar em Santo André, SP. Agende seu horário e conheça o Clube Loiros com Propósito." />
+  <meta name="theme-color" content="#FBF6EC" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Jane Barreiros — Especialista em Loiros e Colorimetria Capilar" />
+  <meta property="og:description" content="Transformando autoestima em identidade através do loiro dos seus sonhos." />
+  <meta property="og:locale" content="pt_BR" />
+
+  <title>Jane Barreiros | Especialista em Loiros e Colorimetria Capilar</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="Logomarca.png" type="image/png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Configuração do Tema + Componentes reutilizáveis -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream:       'rgb(var(--t-cream) / <alpha-value>)',
+            'cream-deep': 'rgb(var(--t-cream-deep) / <alpha-value>)',
+            'cream-soft': 'rgb(var(--t-cream-soft) / <alpha-value>)',
+            ink:         'rgb(var(--t-ink) / <alpha-value>)',
+            'ink-soft':  'rgb(var(--t-ink-soft) / <alpha-value>)',
+            muted:       'rgb(var(--t-muted) / <alpha-value>)',
+            gold:        'rgb(var(--t-gold) / <alpha-value>)',
+            'gold-dark': 'rgb(var(--t-gold-dark) / <alpha-value>)',
+            'gold-light':'rgb(var(--t-gold-light) / <alpha-value>)'
+          },
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans: ['Montserrat', '"Helvetica Neue"', 'Arial', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Aplica o tema salvo antes do render (evita flash) -->
+  <script>
+    try {
+      if (localStorage.getItem('jane-theme') === 'dark') {
+        document.documentElement.classList.remove('light');
+        var m = document.querySelector('meta[name="theme-color"]');
+        if (m) m.setAttribute('content', '#0D0D0D');
+      }
+    } catch (e) {}
+  </script>
+
+  <style type="text/tailwindcss">
+    @layer base {
+      html { scroll-behavior: smooth; }
+    }
+    @layer components {
+      .btn {
+        @apply inline-flex items-center justify-center gap-2 rounded-full px-7 py-4 text-sm font-semibold tracking-wide transition-all duration-300;
+      }
+      .btn-primary {
+        @apply shadow-lg hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0;
+      }
+      .btn-outline {
+        @apply border-2 border-gold/50 text-gold-light hover:border-gold hover:bg-gold hover:text-black active:translate-y-0;
+      }
+      .btn-gold {
+        @apply text-white shadow-xl shadow-gold/40 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-gold/50 active:translate-y-0;
+      }
+      .eyebrow {
+        @apply inline-flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.3em] text-muted;
+      }
+      .eyebrow::before {
+        content: "";
+        @apply h-px w-9 bg-gold;
+      }
+      .nav-link {
+        @apply relative text-sm font-medium tracking-wide text-ink-soft transition-colors hover:text-ink;
+      }
+      .nav-link::after {
+        content: "";
+        @apply absolute -bottom-1 left-0 h-px w-0 bg-gold-dark transition-all duration-300;
+      }
+      .nav-link:hover::after {
+        @apply w-full;
+      }
+    }
+  </style>
+
+  <!-- ==============================================================
+       Instagram: cards + botões com degradê preto → dourado (luxo)
+  =============================================================== -->
+  <style>
+    /* Card: mídia ocupa 100% do card, contorno dourado leve */
+    #instagram-grid article {
+      border: 1px solid rgba(212, 175, 55, .2);
+      background: rgb(var(--t-cream-soft));
+      box-shadow: 0 8px 22px -14px rgba(0, 0, 0, .5);
+      transition: transform .35s ease, box-shadow .35s ease, filter .3s ease;
+    }
+    #instagram-grid article:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 34px -16px rgba(0, 0, 0, .6), 0 0 18px -6px rgba(212, 175, 55, .5);
+    }
+
+    /* Legenda inferior mantida escura, para não encobrir o vídeo com dourado */
+    #instagram-grid article .relative .bg-gradient-to-t {
+      background-image: linear-gradient(to top, rgba(0, 0, 0, .82), rgba(0, 0, 0, 0));
+    }
+
+    /* Metálico dourado premium (ouro "escovado") — botão principal e cards */
+    #insta-url,
+    #instagram-grid article .insta-card-btn {
+      border: 1px solid rgba(122, 85, 20, .45);
+      background-image: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%);
+      color: #201607 !important;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, .32);
+      box-shadow: 0 4px 12px -4px rgba(140, 100, 25, .5);
+      transition: translate .3s ease, scale .3s ease, box-shadow .3s ease, filter .3s ease;
+    }
+    #insta-url:hover,
+    #instagram-grid article .insta-card-btn:hover {
+      translate: 0 -2px;
+      scale: 1.05;
+      box-shadow: 0 0 18px 3px rgba(212, 175, 55, .6);
+      filter: brightness(1.05);
+    }
+  </style>
+  <!-- Tema Preto & Dourado Luxo -->
+  <style>
+    :root {
+      --t-cream: 13 13 13;
+      --t-cream-deep: 26 26 26;
+      --t-cream-soft: 21 21 21;
+      --t-ink: 245 245 245;
+      --t-ink-soft: 201 194 184;
+      --t-muted: 168 162 154;
+      --t-gold: 212 175 55;
+      --t-gold-dark: 191 149 63;
+      --t-gold-light: 243 229 178;
+    }
+    html.light {
+      --t-cream: 250 246 238;
+      --t-cream-deep: 242 236 224;
+      --t-cream-soft: 255 255 255;
+      --t-ink: 38 33 25;
+      --t-ink-soft: 84 74 58;
+      --t-muted: 122 112 96;
+      --t-gold: 163 130 30;
+      --t-gold-dark: 122 90 15;
+      --t-gold-light: 196 160 52;
+    }
+    html.light h1, html.light h2, html.light h3 { color: #8A6A12; }
+    html.light h1 em, html.light h2 em, html.light h3 em { color: #A9811F; }
+    h1, h2, h3 { color: #D4AF37; }
+    h1 em, h2 em, h3 em { color: #EBCF7D; }
+    footer { border-top: 1px solid rgba(212, 175, 55, .35); }
+    .btn-primary, .btn-ghost-gold, .btn-gold, .btn-outline {
+      border: 1px solid rgba(122, 85, 20, .55) !important;
+      background-image: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%) !important;
+      color: #241805 !important;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, .35);
+      box-shadow: 0 4px 12px -4px rgba(140, 100, 25, .55) !important;
+    }
+    .btn-primary:hover, .btn-ghost-gold:hover, .btn-gold:hover, .btn-outline:hover {
+      scale: 1.05;
+      box-shadow: 0 0 18px 3px rgba(212, 175, 55, .6);
+      filter: brightness(1.05);
+    }
+    /* Checkmarks metálicos (ícones ✓) */
+    .check-gold {
+      background-image: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%) !important;
+      border: 1px solid rgba(122, 85, 20, .45);
+      color: #241805 !important;
+      box-shadow: 0 2px 6px -2px rgba(140, 100, 25, .5);
+    }
+    /* Google Maps — escurece o iframe no tema dark */
+    iframe.mapa-dark {
+      filter: grayscale(100%) invert(92%) contrast(83%);
+    }
+    html.light iframe.mapa-dark {
+      filter: none;
+    }
+    /* === Header + Footer sempre escuros (modo claro) === */
+    html.light #site-header {
+      background-color: rgba(10,10,10,.88) !important;
+      border-color: rgba(212,175,55,.35) !important;
+    }
+    html.light #site-header .nav-link {
+      color: rgba(243,229,178,.85);
+    }
+    html.light #site-header .nav-link:hover {
+      color: #D4AF37;
+    }
+    html.light #site-header #menu-btn span {
+      background-color: #F3E5B2;
+    }
+    html.light footer {
+      background-color: #0A0A0A !important;
+      border-top-color: rgba(212,175,55,.35) !important;
+    }
+    html.light footer a,
+    html.light footer #footer-logo-etiqueta {
+      color: #E5DDD0;
+    }
+    html.light footer a:hover {
+      color: #D4AF37;
+    }
+    html.light footer .font-serif {
+      color: #D4AF37;
+    }
+  </style>
+
+  <!-- ==============================================================
+       GALERIA INTERATIVA — MOSAICO POLAROID EM MARQUEE
+  =============================================================== -->
+  <style>
+    /* ===== Galeria em Movimento — 3 fileiras de Polaroids (mosaico denso) ===== */
+    #galeria {
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(197, 168, 128, 0.22), transparent 42%),
+        radial-gradient(circle at 88% 82%, rgba(212, 175, 55, 0.12), transparent 40%),
+        radial-gradient(circle at 55% 45%, rgba(212, 175, 55, 0.05), transparent 55%),
+        #121212;
+    }
+    /* Camada decorativa: partículas douradas + linhas curvas finas ao fundo */
+    .g-deco {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    #galeria::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, #0A0A0A 0%, transparent 14%, transparent 86%, #0A0A0A 100%);
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    /* Faixa de marquee de cada fileira */
+    .g-row {
+      position: relative;
+      display: flex;
+      width: max-content;
+      align-items: center;
+      will-change: transform;
+      padding: 14px 0;
+    }
+    .g-rail {
+      position: relative;
+      z-index: 2;
+      overflow: hidden;
+      width: 100%;
+    }
+    .g-rail--top   .g-row,
+    .g-rail--mid   .g-row,
+    .g-rail--bot   .g-row { animation: g-right  48s linear infinite; }
+    .g-rail--top   .g-row { animation-duration: 48s; }
+    .g-rail--mid   .g-row { animation-duration: 62s; }
+    .g-rail--bot   .g-row { animation-duration: 74s; }
+    .g-rails       { position: relative; z-index: 3; padding: 34px 0 140px; }
+    .g-rail--mid   { margin-top: -26px; margin-bottom: -26px; }
+    /* Leve curva ondulada descendente entre as fileiras */
+    .g-rail--top   { transform: rotate(-0.7deg) translateY(4px); }
+    .g-rail--mid   { transform: rotate(0.6deg) translateY(-4px); }
+    .g-rail--bot   { transform: rotate(-0.5deg) translateY(2px); }
+    @keyframes g-right { from { transform: translate3d(-50%, 0, 0); } to { transform: translate3d(0, 0, 0); } }
+    @keyframes g-left  { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
+    .g-rails:hover .g-row { animation-play-state: paused; }
+
+    /* Polaroid densa e sobreposta (onda em camadas) */
+    .pola {
+      position: relative;
+      flex: none;
+      width: 180px;
+      max-width: 180px;
+      margin: 0 -10px -10px;
+      padding: 8px 8px 0;
+      background: linear-gradient(160deg, #FCFAF4, #F1EBE0);
+      border-radius: 5px;
+      box-shadow: 0 18px 36px -18px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(212, 175, 55, 0.18);
+      transform: rotate(var(--rot, 0deg)) translateY(var(--lift, 0));
+      z-index: var(--z, 1);
+      cursor: pointer;
+      transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), z-index 0s, box-shadow 0.5s ease;
+    }
+    .pola:nth-child(odd)  { --z: 2; transform: rotate(var(--rot, 3deg)) translateY(10px); }
+    .pola:nth-child(even) { --z: 4; transform: rotate(var(--rot, -3deg)) translateY(-10px); }
+    .pola img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      background: #E9E2D4;
+      border-radius: 4px;
+    }
+    .pola::after {
+      content: "✦ jane barreiros";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -26px;
+      padding: 6px 0;
+      color: #2A2418;
+      font-family: "Montserrat", sans-serif;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.24em;
+      text-align: center;
+    }
+    .pola:hover {
+      transform: rotate(0deg) translateY(-16px) scale(1.08) !important;
+      z-index: 50;
+      box-shadow: 0 26px 54px -20px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(212, 175, 55, 0.6), 0 0 36px -8px rgba(212, 175, 55, 0.6);
+    }
+
+    /* Pílula dourada fixa sobre as fotos */
+    .g-tag {
+      position: absolute;
+      z-index: 40;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+      border: 1px solid rgba(212, 175, 55, 0.55);
+      background: rgba(12, 12, 12, 0.55);
+      -webkit-backdrop-filter: blur(7px);
+      backdrop-filter: blur(7px);
+      color: #F3E5B2;
+      font-family: "Montserrat", sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 10px 15px;
+      border-radius: 999px;
+      box-shadow: 0 0 24px -6px rgba(212, 175, 55, 0.65);
+      pointer-events: none;
+    }
+    .g-tag::before {
+      content: "✦";
+      color: #D4AF37;
+      font-size: 9px;
+    }
+
+    /* Bloco texto-reflexivo + CTA no canto inferior direito */
+    .g-overlay {
+      position: absolute;
+      z-index: 40;
+      right: 5%;
+      bottom: clamp(24px, 6%, 64px);
+      max-width: 460px;
+      text-align: right;
+    }
+    .g-overlay h2 {
+      font-family: "Playfair Display", Georgia, serif;
+      font-style: italic;
+      font-weight: 500;
+      line-height: 1.18;
+      color: #F3E5B2;
+      text-shadow: 0 6px 30px rgba(0, 0, 0, 0.7);
+    }
+    .g-overlay h2 em { color: #D4AF37; }
+    .g-overlay .btn-gold { margin-top: 26px; }
+
+    @media (max-width: 1023px) {
+      .pola { width: 170px; }
+      .g-overlay { right: 6%; bottom: clamp(20px, 5%, 52px); max-width: 320px; }
+      .g-rails { padding-bottom: 120px; }
+    }
+    @media (max-width: 479px) {
+      .pola { width: 152px; }
+      .g-overlay { position: relative; right: auto; bottom: auto; max-width: none; text-align: center; padding: 0 22px; margin-top: 8px; }
+      .g-overlay .btn-gold { justify-content: center; }
+      .g-rails { padding-bottom: 40px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .g-row { animation: none !important; width: 100%; overflow-x: auto; }
+    }
+  </style>
+</head>
+
+<body class="bg-cream text-ink font-sans antialiased selection:bg-gold selection:text-black">
+
+  <!-- ==============================================================
+       1. HEADER FIXO
+  =============================================================== -->
+  <header class="fixed inset-x-0 top-0 z-50 border-b border-cream-deep bg-cream/85 backdrop-blur-md" id="site-header">
+    <div class="mx-auto flex h-20 max-w-6xl items-center justify-between px-5 lg:px-8">
+      <a href="#hero" class="leading-none">
+        <img src="Logo1.png" alt="Studio Jane Barreiros — Especialista em Loiros e Colorimetria Capilar" style="max-height:50px" class="h-auto w-auto">
+      </a>
+
+      <!-- Navegação Desktop -->
+      <nav class="hidden items-center gap-9 lg:flex" aria-label="Navegação principal">
+        <a href="#sobre" class="nav-link">Sobre</a>
+        <a href="#servicos" class="nav-link">Serviços</a>
+        <a href="agendamento.html" class="nav-link">Agendamento</a>
+        <a href="#curso" class="nav-link">Curso Online</a>
+        <a href="#localizacao" class="nav-link">Localização</a>
+        <a href="agendamento.html" class="btn btn-primary !py-3 !px-6 text-xs">Agendar Horário</a>
+      </nav>
+
+      <!-- Alternador de tema + Hambúrguer (Mobile) -->
+      <div class="flex items-center gap-2 lg:gap-3">
+        <button id="theme-toggle" type="button" aria-label="Alternar modo claro/escuro" class="flex h-10 w-10 items-center justify-center rounded-full border border-gold/40 text-gold-light transition-all duration-300 hover:border-gold hover:bg-gold hover:text-black">
+          <svg id="icon-lua" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg id="icon-sol" class="hidden h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        </button>
+        <button id="menu-btn" class="flex flex-col gap-[6px] p-2 lg:hidden" aria-label="Abrir menu de navegação" aria-expanded="false" aria-controls="mobile-menu">
+          <span class="block h-0.5 w-7 bg-ink transition-all duration-300"></span>
+          <span class="block h-0.5 w-7 bg-ink transition-all duration-300"></span>
+          <span class="block h-0.5 w-7 bg-ink transition-all duration-300"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Menu Mobile (Overlay) -->
+  <nav id="mobile-menu" class="fixed inset-0 z-40 hidden flex-col items-center justify-center gap-9 bg-cream/95 backdrop-blur-xl lg:hidden" aria-label="Menu mobile">
+    <a href="#sobre" class="mobile-link font-serif text-2xl text-gold-light">Sobre</a>
+    <a href="#servicos" class="mobile-link font-serif text-2xl text-gold-light">Serviços</a>
+    <a href="agendamento.html" class="mobile-link font-serif text-2xl text-gold-light">Agendamento</a>
+    <a href="#curso" class="mobile-link font-serif text-2xl text-gold-light">Curso Online</a>
+    <a href="#localizacao" class="mobile-link font-serif text-2xl text-gold-light">Localização</a>
+    <a href="agendamento.html" class="mobile-link btn btn-primary mt-2">Agendar Horário</a>
+  </nav>
+
+  <main>
+
+    <!-- ==============================================================
+         2. HERO
+    =============================================================== -->
+    <section id="hero" class="relative overflow-hidden pb-20 pt-32 lg:pb-28 lg:pt-44">
+      <div class="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-cream via-cream to-cream-deep"></div>
+      <div class="pointer-events-none absolute -top-24 -left-24 -z-10 h-96 w-96 rounded-full bg-gold/20 blur-3xl"></div>
+
+      <div class="mx-auto grid max-w-6xl items-center gap-12 px-5 lg:grid-cols-2 lg:gap-16 lg:px-8">
+        <div>
+          <p id="hero-eyebrow" class="eyebrow">Studio Jane Barreiros · Santo André · SP</p>
+          <h1 id="hero-titulo" class="mt-6 font-serif text-4xl font-medium leading-[1.12] sm:text-5xl lg:text-6xl">
+            Especialista em <em class="italic">Loiros</em> e
+            <em class="italic">Colorimetria</em> Capilar
+          </h1>
+          <p id="hero-subtitulo" class="mt-6 max-w-xl text-lg font-light leading-relaxed text-muted">
+            Transformando autoestima em identidade através do loiro dos seus sonhos
+            com saúde e confiança.
+          </p>
+
+          <div class="mt-9 flex flex-col gap-4 sm:flex-row">
+            <a href="agendamento.html" class="btn btn-primary">Agendar Horário</a>
+            <a href="#curso" class="btn btn-outline">Conhecer o Curso Online</a>
+          </div>
+
+          <ul class="mt-10 flex flex-wrap gap-x-8 gap-y-3 text-sm font-medium text-ink-soft">
+            <li class="flex items-center gap-2"><span class="check-gold flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Especialista em Colorimetria</li>
+            <li class="flex items-center gap-2"><span class="check-gold flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Educadora de Cabeleireiros</li>
+            <li class="flex items-center gap-2"><span class="check-gold flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Atendimento Personalizado</li>
+          </ul>
+        </div>
+
+        <!-- Foto oficial da Edjane -->
+        <div class="relative mx-auto w-full max-w-md lg:max-w-none">
+          <div class="relative aspect-[4/5] overflow-hidden rounded-2xl bg-gold-light shadow-xl">
+            <!-- Substitua por uma foto real em assets/img/edjane-hero.jpg -->
+            <img id="hero-img" src="assets/img/edjane-hero.svg" alt="Edjane Barreiros, especialista em loiros e colorimetria capilar"
+                 class="h-full w-full object-cover"
+                 onerror="this.onerror=null;this.src='https://placehold.co/800x1000/1A1A1A/D4AF37?text=Jane+Barreiros';" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+            <span id="hero-badge" class="absolute bottom-4 left-4 rounded-xl bg-black/75 px-4 py-3 font-serif text-sm text-muted shadow-lg backdrop-blur">
+              + de 12 anos transformando<br/>cabelos e autoestima
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         3. SOBRE
+    =============================================================== -->
+    <section id="sobre" class="scroll-mt-24 py-20 lg:py-28">
+      <div class="mx-auto grid max-w-6xl gap-12 px-5 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16 lg:px-8">
+        <div>
+          <p class="eyebrow">Sobre a Fundadora</p>
+          <h2 class="mt-5 font-serif text-3xl font-semibold leading-tight sm:text-4xl">
+            Olá, sou <em class="italic">Edjane Barreiros</em>
+          </h2>
+          <div class="mt-7 space-y-5 text-muted font-light leading-relaxed">
+            <p id="sobre-apresentacao">
+              Apaixonada por transformar a autoestima das minhas clientes através de mechas perfeitas.
+              Minha missão é proporcionar um atendimento personalizado, priorizando a saúde dos fios,
+              a satisfação de cada cliente e a qualidade de cada transformação.
+            </p>
+            <p id="sobre-trajetoria">
+              Minha trajetória começou de forma simples — de <strong class="font-semibold text-ink-soft">2 cômodos no fundo de uma casa</strong>
+              — até a estrutura completa do meu studio em Santo André. Cada etapa me ensinou que técnica,
+              escuta e acolhimento caminham juntos.
+            </p>
+            <p id="sobre-educadora">
+              Hoje, além de atender, atuo como <strong class="font-semibold text-ink-soft">Educadora de cabeleireiros iniciantes</strong>,
+              compartilhando tudo o que vivi e aprendi no universo dos loiros e da colorimetria para formar
+              novos profissionais.
+            </p>
+          </div>
+
+          <blockquote class="mt-8 rounded-xl border-l-4 border-gold bg-cream-soft p-6 shadow-sm">
+            <p id="sobre-citacao" class="font-serif text-lg italic leading-relaxed text-ink">
+              “De 2 cômodos no fundo aos cabelos que você vê hoje: cada fio tem uma história,
+              e eu ajudo a escrever a sua.”
+            </p>
+            <cite class="mt-3 block text-xs font-semibold uppercase tracking-[0.2em] not-italic text-muted">— Edjane Barreiros</cite>
+          </blockquote>
+        </div>
+
+        <!-- Destaques de trajetória -->
+        <div class="grid content-start gap-5">
+          <div class="rounded-2xl border border-gold/30 bg-cream-soft p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-gold hover:shadow-md">
+            <span id="stat-anos" class="font-serif text-3xl font-semibold text-gold">+12</span>
+            <p class="mt-2 text-sm text-muted">anos de experiência em colorimetria e loiros.</p>
+          </div>
+          <div class="rounded-2xl border border-gold/30 bg-cream-soft p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-gold hover:shadow-md">
+            <span id="stat-clientes" class="font-serif text-3xl font-semibold text-gold">+3.000</span>
+            <p class="mt-2 text-sm text-muted">clientes atendidas com transformações reais.</p>
+          </div>
+          <div class="rounded-2xl border border-gold/40 bg-gradient-to-br from-cream-deep to-cream-soft p-7 text-ink shadow-md">
+            <span class="font-serif text-2xl font-medium text-gold">Educadora</span>
+            <p class="mt-2 text-sm text-muted">Formando novos profissionais no universo dos loiros.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         4. SERVIÇOS
+    =============================================================== -->
+    <section id="servicos" class="scroll-mt-24 bg-cream-deep py-20 lg:py-28">
+      <div class="mx-auto max-w-6xl px-5 lg:px-8">
+        <header class="mx-auto max-w-2xl text-center">
+          <p class="eyebrow inline-flex justify-center">Salão Presencial</p>
+          <h2 class="mt-5 font-serif text-3xl font-semibold sm:text-4xl">Nossos Serviços</h2>
+          <p class="mt-4 font-light text-muted">Técnica apurada e protocolos sofisticados para cuidar da saúde e da beleza dos seus fios.</p>
+        </header>
+
+        <!-- Grid de cards -->
+        <div class="mt-14 grid gap-7 md:grid-cols-2 lg:grid-cols-3">
+          <!-- Card 1: Mechas -->
+          <article id="card-mechas" class="group flex cursor-pointer flex-col rounded-2xl border border-gold/25 bg-cream-soft p-9 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-gold hover:shadow-md">
+            <div class="flex h-14 w-14 items-center justify-center rounded-full bg-cream-deep text-gold-dark transition-colors duration-300 group-hover:bg-gold group-hover:text-white">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-7 w-7"><path d="M12 3c2.5 0 4 1.5 4 4 0 3.5-1.5 6-4 8-2.5-2-4-4.5-4-8 0-2.5 1.5-4 4-4z"/><path d="M12 3v12"/><path d="M9.5 21h5"/></svg>
+            </div>
+            <h3 class="mt-6 font-serif text-xl font-semibold">Mechas &amp; Loiros Impecáveis</h3>
+            <p class="mt-3 flex-1 text-sm font-light leading-relaxed text-muted">
+              Loiros luminosos e naturais, construídos com técnicas de mechas que valorizam o tom de pele
+              e a identidade de cada cliente.
+            </p>
+            <div class="mt-8 flex flex-wrap items-center gap-3">
+              <button type="button" id="btn-saiba-mais" class="btn-gold inline-flex items-center gap-1.5 rounded-full px-6 py-3 text-sm font-semibold">
+                Saiba Mais <span aria-hidden="true">→</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- Card 2: Colorimetria (Destaque) -->
+          <article id="card-colorimetria" class="group flex cursor-pointer flex-col rounded-2xl border-2 border-gold bg-cream-soft p-9 shadow-md transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lg">
+            <div class="flex h-14 w-14 items-center justify-center rounded-full bg-gold text-white">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-7 w-7"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>
+            </div>
+            <span class="mt-6 self-start rounded-full bg-gold/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-muted">Especialidade</span>
+            <h3 class="mt-3 font-serif text-xl font-semibold">Colorimetria &amp; Correção de Cor</h3>
+            <p class="mt-3 flex-1 text-sm font-light leading-relaxed text-muted">
+              Diagnóstico preciso e neutralização correta para apagar erros e conquistar a cor dos seus sonhos,
+              sem danificar os fios.
+            </p>
+            <div class="mt-8 flex flex-wrap items-center gap-3">
+              <button type="button" id="btn-saiba-mais-colorimetria" class="btn-gold inline-flex items-center gap-1.5 rounded-full px-6 py-3 text-sm font-semibold">
+                Saiba Mais <span aria-hidden="true">→</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- Card 3: Tratamentos -->
+          <article id="card-tratamentos" class="group flex cursor-pointer flex-col rounded-2xl border border-gold/25 bg-cream-soft p-9 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-gold hover:shadow-md">
+            <div class="flex h-14 w-14 items-center justify-center rounded-full bg-cream-deep text-gold-dark transition-colors duration-300 group-hover:bg-gold group-hover:text-white">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-7 w-7"><path d="M12 21c-4 0-8-1.5-8-6 0-5 3-8.5 8-13 5 4.5 8 8 8 13 0 4.5-4 6-8 6z"/><path d="M12 21V8"/></svg>
+            </div>
+            <h3 class="mt-6 font-serif text-xl font-semibold">Tratamentos &amp; Recuperação Capilar</h3>
+            <p class="mt-3 flex-1 text-sm font-light leading-relaxed text-muted">
+              Protocolos de reconstrução, hidratação e blindagem para devolver força, brilho e movimento
+              aos fios fragilizados.
+            </p>
+            <div class="mt-8 flex flex-wrap items-center gap-3">
+              <button type="button" id="btn-saiba-mais-tratamentos" class="btn-gold inline-flex items-center gap-1.5 rounded-full px-6 py-3 text-sm font-semibold">
+                Saiba Mais <span aria-hidden="true">→</span>
+              </button>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         5. SIGA NO INSTAGRAM
+    =============================================================== -->
+    <section id="instagram" class="scroll-mt-24 py-20 lg:py-28">
+      <div class="mx-auto max-w-6xl px-5 lg:px-8">
+        <header class="mx-auto max-w-2xl text-center">
+          <span class="inline-flex items-center rounded-full bg-gold/10 px-5 py-2 text-[11px] font-bold uppercase tracking-[0.25em] text-muted">Conteúdo &amp; Dicas</span>
+          <h2 id="insta-titulo" class="mt-6 font-serif text-3xl font-semibold sm:text-4xl">Siga no <em class="italic">Instagram</em></h2>
+          <p id="insta-subtitulo" class="mt-4 font-light text-muted">Dicas de loiros perfeitos, colorimetria e os bastidores do Studio Jane Barreiros.</p>
+          <a id="insta-url" href="https://www.instagram.com/janebarreiros_" target="_blank" rel="noopener" class="mt-7 inline-flex items-center gap-2.5 rounded-full bg-gradient-to-br from-gold-light via-gold to-[#B98D6A] px-7 py-3.5 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor"/></svg>
+            <span id="insta-handle">@janebarreiros_</span>
+          </a>
+        </header>
+
+        <!-- Grid de cards do feed -->
+        <div id="instagram-grid" class="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <!-- Card 1 -->
           <article class="group relative overflow-hidden rounded-2xl border border-gold/20 shadow-sm transition-all duration-300 hover:shadow-lg">
             <div class="relative aspect-[4/5] overflow-hidden">
               <video class="insta-video h-full w-full object-cover" src="Instagram/VideoJane1.mp4" poster="Instagram/Instagram.png" muted loop playsinline preload="metadata"></video>
               <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
               
-              <a href="https://www.instagram.com/p/DCcI6JyOZnI/" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">
-                Ver no Instagram <span aria-hidden="true">→</span>
-              </a>
+              <a href="https://www.instagram.com/p/DCcI6JyOZnI/" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">Ver no Instagram <span aria-hidden="true">&rarr;</span></a>
             </div>
           </article>
-
           <!-- Card 2 -->
           <article class="group relative overflow-hidden rounded-2xl border border-gold/20 shadow-sm transition-all duration-300 hover:shadow-lg">
             <div class="relative aspect-[4/5] overflow-hidden">
               <video class="insta-video h-full w-full object-cover" src="Instagram/VideoJane2.mp4" poster="Instagram/Instagram.png" muted loop playsinline preload="metadata"></video>
               <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
               
-              <a href="https://www.instagram.com/p/DCcI6JyOZnI/" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">
-                Ver no Instagram <span aria-hidden="true">→</span>
-              </a>
+              <a href="https://www.instagram.com/p/DCcI6JyOZnI/" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">Ver no Instagram <span aria-hidden="true">&rarr;</span></a>
             </div>
           </article>
-
           <!-- Card 3 -->
           <article class="group relative overflow-hidden rounded-2xl border border-gold/20 shadow-sm transition-all duration-300 hover:shadow-lg">
             <div class="relative aspect-[4/5] overflow-hidden">
               <video class="insta-video h-full w-full object-cover" src="Instagram/VideoJane3.mp4" poster="Instagram/Instagram.png" muted loop playsinline preload="metadata"></video>
               <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
               
-              <a href="https://www.instagram.com/p/DcCqTzQRwQ2/" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">
-                Ver no Instagram <span aria-hidden="true">→</span>
-              </a>
+              <a href="https://www.instagram.com/p/DcCqTzQRwQ2/" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">Ver no Instagram <span aria-hidden="true">&rarr;</span></a>
             </div>
           </article>
-
           <!-- Card 4 -->
           <article class="group relative overflow-hidden rounded-2xl border border-gold/20 shadow-sm transition-all duration-300 hover:shadow-lg">
             <div class="relative aspect-[4/5] overflow-hidden">
               <video class="insta-video h-full w-full object-cover" src="Instagram/VideoJane4.mp4" poster="Instagram/Instagram.png" muted loop playsinline preload="metadata"></video>
               <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
               
-              <a href="https://www.instagram.com/p/DDXjQC5yCbT/" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">
-                Ver no Instagram <span aria-hidden="true">→</span>
-              </a>
+              <a href="https://www.instagram.com/p/DDXjQC5yCbT/" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">Ver no Instagram <span aria-hidden="true">&rarr;</span></a>
             </div>
           </article>
-
           <!-- Card 5 -->
           <article class="group relative overflow-hidden rounded-2xl border border-gold/20 shadow-sm transition-all duration-300 hover:shadow-lg">
             <div class="relative aspect-[4/5] overflow-hidden">
               <img src="Instagram/Instagram.png" alt="Foto do Instagram" loading="lazy" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='https://placehold.co/600x750/1A1A1A/D4AF37?text=Post%205';" />
               <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
               
-              <a href="https://www.instagram.com/p/Db9b3uLxtuO/" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">
-                Ver no Instagram <span aria-hidden="true">→</span>
-              </a>
+              <a href="https://www.instagram.com/p/Db9b3uLxtuO/" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">Ver no Instagram <span aria-hidden="true">&rarr;</span></a>
             </div>
           </article>
-
           <!-- Card 6 -->
           <article class="group relative overflow-hidden rounded-2xl border border-gold/20 shadow-sm transition-all duration-300 hover:shadow-lg">
             <div class="relative aspect-[4/5] overflow-hidden">
               <img src="Instagram/Instagram.png" alt="Foto do Instagram" loading="lazy" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='https://placehold.co/600x750/1A1A1A/D4AF37?text=Post%206';" />
               <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
               
-              <a href="https://www.instagram.com/p/DCcI6JyOZnI/" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">
-                Ver no Instagram <span aria-hidden="true">→</span>
-              </a>
+              <a href="https://www.instagram.com/p/DCcI6JyOZnI/" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">Ver no Instagram <span aria-hidden="true">&rarr;</span></a>
             </div>
           </article>
-
           <!-- Card 7 -->
           <article class="group relative overflow-hidden rounded-2xl border border-gold/20 shadow-sm transition-all duration-300 hover:shadow-lg">
             <div class="relative aspect-[4/5] overflow-hidden">
               <img src="Instagram/Instagram.png" alt="Foto do Instagram" loading="lazy" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='https://placehold.co/600x750/1A1A1A/D4AF37?text=Post%207';" />
               <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
               
-              <a href="https://www.instagram.com/janebarreiros_" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">
-                Ver no Instagram <span aria-hidden="true">→</span>
-              </a>
+              <a href="https://www.instagram.com/janebarreiros_" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">Ver no Instagram <span aria-hidden="true">&rarr;</span></a>
             </div>
           </article>
-
           <!-- Card 8 -->
           <article class="group relative overflow-hidden rounded-2xl border border-gold/20 shadow-sm transition-all duration-300 hover:shadow-lg">
             <div class="relative aspect-[4/5] overflow-hidden">
               <img src="Instagram/Instagram.png" alt="Foto do Instagram" loading="lazy" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='https://placehold.co/600x750/1A1A1A/D4AF37?text=Post%208';" />
               <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
               
-              <a href="https://www.instagram.com/janebarreiros_" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">
-                Ver no Instagram <span aria-hidden="true">→</span>
-              </a>
+              <a href="https://www.instagram.com/janebarreiros_" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">Ver no Instagram <span aria-hidden="true">&rarr;</span></a>
             </div>
           </article>
-
           <!-- Card 9 -->
           <article class="group relative overflow-hidden rounded-2xl border border-gold/20 shadow-sm transition-all duration-300 hover:shadow-lg">
             <div class="relative aspect-[4/5] overflow-hidden">
               <img src="Instagram/Instagram.png" alt="Foto do Instagram" loading="lazy" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='https://placehold.co/600x750/1A1A1A/D4AF37?text=Post%209';" />
               <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
               
-              <a href="https://www.instagram.com/p/Db9b3uLxtuO/" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">
-                Ver no Instagram <span aria-hidden="true">→</span>
-              </a>
+              <a href="https://www.instagram.com/p/Db9b3uLxtuO/" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">Ver no Instagram <span aria-hidden="true">&rarr;</span></a>
             </div>
           </article>
-
           <!-- Card 10 -->
           <article class="group relative overflow-hidden rounded-2xl border border-gold/20 shadow-sm transition-all duration-300 hover:shadow-lg">
             <div class="relative aspect-[4/5] overflow-hidden">
               <img src="Instagram/Instagram.png" alt="Foto do Instagram" loading="lazy" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='https://placehold.co/600x750/1A1A1A/D4AF37?text=Post%2010';" />
               <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
               
-              <a href="https://www.instagram.com/p/DCcI6JyOZnI/" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">
-                Ver no Instagram <span aria-hidden="true">→</span>
-              </a>
+              <a href="https://www.instagram.com/p/DCcI6JyOZnI/" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">Ver no Instagram <span aria-hidden="true">&rarr;</span></a>
             </div>
           </article>
-
           <!-- Card 11 -->
           <article class="group relative overflow-hidden rounded-2xl border border-gold/20 shadow-sm transition-all duration-300 hover:shadow-lg">
             <div class="relative aspect-[4/5] overflow-hidden">
               <img src="Instagram/Instagram.png" alt="Foto do Instagram" loading="lazy" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='https://placehold.co/600x750/1A1A1A/D4AF37?text=Post%2011';" />
               <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
               
-              <a href="https://www.instagram.com/janebarreiros_" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">
-                Ver no Instagram <span aria-hidden="true">→</span>
-              </a>
+              <a href="https://www.instagram.com/janebarreiros_" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">Ver no Instagram <span aria-hidden="true">&rarr;</span></a>
             </div>
           </article>
-
           <!-- Card 12 -->
           <article class="group relative overflow-hidden rounded-2xl border border-gold/20 shadow-sm transition-all duration-300 hover:shadow-lg">
             <div class="relative aspect-[4/5] overflow-hidden">
               <img src="Instagram/Instagram.png" alt="Foto do Instagram" loading="lazy" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='https://placehold.co/600x750/1A1A1A/D4AF37?text=Post%2012';" />
               <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
               
-              <a href="https://www.instagram.com/janebarreiros_" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">
-                Ver no Instagram <span aria-hidden="true">→</span>
-              </a>
+              <a href="https://www.instagram.com/janebarreiros_" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">Ver no Instagram <span aria-hidden="true">&rarr;</span></a>
             </div>
           </article>
-
           <!-- Card 13 -->
           <article class="group relative overflow-hidden rounded-2xl border border-gold/20 shadow-sm transition-all duration-300 hover:shadow-lg">
             <div class="relative aspect-[4/5] overflow-hidden">
               <img src="Instagram/Instagram.png" alt="Foto do Instagram" loading="lazy" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='https://placehold.co/600x750/1A1A1A/D4AF37?text=Post%2013';" />
               <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
               
-              <a href="https://www.instagram.com/p/Db9b3uLxtuO/" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">
-                Ver no Instagram <span aria-hidden="true">→</span>
-              </a>
+              <a href="https://www.instagram.com/p/Db9b3uLxtuO/" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">Ver no Instagram <span aria-hidden="true">&rarr;</span></a>
             </div>
           </article>
-
           <!-- Card 14 -->
           <article class="group relative overflow-hidden rounded-2xl border border-gold/20 shadow-sm transition-all duration-300 hover:shadow-lg">
             <div class="relative aspect-[4/5] overflow-hidden">
               <img src="Instagram/Instagram.png" alt="Foto do Instagram" loading="lazy" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='https://placehold.co/600x750/1A1A1A/D4AF37?text=Post%2014';" />
               <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
               
-              <a href="https://www.instagram.com/p/DCcI6JyOZnI/" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">
-                Ver no Instagram <span aria-hidden="true">→</span>
-              </a>
+              <a href="https://www.instagram.com/p/DCcI6JyOZnI/" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">Ver no Instagram <span aria-hidden="true">&rarr;</span></a>
             </div>
           </article>
-
           <!-- Card 15 -->
           <article class="group relative overflow-hidden rounded-2xl border border-gold/20 shadow-sm transition-all duration-300 hover:shadow-lg">
             <div class="relative aspect-[4/5] overflow-hidden">
               <img src="Instagram/Instagram.png" alt="Foto do Instagram" loading="lazy" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='https://placehold.co/600x750/1A1A1A/D4AF37?text=Post%2015';" />
               <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
               
-              <a href="https://www.instagram.com/janebarreiros_" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">
-                Ver no Instagram <span aria-hidden="true">→</span>
-              </a>
+              <a href="https://www.instagram.com/janebarreiros_" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">Ver no Instagram <span aria-hidden="true">&rarr;</span></a>
             </div>
           </article>
-
           <!-- Card 16 -->
           <article class="group relative overflow-hidden rounded-2xl border border-gold/20 shadow-sm transition-all duration-300 hover:shadow-lg">
             <div class="relative aspect-[4/5] overflow-hidden">
               <img src="Instagram/Instagram.png" alt="Foto do Instagram" loading="lazy" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src='https://placehold.co/600x750/1A1A1A/D4AF37?text=Post%2016';" />
               <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
               
-              <a href="https://www.instagram.com/janebarreiros_" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">
-                Ver no Instagram <span aria-hidden="true">→</span>
-              </a>
+              <a href="https://www.instagram.com/janebarreiros_" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">Ver no Instagram <span aria-hidden="true">&rarr;</span></a>
             </div>
           </article>
-        </div>﻿
+        </div>
+      </div>
+    </section>
+
+
+
+    <!-- ==============================================================
+         6. CTA AGENDAMENTO (Banner de Destaque)
+    =============================================================== -->
+    <section id="agendamento-cta" class="scroll-mt-24 px-5 py-20 lg:px-8 lg:py-28">
+      <div class="mx-auto max-w-6xl">
+        <div class="relative overflow-hidden rounded-2xl bg-cream-deep px-8 py-16 text-center text-ink shadow-xl lg:px-16 lg:py-24">
+          <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(197,168,128,0.28),transparent_45%),radial-gradient(circle_at_85%_80%,rgba(197,168,128,0.18),transparent_40%)]"></div>
+          <div class="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full border-2 border-gold/40"></div>
+          <div class="pointer-events-none absolute -bottom-24 -left-20 h-64 w-64 rounded-full border-2 border-gold/30"></div>
+
+          <div class="relative">
+            <p class="eyebrow">Agendamento On-line</p>
+            <h2 class="mt-5 font-serif text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">
+              Pronta para <em class="italic">transformar seu visual?</em>
+            </h2>
+            <p class="mx-auto mt-5 max-w-xl font-light leading-relaxed text-muted">
+              Confira nossa lista completa de serviços, valores e agende seu horário
+              online em poucos cliques.
+            </p>
+            <div class="mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row">
+              <a href="agendamento.html" class="btn btn-gold text-base">
+                Ver Serviços e Agendar Horário <span aria-hidden="true">→</span>
+              </a>
+            </div>
+            <p class="mt-5 text-xs text-muted">Terça a Sábado: 09:00 às 18:00 · Santo André — SP</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         6.1 GALERIA EM MOVIMENTO — MOSAICO DE POLAROIDS (3 FILEIRAS)
+    =============================================================== -->
+    <section id="galeria" aria-label="Galeria em movimento" class="relative scroll-mt-24 overflow-hidden py-24 lg:py-32">
+      <!-- Partículas douradas + linhas curvas ao fundo -->
+      <svg class="g-deco" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+        <g fill="none" stroke="#D4AF37" stroke-linecap="round">
+          <path d="M-80 210 C 320 60, 560 320, 900 200 S 1380 120, 1540 240" stroke-width="1.1" opacity="0.28" />
+          <path d="M-80 720 C 300 860, 580 620, 920 760 S 1400 840, 1540 700" stroke-width="1.1" opacity="0.2" />
+          <path d="M-40 470 C 260 380, 480 540, 760 460 S 1180 360, 1500 480" stroke-width="0.8" opacity="0.14" />
+        </g>
+        <g fill="#F3E5B2">
+          <circle cx="7%"   cy="14%" r="1.6" opacity="0.55" />
+          <circle cx="18%"  cy="78%" r="1.2" opacity="0.4" />
+          <circle cx="27%"  cy="30%" r="2.0" opacity="0.65" />
+          <circle cx="39%"  cy="86%" r="1.4" opacity="0.5" />
+          <circle cx="52%"  cy="10%" r="1.3" opacity="0.45" />
+          <circle cx="61%"  cy="66%" r="1.8" opacity="0.6" />
+          <circle cx="74%"  cy="22%" r="1.2" opacity="0.4" />
+          <circle cx="83%"  cy="80%" r="1.7" opacity="0.55" />
+          <circle cx="91%"  cy="38%" r="1.3" opacity="0.45" />
+          <circle cx="96%"  cy="62%" r="1.5" opacity="0.5" />
+          <circle cx="13%"  cy="52%" r="1.2" opacity="0.35" />
+          <circle cx="46%"  cy="42%" r="1.4" opacity="0.45" />
+          <circle cx="68%"  cy="92%" r="1.3" opacity="0.4" />
+          <circle cx="88%"  cy="6%"  r="1.1" opacity="0.35" />
+        </g>
+      </svg>
+
+      <!-- Pílulas douradas fixas sobre o mosaico -->
+      <span class="g-tag" style="top:12%; left:5%; transform:rotate(-4deg)">Colorimetria em Movimento</span>
+      <span class="g-tag" style="top:14%; left:50%; transform:translateX(-50%) rotate(2.5deg)">Transformações Reais</span>
+      <span class="g-tag" style="top:26%; right:5%; transform:rotate(3deg)">Nosso Olhar</span>
+      <span class="g-tag" style="bottom:28%; right:7%; transform:rotate(-2.5deg)">Estilo em Camadas</span>
+
+      <!-- Mosaico: 3 fileiras deslizando para a direita, com duplicatas p/ loop contínuo -->
+      <div class="g-rails">
+                                        <div class="g-rail g-rail--top">
+          <div class="g-row">
+            <figure class="pola" style="--rot:-8deg"><img src="images/galeria/1.jpg" alt="TransformaÃ§Ã£o de loiro com colorimetria" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=TransformaÃ§Ã£o+de+loiro+com+colorimetria';"/></figure>
+            <figure class="pola" style="--rot:7deg"><img src="images/galeria/2.jpg" alt="Clareamento e tons dourados" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=Clareamento+e+tons+dourados';"/></figure>
+            <figure class="pola" style="--rot:-5deg"><img src="images/galeria/3.jpg" alt="Babylights personalizadas" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=Babylights+personalizadas';"/></figure>
+            <figure class="pola" style="--rot:5deg"><img src="images/galeria/4.jpg" alt="Cabelos com movimento e brilho" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=Cabelos+com+movimento+e+brilho';"/></figure>
+            <figure class="pola" style="--rot:-3deg"><img src="images/galeria/5.jpg" alt="NeutralizaÃ§Ã£o de fundos" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=NeutralizaÃ§Ã£o+de+fundos';"/></figure>
+            <figure class="pola" style="--rot:3deg"><img src="images/galeria/6.jpg" alt="Loiro platinado no salÃ£o" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=Loiro+platinado+no+salÃ£o';"/></figure>
+            <figure class="pola" style="--rot:-6deg"><img src="images/galeria/1.jpg" alt="TransformaÃ§Ã£o de loiro com colorimetria" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=TransformaÃ§Ã£o+de+loiro+com+colorimetria';"/></figure>
+            <figure class="pola" style="--rot:6deg"><img src="images/galeria/2.jpg" alt="Clareamento e tons dourados" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=Clareamento+e+tons+dourados';"/></figure>
+            <figure class="pola" style="--rot:-4deg"><img src="images/galeria/3.jpg" alt="Babylights personalizadas" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=Babylights+personalizadas';"/></figure>
+            <figure class="pola" style="--rot:4deg"><img src="images/galeria/4.jpg" alt="Cabelos com movimento e brilho" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=Cabelos+com+movimento+e+brilho';"/></figure>
+            <figure class="pola" style="--rot:-7deg"><img src="images/galeria/5.jpg" alt="NeutralizaÃ§Ã£o de fundos" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=NeutralizaÃ§Ã£o+de+fundos';"/></figure>
+            <figure class="pola" style="--rot:7deg"><img src="images/galeria/6.jpg" alt="Loiro platinado no salÃ£o" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=Loiro+platinado+no+salÃ£o';"/></figure>
+          </div>
+        </div>
+        <div class="g-rail g-rail--mid">
+          <div class="g-row">
+            <figure class="pola" style="--rot:-8deg"><img src="images/galeria/7.jpg" alt="RecuperaÃ§Ã£o e reconstruÃ§Ã£o dos fios" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=RecuperaÃ§Ã£o+e+reconstruÃ§Ã£o+dos+fios';"/></figure>
+            <figure class="pola" style="--rot:7deg"><img src="images/galeria/8.jpg" alt="Tonalidade perfeita" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=Tonalidade+perfeita';"/></figure>
+            <figure class="pola" style="--rot:-5deg"><img src="images/galeria/9.jpg" alt="Mechas com luzes suaves" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=Mechas+com+luzes+suaves';"/></figure>
+            <figure class="pola" style="--rot:5deg"><img src="images/galeria/10.jpg" alt="Loiro com profundidade" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=Loiro+com+profundidade';"/></figure>
+            <figure class="pola" style="--rot:-3deg"><img src="images/galeria/11.jpg" alt="Resultado final impecÃ¡vel" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=Resultado+final+impecÃ¡vel';"/></figure>
+            <figure class="pola" style="--rot:3deg"><img src="images/galeria/12.png" alt="Brilho e vitalidade" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=Brilho+e+vitalidade';"/></figure>
+            <figure class="pola" style="--rot:-6deg"><img src="images/galeria/7.jpg" alt="RecuperaÃ§Ã£o e reconstruÃ§Ã£o dos fios" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=RecuperaÃ§Ã£o+e+reconstruÃ§Ã£o+dos+fios';"/></figure>
+            <figure class="pola" style="--rot:6deg"><img src="images/galeria/8.jpg" alt="Tonalidade perfeita" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=Tonalidade+perfeita';"/></figure>
+            <figure class="pola" style="--rot:-4deg"><img src="images/galeria/9.jpg" alt="Mechas com luzes suaves" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=Mechas+com+luzes+suaves';"/></figure>
+            <figure class="pola" style="--rot:4deg"><img src="images/galeria/10.jpg" alt="Loiro com profundidade" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=Loiro+com+profundidade';"/></figure>
+            <figure class="pola" style="--rot:-7deg"><img src="images/galeria/11.jpg" alt="Resultado final impecÃ¡vel" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=Resultado+final+impecÃ¡vel';"/></figure>
+            <figure class="pola" style="--rot:7deg"><img src="images/galeria/12.png" alt="Brilho e vitalidade" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=Brilho+e+vitalidade';"/></figure>
+          </div>
+        </div>
+        <div class="g-rail g-rail--bot">
+          <div class="g-row">
+            <figure class="pola" style="--rot:-8deg"><img src="images/galeria/13.jpg" alt="Realce natural valorizado" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=Realce+natural+valorizado';"/></figure>
+            <figure class="pola" style="--rot:7deg"><img src="images/galeria/14.jpg" alt="Blonding completo" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=Blonding+completo';"/></figure>
+            <figure class="pola" style="--rot:-5deg"><img src="images/galeria/15.jpg" alt="CorreÃ§Ã£o de cor personalizada" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=CorreÃ§Ã£o+de+cor+personalizada';"/></figure>
+            <figure class="pola" style="--rot:5deg"><img src="images/galeria/16.jpg" alt="Fios saudÃ¡veis e luminosos" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=Fios+saudÃ¡veis+e+luminosos';"/></figure>
+            <figure class="pola" style="--rot:-3deg"><img src="images/galeria/17.jpg" alt="Estilo em camadas" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=Estilo+em+camadas';"/></figure>
+            <figure class="pola" style="--rot:3deg"><img src="images/galeria/18.jpg" alt="ManutenÃ§Ã£o da cor perfeita" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=ManutenÃ§Ã£o+da+cor+perfeita';"/></figure>
+            <figure class="pola" style="--rot:-6deg"><img src="images/galeria/13.jpg" alt="Realce natural valorizado" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=Realce+natural+valorizado';"/></figure>
+            <figure class="pola" style="--rot:6deg"><img src="images/galeria/14.jpg" alt="Blonding completo" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=Blonding+completo';"/></figure>
+            <figure class="pola" style="--rot:-4deg"><img src="images/galeria/15.jpg" alt="CorreÃ§Ã£o de cor personalizada" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=CorreÃ§Ã£o+de+cor+personalizada';"/></figure>
+            <figure class="pola" style="--rot:4deg"><img src="images/galeria/16.jpg" alt="Fios saudÃ¡veis e luminosos" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=Fios+saudÃ¡veis+e+luminosos';"/></figure>
+            <figure class="pola" style="--rot:-7deg"><img src="images/galeria/17.jpg" alt="Estilo em camadas" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=Estilo+em+camadas';"/></figure>
+            <figure class="pola" style="--rot:7deg"><img src="images/galeria/18.jpg" alt="ManutenÃ§Ã£o da cor perfeita" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1A1A1A/D4AF37?text=ManutenÃ§Ã£o+da+cor+perfeita';"/></figure>
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+      <!-- Overlay: texto reflexivo + CTA no canto inferior direito -->
+      <div class="g-overlay">
+        <h2>SINTA A ENERGIA DAS NOSSAS TRANSFORMAÇÕES.<br/>CADA CAMADA, UM NOVO OLHAR.</h2>
+        <a href="#instagram" class="btn-gold inline-flex items-center gap-2 rounded-full px-7 py-4 text-sm font-semibold uppercase tracking-[0.18em]">Ver galeria completa <span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         7. CURSO ONLINE
+    =============================================================== -->
+    <section id="curso" class="scroll-mt-24 bg-cream-deep py-20 lg:py-28">
+      <div class="mx-auto max-w-6xl px-5 lg:px-8">
+        <div class="grid items-start gap-12 lg:grid-cols-[1fr_1fr]">
+          <div>
+            <p class="eyebrow">Curso Online</p>
+            <h2 class="mt-5 font-serif text-3xl font-semibold sm:text-4xl"><span id="curso-titulo">Clube Loiros com Propósito</span></h2>
+            <p id="curso-descricao" class="mt-5 text-[15px] font-light leading-relaxed text-muted">Aprenda técnicas de clareamento, tonalização e recuperação capilar para cabeleireiros iniciantes e profissionais. Aulas práticas, diretas e aplicáveis no dia a dia do salão.</p>
+            <ul id="curso-beneficios" class="mt-8 space-y-3">
+              <li class="flex items-center gap-3"><span class="check-gold flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold">✓</span>Clareamento e neutralização de fundos</li>
+              <li class="flex items-center gap-3"><span class="check-gold flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold">✓</span>Tonalização e construção de loiros</li>
+              <li class="flex items-center gap-3"><span class="check-gold flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold">✓</span>Recuperação e manutenção dos fios</li>
+              <li class="flex items-center gap-3"><span class="check-gold flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold">✓</span>Material de apoio exclusivo</li>
+            </ul>
+          </div>
+          <div class="rounded-3xl border border-gold/25 bg-cream p-8 shadow-md">
+            <p class="text-xs font-bold uppercase tracking-[0.25em] text-gold">Investimento</p>
+            <p class="mt-3 font-serif text-4xl font-semibold text-ink"><span id="curso-preco">R$ 47,99</span></p>
+            <p id="curso-parcelas" class="mt-1 text-sm text-muted">ou 6x de R$ 9,00</p>
+            <p class="mt-4 text-sm text-ink-soft"><span id="curso-garantia">✓ Garantia incondicional de 7 dias</span></p>
+            <p class="mt-2 text-sm text-ink-soft"><span id="curso-acesso">✓ Acesso em qualquer dispositivo</span></p>
+            <a id="curso-checkout" href="curso-online.html" class="btn-gold mt-7 inline-flex w-full items-center justify-center gap-2 rounded-full px-7 py-4 text-sm font-semibold">
+              Quero acessar o curso <span aria-hidden="true">→</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         8. LOCALIZAÇÃO & CONTATO
+    =============================================================== -->
+    <section id="localizacao" class="scroll-mt-24 py-20 lg:py-28">
+      <div class="mx-auto max-w-6xl px-5 lg:px-8">
+        <div class="grid items-start gap-10 lg:grid-cols-[1fr_1.2fr]">
+          <div>
+            <p class="eyebrow">Localização &amp; Contato</p>
+            <h2 class="mt-5 font-serif text-3xl font-semibold sm:text-4xl">Onde estamos</h2>
+            <p id="endereco-logradouro" class="mt-6 text-lg font-light leading-relaxed text-ink">Rua Rio Grande Do Sul, 348<br/>Santo André &mdash; SP</p>
+            <p id="horarios" class="mt-3 text-sm font-light leading-relaxed text-muted">Terça a Sábado: 09:00 &ndash; 18:00<br/>Domingo e Segunda: Fechado</p>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=Rua+Rio+Grande+Do+Sul,+348+Santo+Andre,+SP" target="_blank" rel="noopener" class="btn-gold mt-8 inline-flex items-center justify-center gap-2.5 rounded-xl px-6 py-3.5 text-sm font-semibold">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+              Traçar Rota no Google Maps
+            </a>
+          </div>
+          <div class="min-h-[340px] overflow-hidden rounded-2xl border border-gold/20 shadow-md">
+            <iframe
+              id="mapa-iframe"
+              src="https://www.google.com/maps?q=Rua+Rio+Grande+Do+Sul,+348+Santo+Andre,+SP&output=embed"
+              title="Mapa: Rua Rio Grande Do Sul, 348 ? Santo Andr?, SP"
+              class="h-full min-h-[340px] w-full border-0 mapa-dark"
+              loading="lazy"
+              allowfullscreen
+              referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         MODAL — Mechas & Loiros Impecáveis
+    =============================================================== -->
+    <div id="modal-mechas" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/80 p-5 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="modal-mechas-titulo">
+      <button type="button" id="modal-mechas-fechar" aria-label="Fechar modal" class="absolute right-5 top-5 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-gold/40 text-gold-light transition-all duration-300 hover:scale-105 hover:border-gold hover:bg-gold hover:text-black">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+
+      <div class="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-gold/30 bg-[#111111] p-8 shadow-[0_30px_80px_-20px_rgba(0,0,0,.9)] sm:p-10">
+        <span class="inline-flex items-center rounded-full bg-gold/10 px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.25em] text-muted">Especialidade &amp; Colorimetria</span>
+        <h3 id="modal-mechas-titulo" class="mt-5 font-serif text-2xl font-semibold sm:text-3xl">Mechas &amp; Loiros Impecáveis</h3>
+
+        <p class="mt-6 text-sm font-light leading-relaxed text-muted">
+          O loiro perfeito é uma obra de arte personalizada. No Studio Jane Barreiros, cada procedimento de mechas e clareamento é precedido por uma análise detalhada de diagnóstico capilar, tom de pele e saúde dos fios.
+        </p>
+        <p class="mt-4 text-sm font-light leading-relaxed text-muted">
+          Utilizamos técnicas avançadas de iluminação — como Babylights, Contour e Freehands — combinadas com produtos de alta performance que protegem as pontes estruturais do cabelo durante o clareamento.
+        </p>
+        <p class="mt-4 text-sm font-light leading-relaxed text-muted">
+          O resultado é um loiro com contraste harmonioso, luminosidade estratégica, toque sedoso e, acima de tudo, integridade capilar preservada para que a sua cor se mantenha radiante por muito mais tempo.
+        </p>
+
+        <ul class="mt-7 space-y-3">
+          <li class="flex items-start gap-3 text-sm text-ink-soft"><span class="check-gold mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Diagnóstico e teste de mecha personalizado</li>
+          <li class="flex items-start gap-3 text-sm text-ink-soft"><span class="check-gold mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Proteção e reconstrução estrutural durante o descoloramento</li>
+          <li class="flex items-start gap-3 text-sm text-ink-soft"><span class="check-gold mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Tonalização de precisão para neutralizar amarelos indesejados</li>
+          <li class="flex items-start gap-3 text-sm text-ink-soft"><span class="check-gold mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Protocolo de pós-coloração exclusivo para selagem das cutículas</li>
+        </ul>
+
+        <div class="mt-8 border-t border-gold/20 pt-6">
+          <a id="modal-mechas-cta" href="https://wa.me/5511942212626?text=Ol%C3%A1!%20Quero%20agendar%20uma%20avalia%C3%A7%C3%A3o%20para%20Mechas%20e%20Loiros%20no%20Studio%20Jane%20Barreiros." target="_blank" rel="noopener" class="btn-gold inline-flex w-full items-center justify-center gap-2 rounded-full px-7 py-4 text-sm font-semibold">
+            Agendar Minha Avaliação <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==============================================================
+         MODAL — Colorimetria & Correção de Cor
+    =============================================================== -->
+    <div id="modal-colorimetria" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/80 p-5 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="modal-colorimetria-titulo">
+      <button type="button" id="modal-colorimetria-fechar" aria-label="Fechar modal" class="absolute right-5 top-5 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-gold/40 text-gold-light transition-all duration-300 hover:scale-105 hover:border-gold hover:bg-gold hover:text-black">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+
+      <div class="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-gold/30 bg-[#111111] p-8 shadow-[0_30px_80px_-20px_rgba(0,0,0,.9)] sm:p-10">
+        <span class="inline-flex items-center rounded-full bg-gold/10 px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.25em] text-muted">Especialidade &amp; Reconstrução</span>
+        <h3 id="modal-colorimetria-titulo" class="mt-5 font-serif text-2xl font-semibold sm:text-3xl">Colorimetria &amp; Correção de Cor</h3>
+
+        <p class="mt-6 text-sm font-light leading-relaxed text-muted">
+          Corrigir a cor de um cabelo exige um conhecimento profundo em matemática da colorimetria e biologia capilar. Seja para neutralizar tons alaranjados e esverdeados, suavizar manchas de descolorações antigas ou transicionar de uma tonalidade escura para um tom luminoso, o tratamento de Correção de Cor é feito sob medida.
+        </p>
+        <p class="mt-4 text-sm font-light leading-relaxed text-muted">
+          Antes de aplicar qualquer pigmento, realizamos um teste de mecha rigoroso para verificar a resistência do fio. Nosso foco é devolver a harmonia tonal desejada enquanto reconstruímos a estrutura do cabelo, garantindo uma cor homogênea, vibrante e totalmente saudável.
+        </p>
+
+        <ul class="mt-7 space-y-3">
+          <li class="flex items-start gap-3 text-sm text-ink-soft"><span class="check-gold mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Mapeamento de pigmentos anteriores e análise de porosidade</li>
+          <li class="flex items-start gap-3 text-sm text-ink-soft"><span class="check-gold mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Neutralização precisa de matizes indesejados (laranja, amarelo ou verde)</li>
+          <li class="flex items-start gap-3 text-sm text-ink-soft"><span class="check-gold mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Transição segura de tons sem comprometer a saúde da fibra capilar</li>
+          <li class="flex items-start gap-3 text-sm text-ink-soft"><span class="check-gold mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Tratamento de reposição de massa e lipídios integrado ao processo</li>
+        </ul>
+
+        <div class="mt-8 border-t border-gold/20 pt-6">
+          <a id="modal-colorimetria-cta" href="agendamento.html" class="btn-gold inline-flex w-full items-center justify-center gap-2 rounded-full px-7 py-4 text-sm font-semibold">
+            Agendar Avaliação de Cor <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==============================================================
+         MODAL — Tratamentos & Recuperação Capilar
+    =============================================================== -->
+    <div id="modal-tratamentos" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/80 p-5 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="modal-tratamentos-titulo">
+      <button type="button" id="modal-tratamentos-fechar" aria-label="Fechar modal" class="absolute right-5 top-5 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-gold/40 text-gold-light transition-all duration-300 hover:scale-105 hover:border-gold hover:bg-gold hover:text-black">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+
+      <div class="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-gold/30 bg-[#111111] p-8 shadow-[0_30px_80px_-20px_rgba(0,0,0,.9)] sm:p-10">
+        <span class="inline-flex items-center rounded-full bg-gold/10 px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.25em] text-muted">Saúde &amp; Reconstrução Profunda</span>
+        <h3 id="modal-tratamentos-titulo" class="mt-5 font-serif text-2xl font-semibold sm:text-3xl">Tratamentos &amp; Recuperação Capilar</h3>
+
+        <p class="mt-6 text-sm font-light leading-relaxed text-muted">
+          Cabelos descoloridos, quimicamente tratados ou expostos ao calor constante necessitam de uma rotina intensa de reposição de nutrientes. Nossos protocolos de recuperação combinam biotecnologia de ponta com ativos altamente concentrados para reconstruir a fibra capilar de dentro para fora.
+        </p>
+        <p class="mt-4 text-sm font-light leading-relaxed text-muted">
+          Através do diagnóstico personalizado de cronograma capilar, identificamos exatamente do que seu fio precisa: aminoácidos para força, lipídios para nutrição ou hialurônico para hidratação. O resultado é um cabelo com elasticidade restaurada, brilho espelhado, toque aveludado e resistência contra novas agressões.
+        </p>
+
+        <ul class="mt-7 space-y-3">
+          <li class="flex items-start gap-3 text-sm text-ink-soft"><span class="check-gold mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Cronograma capilar customizado após avaliação da fibra</li>
+          <li class="flex items-start gap-3 text-sm text-ink-soft"><span class="check-gold mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Reconstrução Córtex e Cauterização de alta performance</li>
+          <li class="flex items-start gap-3 text-sm text-ink-soft"><span class="check-gold mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Blindagem de cutículas para selagem de brilho e redução de frizz</li>
+          <li class="flex items-start gap-3 text-sm text-ink-soft"><span class="check-gold mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Reposição de massa proteica e aminoácidos essenciais</li>
+        </ul>
+
+        <div class="mt-8 border-t border-gold/20 pt-6">
+          <a id="modal-tratamentos-cta" href="agendamento.html" class="btn-gold inline-flex w-full items-center justify-center gap-2 rounded-full px-7 py-4 text-sm font-semibold">
+            Agendar Tratamento Capilar <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ==============================================================
+       9. FOOTER
+  =============================================================== -->
+  <footer class="bg-cream-deep py-14 text-center text-muted">
+    <div class="mx-auto flex max-w-6xl flex-col items-center gap-7 px-5">
+      <a href="#hero" class="leading-none">
+        <span class="block font-serif text-xl font-bold tracking-[0.14em] text-ink">JANE BARREIROS</span>
+        <span id="footer-logo-etiqueta" class="mt-1.5 block text-[10px] uppercase tracking-[0.32em] text-muted">Studio &amp; Academia de Loiros</span>
+      </a>
+      <nav class="flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm" aria-label="Navegação do rodapé">
+        <a href="#sobre" class="transition-colors hover:text-gold-light">Sobre</a>
+        <a href="#servicos" class="transition-colors hover:text-gold-light">Serviços</a>
+        <a href="agendamento.html" class="transition-colors hover:text-gold-light">Agendamento</a>
+        <a href="#curso" class="transition-colors hover:text-gold-light">Curso Online</a>
+        <a href="#localizacao" class="transition-colors hover:text-gold-light">Localização</a>
+      </nav>
+      <div class="flex flex-row items-center justify-center gap-5 sm:gap-6" aria-label="Redes sociais">
+        <svg width="0" height="0" class="absolute" aria-hidden="true" focusable="false"><defs>
+          <linearGradient id="goldSocial" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#F3E5B2"/><stop offset="0.45" stop-color="#D4AF37"/><stop offset="1" stop-color="#AA771C"/>
+          </linearGradient>
+        </defs></svg>
+        <a id="social-instagram-footer" href="https://www.instagram.com/janebarreiros_" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram" class="text-gold transition-all duration-300 hover:scale-[1.15] hover:brightness-125">
+          <svg viewBox="0 0 24 24" fill="url(#goldSocial)" class="h-9 w-9"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/></svg>
+        </a>
+        <a id="social-facebook-footer" href="https://www.facebook.com/janebarreiros" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook" class="text-gold transition-all duration-300 hover:scale-[1.15] hover:brightness-125">
+          <svg viewBox="0 0 24 24" fill="url(#goldSocial)" class="h-9 w-9"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </a>
+        <a id="social-threads-footer" href="https://www.threads.net/@janebarreiros_" target="_blank" rel="noopener" aria-label="Threads" title="Threads" class="text-gold transition-all duration-300 hover:scale-[1.15] hover:brightness-125">
+          <svg viewBox="0 0 448 512" fill="url(#goldSocial)" class="h-9 w-auto"><path d="M331.5 235.7c2.2 .9 4.2 1.9 6.3 2.8c29.2 14.1 50.6 35.2 61.8 61.4c15.7 36.5 17.2 95.8-30.3 143.2c-36.2 36.2-80.3 52.5-142.6 53h-.3c-70.2-.5-124.1-24.1-160.4-70.2c-32.3-41-48.9-98.1-49.5-169.6V256v-.2C17 184.3 33.6 127.2 65.9 86.2C102.2 40.1 156.2 16.5 226.4 16h.3c70.3 .5 124.9 24 162.3 69.9c18.4 22.7 32 50 40.6 81.7l-40.4 10.8c-7.1-25.8-17.8-47.8-32.2-65.4c-29.2-35.8-73-54.2-130.5-54.6c-57 .5-100.1 18.8-128.2 54.4C72.1 146.1 58.5 194.3 58 256c.5 61.7 14.1 109.9 40.3 143.3c28 35.6 71.2 53.9 128.2 54.4c51.4-.4 85.4-12.6 113.7-40.9c32.3-32.2 31.7-71.8 21.4-95.9c-6.1-14.2-17.1-26-31.9-34.9c-3.7 26.9-11.8 48.3-24.7 64.8c-17.1 21.8-41.4 33.6-72.7 35.3c-23.6 1.3-46.3-4.4-63.9-16c-20.8-13.8-33-34.8-34.3-59.3c-2.5-48.3 35.7-83 95.2-86.4c21.1-1.2 40.9-.3 59.2 2.8c-2.4-14.8-7.3-26.6-14.6-35.2c-10-11.7-25.6-17.7-46.2-17.8H227c-16.6 0-39 4.6-53.3 26.3l-34.4-23.6c19.2-29.1 50.3-45.1 87.8-45.1h.8c62.6 .4 99.9 39.5 103.7 107.7l-.2 .2zm-156 68.8c1.3 25.1 28.4 36.8 54.6 35.3c25.6-1.4 54.6-11.4 59.5-73.2c-13.2-2.9-27.8-4.4-43.4-4.4c-4.8 0-9.6 .1-14.4 .4c-42.9 2.4-57.2 23.2-56.2 41.8l-.1 .1z"/></svg>
+        </a>
+        <a id="social-linkedin-footer" href="https://www.linkedin.com/in/janebarreiros" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn" class="text-gold transition-all duration-300 hover:scale-[1.15] hover:brightness-125">
+          <svg viewBox="0 0 24 24" fill="url(#goldSocial)" class="h-9 w-9"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        </a>
+        <a id="social-tiktok-footer" href="https://www.tiktok.com/@janebarreiros_" target="_blank" rel="noopener" aria-label="TikTok" title="TikTok" class="text-gold transition-all duration-300 hover:scale-[1.15] hover:brightness-125">
+          <svg viewBox="0 0 24 24" fill="url(#goldSocial)" class="h-9 w-9"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+        </a>
+        <a id="social-youtube-footer" href="https://www.youtube.com/@janebarreiros" target="_blank" rel="noopener" aria-label="YouTube" title="YouTube" class="text-gold transition-all duration-300 hover:scale-[1.15] hover:brightness-125">
+          <svg viewBox="0 0 24 24" fill="url(#goldSocial)" class="h-9 w-9"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        </a>
+        <a id="social-whatsapp-footer" href="https://wa.me/5511942212626" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp" class="text-gold transition-all duration-300 hover:scale-[1.15] hover:brightness-125">
+          <svg viewBox="0 0 448 512" fill="url(#goldSocial)" class="h-9 w-auto"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
+        </a>
+        <a id="social-telegram-footer" href="https://t.me/janebarreiros" target="_blank" rel="noopener" aria-label="Telegram" title="Telegram" class="text-gold transition-all duration-300 hover:scale-[1.15] hover:brightness-125">
+          <svg viewBox="0 0 496 512" fill="url(#goldSocial)" class="h-9 w-auto"><path d="M248,8C111.033,8,0,119.033,0,256S111.033,504,248,504,496,392.967,496,256,384.967,8,248,8ZM362.952,176.66c-3.732,39.215-19.881,134.378-28.1,178.3-3.476,18.584-10.322,24.816-16.948,25.425-14.4,1.326-25.338-9.517-39.287-18.661-21.827-14.308-34.158-23.215-55.346-37.177-24.485-16.135-8.612-25,5.342-39.5,3.652-3.793,67.107-61.51,68.335-66.746.153-.655.3-3.1-1.154-4.384s-3.59-.849-5.135-.5q-3.283.746-104.608,69.142-14.845,10.194-26.894,9.934c-8.855-.191-25.888-5.006-38.551-9.123-15.531-5.048-27.875-7.717-26.8-16.291q.84-6.7,18.45-13.7,108.446-47.248,144.628-62.3c68.872-28.647,83.183-33.623,92.511-33.789,2.052-.034,6.639.474,9.61,2.885a10.452,10.452,0,0,1,3.53,6.716A43.765,43.765,0,0,1,362.952,176.66Z"/></svg>
+        </a>
+      </div>
+      <div class="mt-2 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 border-t border-white/10 pt-4 text-xs text-gray-400 md:gap-x-3">
+        <span>© <span id="year">2026</span> Studio Jane Barreiros. Todos os direitos reservados.</span>
+        <span class="hidden sm:inline text-gray-600">|</span>
+        <a href="javascript:void(0)" data-legal="privacidade" class="cursor-pointer underline transition-colors duration-300 hover:text-[#D4AF37]">Política de Privacidade</a>
+        <span class="hidden sm:inline text-gray-600">|</span>
+        <a href="javascript:void(0)" data-legal="termos" class="cursor-pointer underline transition-colors duration-300 hover:text-[#D4AF37]">Termos de Uso</a>
+        <span class="hidden sm:inline text-gray-600">|</span>
+        <a href="javascript:void(0)" data-legal="responsabilidade" class="cursor-pointer underline transition-colors duration-300 hover:text-[#D4AF37]">Termo de Responsabilidade</a>
+        <span class="hidden sm:inline text-gray-600">|</span>
+        <span>Desenvolvido por <a href="https://masterwd.com.br" target="_blank" rel="noopener nofollow" class="font-bold text-gray-300 transition-colors duration-300 hover:text-[#D4AF37]">Master Web Designer</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==============================================================
+       JAVASCRIPT PURO
+  =============================================================== -->
+  <script>
+    (function () {
+      'use strict';
+
+      /* ---------- Menu mobile (hambúrguer) ---------- */
+      var menuBtn = document.getElementById('menu-btn');
+      var mobileMenu = document.getElementById('mobile-menu');
+      var bars = menuBtn.querySelectorAll('span');
+
+      function toggleMenu(open) {
+        mobileMenu.classList.toggle('hidden', !open);
+        mobileMenu.classList.toggle('flex', open);
+        menuBtn.classList.toggle('open', open);
+        menuBtn.setAttribute('aria-expanded', String(open));
+        document.body.style.overflow = open ? 'hidden' : '';
+        bars[0].style.transform = open ? 'translateY(6px) rotate(45deg)' : '';
+        bars[1].style.opacity = open ? '0' : '1';
+        bars[2].style.transform = open ? 'translateY(-6px) rotate(-45deg)' : '';
+      }
+
+      menuBtn.addEventListener('click', function () {
+        toggleMenu(mobileMenu.classList.contains('hidden'));
+      });
+
+      // Fecha o menu ao navegar para âncoras internas
+      document.querySelectorAll('.mobile-link').forEach(function (link) {
+        link.addEventListener('click', function () { toggleMenu(false); });
+      });
+
+      /* ---------- Sombra do header ao rolar ---------- */
+      var header = document.getElementById('site-header');
+      function onScroll() {
+        header.classList.toggle('shadow-md', window.scrollY > 12);
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+
+      /* ---------- Ano dinâmico ---------- */
+      document.getElementById('year').textContent = new Date().getFullYear();
+    })();
+  </script>
+
+  <!-- ==============================================================
+       CARREGAMENTO DINÂMICO DO CONTEÚDO (content/site.json)
+       Se o JSON não puder ser lido, o conteúdo estático da página
+       continua sendo exibido (fallback).
+  =============================================================== -->
+  <script>
+    (function () {
+      'use strict';
+
+      /* ---------- Modo editor (apenas o dono) ---------- */
+      var EDITOR_PIN = 'jane-2026'; // TROQUE A SENHA AQUI
+      var EDITOR_MODE = false;
+      try { EDITOR_MODE = localStorage.getItem('jane_editor') === '1'; } catch (e) {}
+
+      // Conteúdo vindo do CMS é considerado de confiança, mas escapamos
+      // mesmo assim antes de injetar via innerHTML (segurança básica).
+      function esc(s) {
+        return String(s == null ? '' : s)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      // Envolve uma frase em <strong> estilizado (usado no Sobre).
+      function strong(phrase, html) {
+        var re = new RegExp('(' + phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+        return html.replace(re, '<strong class="font-semibold text-ink-soft">$1</strong>');
+      }
+
+      // Envolve uma palavra em <em> dourado (usado no Hero/Instagram).
+      function em(phrase, text) {
+        var re = new RegExp('(' + phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+        return text.replace(re, '<em class="italic text-ink-soft">$1</em>');
+      }
+
+      // Realça o horário após os dois-pontos com <strong>.
+      function boldTime(s) {
+        var i = String(s || '').indexOf(':');
+        return i > -1
+          ? esc(s.slice(0, i + 1)) + ' <strong class="font-semibold text-ink-soft">' + esc(s.slice(i + 1).trim()) + '</strong>'
+          : esc(s);
+      }
+
+      function setText(id, val) {
+        var el = document.getElementById(id);
+        if (el && val != null && val !== '') el.textContent = val;
+      }
+
+      function setHTML(id, val) {
+        var el = document.getElementById(id);
+        if (el && val != null && val !== '') el.innerHTML = val;
+      }
+
+      function setAttr(id, attr, val) {
+        var el = document.getElementById(id);
+        if (el && val) el.setAttribute(attr, val);
+      }
+
+      fetch('content/site.json?v=' + Date.now())
+        .then(function (res) {
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          return res.json();
+        })
+        .then(function (data) {
+          var site    = data.site    || {};
+          var sobre   = data.sobre   || {};
+          var curso   = data.curso   || {};
+          var contato = data.contato || {};
+          var insta   = data.instagram || {};
+
+          /* ---------- Logo ---------- */
+          setText('logo-etiqueta', site.logo_etiqueta);
+          setText('footer-logo-etiqueta', site.logo_etiqueta);
+
+          /* ---------- Hero & Sobre ---------- */
+          setText('hero-eyebrow', sobre.hero_eyebrow);
+          setHTML('hero-titulo', em('Colorimetria', em('Loiros', esc(sobre.hero_titulo))));
+          setText('hero-subtitulo', sobre.hero_subtitulo);
+          setAttr('hero-img', 'src', sobre.hero_imagem);
+          setHTML('hero-badge', esc(sobre.hero_badge).replace(' cabelos', '<br/>cabelos'));
+          setHTML('sobre-apresentacao', esc(sobre.apresentacao));
+          setHTML('sobre-trajetoria', strong('2 cômodos no fundo de uma casa', esc(sobre.trajetoria)));
+          setHTML('sobre-educadora', strong('Educadora de cabeleireiros iniciantes', esc(sobre.educadora)));
+          setText('sobre-citacao', sobre.citacao);
+          setText('stat-anos', '+' + sobre.stat_anos);
+          setText('stat-clientes', '+' + Number(sobre.stat_clientes).toLocaleString('pt-BR'));
+
+          /* ---------- Curso Online ---------- */
+          setText('curso-titulo', curso.nome);
+          setText('curso-preco', curso.preco);
+          setText('curso-parcelas', curso.parcelas);
+          setText('curso-garantia', '✔ ' + curso.garantia);
+          setText('curso-acesso', '✔ ' + curso.acesso);
+          setText('curso-descricao', curso.descricao);
+
+          var beneficios = (curso.beneficios || []).map(function (b) {
+            var texto = (b && b.beneficio != null) ? b.beneficio : b;
+            return '<li class="flex items-center gap-3">' +
+              '<span class="check-gold flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold">✓</span>' +
+              esc(texto) +
+              '</li>';
+          }).join('');
+          if (beneficios) {
+            var ul = document.getElementById('curso-beneficios');
+            if (ul) ul.innerHTML = beneficios;
+          }
+
+          /* ---------- Siga no Instagram ---------- */
+          setHTML('insta-titulo', em('Instagram', esc(insta.titulo)));
+          setText('insta-subtitulo', insta.subtitulo);
+          setAttr('insta-url', 'href', (data.redes && data.redes.instagram_url) || insta.url);
+          setText('insta-handle', '@' + ((data.redes && data.redes.instagram_usuario) || insta.handle));
+
+          var grid = document.getElementById('instagram-grid');
+          var instaAll = insta.posts || [];
+
+          var igIcons = {
+            play: '<svg viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4"><path d="M8 5v14l11-7z"/></svg>',
+            soundOff: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M11 5 6 9H2v6h4l5 4V5z"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>',
+            soundOn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18 6a9 9 0 0 1 0 12"/></svg>'
+          };
+
+          function renderInsta(posts) {
+            posts = (posts || instaAll).filter(function (p) { return !p.ocultar; });
+            if (!grid) return;
+            grid.innerHTML = posts.map(function (p, i) {
+              var fallback = encodeURIComponent(p.titulo || ('Post ' + (i + 1)));
+              var plink = p.link || insta.url;
+              var pAlt = p.titulo ? esc(p.titulo) : 'Foto do Instagram';
+              var pTitle = p.titulo
+                ? '<p class="absolute bottom-16 left-4 right-4 font-serif text-lg font-medium leading-snug text-white">' + esc(p.titulo) + '</p>'
+                : '';
+              var ocultarBtn = EDITOR_MODE
+                ? '<button type="button" class="insta-hide absolute left-3 top-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-black/80 px-3 py-1.5 text-[11px] font-bold text-[#F3D9A4] shadow-md transition hover:bg-red-600 hover:text-white" data-ordem="' + p.ordem + '" title="Ocultar esta publicação do site">' +
+                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5"><path d="m2 2 20 20"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 10 8 10 8a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.5 13.5 0 0 0 2 12s3 8 10 8a9.74 9.74 0 0 0 5.39-1.61"/><path d="M9.9 14.1A9 9 0 0 0 14.9 9.9"/></svg>' +
+                  'Ocultar' +
+                  '</button>'
+                : '';
+              var media;
+              if (p.video) {
+                media = '<video class="insta-video h-full w-full object-cover" src="' + esc(p.video) + '"' +
+                  (p.imagem ? ' poster="' + esc(p.imagem) + '"' : '') +
+                  ' muted loop playsinline preload="metadata"></video>' +
+                  '<div class="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 transition group-hover:opacity-100">' + igIcons.play + '</div>' +
+                  '<button type="button" class="insta-sound absolute bottom-4 right-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/70 text-white shadow-md transition hover:bg-black" aria-label="Alternar som do vídeo">' + igIcons.soundOff + '</button>';
+              } else {
+                media = '<img src="' + esc(p.imagem) + '" alt="' + pAlt + '" loading="lazy" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.onerror=null;this.src=\'https://placehold.co/600x750/1A1A1A/D4AF37?text=' + fallback + '\';" />';
+              }
+              return '' +
+                '<article class="group relative overflow-hidden rounded-2xl border border-gold/20 shadow-sm transition-all duration-300 hover:shadow-lg">' +
+                  '<div class="relative aspect-[4/5] overflow-hidden">' +
+                    media +
+                    ocultarBtn +
+                    '<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>' +
+                    pTitle +
+                    '<a href="' + esc(plink) + '" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">Ver no Instagram <span aria-hidden="true">→</span></a>' +
+                  '</div>' +
+                '</article>';
+            }).join('');
+
+            /* Reproduz o vídeo automaticamente quando o card entra na tela */
+            var vids = grid.querySelectorAll('video.insta-video');
+            if (vids.length && 'IntersectionObserver' in window) {
+              var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (en) {
+                  var v = en.target;
+                  if (en.isIntersecting) {
+                    var pr = v.play();
+                    if (pr && pr.catch) pr.catch(function () {});
+                  } else {
+                    v.pause();
+                  }
+                });
+              }, { threshold: 0.4 });
+              for (var k = 0; k < vids.length; k++) io.observe(vids[k]);
+            }
+
+            /* Botão de som: liga/desliga o áudio do vídeo do card */
+            var snds = grid.querySelectorAll('button.insta-sound');
+            for (var s = 0; s < snds.length; s++) (function (btn) {
+              btn.addEventListener('click', function () {
+                var card = btn.closest('.relative');
+                var v = card && card.querySelector('video');
+                if (!v) return;
+                v.muted = !v.muted;
+                btn.innerHTML = v.muted ? igIcons.soundOff : igIcons.soundOn;
+                btn.setAttribute('aria-label', v.muted ? 'Ligar som do vídeo' : 'Silenciar vídeo');
+                if (!v.muted) {
+                  var pr2 = v.play();
+                  if (pr2 && pr2.catch) pr2.catch(function () {});
+                }
+              });
+            })(snds[s]);
+          }
+
+          renderInsta();
+
+          /* ---------- Modo editor (dono): alternar e ocultar posts ---------- */
+          var ownerBtn = document.getElementById('owner-lock');
+          if (ownerBtn) {
+            function syncOwnerBtn() {
+              ownerBtn.title = EDITOR_MODE ? 'Modo editor ativo (clique para sair)' : 'Entrar no modo editor';
+              ownerBtn.innerHTML = EDITOR_MODE
+                ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 text-[#F3D9A4]"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/><path d="m9 15 2 2 4-4"/></svg>'
+                : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+            }
+            syncOwnerBtn();
+            ownerBtn.addEventListener('click', function () {
+              if (EDITOR_MODE) {
+                EDITOR_MODE = false;
+                try { localStorage.setItem('jane_editor', '0'); } catch (e) {}
+                syncOwnerBtn();
+                renderInsta();
+                return;
+              }
+              var pin = prompt('Digite a senha do modo editor:');
+              if (pin === null) return;
+              if (pin !== EDITOR_PIN) {
+                alert('Senha incorreta.');
+                return;
+              }
+              EDITOR_MODE = true;
+              try { localStorage.setItem('jane_editor', '1'); } catch (e) {}
+              syncOwnerBtn();
+              renderInsta();
+            });
+            grid.addEventListener('click', function (ev) {
+              var alvo = ev.target && ev.target.closest ? ev.target.closest('.insta-hide') : null;
+              if (!alvo) return;
+              var ordem = Number(alvo.getAttribute('data-ordem'));
+              alvo.disabled = true;
+              alvo.textContent = '...';
+              fetch('/api/hide-instagram', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ordem: ordem, ocultar: true })
+              })
+                .then(function (r) { return r.json(); })
+                .then(function (res) {
+                  if (!res || !res.ok) throw new Error((res && res.error) || 'Falha ao ocultar');
+                  instaAll.forEach(function (p) { if (p.ordem === ordem) p.ocultar = true; });
+                  renderInsta();
+                })
+                .catch(function (err) {
+                  alvo.disabled = false;
+                  alvo.innerHTML = 'Erro';
+                  alert('Não foi possível ocultar: ' + err.message);
+                });
+            });
+          }
+
+          /* ---------- Localização & Contato ---------- */
+          setHTML('endereco-logradouro', esc(contato.endereco_logradouro) + '<br/>' + esc(contato.endereco_cidade));
+          setHTML('horarios', boldTime(contato.horario_semana) + '<br/>' + boldTime(contato.horario_fim_de_semana));
+
+          /* ---------- Redes sociais (fonte: seção "Redes Sociais" do Admin) ---------- */
+          var redes = data.redes || {};
+          if (redes.instagram_url)      setAttr('social-instagram-footer', 'href', redes.instagram_url);
+          if (redes.facebook_url)       setAttr('social-facebook-footer', 'href', redes.facebook_url);
+          if (redes.threads_url)        setAttr('social-threads-footer', 'href', redes.threads_url);
+          if (redes.linkedin_url)       setAttr('social-linkedin-footer', 'href', redes.linkedin_url);
+          if (redes.tiktok_url)         setAttr('social-tiktok-footer', 'href', redes.tiktok_url);
+          if (redes.youtube_url)        setAttr('social-youtube-footer', 'href', redes.youtube_url);
+          if (redes.whatsapp_url)       setAttr('social-whatsapp-footer', 'href', redes.whatsapp_url);
+          if (redes.telegram_url)       setAttr('social-telegram-footer', 'href', redes.telegram_url);
+          setAttr('mapa-iframe', 'src', contato.mapa_embed);
+          setAttr('modal-mechas-cta', 'href', contato.whatsapp_link);
+        })
+        .catch(function () {
+          // Fallback: mantém o conteúdo estático (digitação direta no HTML).
+          // Sem replicação: os cards exibidos são apenas os estáticos definidos.
+        });
+    })();
+  </script>
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var meta = document.querySelector('meta[name="theme-color"]');
+      var btn = document.getElementById('theme-toggle');
+      var sol = document.getElementById('icon-sol');
+      var lua = document.getElementById('icon-lua');
+      function sync() {
+        var light = root.classList.contains('light');
+        if (sol) sol.classList.toggle('hidden', !light);
+        if (lua) lua.classList.toggle('hidden', light);
+        if (meta) meta.setAttribute('content', light ? '#FBF6EC' : '#0D0D0D');
+      }
+      if (btn) {
+        btn.addEventListener('click', function () {
+          root.classList.toggle('light');
+          try {
+            localStorage.setItem('jane-theme', root.classList.contains('light') ? 'light' : 'dark');
+          } catch (e) {}
+          sync();
+        });
+      }
+      sync();
+    })();
+  </script>
+  <script>
+    (function () {
+      var modal = document.getElementById('modal-mechas');
+      var card = document.getElementById('card-mechas');
+      var abrir = document.getElementById('btn-saiba-mais');
+      var fechar = document.getElementById('modal-mechas-fechar');
+      if (!modal || !card) return;
+
+      function openModal() { modal.classList.remove('hidden'); modal.classList.add('flex'); document.body.style.overflow = 'hidden'; }
+      function closeModal() { modal.classList.add('hidden'); modal.classList.remove('flex'); document.body.style.overflow = ''; }
+
+      card.addEventListener('click', function (e) { if (e.target.closest('a')) return; openModal(); });
+      if (abrir) abrir.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); openModal(); });
+      if (fechar) fechar.addEventListener('click', closeModal);
+      modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+    })();
+  </script>
+  <script>
+    (function () {
+      var modal = document.getElementById('modal-colorimetria');
+      var card = document.getElementById('card-colorimetria');
+      var abrir = document.getElementById('btn-saiba-mais-colorimetria');
+      var fechar = document.getElementById('modal-colorimetria-fechar');
+      if (!modal || !card) return;
+
+      function openModal() { modal.classList.remove('hidden'); modal.classList.add('flex'); document.body.style.overflow = 'hidden'; }
+      function closeModal() { modal.classList.add('hidden'); modal.classList.remove('flex'); document.body.style.overflow = ''; }
+
+      card.addEventListener('click', function (e) { if (e.target.closest('a')) return; openModal(); });
+      if (abrir) abrir.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); openModal(); });
+      if (fechar) fechar.addEventListener('click', closeModal);
+      modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+    })();
+  </script>
+  <script>
+    (function () {
+      var modal = document.getElementById('modal-tratamentos');
+      var card = document.getElementById('card-tratamentos');
+      var abrir = document.getElementById('btn-saiba-mais-tratamentos');
+      var fechar = document.getElementById('modal-tratamentos-fechar');
+      if (!modal || !card) return;
+
+      function openModal() { modal.classList.remove('hidden'); modal.classList.add('flex'); document.body.style.overflow = 'hidden'; }
+      function closeModal() { modal.classList.add('hidden'); modal.classList.remove('flex'); document.body.style.overflow = ''; }
+
+      card.addEventListener('click', function (e) { if (e.target.closest('a')) return; openModal(); });
+      if (abrir) abrir.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); openModal(); });
+      if (fechar) fechar.addEventListener('click', closeModal);
+      modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+    })();
+  </script>
+
+  <!-- ==============================================================
+       MODAL LEGAL — Termos / Política / Responsabilidade
+  =============================================================== -->
+  <script>
+    (function () {
+      'use strict';
+
+      function iniciarConsentimento() {
+      /* ---------- Modal Legal (Termos / Política / Responsabilidade) ---------- */
+      var legalModal = document.getElementById('modal-legal');
+      var legalTitulo = document.getElementById('modal-legal-titulo');
+      var legalCorpo = document.getElementById('modal-legal-corpo');
+
+      var legais = {
+        privacidade: {
+          titulo: 'Política de Privacidade & Proteção de Dados',
+          secao: [
+            {
+              t: '1. Quem Somos',
+              c: ['O Studio Jane Barreiros, localizado à Rua Rio Grande do Sul, 348, Santo André - SP, é o controlador dos dados pessoais tratados por meio deste site e atua em conformidade com a Lei Geral de Proteção de Dados Pessoais (Lei n. 13.709/2018 - LGPD).']
+            },
+            {
+              t: '2. Dados Coletados',
+              c: [
+                'Ao realizar o agendamento pelo nosso site, coletamos somente os dados indispensáveis ao atendimento: Nome, Telefone/WhatsApp, Serviço desejado e Data pretendida.',
+                'Também podemos receber informações complementares enviadas voluntariamente pela cliente por meio do nosso canal de WhatsApp ou de mensagens diretas.'
+              ]
+            },
+            {
+              t: '3. Finalidade do Tratamento',
+              c: [
+                'Os dados coletados são utilizados exclusivamente para: confirmar e gerenciar agendamentos; prestar atendimento e responder solicitações; recomendar serviços adequados ao perfil da cliente; e cumprir obrigações fiscais e legais quando aplicável.',
+                'Nunca utilizamos seus dados para finalidades não previstas nesta política.'
+              ]
+            },
+            {
+              t: '4. Uso do WhatsApp',
+              c: [
+                'Ao informar seu número de WhatsApp, você autoriza o Estúdio a entrar em contato para confirmação de agendamentos, lembretes e comunicação diretamente relacionada ao seu atendimento.',
+                'Você pode, a qualquer momento, solicitar a inclusão do seu número em nossa lista de não perturbe ou a exclusão de seus registros.'
+              ]
+            },
+            {
+              t: '5. Compartilhamento e Consentimento',
+              c: ['Seus dados não serão comercializados. Não compartilhamos informações com terceiros sem o seu consentimento, salvo quando exigido por lei, ordem judicial ou para cumprimento de obrigações regulatórias.']
+            },
+            {
+              t: '6. Armazenamento e Segurança',
+              c: [
+                'Adotamos medidas técnicas e organizacionais de segurança da informação, como controle de acesso e proteção em trânsito, para proteger seus dados contra acessos não autorizados, perda ou alteração.',
+                'Os dados são mantidos pelo prazo necessário ao cumprimento das finalidades desta política e eliminados ou anonimizados quando não mais necessários.'
+              ]
+            },
+            {
+              t: '7. Direitos do Titular (Art. 18 da LGPD)',
+              c: [
+                'Você pode, a qualquer momento e sem custo: solicitar acesso aos seus dados; corrigi-los quando incompletos ou desatualizados; solicitar anonimização, bloqueio ou eliminação de dados desnecessários; revogar o consentimento; e solicitar a portabilidade dos dados.',
+                'Para exercer esses direitos, entre em contato pelo nosso canal de atendimento informando seu nome e a solicitação desejada.'
+              ]
+            },
+            {
+              t: '8. Cookies',
+              c: ['Utilizamos cookies para personalizar e melhorar sua experiência de navegação, conforme o nosso aviso de cookies. Você pode optar por aceitar apenas os essenciais ou gerenciar as preferências pelo seu navegador.']
+            },
+            {
+              t: '9. Menores de Idade',
+              c: ['Este site não é direcionado a menores de 18 anos. Caso identifiquemos o tratamento de dados de menores, solicitaremos a autorização dos responsáveis legais.']
+            },
+            {
+              t: '10. Alterações desta Política',
+              c: ['Podemos atualizar esta Política para refletir mudanças legais ou em nossos processos. A versão vigente estará sempre disponível nesta página.']
+            },
+            {
+              t: '11. Fale Conosco',
+              c: ['Para dúvidas sobre o tratamento de dados ou para exercer seus direitos como titular, fale conosco pelo WhatsApp do Estúdio ou pelos nossos canais de atendimento.']
+            }
+          ]
+        },
+        termos: {
+          titulo: 'Termos e Condições de Uso do Website',
+          secao: [
+            {
+              t: '1. Aceitação dos Termos',
+              c: ['Ao acessar e utilizar o site do Studio Jane Barreiros, o usuário concorda expressamente em cumprir estes Termos e Condições de Uso, bem como toda a legislação brasileira aplicável. Caso não concorde com qualquer disposição, você deve interromper o uso do site.']
+            },
+            {
+              t: '2. Objeto do Site',
+              c: ['O site possui caráter institucional e comercial, destinado à apresentação dos serviços de colorimetria, mechas e tratamentos capilares, ao agendamento de horários e à divulgação do Curso Online do Estúdio.']
+            },
+            {
+              t: '3. Regras de Navegação',
+              c: ['O usuário compromete-se a utilizar o site de forma lícita e respeitosa, não praticando condutas que possam danificar, sobrecarregar ou comprometer a disponibilidade do serviço, como uso de bots, raspagem de dados, injeção de scripts ou tentativas de acesso não autorizado.']
+            },
+            {
+              t: '4. Serviços e Agendamentos',
+              c: ['As informações sobre serviços, valores e disponibilidade são apresentadas com caráter orientativo e podem ser atualizadas a qualquer momento. Os horários marcados dependem de confirmação da equipe do Estúdio.']
+            },
+            {
+              t: '5. Propriedade Intelectual',
+              c: [
+                'Todos os conteúdos deste site, incluindo fotografias, vídeos, textos, marcas, logotipos e identidade visual, pertencem ao Studio Jane Barreiros e estão protegidos pela Lei de Direitos Autorais (Lei n. 9.610/1998) e pela Lei de Propriedade Industrial (Lei n. 9.279/1996).',
+                'É proibida a reprodução, distribuição, modificação ou utilização desses conteúdos sem autorização prévia e por escrito do Estúdio.'
+              ]
+            },
+            {
+              t: '6. Conteúdo do Curso Online',
+              c: [
+                'O acesso ao Curso Online é pessoal e intransferível. As videoaulas, materiais de apoio, apostilas e demais conteúdos didáticos são de uso exclusivo do aluno.',
+                'É vedada a gravação, o compartilhamento, a revenda ou a disponibilização pública do conteúdo do curso, em qualquer formato ou mídia. A violação dessas regras sujeita o infrator às penalidades civis e criminais cabíveis.',
+                'O Estúdio não garante resultado financeiro ou profissional específico decorrente da realização do curso.'
+              ]
+            },
+            {
+              t: '7. Conduta do Usuário',
+              c: [
+                'O usuário não poderá: utilizar o site para fins ilícitos; enviar ou publicar conteúdo difamatório, ofensivo ou discriminatório; infringir direitos de terceiros; ou tentar acessar áreas restritas do sistema.',
+                'O descumprimento destas regras pode acarretar o bloqueio do acesso ao site e/ou ao curso, sem prejuízo das sanções legais.'
+              ]
+            },
+            {
+              t: '8. Links Externos',
+              c: ['O site pode conter links para redes sociais e serviços de terceiros. O Estúdio não se responsabiliza pelo conteúdo ou pelas práticas de privacidade desses serviços, orientando o usuário a consultar as respectivas políticas.']
+            },
+            {
+              t: '9. Limitação de Responsabilidade',
+              c: ['O Estúdio envidará esforços para manter o site atualizado e disponível, mas não se responsabiliza por instabilidades temporárias, indisponibilidades decorrentes de manutenção ou falhas em serviços de terceiros.']
+            },
+            {
+              t: '10. Alterações e Legislação Aplicável',
+              c: [
+                'Estes Termos podem ser atualizados a qualquer momento, sendo a versão vigente publicada nesta página.',
+                'Estes Termos são regidos pelas leis da República Federativa do Brasil, com foro na Comarca de Santo André/SP para dirimir eventuais controvérsias.'
+              ]
+            }
+          ]
+        },
+        responsabilidade: {
+          titulo: 'Termo de Responsabilidade & Procedimentos Técnicos',
+          secao: [
+            {
+              t: '1. Avaliação Prévia e Teste de Mecha Obrigatório',
+              c: [
+                'Todo procedimento que envolva descoloração, mechas, coloração ou mudança de cor exige avaliação técnica prévia e Teste de Mecha.',
+                'Caso a fibra capilar apresente incompatibilidade, fragilidade ou risco de corte químico, o Studio Jane Barreiros reserva-se o direito de recusar a química imediata e indicar um protocolo de recuperação capilar.'
+              ]
+            },
+            {
+              t: '2. Veracidade do Histórico Capilar',
+              c: [
+                'É responsabilidade da cliente informar com exatidão todo o histórico químico recente do cabelo, incluindo o uso de hena, tinturas de farmácia, alisamentos, progressivas, botox capilar, tonificantes e qualquer outro procedimento.',
+                'O ocultamento ou a falsidade dessas informações isenta o profissional e o Estúdio de responsabilidade por reações químicas imprevisíveis, resultados insatisfatórios ou danos aos fios.'
+              ]
+            },
+            {
+              t: '3. Condições de Saúde e Alergias',
+              c: [
+                'A cliente deve comunicar à equipe qualquer alergia, sensibilidade, lesão no couro cabeludo, gestação, lactação ou uso de medicamentos que possam influenciar o procedimento.',
+                'Em caso de dúvida, o procedimento poderá ser adiado ou indicada a avaliação de um profissional de saúde.'
+              ]
+            },
+            {
+              t: '4. Manutenção e Home Care',
+              c: [
+                'O resultado e a durabilidade da cor, da reconstrução ou do tratamento dependem do cumprimento das orientações de manutenção, do cronograma capilar e dos produtos Home Care recomendados pelo profissional.',
+                'A não observância dessas recomendações pode comprometer o resultado e não caracteriza garantia do serviço.'
+              ]
+            },
+            {
+              t: '5. Sobre o Conteúdo dos Cursos',
+              c: [
+                'O conteúdo disponibilizado nos cursos do Estúdio possui caráter didático e profissional. O uso é pessoal e intransferível, sendo vedada a distribuição, reprodução ou revenda do material.',
+                'O Estúdio não se responsabiliza pela aplicação do conteúdo didático em situações que exijam avaliação individualizada, devendo cada profissional realizar os testes e a avaliação prévia em suas clientes.'
+              ]
+            },
+            {
+              t: '6. Aceite e Contato',
+              c: [
+                'Ao realizar o agendamento, a cliente declara ter lido e compreendido este Termo de Responsabilidade, autorizando os procedimentos indicados pela equipe.',
+                'Em caso de dúvidas, a equipe do Studio Jane Barreiros está à disposição para esclarecimentos antes do início de qualquer procedimento.'
+              ]
+            }
+          ]
+        }
+      };
+
+      function showLegal(tipo) {
+        var item = legais[tipo];
+        if (!legalModal || !item) return;
+        legalTitulo.textContent = item.titulo;
+        legalCorpo.innerHTML = item.secao.map(function (s) {
+          var paragrafos = (s.c && s.c.length ? s.c : [s.c]).map(function (p) {
+            return '<p class="text-sm font-light leading-relaxed text-muted">' + p + '</p>';
+          }).join('');
+          return '<div class="border-l-2 border-gold/40 pl-4"><h4 class="font-serif text-base font-semibold text-gold-light">' + s.t + '</h4>' + paragrafos + '</div>';
+        }).join('');
+        legalModal.classList.remove('hidden');
+        legalModal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeLegal() {
+        if (!legalModal) return;
+        legalModal.classList.add('hidden');
+        legalModal.classList.remove('flex');
+        document.body.style.overflow = '';
+      }
+      if (legalModal) {
+        var legalFechar = document.getElementById('modal-legal-fechar');
+        if (legalFechar) legalFechar.addEventListener('click', closeLegal);
+        legalModal.addEventListener('click', function (e) { if (e.target === legalModal) closeLegal(); });
+        document.querySelectorAll('[data-legal]').forEach(function (btn) {
+          btn.addEventListener('click', function () { showLegal(btn.getAttribute('data-legal')); });
+        });
+      }
+
+      /* ---------- Banner de Cookies (LGPD) ---------- */
+      var cookieBanner = document.getElementById('cookie-banner');
+      var cookieAceitar = document.getElementById('cookie-aceitar');
+      var cookieRecusar = document.getElementById('cookie-recusar');
+
+      function esconderCookies() {
+        if (!cookieBanner) return;
+        cookieBanner.classList.add('opacity-0', '-translate-y-2');
+        setTimeout(function () {
+          cookieBanner.classList.add('hidden');
+          cookieBanner.classList.remove('flex');
+        }, 450);
+      }
+
+      try {
+        if (!localStorage.getItem('cookiesAceitos') && cookieBanner) {
+          cookieBanner.classList.remove('hidden');
+          cookieBanner.classList.add('flex');
+        }
+      } catch (e) {}
+
+      if (cookieAceitar) cookieAceitar.addEventListener('click', function () {
+        try { localStorage.setItem('cookiesAceitos', 'true'); } catch (e) {}
+        esconderCookies();
+      });
+      if (cookieRecusar) cookieRecusar.addEventListener('click', function () {
+        try { localStorage.setItem('cookiesAceitos', 'false'); } catch (e) {}
+        esconderCookies();
+      });
+      } // fim iniciarConsentimento
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', iniciarConsentimento);
+      } else {
+        iniciarConsentimento();
+      }
+    })();
+  </script>
+
+  <div id="modal-legal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-black/80 p-5 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="modal-legal-titulo">
+    <button type="button" id="modal-legal-fechar" aria-label="Fechar modal" class="absolute right-5 top-5 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-gold/40 text-gold-light transition-all duration-300 hover:scale-105 hover:border-gold hover:bg-gold hover:text-black">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="relative max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-gold/30 bg-[#111111] p-8 text-ink shadow-[0_30px_80px_-20px_rgba(0,0,0,.9)] sm:p-10">
+      <h3 id="modal-legal-titulo" class="font-serif text-2xl font-semibold text-ink">Termos e Condições de Uso</h3>
+      <div id="modal-legal-corpo" class="mt-5 space-y-4 text-sm font-light leading-relaxed text-muted"></div>
+    </div>
+  </div>
+
+  <!-- ==============================================================
+       MODO EDITOR (dono): ocultar/reativar publicações direto no site
+  =============================================================== -->
+  <button type="button" id="owner-lock" aria-label="Modo editor (dono)" title="Modo editor" class="fixed bottom-4 left-4 z-50 flex h-10 w-10 items-center justify-center rounded-full border border-gold/30 bg-[#121212]/90 text-gold-light shadow-lg backdrop-blur-md transition-all duration-300 hover:border-gold hover:bg-black sm:bottom-6 sm:left-6">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+  </button>
+
+  <!-- ==============================================================
+       BANNER DE COOKIES (LGPD)
+  =============================================================== -->
+  <div id="cookie-banner" class="fixed bottom-4 left-4 right-4 z-50 hidden flex-col gap-4 rounded-2xl border border-[#D4AF37]/40 bg-[#121212]/95 p-5 shadow-[0_20px_60px_-15px_rgba(0,0,0,.95)] backdrop-blur-md transition-all duration-500 ease-out sm:bottom-6 sm:left-auto sm:right-6 sm:max-w-md sm:p-6" role="region" aria-label="Aviso de cookies">
+    <p class="text-[13px] font-light leading-relaxed text-slate-300">
+      Utilizamos cookies para personalizar e melhorar sua experiência no site do Studio Jane Barreiros. Ao continuar navegando, você concorda com a nossa política de privacidade.
+    </p>
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <button type="button" id="cookie-aceitar" class="bg-gradient-to-r from-[#BF953F] via-[#FCF6BA] to-[#B38728] rounded-full px-6 py-2.5 text-sm font-semibold text-black shadow-[0_4px_20px_-6px_rgba(212,175,55,.6)] transition-all duration-300 hover:brightness-110">Aceitar</button>
+      <button type="button" id="cookie-recusar" class="text-xs font-semibold text-[#BF953F] transition-colors duration-300 hover:text-[#FCF6BA]">Apenas Essenciais</button>
+    </div>
+  </div>
+</body>
+</html>
