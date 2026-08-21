@@ -8,5 +8,8 @@
   },
   "devDependencies": {
     "decap-server": "^3.8.0"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
   }
 }
