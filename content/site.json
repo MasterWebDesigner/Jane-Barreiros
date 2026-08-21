@@ -231,7 +231,7 @@
     }
   ],
   "curso": {
-    "checkout": "curso-online.html",
+    "checkout": "curso.html",
     "garantia": "Garantia incondicional de 7 dias",
     "beneficios": [
       {
@@ -279,7 +279,7 @@
         "ordem": 2,
         "imagem": "Instagram/Instagram.png",
         "titulo": "",
-        "link": "https://www.instagram.com/p/DCcI6JyOZnI/",
+        "link": "https://www.instagram.com/p/Db9b3uLxtuO/",
         "video": "Instagram/VideoJane2.mp4",
         "ocultar": false
       },

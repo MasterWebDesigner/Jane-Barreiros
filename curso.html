@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Clube Loiros com Propósito — Curso Online de Colorimetria e Técnicas de Clareamento por Edjane Barreiros. Domine a arte dos loiros perfeitos." />
+  <meta name="theme-color" content="#FBF6EC" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Clube Loiros com Propósito — Curso Online | Studio Jane Barreiros" />
+  <meta property="og:description" content="Domine a técnica dos loiros perfeitos e transforme sua carreira na colorimetria." />
+  <meta property="og:locale" content="pt_BR" />
+
+  <title>Clube Loiros com Propósito | Curso Online — Studio Jane Barreiros</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="Logomarca.png" type="image/png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Configuração do Tema -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream:       'rgb(var(--t-cream) / <alpha-value>)',
+            'cream-deep': 'rgb(var(--t-cream-deep) / <alpha-value>)',
+            'cream-soft': 'rgb(var(--t-cream-soft) / <alpha-value>)',
+            ink:         'rgb(var(--t-ink) / <alpha-value>)',
+            'ink-soft':  'rgb(var(--t-ink-soft) / <alpha-value>)',
+            muted:       'rgb(var(--t-muted) / <alpha-value>)',
+            gold:        'rgb(var(--t-gold) / <alpha-value>)',
+            'gold-dark': 'rgb(var(--t-gold-dark) / <alpha-value>)',
+            'gold-light':'rgb(var(--t-gold-light) / <alpha-value>)'
+          },
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans: ['Montserrat', '"Helvetica Neue"', 'Arial', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Aplica o tema salvo antes do render -->
+  <script>
+    try {
+      if (localStorage.getItem('jane-theme') === 'dark') {
+        document.documentElement.classList.remove('light');
+        var m = document.querySelector('meta[name="theme-color"]');
+        if (m) m.setAttribute('content', '#0D0D0D');
+      }
+    } catch (e) {}
+  </script>
+
+  <style type="text/tailwindcss">
+    @layer base {
+      html { scroll-behavior: smooth; }
+    }
+    @layer components {
+      .btn {
+        @apply inline-flex items-center justify-center gap-2 rounded-full px-7 py-4 text-sm font-semibold tracking-wide transition-all duration-300;
+      }
+      .btn-primary {
+        @apply shadow-lg hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0;
+      }
+      .btn-outline {
+        @apply border-2 border-gold/50 text-gold-light hover:border-gold hover:bg-gold hover:text-black active:translate-y-0;
+      }
+      .btn-gold {
+        @apply text-white shadow-xl shadow-gold/40 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-gold/50 active:translate-y-0;
+      }
+      .eyebrow {
+        @apply inline-flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.3em] text-muted;
+      }
+      .eyebrow::before {
+        content: "";
+        @apply h-px w-9 bg-gold;
+      }
+      .nav-link {
+        @apply relative text-sm font-medium tracking-wide text-ink-soft transition-colors hover:text-ink;
+      }
+      .nav-link::after {
+        content: "";
+        @apply absolute -bottom-1 left-0 h-px w-0 bg-gold-dark transition-all duration-300;
+      }
+      .nav-link:hover::after {
+        @apply w-full;
+      }
+    }
+  </style>
+
+  <!-- Tema Preto & Dourado Luxo -->
+  <style>
+    :root {
+      --t-cream: 13 13 13;
+      --t-cream-deep: 26 26 26;
+      --t-cream-soft: 21 21 21;
+      --t-ink: 245 245 245;
+      --t-ink-soft: 201 194 184;
+      --t-muted: 168 162 154;
+      --t-gold: 212 175 55;
+      --t-gold-dark: 191 149 63;
+      --t-gold-light: 243 229 178;
+    }
+    html.light {
+      --t-cream: 250 246 238;
+      --t-cream-deep: 242 236 224;
+      --t-cream-soft: 255 255 255;
+      --t-ink: 38 33 25;
+      --t-ink-soft: 84 74 58;
+      --t-muted: 122 112 96;
+      --t-gold: 163 130 30;
+      --t-gold-dark: 122 90 15;
+      --t-gold-light: 196 160 52;
+    }
+    html.light h1, html.light h2, html.light h3 { color: #8A6A12; }
+    html.light h1 em, html.light h2 em, html.light h3 em { color: #A9811F; }
+    h1, h2, h3 { color: #D4AF37; }
+    h1 em, h2 em, h3 em { color: #EBCF7D; }
+    footer { border-top: 1px solid rgba(212, 175, 55, .35); }
+    .btn-primary, .btn-ghost-gold, .btn-gold, .btn-outline {
+      border: 1px solid rgba(122, 85, 20, .55) !important;
+      background-image: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%) !important;
+      color: #241805 !important;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, .35);
+      box-shadow: 0 4px 12px -4px rgba(140, 100, 25, .55) !important;
+    }
+    .btn-primary:hover, .btn-ghost-gold:hover, .btn-gold:hover, .btn-outline:hover {
+      scale: 1.05;
+      box-shadow: 0 0 18px 3px rgba(212, 175, 55, .6);
+      filter: brightness(1.05);
+    }
+    .check-gold {
+      background-image: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%) !important;
+      border: 1px solid rgba(122, 85, 20, .45);
+      color: #241805 !important;
+      box-shadow: 0 2px 6px -2px rgba(140, 100, 25, .5);
+    }
+    /* === Header + Footer sempre escuros (modo claro) === */
+    html.light #site-header {
+      background-color: rgba(10,10,10,.88) !important;
+      border-color: rgba(212,175,55,.35) !important;
+    }
+    html.light #site-header .nav-link {
+      color: rgba(243,229,178,.85);
+    }
+    html.light #site-header .nav-link:hover {
+      color: #D4AF37;
+    }
+    html.light #site-header #menu-btn span {
+      background-color: #F3E5B2;
+    }
+    html.light footer {
+      background-color: #0A0A0A !important;
+      border-top-color: rgba(212,175,55,.35) !important;
+    }
+    html.light footer a,
+    html.light footer #footer-logo-etiqueta {
+      color: #E5DDD0;
+    }
+    html.light footer a:hover {
+      color: #D4AF37;
+    }
+    html.light footer .font-serif {
+      color: #D4AF37;
+    }
+
+    /* ===== Accordion ===== */
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1), padding 0.35s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+    .accordion-item.active .accordion-content {
+      max-height: 600px;
+      opacity: 1;
+    }
+    .accordion-arrow {
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .accordion-item.active .accordion-arrow {
+      transform: rotate(180deg);
+    }
+
+    /* ===== Pulse Gold ===== */
+    @keyframes pulse-gold {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.5), 0 4px 12px -4px rgba(140, 100, 25, .55); }
+      50% { box-shadow: 0 0 0 14px rgba(212, 175, 55, 0), 0 4px 12px -4px rgba(140, 100, 25, .55); }
+    }
+    .pulse-gold {
+      animation: pulse-gold 2.2s ease-in-out infinite;
+    }
+
+    /* ===== Video play button pulse ===== */
+    @keyframes pulse-play {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.6); }
+      50% { box-shadow: 0 0 0 16px rgba(212, 175, 55, 0); }
+    }
+    .pulse-play {
+      animation: pulse-play 2s ease-in-out infinite;
+    }
+  </style>
+</head>
+
+<body class="bg-cream text-ink font-sans antialiased selection:bg-gold selection:text-black">
+
+  <!-- ==============================================================
+       1. HEADER FIXO
+  =============================================================== -->
+  <header class="fixed inset-x-0 top-0 z-50 border-b border-cream-deep bg-cream/85 backdrop-blur-md" id="site-header">
+    <div class="mx-auto flex h-20 max-w-6xl items-center justify-between px-5 lg:px-8">
+      <a href="index.html#hero" class="leading-none">
+        <img src="Logo1.png" alt="Studio Jane Barreiros" style="max-height:50px" class="h-auto w-auto">
+      </a>
+
+      <!-- Navegação Desktop -->
+      <nav class="hidden items-center gap-9 lg:flex" aria-label="Navegação principal">
+        <a href="index.html#sobre" class="nav-link">Sobre</a>
+        <a href="index.html#servicos" class="nav-link">Serviços</a>
+        <a href="agendamento.html" class="nav-link">Agendamento</a>
+        <a href="#modulos" class="nav-link">Módulos</a>
+        <a href="#faq" class="nav-link">FAQ</a>
+        <a href="https://pay.hotmart.com/SEU_CODIGO_DE_PRODUTO" target="_blank" rel="noopener" class="btn btn-primary !py-3 !px-6 text-xs">GARANTIR MINHA VAGA</a>
+      </nav>
+
+      <!-- Alternador de tema + Hambúrguer (Mobile) -->
+      <div class="flex items-center gap-2 lg:gap-3">
+        <button id="theme-toggle" type="button" aria-label="Alternar modo claro/escuro" class="flex h-10 w-10 items-center justify-center rounded-full border border-gold/40 text-gold-light transition-all duration-300 hover:border-gold hover:bg-gold hover:text-black">
+          <svg id="icon-lua" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg id="icon-sol" class="hidden h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        </button>
+        <button id="menu-btn" class="flex flex-col gap-[6px] p-2 lg:hidden" aria-label="Abrir menu de navegação" aria-expanded="false" aria-controls="mobile-menu">
+          <span class="block h-0.5 w-7 bg-ink transition-all duration-300"></span>
+          <span class="block h-0.5 w-7 bg-ink transition-all duration-300"></span>
+          <span class="block h-0.5 w-7 bg-ink transition-all duration-300"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Menu Mobile (Overlay) -->
+  <nav id="mobile-menu" class="fixed inset-0 z-40 hidden flex-col items-center justify-center gap-9 bg-cream/95 backdrop-blur-xl lg:hidden" aria-label="Menu mobile">
+    <a href="index.html#sobre" class="mobile-link font-serif text-2xl text-gold-light">Sobre</a>
+    <a href="index.html#servicos" class="mobile-link font-serif text-2xl text-gold-light">Serviços</a>
+    <a href="agendamento.html" class="mobile-link font-serif text-2xl text-gold-light">Agendamento</a>
+    <a href="#modulos" class="mobile-link font-serif text-2xl text-gold-light">Módulos</a>
+    <a href="#faq" class="mobile-link font-serif text-2xl text-gold-light">FAQ</a>
+    <a href="https://pay.hotmart.com/SEU_CODIGO_DE_PRODUTO" target="_blank" rel="noopener" class="mobile-link btn btn-primary mt-2">GARANTIR MINHA VAGA</a>
+  </nav>
+
+  <main>
+
+    <!-- ==============================================================
+         2. HERO SECTION
+    =============================================================== -->
+    <section id="hero" class="relative overflow-hidden pb-20 pt-32 lg:pb-28 lg:pt-44">
+      <div class="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-[#0A0A0A] via-[#111111] to-[#1A1A1A]"></div>
+      <div class="pointer-events-none absolute -top-24 -left-24 -z-10 h-96 w-96 rounded-full bg-gold/15 blur-3xl"></div>
+      <div class="pointer-events-none absolute -bottom-32 -right-32 -z-10 h-[500px] w-[500px] rounded-full bg-gold/10 blur-3xl"></div>
+
+      <div class="mx-auto max-w-6xl px-5 lg:px-8">
+        <div class="text-center">
+          <span class="inline-flex items-center rounded-full border border-gold/40 bg-gold/10 px-5 py-2 text-[11px] font-bold uppercase tracking-[0.25em] text-gold-light">Curso Online</span>
+
+          <h1 class="mx-auto mt-8 max-w-4xl font-serif text-3xl font-medium leading-[1.12] sm:text-4xl lg:text-5xl xl:text-6xl">
+            Domine a Técnica dos <em class="italic">Loiros Perfeitos</em> e Transforme sua Carreira na <em class="italic">Colorimetria</em>
+          </h1>
+
+          <p class="mx-auto mt-6 max-w-2xl text-base font-light leading-relaxed text-muted sm:text-lg">
+            Técnicas práticas e comprovadas por +3.000 clientes atendidas. Aprenda a criar loiros impecáveis, do clareamento à tonalização, com segurança e precisão.
+          </p>
+
+          <!-- Video placeholder -->
+          <div class="relative mx-auto mt-12 max-w-3xl overflow-hidden rounded-2xl border border-gold/30 shadow-2xl">
+            <div class="relative aspect-video">
+              <img src="assets/img/jane.jpg" alt="Aula do Curso Clube Loiros com Propósito" class="h-full w-full object-cover" onerror="this.onerror=null;this.src='https://placehold.co/1280x720/1A1A1A/D4AF37?text=Curso+Clube+Loiros+com+Propósito';" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+              <button type="button" class="pulse-play absolute left-1/2 top-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-gold/60 bg-black/50 text-gold-light backdrop-blur-sm transition-all duration-300 hover:scale-110 hover:border-gold hover:bg-gold hover:text-black sm:h-24 sm:w-24" aria-label="Assistir prévia do curso">
+                <svg viewBox="0 0 24 24" fill="currentColor" class="ml-1 h-8 w-8 sm:h-10 sm:w-10"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+              <span class="absolute bottom-4 left-4 rounded-lg bg-black/70 px-4 py-2 text-xs font-medium text-muted backdrop-blur">Prévia do Curso</span>
+            </div>
+          </div>
+
+          <!-- CTA principal -->
+          <div class="mt-12">
+            <a href="https://pay.hotmart.com/SEU_CODIGO_DE_PRODUTO" target="_blank" rel="noopener" class="pulse-gold btn-gold inline-flex items-center gap-3 rounded-full px-10 py-5 text-base font-bold tracking-wide sm:text-lg">
+              GARANTIR MINHA VAGA AGORA <span aria-hidden="true">→</span>
+            </a>
+            <p class="mt-4 text-xs text-muted">Oferta por tempo limitado • Vagas limitadas</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         3. PARA QUEM É
+    =============================================================== -->
+    <section id="para-quem" class="scroll-mt-24 bg-cream-deep py-20 lg:py-28">
+      <div class="mx-auto max-w-6xl px-5 lg:px-8">
+        <header class="mx-auto max-w-2xl text-center">
+          <p class="eyebrow inline-flex justify-center">Pra quem é</p>
+          <h2 class="mt-5 font-serif text-3xl font-semibold sm:text-4xl">Esse curso é para você que…</h2>
+        </header>
+
+        <div class="mt-14 grid gap-7 sm:grid-cols-2 lg:grid-cols-4">
+          <!-- Card 1 -->
+          <article class="group rounded-2xl border border-gold/25 bg-cream-soft p-8 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-gold hover:shadow-md">
+            <div class="flex h-14 w-14 items-center justify-center rounded-full bg-cream-deep text-gold-dark transition-colors duration-300 group-hover:bg-gold group-hover:text-white">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-7 w-7"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+            </div>
+            <h3 class="mt-6 font-serif text-lg font-semibold">Medo de Manchar o Cabelo</h3>
+            <p class="mt-3 text-sm font-light leading-relaxed text-muted">Tem receio de aplicar cor e o resultado sair fora do esperado? Aprenda a diagnósticar e planejar cada etapa com segurança.</p>
+          </article>
+
+          <!-- Card 2 -->
+          <article class="group rounded-2xl border border-gold/25 bg-cream-soft p-8 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-gold hover:shadow-md">
+            <div class="flex h-14 w-14 items-center justify-center rounded-full bg-cream-deep text-gold-dark transition-colors duration-300 group-hover:bg-gold group-hover:text-white">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-7 w-7"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+            </div>
+            <h3 class="mt-6 font-serif text-lg font-semibold">Dúvida na Tonalização</h3>
+            <p class="mt-3 text-sm font-light leading-relaxed text-muted">Não sabe qual tom escolher ou como neutralizar amarelos e laranjas? Domine o círculo cromático na prática.</p>
+          </article>
+
+          <!-- Card 3 -->
+          <article class="group rounded-2xl border border-gold/25 bg-cream-soft p-8 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-gold hover:shadow-md">
+            <div class="flex h-14 w-14 items-center justify-center rounded-full bg-cream-deep text-gold-dark transition-colors duration-300 group-hover:bg-gold group-hover:text-white">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-7 w-7"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <h3 class="mt-6 font-serif text-lg font-semibold">Dificuldade em Precificar</h3>
+            <p class="mt-3 text-sm font-light leading-relaxed text-muted">Sabe fazer, mas não sabe cobrar? Aprenda a precificar seu trabalho com base em tempo,-material e valor agregado.</p>
+          </article>
+
+          <!-- Card 4 -->
+          <article class="group rounded-2xl border border-gold/25 bg-cream-soft p-8 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-gold hover:shadow-md">
+            <div class="flex h-14 w-14 items-center justify-center rounded-full bg-cream-deep text-gold-dark transition-colors duration-300 group-hover:bg-gold group-hover:text-white">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="h-7 w-7"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <h3 class="mt-6 font-serif text-lg font-semibold">Quero Mais Clientes</h3>
+            <p class="mt-3 text-sm font-light leading-relaxed text-muted">Resultados impressionantes atraem novos clientes. Torne-se referência em loiros e multiplique sua agenda.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         4. MÓDULOS DO CURSO
+    =============================================================== -->
+    <section id="modulos" class="scroll-mt-24 py-20 lg:py-28">
+      <div class="mx-auto max-w-4xl px-5 lg:px-8">
+        <header class="mx-auto max-w-2xl text-center">
+          <p class="eyebrow inline-flex justify-center">Conteúdo Programático</p>
+          <h2 class="mt-5 font-serif text-3xl font-semibold sm:text-4xl">Módulos do Curso</h2>
+          <p class="mt-4 font-light text-muted">4 módulos completos para você dominar cada etapa da colorimetria capilar.</p>
+        </header>
+
+        <div class="mt-14 space-y-4" id="modulos-accordion">
+
+          <!-- Módulo 01 -->
+          <div class="accordion-item rounded-2xl border border-gold/25 bg-cream-soft shadow-sm transition-all duration-300 hover:border-gold/50">
+            <button type="button" class="accordion-trigger flex w-full items-center gap-5 p-6 text-left sm:p-8" aria-expanded="false">
+              <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gold font-serif text-lg font-bold text-black">01</span>
+              <div class="flex-1">
+                <h3 class="font-serif text-lg font-semibold sm:text-xl">Fundamentos da Colorimetria</h3>
+                <p class="mt-1 text-sm text-muted">A base teórica para dominar a cor.</p>
+              </div>
+              <svg class="accordion-arrow h-5 w-5 shrink-0 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="accordion-content px-6 pb-6 sm:px-8 sm:pb-8">
+              <div class="border-t border-gold/15 pt-6">
+                <ul class="space-y-3">
+                  <li class="flex items-start gap-3 text-sm text-ink-soft"><span class="check-gold mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Círculo cromático e harmonia de cores</li>
+                  <li class="flex items-start gap-3 text-sm text-ink-soft"><span class="check-gold mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Níveis de clareza e subtons</li>
+                  <li class="flex items-start gap-3 text-sm text-ink-soft"><span class="check-gold mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Leitura de fiche de coloração</li>
+                  <li class="flex items-start gap-3 text-sm text-ink-soft"><span class="check-gold mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Teste de mecha e diagnóstico capilar</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Módulo 02 -->
+          <div class="accordion-item rounded-2xl border border-gold/25 bg-cream-soft shadow-sm transition-all duration-300 hover:border-gold/50">
+            <button type="button" class="accordion-trigger flex w-full items-center gap-5 p-6 text-left sm:p-8" aria-expanded="false">
+              <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gold font-serif text-lg font-bold text-black">02</span>
+              <div class="flex-1">
+                <h3 class="font-serif text-lg font-semibold sm:text-xl">Técnicas de Clareamento Sem Danos</h3>
+                <p class="mt-1 text-sm text-muted">Ilumine os fios preservando a saúde capilar.</p>
+              </div>
+              <svg class="accordion-arrow h-5 w-5 shrink-0 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="accordion-content px-6 pb-6 sm:px-8 sm:pb-8">
+              <div class="border-t border-gold/15 pt-6">
+                <ul class="space-y-3">
+                  <li class="flex items-start gap-3 text-sm text-ink-soft"><span class="check-gold mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Babylights — iluminação sutil e natural</li>
+                  <li class="flex items-start gap-3 text-sm text-ink-soft"><span class="check-gold mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Freehands — liberdade criativa na pintura</li>
+                  <li class="flex items-start gap-3 text-sm text-ink-soft"><span class="check-gold mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Clareamento global seguro e controlado</li>
+                  <li class="flex items-start gap-3 text-sm text-ink-soft"><span class="check-gold mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Proteção e reconstrução durante o processo</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Módulo 03 -->
+          <div class="accordion-item rounded-2xl border border-gold/25 bg-cream-soft shadow-sm transition-all duration-300 hover:border-gold/50">
+            <button type="button" class="accordion-trigger flex w-full items-center gap-5 p-6 text-left sm:p-8" aria-expanded="false">
+              <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gold font-serif text-lg font-bold text-black">03</span>
+              <div class="flex-1">
+                <h3 class="font-serif text-lg font-semibold sm:text-xl">Matização e Tonalização de Elite</h3>
+                <p class="mt-1 text-sm text-muted">Cores perfeitas do início ao fim.</p>
+              </div>
+              <svg class="accordion-arrow h-5 w-5 shrink-0 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="accordion-content px-6 pb-6 sm:px-8 sm:pb-8">
+              <div class="border-t border-gold/15 pt-6">
+                <ul class="space-y-3">
+                  <li class="flex items-start gap-3 text-sm text-ink-soft"><span class="check-gold mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Cores frias vs. cores quentes — quando usar cada uma</li>
+                  <li class="flex items-start gap-3 text-sm text-ink-soft"><span class="check-gold mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Loiros platinados e acinzentados sem erros</li>
+                  <li class="flex items-start gap-3 text-sm text-ink-soft"><span class="check-gold mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Correção de cor — como resolver o que deu errado</li>
+                  <li class="flex items-start gap-3 text-sm text-ink-soft"><span class="check-gold mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Tonalização de precisão para cada tipo de fio</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Módulo 04 -->
+          <div class="accordion-item rounded-2xl border border-gold/25 bg-cream-soft shadow-sm transition-all duration-300 hover:border-gold/50">
+            <button type="button" class="accordion-trigger flex w-full items-center gap-5 p-6 text-left sm:p-8" aria-expanded="false">
+              <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gold font-serif text-lg font-bold text-black">04</span>
+              <div class="flex-1">
+                <h3 class="font-serif text-lg font-semibold sm:text-xl">Pós-Química e Manutenção</h3>
+                <p class="mt-1 text-sm text-muted">Fidelize clientes com resultados duradouros.</p>
+              </div>
+              <svg class="accordion-arrow h-5 w-5 shrink-0 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="accordion-content px-6 pb-6 sm:px-8 sm:pb-8">
+              <div class="border-t border-gold/15 pt-6">
+                <ul class="space-y-3">
+                  <li class="flex items-start gap-3 text-sm text-ink-soft"><span class="check-gold mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Protocolos de recuperação pós-química</li>
+                  <li class="flex items-start gap-3 text-sm text-ink-soft"><span class="check-gold mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Cronograma capilar para manter a cor</li>
+                  <li class="flex items-start gap-3 text-sm text-ink-soft"><span class="check-gold mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Orientação de home care para a cliente</li>
+                  <li class="flex items-start gap-3 text-sm text-ink-soft"><span class="check-gold mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold">✓</span> Técnicas de retenção e fidelização de clientes</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         5. AUTORIDADE DA MENTORA
+    =============================================================== -->
+    <section id="mentora" class="scroll-mt-24 bg-cream-deep py-20 lg:py-28">
+      <div class="mx-auto grid max-w-6xl items-center gap-12 px-5 lg:grid-cols-[1fr_1.15fr] lg:gap-16 lg:px-8">
+        <!-- Foto -->
+        <div class="relative mx-auto w-full max-w-md lg:max-w-none">
+          <div class="relative aspect-[4/5] overflow-hidden rounded-2xl bg-gold-light shadow-xl">
+            <img src="assets/img/jane.jpg" alt="Edjane Barreiros, mentora do Curso Clube Loiros com Propósito" class="h-full w-full object-cover" onerror="this.onerror=null;this.src='https://placehold.co/800x1000/1A1A1A/D4AF37?text=Edjane+Barreiros';" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+          </div>
+        </div>
+
+        <!-- Texto -->
+        <div>
+          <p class="eyebrow">Sua Mentora</p>
+          <h2 class="mt-5 font-serif text-3xl font-semibold leading-tight sm:text-4xl">
+            Conheça <em class="italic">Edjane Barreiros</em>
+          </h2>
+          <div class="mt-7 grid grid-cols-3 gap-4">
+            <div class="rounded-xl border border-gold/30 bg-cream-soft p-4 text-center shadow-sm">
+              <span class="font-serif text-2xl font-semibold text-gold">+12</span>
+              <p class="mt-1 text-xs text-muted">anos de experiência</p>
+            </div>
+            <div class="rounded-xl border border-gold/30 bg-cream-soft p-4 text-center shadow-sm">
+              <span class="font-serif text-2xl font-semibold text-gold">+3.000</span>
+              <p class="mt-1 text-xs text-muted">clientes atendidas</p>
+            </div>
+            <div class="rounded-xl border border-gold/30 bg-cream-soft p-4 text-center shadow-sm">
+              <span class="font-serif text-lg font-semibold text-gold">Educadora</span>
+              <p class="mt-1 text-xs text-muted">de cabeleireiros</p>
+            </div>
+          </div>
+          <div class="mt-8 space-y-5 text-muted font-light leading-relaxed">
+            <p>
+              Minha trajetória começou de forma simples — de <strong class="font-semibold text-ink-soft">2 cômodos no fundo de uma casa</strong> — até a estrutura completa do meu studio em Santo André. Cada etapa me ensinou que técnica, escuta e acolhimento caminham juntos.
+            </p>
+            <p>
+              Hoje, além de atender mais de 3.000 clientes, atuo como <strong class="font-semibold text-ink-soft">Educadora de cabeleireiros</strong>, compartilhando tudo o que vivi e aprendi no universo dos loiros e da colorimetria para formar novos profissionais de sucesso.
+            </p>
+            <p>
+              Este curso é a condensação de mais de uma década de experiência prática — sem enrolação, direto ao ponto, com técnicas que funcionam no dia a dia do salão.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         6. CARD DE OFERTA
+    =============================================================== -->
+    <section id="oferta" class="scroll-mt-24 py-20 lg:py-28">
+      <div class="mx-auto max-w-3xl px-5 lg:px-8">
+        <div class="relative rounded-3xl border-2 border-gold/50 bg-cream-soft p-8 shadow-xl sm:p-12">
+          <!-- Badge -->
+          <div class="text-center">
+            <span class="inline-flex items-center rounded-full bg-gold/10 px-5 py-2 text-[11px] font-bold uppercase tracking-[0.25em] text-gold-dark">Oferta Especial</span>
+          </div>
+
+          <h2 class="mt-6 text-center font-serif text-2xl font-semibold sm:text-3xl">
+            Clube Loiros com Propósito
+          </h2>
+
+          <!-- Preço -->
+          <div class="mt-6 text-center">
+            <p class="text-sm text-muted">Investimento</p>
+            <p class="mt-2 font-serif text-5xl font-bold text-ink sm:text-6xl">R$ 47,99</p>
+            <p class="mt-2 text-base text-muted">ou 6x de R$ 9,00</p>
+          </div>
+
+          <!-- Benefícios -->
+          <ul class="mt-8 space-y-4">
+            <li class="flex items-center gap-3 text-sm text-ink-soft"><span class="check-gold flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold">✓</span> Clareamento e neutralização de fundos</li>
+            <li class="flex items-center gap-3 text-sm text-ink-soft"><span class="check-gold flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold">✓</span> Tonalização e construção de loiros</li>
+            <li class="flex items-center gap-3 text-sm text-ink-soft"><span class="check-gold flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold">✓</span> Recuperação e manutenção dos fios</li>
+            <li class="flex items-center gap-3 text-sm text-ink-soft"><span class="check-gold flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold">✓</span> Material de apoio exclusivo</li>
+          </ul>
+
+          <!-- CTA -->
+          <div class="mt-10 text-center">
+            <a href="https://pay.hotmart.com/SEU_CODIGO_DE_PRODUTO" target="_blank" rel="noopener" class="btn-gold inline-flex w-full items-center justify-center gap-2 rounded-full px-8 py-4 text-base font-bold sm:w-auto">
+              GARANTIR MINHA VAGA <span aria-hidden="true">→</span>
+            </a>
+          </div>
+
+          <!-- Badges de segurança -->
+          <div class="mt-10 grid grid-cols-2 gap-4 border-t border-gold/20 pt-8 sm:grid-cols-4">
+            <div class="text-center">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto h-7 w-7 text-gold"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              <p class="mt-2 text-xs font-medium text-ink-soft">Acesso Imediato</p>
+            </div>
+            <div class="text-center">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto h-7 w-7 text-gold"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <p class="mt-2 text-xs font-medium text-ink-soft">Certificado Incluído</p>
+            </div>
+            <div class="text-center">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto h-7 w-7 text-gold"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <p class="mt-2 text-xs font-medium text-ink-soft">Pagamento Seguro</p>
+            </div>
+            <div class="text-center">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto h-7 w-7 text-gold"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <p class="mt-2 text-xs font-medium text-ink-soft">Garantia 7 Dias</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         7. FAQ
+    =============================================================== -->
+    <section id="faq" class="scroll-mt-24 bg-cream-deep py-20 lg:py-28">
+      <div class="mx-auto max-w-3xl px-5 lg:px-8">
+        <header class="mx-auto max-w-2xl text-center">
+          <p class="eyebrow inline-flex justify-center">Dúvidas Frequentes</p>
+          <h2 class="mt-5 font-serif text-3xl font-semibold sm:text-4xl">Perguntas &amp; Respostas</h2>
+        </header>
+
+        <div class="mt-14 space-y-4" id="faq-accordion">
+
+          <!-- Pergunta 1 -->
+          <div class="accordion-item rounded-2xl border border-gold/25 bg-cream-soft shadow-sm transition-all duration-300 hover:border-gold/50">
+            <button type="button" class="accordion-trigger flex w-full items-center gap-4 p-6 text-left sm:p-7" aria-expanded="false">
+              <h3 class="flex-1 font-serif text-base font-semibold sm:text-lg">Como acesso as aulas?</h3>
+              <svg class="accordion-arrow h-5 w-5 shrink-0 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="accordion-content px-6 pb-6 sm:px-7 sm:pb-7">
+              <div class="border-t border-gold/15 pt-5">
+                <p class="text-sm font-light leading-relaxed text-muted">Após a confirmação do pagamento, você receberá um e-mail com os dados de acesso à plataforma. As aulas ficam disponíveis 24 horas por dia, 7 dias por semana, e você pode assistir no computador, tablet ou celular, no seu próprio ritmo.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pergunta 2 -->
+          <div class="accordion-item rounded-2xl border border-gold/25 bg-cream-soft shadow-sm transition-all duration-300 hover:border-gold/50">
+            <button type="button" class="accordion-trigger flex w-full items-center gap-4 p-6 text-left sm:p-7" aria-expanded="false">
+              <h3 class="flex-1 font-serif text-base font-semibold sm:text-lg">O curso oferece certificado?</h3>
+              <svg class="accordion-arrow h-5 w-5 shrink-0 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="accordion-content px-6 pb-6 sm:px-7 sm:pb-7">
+              <div class="border-t border-gold/15 pt-5">
+                <p class="text-sm font-light leading-relaxed text-muted">Sim! Ao concluir todas as aulas e módulos do curso, você recebe um certificado digital de conclusão que comprova sua especialização em colorimetria e técnicas de loiros. O certificado pode ser impresso ou compartilhado em suas redes sociais.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pergunta 3 -->
+          <div class="accordion-item rounded-2xl border border-gold/25 bg-cream-soft shadow-sm transition-all duration-300 hover:border-gold/50">
+            <button type="button" class="accordion-trigger flex w-full items-center gap-4 p-6 text-left sm:p-7" aria-expanded="false">
+              <h3 class="flex-1 font-serif text-base font-semibold sm:text-lg">Preciso de experiência prévia?</h3>
+              <svg class="accordion-arrow h-5 w-5 shrink-0 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="accordion-content px-6 pb-6 sm:px-7 sm:pb-7">
+              <div class="border-t border-gold/15 pt-5">
+                <p class="text-sm font-light leading-relaxed text-muted">Não! O curso foi pensado para atender tanto profissionais iniciantes quanto cabeleireiros já experientes que desejam se especializar em loiros e colorimetria. O conteúdo é apresentado de forma didática, do básico ao avançado, com linguagem acessível e muitos exemplos práticos.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pergunta 4 -->
+          <div class="accordion-item rounded-2xl border border-gold/25 bg-cream-soft shadow-sm transition-all duration-300 hover:border-gold/50">
+            <button type="button" class="accordion-trigger flex w-full items-center gap-4 p-6 text-left sm:p-7" aria-expanded="false">
+              <h3 class="flex-1 font-serif text-base font-semibold sm:text-lg">E se eu não gostar?</h3>
+              <svg class="accordion-arrow h-5 w-5 shrink-0 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="accordion-content px-6 pb-6 sm:px-7 sm:pb-7">
+              <div class="border-t border-gold/15 pt-5">
+                <p class="text-sm font-light leading-relaxed text-muted">Oferecemos garantia incondicional de 7 dias. Se dentro desse período você sentir que o curso não é para você, basta enviar um e-mail e devolveremos 100% do seu investimento, sem perguntas. O risco é todo nosso.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==============================================================
+       8. FOOTER
+  =============================================================== -->
+  <footer class="bg-cream-deep py-14 text-center text-muted">
+    <div class="mx-auto flex max-w-6xl flex-col items-center gap-7 px-5">
+      <a href="index.html#hero" class="leading-none">
+        <img src="Logo1.png" alt="Studio Jane Barreiros" style="max-height:44px" class="mx-auto h-auto w-auto">
+      </a>
+      <nav class="flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm" aria-label="Navegação do rodapé">
+        <a href="index.html#sobre" class="transition-colors hover:text-gold-light">Sobre</a>
+        <a href="index.html#servicos" class="transition-colors hover:text-gold-light">Serviços</a>
+        <a href="agendamento.html" class="transition-colors hover:text-gold-light">Agendamento</a>
+        <a href="#modulos" class="transition-colors hover:text-gold-light">Módulos</a>
+        <a href="#faq" class="transition-colors hover:text-gold-light">FAQ</a>
+      </nav>
+      <div class="flex flex-row items-center justify-center gap-5 sm:gap-6" aria-label="Redes sociais">
+        <svg width="0" height="0" class="absolute" aria-hidden="true" focusable="false"><defs>
+          <linearGradient id="goldSocial" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#F3E5B2"/><stop offset="0.45" stop-color="#D4AF37"/><stop offset="1" stop-color="#AA771C"/>
+          </linearGradient>
+        </defs></svg>
+        <a href="https://www.instagram.com/janebarreiros_" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram" class="text-gold transition-all duration-300 hover:scale-[1.15] hover:brightness-125">
+          <svg viewBox="0 0 24 24" fill="url(#goldSocial)" class="h-9 w-9"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/></svg>
+        </a>
+        <a href="https://www.facebook.com/janebarreiros" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook" class="text-gold transition-all duration-300 hover:scale-[1.15] hover:brightness-125">
+          <svg viewBox="0 0 24 24" fill="url(#goldSocial)" class="h-9 w-9"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </a>
+        <a href="https://www.threads.net/@janebarreiros_" target="_blank" rel="noopener" aria-label="Threads" title="Threads" class="text-gold transition-all duration-300 hover:scale-[1.15] hover:brightness-125">
+          <svg viewBox="0 0 448 512" fill="url(#goldSocial)" class="h-9 w-auto"><path d="M331.5 235.7c2.2 .9 4.2 1.9 6.3 2.8c29.2 14.1 50.6 35.2 61.8 61.4c15.7 36.5 17.2 95.8-30.3 143.2c-36.2 36.2-80.3 52.5-142.6 53h-.3c-70.2-.5-124.1-24.1-160.4-70.2c-32.3-41-48.9-98.1-49.5-169.6V256v-.2C17 184.3 33.6 127.2 65.9 86.2C102.2 40.1 156.2 16.5 226.4 16h.3c70.3 .5 124.9 24 162.3 69.9c18.4 22.7 32 50 40.6 81.7l-40.4 10.8c-7.1-25.8-17.8-47.8-32.2-65.4c-29.2-35.8-73-54.2-130.5-54.6c-57 .5-100.1 18.8-128.2 54.4C72.1 146.1 58.5 194.3 58 256c.5 61.7 14.1 109.9 40.3 143.3c28 35.6 71.2 53.9 128.2 54.4c51.4-.4 85.4-12.6 113.7-40.9c32.3-32.2 31.7-71.8 21.4-95.9c-6.1-14.2-17.1-26-31.9-34.9c-3.7 26.9-11.8 48.3-24.7 64.8c-17.1 21.8-41.4 33.6-72.7 35.3c-23.6 1.3-46.3-4.4-63.9-16c-20.8-13.8-33-34.8-34.3-59.3c-2.5-48.3 35.7-83 95.2-86.4c21.1-1.2 40.9-.3 59.2 2.8c-2.4-14.8-7.3-26.6-14.6-35.2c-10-11.7-25.6-17.7-46.2-17.8H227c-16.6 0-39 4.6-53.3 26.3l-34.4-23.6c19.2-29.1 50.3-45.1 87.8-45.1h.8c62.6 .4 99.9 39.5 103.7 107.7l-.2 .2zm-156 68.8c1.3 25.1 28.4 36.8 54.6 35.3c25.6-1.4 54.6-11.4 59.5-73.2c-13.2-2.9-27.8-4.4-43.4-4.4c-4.8 0-9.6 .1-14.4 .4c-42.9 2.4-57.2 23.2-56.2 41.8l-.1 .1z"/></svg>
+        </a>
+        <a href="https://www.linkedin.com/in/janebarreiros" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn" class="text-gold transition-all duration-300 hover:scale-[1.15] hover:brightness-125">
+          <svg viewBox="0 0 24 24" fill="url(#goldSocial)" class="h-9 w-9"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        </a>
+        <a href="https://www.tiktok.com/@janebarreiros_" target="_blank" rel="noopener" aria-label="TikTok" title="TikTok" class="text-gold transition-all duration-300 hover:scale-[1.15] hover:brightness-125">
+          <svg viewBox="0 0 24 24" fill="url(#goldSocial)" class="h-9 w-9"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+        </a>
+        <a href="https://wa.me/5511942212626" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp" class="text-gold transition-all duration-300 hover:scale-[1.15] hover:brightness-125">
+          <svg viewBox="0 0 448 512" fill="url(#goldSocial)" class="h-9 w-auto"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
+        </a>
+      </div>
+      <div class="mt-2 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 border-t border-white/10 pt-4 text-xs text-gray-400 md:gap-x-3">
+        <span>© <span id="year">2026</span> Studio Jane Barreiros. Todos os direitos reservados.</span>
+        <span class="hidden sm:inline text-gray-600">|</span>
+        <a href="javascript:void(0)" data-legal="privacidade" class="cursor-pointer underline transition-colors duration-300 hover:text-[#D4AF37]">Política de Privacidade</a>
+        <span class="hidden sm:inline text-gray-600">|</span>
+        <a href="javascript:void(0)" data-legal="termos" class="cursor-pointer underline transition-colors duration-300 hover:text-[#D4AF37]">Termos de Uso</a>
+        <span class="hidden sm:inline text-gray-600">|</span>
+        <a href="javascript:void(0)" data-legal="responsabilidade" class="cursor-pointer underline transition-colors duration-300 hover:text-[#D4AF37]">Termo de Responsabilidade</a>
+        <span class="hidden sm:inline text-gray-600">|</span>
+        <span>Desenvolvido por <a href="https://masterwd.com.br" target="_blank" rel="noopener nofollow" class="font-bold text-gray-300 transition-colors duration-300 hover:text-[#D4AF37]">Master Web Designer</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==============================================================
+       9. JAVASCRIPT
+  =============================================================== -->
+  <script>
+    (function () {
+      'use strict';
+
+      /* ---------- Tema (light / dark) ---------- */
+      var root = document.documentElement;
+      var meta = document.querySelector('meta[name="theme-color"]');
+      var themeBtn = document.getElementById('theme-toggle');
+      var sol = document.getElementById('icon-sol');
+      var lua = document.getElementById('icon-lua');
+
+      function syncTheme() {
+        var light = root.classList.contains('light');
+        if (sol) sol.classList.toggle('hidden', !light);
+        if (lua) lua.classList.toggle('hidden', light);
+        if (meta) meta.setAttribute('content', light ? '#FBF6EC' : '#0D0D0D');
+      }
+
+      if (themeBtn) {
+        themeBtn.addEventListener('click', function () {
+          root.classList.toggle('light');
+          try {
+            localStorage.setItem('jane-theme', root.classList.contains('light') ? 'light' : 'dark');
+          } catch (e) {}
+          syncTheme();
+        });
+      }
+      syncTheme();
+
+      /* ---------- Menu mobile (hambúrguer) ---------- */
+      var menuBtn = document.getElementById('menu-btn');
+      var mobileMenu = document.getElementById('mobile-menu');
+      var bars = menuBtn.querySelectorAll('span');
+
+      function toggleMenu(open) {
+        mobileMenu.classList.toggle('hidden', !open);
+        mobileMenu.classList.toggle('flex', open);
+        menuBtn.classList.toggle('open', open);
+        menuBtn.setAttribute('aria-expanded', String(open));
+        document.body.style.overflow = open ? 'hidden' : '';
+        bars[0].style.transform = open ? 'translateY(6px) rotate(45deg)' : '';
+        bars[1].style.opacity = open ? '0' : '1';
+        bars[2].style.transform = open ? 'translateY(-6px) rotate(-45deg)' : '';
+      }
+
+      menuBtn.addEventListener('click', function () {
+        toggleMenu(mobileMenu.classList.contains('hidden'));
+      });
+
+      document.querySelectorAll('.mobile-link').forEach(function (link) {
+        link.addEventListener('click', function () { toggleMenu(false); });
+      });
+
+      /* ---------- Sombra do header ao rolar ---------- */
+      var header = document.getElementById('site-header');
+      function onScroll() {
+        header.classList.toggle('shadow-md', window.scrollY > 12);
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+
+      /* ---------- Ano dinâmico ---------- */
+      var yearEl = document.getElementById('year');
+      if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+      /* ---------- Accordion (Módulos + FAQ) ---------- */
+      function setupAccordion(containerId) {
+        var container = document.getElementById(containerId);
+        if (!container) return;
+        var items = container.querySelectorAll('.accordion-item');
+
+        items.forEach(function (item) {
+          var trigger = item.querySelector('.accordion-trigger');
+          if (!trigger) return;
+
+          trigger.addEventListener('click', function () {
+            var isActive = item.classList.contains('active');
+
+            // Fecha todos os outros itens do mesmo accordion
+            items.forEach(function (other) {
+              if (other !== item) {
+                other.classList.remove('active');
+                var otherTrigger = other.querySelector('.accordion-trigger');
+                if (otherTrigger) otherTrigger.setAttribute('aria-expanded', 'false');
+              }
+            });
+
+            // Alterna o item atual
+            item.classList.toggle('active', !isActive);
+            trigger.setAttribute('aria-expanded', String(!isActive));
+          });
+        });
+      }
+
+      setupAccordion('modulos-accordion');
+      setupAccordion('faq-accordion');
+    })();
+  </script>
+</body>
+</html>
