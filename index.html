@@ -361,6 +361,9 @@
     }
 
     /* Bloco texto-reflexivo centralizado sobre a galeria */
+    #galeria {
+      background-color: #0D0D0D !important;
+    }
     .g-overlay {
       position: absolute;
       z-index: 40;
@@ -434,7 +437,10 @@
     html.light #hero-badge {
       color: #F5F5F5 !important;
     }
-    /* ===== GALERIA: mantém visual escuro em AMBOS os modos ===== */
+    /* ===== GALERIA: fundo sempre escuro, cores se adaptam ao tema ===== */
+    html.light #galeria {
+      background-color: #0D0D0D !important;
+    }
     html.light #galeria .g-overlay h2 {
       color: #D4AF37 !important;
     }
@@ -443,6 +449,12 @@
     }
     html.light #galeria .g-overlay p {
       color: #D1D5DB !important;
+    }
+    /* Badges flutuantes: fundo escuro sempre */
+    html.light .g-tag {
+      background: rgba(12, 12, 12, 0.85) !important;
+      color: #F3E5B2 !important;
+      border-color: rgba(212, 175, 55, 0.55) !important;
     }
     html.light strong,
     html.light b {
