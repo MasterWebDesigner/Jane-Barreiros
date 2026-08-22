@@ -360,7 +360,7 @@
       font-size: 9px;
     }
 
-    /* Bloco texto-reflexivo + CTA no canto inferior direito */
+    /* Bloco texto-reflexivo no canto inferior */
     .g-overlay {
       position: absolute;
       z-index: 40;
@@ -373,12 +373,21 @@
       font-family: "Playfair Display", Georgia, serif;
       font-style: italic;
       font-weight: 500;
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
       line-height: 1.18;
-      color: #F3E5B2;
+      color: #D4AF37;
       text-shadow: 0 6px 30px rgba(0, 0, 0, 0.7);
     }
-    .g-overlay h2 em { color: #D4AF37; }
-    .g-overlay .btn-gold { margin-top: 26px; }
+    .g-overlay h2 em { color: #D4AF37; font-style: italic; }
+    .g-overlay p {
+      font-family: "Montserrat", sans-serif;
+      font-weight: 300;
+      font-size: clamp(0.75rem, 1.2vw, 0.95rem);
+      line-height: 1.5;
+      color: #D1D5DB;
+      margin-top: 10px;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    }
 
     @media (max-width: 1023px) {
       .pola { width: 170px; }
@@ -388,7 +397,6 @@
     @media (max-width: 479px) {
       .pola { width: 152px; }
       .g-overlay { position: relative; right: auto; bottom: auto; max-width: none; text-align: center; padding: 0 22px; margin-top: 8px; }
-      .g-overlay .btn-gold { justify-content: center; }
       .g-rails { padding-bottom: 40px; }
     }
     @media (prefers-reduced-motion: reduce) {
@@ -1004,7 +1012,7 @@
     <!-- ==============================================================
          6.1 GALERIA EM MOVIMENTO — MOSAICO DE POLAROIDS (3 FILEIRAS)
     =============================================================== -->
-    <section id="galeria" aria-label="Galeria em movimento" class="relative scroll-mt-24 overflow-hidden py-24 lg:py-32">
+    <section id="galeria" aria-label="Galeria em movimento" class="relative scroll-mt-24 overflow-hidden pb-4 pt-24 lg:pb-6 lg:pt-32">
       <!-- Partículas douradas + linhas curvas ao fundo -->
       <svg class="g-deco" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
         <g fill="none" stroke="#D4AF37" stroke-linecap="round">
@@ -1092,9 +1100,10 @@
 
 
 
-      <!-- Overlay: texto reflexivo + CTA no canto inferior direito -->
+      <!-- Overlay: texto reflexivo -->
       <div class="g-overlay">
-        <h2>SINTA A ENERGIA DAS NOSSAS TRANSFORMAÇÕES.<br/>CADA CAMADA, UM NOVO OLHAR.</h2>
+        <h2>Sinta a <em>transformação</em> a cada olhar.</h2>
+        <p>Sua melhor versão revelada em cada detalhe.</p>
       </div>
     </section>
 
