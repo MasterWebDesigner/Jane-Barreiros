@@ -360,14 +360,16 @@
       font-size: 9px;
     }
 
-    /* Bloco texto-reflexivo no canto inferior */
+    /* Bloco texto-reflexivo centralizado sobre a galeria */
     .g-overlay {
       position: absolute;
       z-index: 40;
-      right: 5%;
+      left: 0;
+      right: 0;
       bottom: clamp(24px, 6%, 64px);
-      max-width: 460px;
-      text-align: right;
+      max-width: 100%;
+      text-align: center;
+      padding: 0 24px;
     }
     .g-overlay h2 {
       font-family: "Playfair Display", Georgia, serif;
@@ -375,28 +377,28 @@
       font-weight: 500;
       font-size: clamp(1.4rem, 2.5vw, 2rem);
       line-height: 1.18;
-      color: #D4AF37;
+      color: #D4AF37 !important;
       text-shadow: 0 6px 30px rgba(0, 0, 0, 0.7);
     }
-    .g-overlay h2 em { color: #D4AF37; font-style: italic; }
+    .g-overlay h2 em { color: #D4AF37 !important; font-style: italic; }
     .g-overlay p {
       font-family: "Montserrat", sans-serif;
       font-weight: 300;
       font-size: clamp(0.75rem, 1.2vw, 0.95rem);
       line-height: 1.5;
-      color: #D1D5DB;
+      color: #D1D5DB !important;
       margin-top: 10px;
       text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
     }
 
     @media (max-width: 1023px) {
       .pola { width: 170px; }
-      .g-overlay { right: 6%; bottom: clamp(20px, 5%, 52px); max-width: 320px; }
-      .g-rails { padding-bottom: 120px; }
+      .g-overlay { bottom: clamp(16px, 4%, 40px); }
+      .g-rails { padding-bottom: 100px; }
     }
     @media (max-width: 479px) {
       .pola { width: 152px; }
-      .g-overlay { position: relative; right: auto; bottom: auto; max-width: none; text-align: center; padding: 0 22px; margin-top: 8px; }
+      .g-overlay { position: relative; bottom: auto; max-width: none; text-align: center; padding: 0 22px; margin-top: 8px; }
       .g-rails { padding-bottom: 40px; }
     }
     @media (prefers-reduced-motion: reduce) {
@@ -431,6 +433,16 @@
     }
     html.light #hero-badge {
       color: #F5F5F5 !important;
+    }
+    /* ===== GALERIA: mantém visual escuro em AMBOS os modos ===== */
+    html.light #galeria .g-overlay h2 {
+      color: #D4AF37 !important;
+    }
+    html.light #galeria .g-overlay h2 em {
+      color: #D4AF37 !important;
+    }
+    html.light #galeria .g-overlay p {
+      color: #D1D5DB !important;
     }
     html.light strong,
     html.light b {
