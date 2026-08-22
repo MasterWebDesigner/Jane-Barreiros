@@ -265,11 +265,43 @@
       color: #333333 !important;
     }
 
-    /* ===== CARDS SERVIÇOS: altura uniforme + notas ===== */
+    /* ===== CARDS SERVICOS ===== */
     #catalogo-servicos { align-items: stretch; }
     #catalogo-servicos article { height: 100%; }
+    .svc-duracao {
+      background: rgba(212,175,55,0.12);
+      color: #B8860B;
+    }
+    html.light .svc-duracao {
+      background: rgba(212,175,55,0.15) !important;
+      color: #8B6914 !important;
+    }
+    .svc-rotulo { color: #9CA3AF; }
+    html.light .svc-rotulo { color: #6B7280 !important; }
+    .svc-preco { color: #D4AF37; }
+    html.light .svc-preco { color: #B8860B !important; }
     .svc-nota { color: #D1D5DB; }
     html.light .svc-nota { color: #374151 !important; }
+    .svc-nota-icon { color: #D4AF37; }
+    html.light .svc-nota-icon { color: #B8860B !important; }
+    .svc-btn {
+      background: transparent;
+      border: 1px solid rgba(212,175,55,0.5);
+      color: #D4AF37;
+      transition: all 0.3s ease;
+    }
+    .svc-btn:hover {
+      background: #D4AF37;
+      color: #0A0A0A;
+    }
+    html.light .svc-btn {
+      border-color: #B8860B !important;
+      color: #B8860B !important;
+    }
+    html.light .svc-btn:hover {
+      background: #B8860B !important;
+      color: #FFFFFF !important;
+    }
     #mobile-menu .mobile-link {
       color: #F3E5B2 !important;
     }
@@ -583,7 +615,7 @@
         var destacado = !!svc.destaque;
         var card = document.createElement('article');
         card.className = 'group relative flex h-full flex-col rounded-2xl border ' +
-          (destacado ? 'border-2 border-gold bg-cream-soft p-7 shadow-md' : 'border-gold/25 bg-cream-soft p-7 shadow-sm') +
+          (destacado ? 'border-2 border-gold bg-cream-soft p-6 shadow-md' : 'border-gold/25 bg-cream-soft p-6 shadow-sm') +
           ' transition-all duration-300 hover:-translate-y-1.5 hover:border-gold hover:shadow-md';
 
         if (destacado) {
@@ -594,7 +626,7 @@
         }
 
         var cabecalho = document.createElement('div');
-        cabecalho.className = 'flex items-start justify-between gap-4';
+        cabecalho.className = 'flex items-start justify-between gap-3';
 
         var nome = document.createElement('h3');
         nome.className = 'font-serif text-lg font-semibold leading-snug';
@@ -602,32 +634,59 @@
         cabecalho.appendChild(nome);
 
         var duracaoBadge = document.createElement('span');
-        duracaoBadge.className = 'mt-1 shrink-0 rounded-full bg-gold/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-muted';
-        duracaoBadge.textContent = (svc.duracao.indexOf('por sessão') !== -1) ? svc.duracao : 'Duração: ' + svc.duracao;
+        duracaoBadge.className = 'svc-duracao shrink-0 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold';
+        var dt = (svc.duracao.indexOf('por sessao') !== -1) ? svc.duracao : svc.duracao;
+        duracaoBadge.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ' + dt;
         cabecalho.appendChild(duracaoBadge);
-
         card.appendChild(cabecalho);
 
-        var preco = document.createElement('p');
-        preco.className = 'mt-4 font-serif text-xl font-bold text-gold';
-        preco.textContent = svc.preco === 'Consulte' ? 'Preço: Consulte' : svc.preco;
-        card.appendChild(preco);
+        var precoBox = document.createElement('div');
+        precoBox.className = 'mt-5';
+
+        if (svc.preco === 'Consulte') {
+          var pv = document.createElement('p');
+          pv.className = 'svc-preco font-serif text-2xl font-bold';
+          pv.textContent = 'Consulte';
+          precoBox.appendChild(pv);
+        } else {
+          var rm = svc.preco.match(/^(A partir de)\s*(.*)$/);
+          if (rm) {
+            var rl = document.createElement('p');
+            rl.className = 'svc-rotulo text-[10px] font-bold uppercase tracking-[0.2em]';
+            rl.textContent = rm[1];
+            precoBox.appendChild(rl);
+            var vl = document.createElement('p');
+            vl.className = 'svc-preco font-serif text-2xl font-bold';
+            vl.textContent = rm[2];
+            precoBox.appendChild(vl);
+          } else {
+            var pd = document.createElement('p');
+            pd.className = 'svc-preco font-serif text-2xl font-bold';
+            pd.textContent = svc.preco;
+            precoBox.appendChild(pd);
+          }
+        }
+        card.appendChild(precoBox);
 
         if (svc.nota) {
           var nota = document.createElement('p');
-          nota.className = 'svc-nota mt-2 text-xs font-medium leading-relaxed';
-          nota.textContent = 'Nota: ' + svc.nota;
+          nota.className = 'svc-nota mt-3 flex items-start gap-2 text-xs font-medium leading-relaxed';
+          var notaIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svc-nota-icon mt-0.5 h-3.5 w-3.5 shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+          nota.innerHTML = notaIcon + ' ' + svc.nota;
           card.appendChild(nota);
         }
 
+        var btnWrap = document.createElement('div');
+        btnWrap.className = 'mt-auto pt-5';
         var btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = 'btn btn-ghost-gold mt-auto self-center !px-5 !py-2.5 text-xs';
-        btn.textContent = 'Agendar este serviço';
+        btn.className = 'svc-btn btn w-full self-center !px-5 !py-3 text-xs font-semibold';
+        btn.textContent = 'Agendar este servico';
         btn.addEventListener('click', function () {
           selecionarServico(svc.nome);
         });
-        card.appendChild(btn);
+        btnWrap.appendChild(btn);
+        card.appendChild(btnWrap);
 
           catalogo.appendChild(card);
         });
