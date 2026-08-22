@@ -264,6 +264,12 @@
     html.light #modal-legal-corpo {
       color: #333333 !important;
     }
+
+    /* ===== CARDS SERVIÇOS: altura uniforme + notas ===== */
+    #catalogo-servicos { align-items: stretch; }
+    #catalogo-servicos article { height: 100%; }
+    .svc-nota { color: #D1D5DB; }
+    html.light .svc-nota { color: #374151 !important; }
     #mobile-menu .mobile-link {
       color: #F3E5B2 !important;
     }
@@ -576,7 +582,7 @@
         lista.forEach(function (svc) {
         var destacado = !!svc.destaque;
         var card = document.createElement('article');
-        card.className = 'group relative flex flex-col rounded-2xl border ' +
+        card.className = 'group relative flex h-full flex-col justify-between rounded-2xl border ' +
           (destacado ? 'border-2 border-gold bg-cream-soft p-7 shadow-md' : 'border-gold/25 bg-cream-soft p-7 shadow-sm') +
           ' transition-all duration-300 hover:-translate-y-1.5 hover:border-gold hover:shadow-md';
 
@@ -609,14 +615,14 @@
 
         if (svc.nota) {
           var nota = document.createElement('p');
-          nota.className = 'mt-2 text-xs font-light italic leading-relaxed text-muted';
+          nota.className = 'svc-nota mt-2 text-xs font-medium leading-relaxed';
           nota.textContent = 'Nota: ' + svc.nota;
           card.appendChild(nota);
         }
 
         var btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = 'btn btn-ghost-gold mt-6 self-start !px-5 !py-2.5 text-xs';
+        btn.className = 'btn btn-ghost-gold mt-auto self-center !px-5 !py-2.5 text-xs';
         btn.textContent = 'Agendar este serviço';
         btn.addEventListener('click', function () {
           selecionarServico(svc.nome);
