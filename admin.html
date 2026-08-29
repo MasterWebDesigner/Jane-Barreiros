@@ -600,6 +600,42 @@
       </div>
     </section>
 
+    <!-- Modal Editar Agendamento -->
+    <div id="ag-edit-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div class="bg-dark-700 border border-dark-300/50 rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4">
+        <h3 class="text-lg font-semibold text-white mb-4">Editar Agendamento</h3>
+        <input type="hidden" id="ag-edit-id" />
+        <div class="space-y-3">
+          <div>
+            <label class="text-xs font-semibold text-gray-400 mb-1 block">Cliente</label>
+            <input id="ag-edit-cliente" type="text" class="w-full rounded-lg bg-dark-600 border border-dark-300/40 px-3 py-2 text-sm text-white" disabled />
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-400 mb-1 block">Serviço</label>
+            <select id="ag-edit-servico" class="w-full rounded-lg bg-dark-600 border border-dark-300/40 px-3 py-2 text-sm text-white focus:border-gold/50 outline-none"></select>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs font-semibold text-gray-400 mb-1 block">Data</label>
+              <input id="ag-edit-data" type="date" class="w-full rounded-lg bg-dark-600 border border-dark-300/40 px-3 py-2 text-sm text-white focus:border-gold/50 outline-none" />
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-400 mb-1 block">Horário</label>
+              <select id="ag-edit-horario" class="w-full rounded-lg bg-dark-600 border border-dark-300/40 px-3 py-2 text-sm text-white focus:border-gold/50 outline-none"></select>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-400 mb-1 block">Valor (R$)</label>
+            <input id="ag-edit-valor" type="number" step="0.01" min="0" class="w-full rounded-lg bg-dark-600 border border-dark-300/40 px-3 py-2 text-sm text-white focus:border-gold/50 outline-none" placeholder="0.00" />
+          </div>
+        </div>
+        <div class="flex gap-3 mt-5">
+          <button id="ag-edit-cancel" class="flex-1 rounded-lg bg-dark-600 border border-dark-300/40 px-4 py-2 text-sm font-semibold text-gray-400 hover:text-white transition-colors">Cancelar</button>
+          <button id="ag-edit-save" class="flex-1 rounded-lg bg-gold px-4 py-2 text-sm font-bold text-black hover:bg-gold-light transition-colors">Salvar</button>
+        </div>
+      </div>
+    </div>
+
     <!-- ==================== CONFIGURAÇÕES ==================== -->
     <section id="page-config" class="admin-page p-6 lg:p-8 hidden">
       <h1 class="font-display text-2xl font-semibold text-white mb-6">Configurações</h1>
@@ -1308,6 +1344,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 '<p class="text-[10px] text-gray-500">' + (ag.forma_pagamento || '—') + '</p>' +
               '</div>' +
               (tel ? '<a href="https://wa.me/55' + tel + '" target="_blank" rel="noopener" class="shrink-0 rounded-lg bg-green-500/15 px-2.5 py-1.5 text-[10px] font-semibold text-green-400 hover:bg-green-500/25 transition-colors">WhatsApp</a>' : '') +
+              '<button class="ag-edit-btn shrink-0 rounded-lg bg-blue-500/15 px-2.5 py-1.5 text-[10px] font-semibold text-blue-400 hover:bg-blue-500/25 transition-colors" data-ag-id="' + ag.id + '" data-ag-data="' + ag.data + '" data-ag-horario="' + ag.horario + '" data-ag-servico="' + (ag.servico||'').replace(/"/g,'&quot;') + '" data-ag-valor="' + (ag.valor_informado||0) + '">Editar</button>' +
               '<div class="flex gap-1 shrink-0">' +
                 '<button data-st-ag="' + ag.id + '" data-st="confirmado" class="status-btn rounded-lg px-2 py-1 text-[10px] font-semibold transition-colors ' + (status==='confirmado'?'bg-yellow-500/25 text-yellow-300 border border-yellow-500/40':'bg-dark-500 text-gray-500 hover:text-yellow-400') + '" title="Confirmar">🟡</button>' +
                 '<button data-st-ag="' + ag.id + '" data-st="em_atendimento" class="status-btn rounded-lg px-2 py-1 text-[10px] font-semibold transition-colors ' + (status==='em_atendimento'?'bg-blue-500/25 text-blue-300 border border-blue-500/40':'bg-dark-500 text-gray-500 hover:text-blue-400') + '" title="Em Atendimento">🔵</button>' +
@@ -1344,6 +1381,43 @@ document.addEventListener('DOMContentLoaded', function () {
           }
           if (B) B.setAgendamentoStatus(agId, newStatus);
           renderDashboard();
+        });
+      });
+
+      /* Edit buttons na lista completa */
+      allLista.querySelectorAll('.ag-edit-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var agId = btn.getAttribute('data-ag-id');
+          var ag = B ? B.getAgendamentos().find(function (a) { return a.id === agId; }) || null : null;
+          if (!ag) return;
+          document.getElementById('ag-edit-id').value = agId;
+          document.getElementById('ag-edit-cliente').value = ag.cliente_nome + (ag.cliente_whatsapp ? ' — ' + ag.cliente_whatsapp : '');
+          document.getElementById('ag-edit-data').value = ag.data;
+          /* Preenche select de serviços */
+          var svcSel = document.getElementById('ag-edit-servico');
+          var svcs = B ? B.getServicos() : [];
+          svcSel.innerHTML = '';
+          svcs.forEach(function (s) {
+            var opt = document.createElement('option');
+            opt.value = s.nome;
+            opt.textContent = s.nome;
+            if (s.nome === ag.servico) opt.selected = true;
+            svcSel.appendChild(opt);
+          });
+          /* Preenche horários disponíveis */
+          var horSel = document.getElementById('ag-edit-horario');
+          horSel.innerHTML = '';
+          var slots = B ? B.horariosDisponiveis(ag.data, ag.profissional) : [];
+          slots.forEach(function (h) {
+            var opt = document.createElement('option');
+            opt.value = h;
+            opt.textContent = h;
+            if (h === ag.horario) opt.selected = true;
+            horSel.appendChild(opt);
+          });
+          /* Valor */
+          document.getElementById('ag-edit-valor').value = ag.valor_informado || '';
+          document.getElementById('ag-edit-modal').classList.remove('hidden');
         });
       });
     }
@@ -2384,6 +2458,46 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     document.getElementById('cli-edit-modal').classList.add('hidden');
     renderClientes(document.getElementById('cli-busca').value);
+  });
+
+  /* --- Editar Agendamento --- */
+  document.getElementById('ag-edit-cancel').addEventListener('click', function () {
+    document.getElementById('ag-edit-modal').classList.add('hidden');
+  });
+  document.getElementById('ag-edit-save').addEventListener('click', function () {
+    var id = document.getElementById('ag-edit-id').value;
+    var data = document.getElementById('ag-edit-data').value;
+    var horario = document.getElementById('ag-edit-horario').value;
+    var servico = document.getElementById('ag-edit-servico').value;
+    var valor = document.getElementById('ag-edit-valor').value;
+    if (!data) { alert('Selecione a data.'); return; }
+    if (!horario) { alert('Selecione o horário.'); return; }
+    if (!servico) { alert('Selecione o serviço.'); return; }
+    var svc = B ? B.getServicoPorNome(servico) : null;
+    var durMin = svc ? (svc.duracao_min || 60) : 60;
+    var dados = { data: data, horario: horario, servico: servico, duracao_min: durMin };
+    if (valor !== '' && parseFloat(valor) >= 0) {
+      dados.valor_informado = parseFloat(valor);
+    }
+    if (B && B.editarAgendamento) {
+      B.editarAgendamento(id, dados);
+    }
+    document.getElementById('ag-edit-modal').classList.add('hidden');
+    renderDashboard();
+  });
+  /* Atualiza horários ao mudar data no modal de edição */
+  document.getElementById('ag-edit-data').addEventListener('change', function () {
+    var data = this.value;
+    var horSel = document.getElementById('ag-edit-horario');
+    var horAtual = horSel.value;
+    horSel.innerHTML = '';
+    var slots = B ? B.horariosDisponiveis(data) : [];
+    slots.forEach(function (h) {
+      var opt = document.createElement('option');
+      opt.value = h; opt.textContent = h;
+      if (h === horAtual) opt.selected = true;
+      horSel.appendChild(opt);
+    });
   });
 
   /* ============================================================

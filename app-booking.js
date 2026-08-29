@@ -241,6 +241,21 @@
     return ag;
   }
 
+  function editarAgendamento(id, dados) {
+    var lista = getAgendamentos();
+    lista.forEach(function (a) {
+      if (a.id === id) {
+        if (dados.data !== undefined) a.data = dados.data;
+        if (dados.horario !== undefined) a.horario = dados.horario;
+        if (dados.servico !== undefined) a.servico = dados.servico;
+        if (dados.duracao_min !== undefined) a.duracao_min = dados.duracao_min;
+        if (dados.valor_informado !== undefined) a.valor_informado = dados.valor_informado;
+        if (dados.profissional !== undefined) a.profissional = dados.profissional;
+      }
+    });
+    setAgendamentos(lista);
+  }
+
   function cancelarAgendamento(id) {
     var lista = getAgendamentos();
     lista.forEach(function (a) {
@@ -676,6 +691,7 @@
     getDuracaoServico: getDuracaoServico,
     getAgendamentos: getAgendamentos,
     criarAgendamento: criarAgendamento,
+    editarAgendamento: editarAgendamento,
     cancelarAgendamento: cancelarAgendamento,
     concluirAgendamento: concluirAgendamento,
     setAgendamentoStatus: setAgendamentoStatus,
