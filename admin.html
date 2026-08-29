@@ -1035,21 +1035,23 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('dash-fat-previsto').textContent = 'R$ ' + fatPrevisto.toFixed(0).replace('.',',');
     document.getElementById('dash-fat-realizado').textContent = 'R$ ' + fatRealizado.toFixed(0).replace('.',',') + ' realizado';
 
-    /* Lista operacional */
+    /* Lista operacional — todos os agendamentos do dia, ordenados por horário */
     var lista = document.getElementById('dash-lista');
-    agsAtivos.sort(function (a,b) { return a.horario < b.horario ? -1 : 1; });
-    if (!agsAtivos.length) {
-      lista.innerHTML = '<p class="text-gray-500 text-sm py-8 text-center">Nenhum atendimento ativo no momento.</p>';
+    todosAgs.sort(function (a,b) { return a.horario < b.horario ? -1 : 1; });
+    if (!todosAgs.length) {
+      lista.innerHTML = '<p class="text-gray-500 text-sm py-8 text-center">Nenhum agendamento para hoje.</p>';
       return;
     }
     lista.innerHTML = '';
-    agsAtivos.forEach(function (ag) {
+    todosAgs.forEach(function (ag) {
       var valor = servicoPreco(ag.servico, ag.valor_informado);
       var tag = clienteTag(ag.cliente_whatsapp);
       var tel = (ag.cliente_whatsapp || '').replace(/\D/g, '');
       var status = ag.status || 'confirmado';
       var card = document.createElement('div');
       card.className = 'rounded-xl bg-dark-600 border border-dark-300/50 p-4 hover:border-gold/20 transition-colors';
+      var statusLabel = status === 'concluido' ? 'Concluído' : status === 'cancelado' ? 'Cancelado' : status === 'em_atendimento' ? 'Em Atendimento' : status === 'pendente' ? 'Pendente' : 'Confirmado';
+      var statusColor = status === 'concluido' ? 'text-green-400' : status === 'cancelado' ? 'text-red-400' : status === 'em_atendimento' ? 'text-blue-400' : status === 'pendente' ? 'text-amber-400' : 'text-yellow-400';
       card.innerHTML =
         '<div class="flex flex-col sm:flex-row sm:items-center gap-3">' +
           '<div class="flex items-center gap-3 flex-1 min-w-0">' +
@@ -1062,6 +1064,7 @@ document.addEventListener('DOMContentLoaded', function () {
                  ag.origem === 'recepcao' ? '<span class="inline-flex items-center rounded-full bg-dark-500 border border-dark-300/50 px-2 py-0.5 text-[10px] font-semibold text-gold">Recepção</span>' : '') +
               '</div>' +
               '<p class="text-xs text-gray-400 truncate">' + ag.servico + '</p>' +
+              '<p class="text-[10px] font-semibold ' + statusColor + '">' + statusLabel + '</p>' +
             '</div>' +
           '</div>' +
           '<div class="flex items-center gap-3 flex-wrap">' +
