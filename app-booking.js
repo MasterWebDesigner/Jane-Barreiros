@@ -519,6 +519,7 @@
         if (dados.tag !== undefined) c.tag = dados.tag;
         if (dados.nome !== undefined) c.nome = dados.nome;
         if (dados.email !== undefined) c.email = dados.email;
+        if (dados.whatsapp !== undefined) c.whatsapp = dados.whatsapp;
       }
     });
     setClientes(clientes);
