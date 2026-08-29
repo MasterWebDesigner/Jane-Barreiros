@@ -1,32 +1,14 @@
 # ============================================================
 #  DECAP CMS — Studio Jane Barreiros
 #  Um único arquivo de dados: content/site.json
-#  Acesse: http://localhost:8001/admin
+#  Acesse: https://SEU-SITE.netlify.app/admin
 #
-#  MODO DEV LOCAL:
-#  - O backend "proxy" aponta DIRETO para o decap-server local (porta 8082),
-#    que LÊ E GRAVA os arquivos reais do projeto (content/site.json) no disco.
-#  - Requisito: o proxy precisa estar ativo neste terminal (na pasta do projeto):
-#        node node_modules\decap-server\dist\index.js   (porta 8082)
-#  - Porta 8082: a 8081 já é usada por outro decap-server no seu computador.
-#  - Se o proxy estiver desligado, o painel não abre os dados (erro visível).
-#
-#  MUDANÇA IMPORTANTE: usamos "name: proxy" + "proxy_url" (e NÃO "local_backend")
-#  porque em versões recentes do Decap o "local_backend" pode cair silenciosamente
-#  para o backend "test-repo", que só grava no localStorage do navegador —
-#  por isso o site "não salvava".
-#
-#  PRODUÇÃO (após publicar no Netlify): troque o bloco backend por git-gateway:
-#      backend:
-#        name: git-gateway
-#        branch: main
-#  e deixe o Netlify Identity habilitado.
+#  PRODUÇÃO: usa git-gateway + Netlify Identity
+#  DEV LOCAL: troque o backend por proxy (veja abaixo)
 # ============================================================
 
-local_backend: true
 backend:
-  name: proxy
-  proxy_url: http://localhost:8081/api/v1
+  name: git-gateway
   branch: main
 
 # Publicação direta (sem fluxo de revisão). Para editar em rascunho:

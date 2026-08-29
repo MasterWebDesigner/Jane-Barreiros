@@ -4,9 +4,13 @@
   "private": true,
   "description": "Site do Studio Jane Barreiros com Decap CMS (administração local).",
   "scripts": {
-    "cms": "decap-server"
+    "start": "concurrently \"node static-server.js . 8001\" \"cross-env PORT=8082 node node_modules/decap-server/dist/index.js\"",
+    "site": "node static-server.js . 8001",
+    "cms": "cross-env PORT=8082 node node_modules/decap-server/dist/index.js"
   },
   "devDependencies": {
+    "concurrently": "^10.0.5",
+    "cross-env": "^10.1.0",
     "decap-server": "^3.8.0"
   },
   "dependencies": {

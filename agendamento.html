@@ -15,7 +15,7 @@
   <title>Serviços &amp; Agendamento | Studio Jane Barreiros</title>
 
   <!-- Favicon -->
-  <link rel="icon" href="Logomarca.png" type="image/png">
+  <link rel="icon" href="./Logomarca.png" type="image/png">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -181,28 +181,51 @@
   </script>
   <script defer src="/_vercel/insights/script.js"></script>
 
-  <!-- FORÇAR LEGIBILIDADE — sobrepõe Tailwind -->
-  <style>
-    body, p, span, li, .text-description, .about-text {
-      color: #F5F5F5 !important;
-    }
-    strong, b {
-      color: #D4AF37 !important;
-      font-weight: 700 !important;
-    }
-    html.light body,
-    html.light p,
-    html.light span,
-    html.light li,
-    html.light .text-description,
-    html.light .about-text {
-      color: #111111 !important;
-    }
-    html.light strong,
-    html.light b {
-      color: #000000 !important;
-      font-weight: 700 !important;
-    }
+    <!-- FORÇAR LEGIBILIDADE — sobrepõe Tailwind -->
+    <style>
+      body, p, span, li, .text-description, .about-text {
+        color: #F5F5F5 !important;
+      }
+      strong, b {
+        color: #D4AF37 !important;
+        font-weight: 700 !important;
+      }
+      /* Modal booking: conteúdo SEMPRE legível independente do tema */
+      #booking-modal,
+      #booking-modal *,
+      #booking-modal *::before,
+      #booking-modal *::after {
+        color: #333333 !important;
+      }
+      #booking-modal h3,
+      #booking-modal h4 {
+        color: #1A1A1A !important;
+      }
+      #booking-modal strong,
+      #booking-modal b {
+        color: #B8860B !important;
+      }
+      #booking-modal .svc-btn,
+      #booking-modal .btn {
+        color: #241805 !important;
+      }
+      #booking-modal a,
+      #booking-modal button {
+        color: #333333 !important;
+      }
+      html.light body,
+      html.light p,
+      html.light span,
+      html.light li,
+      html.light .text-description,
+      html.light .about-text {
+        color: #111111 !important;
+      }
+      html.light strong,
+      html.light b {
+        color: #000000 !important;
+        font-weight: 700 !important;
+      }
     /* Footer: fundo sempre escuro → textos SEMPRE claros */
     footer {
       background-color: #0A0A0A !important;
@@ -375,7 +398,7 @@
   <header class="fixed inset-x-0 top-0 z-50 border-b border-cream-deep bg-cream/85 backdrop-blur-md" id="site-header">
     <div class="mx-auto flex h-20 max-w-6xl items-center justify-between px-5 lg:px-8">
       <a href="index.html#hero" class="leading-none">
-        <img src="Logo1.png" alt="Studio Jane Barreiros — Especialista em Loiros e Colorimetria Capilar" style="max-height:50px" class="h-auto w-auto">
+        <img src="./Logo1.png" alt="Studio Jane Barreiros — Especialista em Loiros e Colorimetria Capilar" style="max-height:50px" class="h-auto w-auto">
       </a>
 
       <!-- Navegação Desktop -->
@@ -459,54 +482,13 @@
       <div class="mx-auto max-w-6xl px-5 lg:px-8">
         <header class="mx-auto max-w-2xl text-center">
           <p class="eyebrow inline-flex justify-center">Reserve seu horário</p>
-          <h2 class="mt-5 font-serif text-3xl font-semibold sm:text-4xl">Formulário de Agendamento</h2>
-          <p class="mt-4 font-light text-muted">Preencha os dados e confirme via WhatsApp. Retornaremos em breve para validar seu horário.</p>
+          <h2 class="mt-5 font-serif text-3xl font-semibold sm:text-4xl">Agendamento Online</h2>
+          <p class="mt-4 font-light text-muted">Escolha o serviço acima e clique em <strong>Agendar</strong> para escolher data e horário. Você será direcionada ao WhatsApp para confirmação.</p>
         </header>
-
-        <!-- Card branco do formulário -->
-        <div class="mx-auto mt-12 max-w-3xl rounded-2xl border border-gold/30 bg-cream-deep p-7 shadow-md md:p-10">
-
-          <!-- Campo 1 — Serviço (select preenchido via JS com os 23 serviços) -->
-          <div class="mb-7">
-            <label for="servico-select" class="form-label">Serviço desejado</label>
-            <select id="servico-select" name="servico" class="form-input appearance-none bg-no-repeat pr-10" style="background-image:url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"%23808080\" stroke-width=\"2\"><path d=\"M6 9l6 6 6-6\"/></svg>');background-position:right 1rem center;background-size:1.2rem;">
-              <option value="" disabled selected>Selecione o serviço…</option>
-            </select>
-          </div>
-
-          <!-- Campo 2 — Nome -->
-          <div class="mb-7">
-            <label for="nome-input" class="form-label">Nome completo do cliente</label>
-            <input id="nome-input" name="nome" type="text" class="form-input" placeholder="Digite seu nome completo" autocomplete="name" />
-          </div>
-
-          <!-- Campo 3 — Telefone/WhatsApp -->
-          <div class="mb-7">
-            <label for="telefone-input" class="form-label">Telefone / WhatsApp</label>
-            <input id="telefone-input" name="telefone" type="tel" class="form-input" placeholder="(11) 90000-0000" autocomplete="tel" inputmode="tel" />
-          </div>
-
-          <!-- Campo 4 — Data -->
-          <div class="mb-7">
-            <label for="data-input" class="form-label">Data desejada</label>
-            <input id="data-input" name="data" type="date" class="form-input" />
-          </div>
-
-          <!-- Campo 5 — Horário (grade de botões) -->
-          <div class="mb-2">
-            <span class="form-label">Horário desejado</span>
-            <p id="horario-erro" class="mb-2 hidden text-xs font-medium text-red-600">Selecione um horário para continuar.</p>
-            <p id="horario-aviso" class="mb-2 hidden text-xs font-light text-muted"></p>
-            <div id="horario-grid" class="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-10" role="radiogroup" aria-label="Horários disponíveis">
-              <!-- Botões de horário gerados via JS -->
-            </div>
-          </div>
-
-          <!-- Botão principal -->
-          <button id="confirmar-btn" type="button" class="btn btn-primary mt-8 w-full !py-4 text-base">
-            Confirmar e Enviar via WhatsApp
-          </button>
-          <p class="mt-4 text-center text-xs text-muted">Você será direcionado(a) ao WhatsApp do Studio com sua solicitação preenchida. Terça a Sábado: 09:00 às 18:00.</p>
+        <div class="mx-auto mt-10 max-w-lg rounded-2xl border border-gold/30 bg-cream-soft p-8 text-center shadow-sm">
+          <p class="font-serif text-lg text-muted">Clique em <span class="font-semibold text-gold-dark">Agendar este serviço</span> em qualquer card acima para iniciar o agendamento.</p>
+          <p class="mt-3 text-sm text-muted">Terça a Sábado · 09:00 às 18:00</p>
+          <a href="#catalogo-servicos" class="btn btn-primary mt-6 inline-block !px-8">Ver Serviços</a>
         </div>
       </div>
     </section>
@@ -518,7 +500,7 @@
   <footer class="bg-cream-deep py-14 text-center text-muted">
     <div class="mx-auto flex max-w-6xl flex-col items-center gap-7 px-5">
       <a href="index.html#hero" class="leading-none">
-        <img src="Logomarca.png" alt="Studio Jane Barreiros" style="max-height:80px" class="mx-auto h-auto w-auto">
+        <img src="./Logomarca.png" alt="Studio Jane Barreiros" style="max-height:80px" class="mx-auto h-auto w-auto">
       </a>
       <nav class="flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm" aria-label="Navegação do rodapé">
         <a href="index.html#sobre" class="transition-colors hover:text-gold-light">Sobre</a>
@@ -549,7 +531,7 @@
         <a id="social-tiktok-footer" href="https://www.tiktok.com/@janebarreiros_" target="_blank" rel="noopener" aria-label="TikTok" title="TikTok" class="text-gold transition-all duration-300 hover:scale-[1.15] hover:brightness-125">
           <svg viewBox="0 0 24 24" fill="url(#goldSocial)" class="h-9 w-9"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
         </a>
-        <a id="social-whatsapp-footer" href="https://wa.me/5511942212626" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp" class="text-gold transition-all duration-300 hover:scale-[1.15] hover:brightness-125">
+        <a id="social-whatsapp-footer" href="https://wa.me/5511930657871" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp" class="text-gold transition-all duration-300 hover:scale-[1.15] hover:brightness-125">
           <svg viewBox="0 0 448 512" fill="url(#goldSocial)" class="h-9 w-auto"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
         </a>
       </div>
@@ -570,9 +552,12 @@
   <!-- ==============================================================
        JAVASCRIPT PURO
   =============================================================== -->
+  <script src="app-booking.js"></script>
   <script>
+    document.addEventListener('DOMContentLoaded', function () {
     (function () {
       'use strict';
+      console.log('[Booking] IIFE iniciado — JS rodando OK');
 
       /* ---------- Menu mobile (hambúrguer) ---------- */
       var menuBtn = document.getElementById('menu-btn');
@@ -598,346 +583,577 @@
         link.addEventListener('click', function () { toggleMenu(false); });
       });
 
-      /* ---------- Dados dos 23 serviços ---------- */
-      var servicos = [
-        { nome: 'Alisamento orgânico', preco: 'A partir de R$ 200,00', duracao: '2h 55min', nota: 'Os valores são a partir, consulte nossos preços antes de agendar.' },
-        { nome: 'Botox', preco: 'A partir de R$ 130,00', duracao: '2h', nota: 'Valor a partir, depende do tamanho e quantidade de cabelo.' },
-        { nome: 'Corte', preco: 'A partir de R$ 50,00', duracao: '1h', nota: 'Lavar + cortar (Escova fica à parte).' },
-        { nome: 'Escova com chapinha', preco: 'A partir de R$ 50,00', duracao: '1h', nota: 'Valores a partir.' },
-        { nome: 'Hidratação', preco: 'A partir de R$ 50,00', duracao: '30min', nota: 'Sem escova.' },
-        { nome: 'Luzes', preco: 'A partir de R$ 450,00', duracao: '6h', nota: 'Luzes + tintura + tratamento + escova. Valores a partir, depende da quantidade que vai puxar no cabelo.' },
-        { nome: 'Luzes Masculino', preco: 'A partir de R$ 150,00', duracao: '1h 05min', nota: '' },
-        { nome: 'Matização para Loiros', preco: 'A partir de R$ 60,00', duracao: '30min', nota: '' },
-        { nome: "Mega Hair (Colocação - Cápsulas)", preco: 'Consulte', duracao: '6h', nota: 'A partir de 100 gramas + preparação das cápsulas (Colocação).' },
-        { nome: 'Mega Hair (Ponto Americano)', preco: 'Consulte', duracao: '1h', nota: '' },
-        { nome: 'Morena Iluminada', preco: 'A partir de R$ 450,00', duracao: '4h 50min', nota: 'Usamos mais tintas que o comum. Valor referente às mechas no papel personalizado + tratamentos + escova e finalização.' },
-        { nome: 'Pacote de Tratamento Robson Peluquero', preco: 'A partir de R$ 350,00', duracao: '30min (por sessão)', nota: 'Pacote com 4 sessões (1 mês de tratamento). Valor à vista (parcelamento tem juros da maquininha).' },
-        { nome: 'Progressiva Japonesa Liso Lambido', preco: 'A partir de R$ 140,00', duracao: '2h', nota: 'Valor a partir, depende do tamanho e quantidade do cabelo.' },
-        { nome: 'Progressiva Sem Formol', preco: 'A partir de R$ 200,00', duracao: '3h', nota: 'Valor a partir, depende do tamanho e quantidade do cabelo.' },
-        { nome: 'Reconstrução Robson Peluquero Carvão Ativado', preco: 'A partir de R$ 150,00', duracao: '1h', nota: 'Detox e reconstrói a fibra. Valor a partir.' },
-        { nome: 'Reconstrução Robson Peluquero', preco: 'A partir de R$ 100,00', duracao: '1h', nota: '' },
-        { nome: 'Reconstrução Robson Extreme', preco: 'A partir de R$ 100,00', duracao: '1h', nota: 'Valores a partir.' },
-        { nome: 'Reconstrução Robson Master Love', preco: 'A partir de R$ 100,00', duracao: '1h 20min', nota: 'Valores a partir.' },
-        { nome: 'Selagem', preco: 'A partir de R$ 150,00', duracao: '2h', nota: 'Valor a partir, depende do tamanho e quantidade do cabelo.' },
-        { nome: 'Teste de Mecha', preco: 'A partir de R$ 20,00', duracao: '2h', nota: '' },
-        { nome: 'Tintura com Tinta do Salão + Escova', preco: 'A partir de R$ 150,00', duracao: '1h 30min', nota: 'Valores a partir.' },
-        { nome: 'Tintura com Tinta da Cliente + Escova', preco: 'A partir de R$ 90,00', duracao: '1h 30min', nota: 'Valores a partir.' },
-        { nome: 'Tintura com Tinta do Salão Sem Escova', preco: 'A partir de R$ 80,00', duracao: '40min', nota: 'Valores a partir.' }
+      /* ============================================================
+         CATÁLOGO DE SERVIÇOS (usa Booking API do app-booking.js)
+         ============================================================ */
+      var FALLBACK_SERVICOS = [
+        { ordem:1,  nome:'Alisamento orgânico', preco:'A partir de R$ 200,00', duracao:'2h 55min', duracao_min:175, nota:'Os valores são a partir, consulte nossos preços antes de agendar.' },
+        { ordem:2,  nome:'Botox', preco:'A partir de R$ 130,00', duracao:'2h', duracao_min:120, nota:'Valor a partir, depende do tamanho e quantidade de cabelo.' },
+        { ordem:3,  nome:'Corte', preco:'A partir de R$ 50,00', duracao:'1h', duracao_min:60, nota:'Lavar + cortar (Escova fica à parte).' },
+        { ordem:4,  nome:'Escova com chapinha', preco:'A partir de R$ 50,00', duracao:'1h', duracao_min:60, nota:'Valores a partir.' },
+        { ordem:5,  nome:'Hidratação', preco:'A partir de R$ 50,00', duracao:'30min', duracao_min:30, nota:'Sem escova.' },
+        { ordem:6,  nome:'Luzes', preco:'A partir de R$ 450,00', duracao:'6h', duracao_min:360, nota:'Luzes + tintura + tratamento + escova. Valores a partir.' },
+        { ordem:7,  nome:'Luzes Masculino', preco:'A partir de R$ 150,00', duracao:'1h 05min', duracao_min:65, nota:'' },
+        { ordem:8,  nome:'Matização para Loiros', preco:'A partir de R$ 60,00', duracao:'30min', duracao_min:30, nota:'' },
+        { ordem:9,  nome:'Mega Hair (Colocação - Cápsulas)', preco:'Consulte', duracao:'6h', duracao_min:360, nota:'A partir de 100 gramas + preparação das cápsulas.' },
+        { ordem:10, nome:'Mega Hair (Ponto Americano)', preco:'Consulte', duracao:'1h', duracao_min:60, nota:'' },
+        { ordem:11, nome:'Morena Iluminada', preco:'A partir de R$ 450,00', duracao:'4h 50min', duracao_min:290, nota:'Mechas no papel personalizado + tratamentos + escova e finalização.' },
+        { ordem:12, nome:'Pacote de Tratamento Robson Peluquero', preco:'A partir de R$ 350,00', duracao:'30min (por sessão)', duracao_min:30, nota:'Pacote com 4 sessões (1 mês de tratamento). Valor à vista.' },
+        { ordem:13, nome:'Progressiva Japonesa Liso Lambido', preco:'A partir de R$ 140,00', duracao:'2h', duracao_min:120, nota:'Valor a partir, depende do tamanho e quantidade do cabelo.' },
+        { ordem:14, nome:'Progressiva Sem Formol', preco:'A partir de R$ 200,00', duracao:'3h', duracao_min:180, nota:'Valor a partir, depende do tamanho e quantidade do cabelo.' },
+        { ordem:15, nome:'Reconstrução Robson Peluquero Carvão Ativado', preco:'A partir de R$ 150,00', duracao:'1h', duracao_min:60, nota:'Detox e reconstrói a fibra.' },
+        { ordem:16, nome:'Reconstrução Robson Peluquero', preco:'A partir de R$ 100,00', duracao:'1h', duracao_min:60, nota:'' },
+        { ordem:17, nome:'Reconstrução Robson Extreme', preco:'A partir de R$ 100,00', duracao:'1h', duracao_min:60, nota:'Valores a partir.' },
+        { ordem:18, nome:'Reconstrução Robson Master Love', preco:'A partir de R$ 100,00', duracao:'1h 20min', duracao_min:80, nota:'Valores a partir.' },
+        { ordem:19, nome:'Selagem', preco:'A partir de R$ 150,00', duracao:'2h', duracao_min:120, nota:'Valor a partir, depende do tamanho e quantidade do cabelo.' },
+        { ordem:20, nome:'Teste de Mecha', preco:'A partir de R$ 20,00', duracao:'2h', duracao_min:120, nota:'' },
+        { ordem:21, nome:'Tintura com Tinta do Salão + Escova', preco:'A partir de R$ 150,00', duracao:'1h 30min', duracao_min:90, nota:'Valores a partir.' },
+        { ordem:22, nome:'Tintura com Tinta da Cliente + Escova', preco:'A partir de R$ 90,00', duracao:'1h 30min', duracao_min:90, nota:'Valores a partir.' },
+        { ordem:23, nome:'Tintura com Tinta do Salão Sem Escova', preco:'A partir de R$ 80,00', duracao:'40min', duracao_min:40, nota:'Valores a partir.' }
       ];
 
-      /* ---------- Renderização dos cards ---------- */
+      var B = window.Booking;
+      var servicos;
+
+      /* ---------- Fallback helpers quando Booking não carrega ---------- */
+      var FB = {
+        DIAS_FECHADOS: [0, 1],
+        HORARIO_ABERTURA: 9,
+        HORARIO_FECHAMENTO: 18,
+        getBloqueios: function () { try { return JSON.parse(localStorage.getItem('jane-booking-bloqueios')) || { datas: [], horarios: [] }; } catch (e) { return { datas: [], horarios: [] }; } },
+        getServicoPorNome: function (n) { return servicos.find(function (s) { return s.nome === n; }) || null; },
+        horariosDisponiveis: function (dataStr, durMin) {
+          var bloco = 30, slots = [];
+          for (var h = 9; h < 18; h++) {
+            for (var m = 0; m < 60; m += bloco) {
+              var ini = h * 60 + m, fim = ini + durMin;
+              if (fim > 18 * 60) continue;
+              var hh = (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+              slots.push(hh);
+            }
+          }
+          return slots;
+        },
+        nomeDiaSemana: function (ds) { var d = new Date(ds + 'T12:00:00'); return ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'][d.getDay()]; },
+        fmtDataBR: function (ds) { var p = ds.split('-'); return p[2] + '/' + p[1] + '/' + p[0]; },
+        adicionarListaEspera: function () {},
+        criarAgendamento: function (d) {
+          var ag = {
+            id: 'ag-' + Date.now() + '-' + Math.random().toString(36).substr(2,5),
+            servico: d.servico,
+            duracao_min: d.duracao_min || 60,
+            data: d.data,
+            horario: d.horario,
+            cliente_nome: d.cliente_nome,
+            cliente_whatsapp: d.cliente_whatsapp,
+            cliente_email: d.cliente_email || '',
+            forma_pagamento: d.forma_pagamento || '',
+            observacoes: d.observacoes || '',
+            status: 'pendente',
+            origem: 'online',
+            criado_em: new Date().toISOString()
+          };
+          try {
+            var lista = JSON.parse(localStorage.getItem('jane-booking-agendamentos')) || [];
+            lista.push(ag);
+            localStorage.setItem('jane-booking-agendamentos', JSON.stringify(lista));
+          } catch (e) {}
+          return ag;
+        },
+        getClientePorTelefone: function (tel) {
+          try {
+            var clientes = JSON.parse(localStorage.getItem('jane-booking-clientes')) || [];
+            var limpo = tel.replace(/\D/g, '');
+            return clientes.find(function (c) { return c.whatsapp.replace(/\D/g, '') === limpo; }) || null;
+          } catch (e) { return null; }
+        },
+        registrarCliente: function (nome, whatsapp, email, servicoNome) {
+          try {
+            var clientes = JSON.parse(localStorage.getItem('jane-booking-clientes')) || [];
+            var limpo = whatsapp.replace(/\D/g, '');
+            var existente = clientes.find(function (c) { return c.whatsapp.replace(/\D/g, '') === limpo; });
+            var agora = new Date().toISOString();
+            if (existente) {
+              existente.nome = nome;
+              if (email) existente.email = email;
+              existente.total_atendimentos++;
+              existente.ultimo_atendimento = agora;
+              existente.tag = existente.total_atendimentos <= 1 ? 'Nova' : 'Ativa';
+              if (!existente.historico) existente.historico = [];
+              if (servicoNome) existente.historico.push({ servico: servicoNome, data: agora });
+            } else {
+              clientes.push({
+                id: 'cli-' + Date.now(), nome: nome, whatsapp: whatsapp, email: email || '',
+                tag: 'Nova', total_atendimentos: 1,
+                historico: servicoNome ? [{ servico: servicoNome, data: agora }] : [],
+                criado_em: agora, ultimo_atendimento: agora
+              });
+            }
+            localStorage.setItem('jane-booking-clientes', JSON.stringify(clientes));
+          } catch (e) {}
+        },
+        calcularValorGasto: function () { return 0; },
+        montarMsgWhatsApp: function (ag) {
+          var svc = servicos.find(function (s) { return s.nome === ag.servico; });
+          var valor = (svc && svc.preco && svc.preco !== 'Consulte') ? '\n💰 Valor: *' + svc.preco + '*' : '';
+          return '📍 *Studio Jane Barreiros*\n━━━━━━━━━━━━━━━━━━━━\n✅ *Agendamento Confirmado!*\n\n💇 Serviço: *' + ag.servico + '*\n📅 Data: *' + ag.data + '*\n🕐 Horário: *' + ag.horario + '*\n👤 Cliente: *' + ag.cliente_nome + '* (' + (ag.cliente_whatsapp || '') + ')' + (ag.forma_pagamento ? '\n💳 Pagamento: *' + ag.forma_pagamento + '*' : '') + valor + '\n\n━━━━━━━━━━━━━━━━━━━━\nTerça a Sábado: 09:00 às 18:00\nRua Rio Grande Do Sul, 348 — Santo André, SP';
+        }
+      };
+
+      function X() { return B || FB; }
+
+      if (B) {
+        servicos = B.getServicos();
+      } else {
+        /* Booking não carregou — usa fallback inline */
+        servicos = FALLBACK_SERVICOS;
+      }
+
       var catalogo = document.getElementById('catalogo-servicos');
 
       function renderCatalogo(lista) {
         catalogo.innerHTML = '';
         lista.forEach(function (svc) {
-        var destacado = !!svc.destaque;
-        var card = document.createElement('article');
-        card.className = 'group relative flex h-full flex-col rounded-2xl border ' +
-          (destacado ? 'border-2 border-gold bg-cream-soft p-6 shadow-md' : 'border-gold/25 bg-cream-soft p-6 shadow-sm') +
-          ' transition-all duration-300 hover:-translate-y-1.5 hover:border-gold hover:shadow-md';
+          var destacado = !!svc.destaque;
+          var card = document.createElement('article');
+          card.className = 'group relative flex h-full flex-col rounded-2xl border ' +
+            (destacado ? 'border-2 border-gold bg-cream-soft p-6 shadow-md' : 'border-gold/25 bg-cream-soft p-6 shadow-sm') +
+            ' transition-all duration-300 hover:-translate-y-1.5 hover:border-gold hover:shadow-md';
 
-        if (destacado) {
-          var selo = document.createElement('span');
-          selo.className = 'absolute right-4 top-4 rounded-full bg-gold px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-black';
-          selo.textContent = 'Destaque';
-          card.appendChild(selo);
-        }
-
-        var cabecalho = document.createElement('div');
-        cabecalho.className = 'flex items-start justify-between gap-3';
-
-        var nome = document.createElement('h3');
-        nome.className = 'font-serif text-lg font-semibold leading-snug';
-        nome.textContent = svc.nome;
-        cabecalho.appendChild(nome);
-
-        var duracaoBadge = document.createElement('span');
-        duracaoBadge.className = 'svc-duracao shrink-0 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold';
-        var dt = (svc.duracao.indexOf('por sessao') !== -1) ? svc.duracao : svc.duracao;
-        duracaoBadge.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ' + dt;
-        cabecalho.appendChild(duracaoBadge);
-        card.appendChild(cabecalho);
-
-        var precoBox = document.createElement('div');
-        precoBox.className = 'mt-5';
-
-        if (svc.preco === 'Consulte') {
-          var pv = document.createElement('p');
-          pv.className = 'svc-preco font-serif text-2xl font-bold';
-          pv.textContent = 'Consulte';
-          precoBox.appendChild(pv);
-        } else {
-          var rm = svc.preco.match(/^(A partir de)\s*(.*)$/);
-          if (rm) {
-            var rl = document.createElement('p');
-            rl.className = 'svc-rotulo text-[10px] font-bold uppercase tracking-[0.2em]';
-            rl.textContent = rm[1];
-            precoBox.appendChild(rl);
-            var vl = document.createElement('p');
-            vl.className = 'svc-preco font-serif text-2xl font-bold';
-            vl.textContent = rm[2];
-            precoBox.appendChild(vl);
-          } else {
-            var pd = document.createElement('p');
-            pd.className = 'svc-preco font-serif text-2xl font-bold';
-            pd.textContent = svc.preco;
-            precoBox.appendChild(pd);
+          if (destacado) {
+            var selo = document.createElement('span');
+            selo.className = 'absolute right-4 top-4 rounded-full bg-gold px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-black';
+            selo.textContent = 'Destaque';
+            card.appendChild(selo);
           }
-        }
-        card.appendChild(precoBox);
 
-        if (svc.nota) {
-          var nota = document.createElement('p');
-          nota.className = 'svc-nota mt-3 flex items-start gap-2 text-xs font-medium leading-relaxed';
-          var notaIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svc-nota-icon mt-0.5 h-3.5 w-3.5 shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
-          nota.innerHTML = notaIcon + ' ' + svc.nota;
-          card.appendChild(nota);
-        }
+          var cabecalho = document.createElement('div');
+          cabecalho.className = 'flex items-start justify-between gap-3';
 
-        var btnWrap = document.createElement('div');
-        btnWrap.className = 'mt-auto pt-5';
-        var btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'svc-btn btn w-full self-center !px-5 !py-3 text-xs font-semibold';
-        btn.textContent = 'Agendar este servico';
-        btn.addEventListener('click', function () {
-          selecionarServico(svc.nome);
-        });
-        btnWrap.appendChild(btn);
-        card.appendChild(btnWrap);
+          var nome = document.createElement('h3');
+          nome.className = 'font-serif text-lg font-semibold leading-snug';
+          nome.textContent = svc.nome;
+          cabecalho.appendChild(nome);
 
+          var duracaoBadge = document.createElement('span');
+          duracaoBadge.className = 'svc-duracao shrink-0 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold';
+          duracaoBadge.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ' + svc.duracao;
+          cabecalho.appendChild(duracaoBadge);
+          card.appendChild(cabecalho);
+
+          var precoBox = document.createElement('div');
+          precoBox.className = 'mt-5';
+          if (svc.preco === 'Consulte') {
+            var pv = document.createElement('p');
+            pv.className = 'svc-preco font-serif text-2xl font-bold';
+            pv.textContent = 'Consulte';
+            precoBox.appendChild(pv);
+          } else {
+            var rm = svc.preco.match(/^(A partir de)\s*(.*)$/);
+            if (rm) {
+              var rl = document.createElement('p');
+              rl.className = 'svc-rotulo text-[10px] font-bold uppercase tracking-[0.2em]';
+              rl.textContent = rm[1];
+              precoBox.appendChild(rl);
+              var vl = document.createElement('p');
+              vl.className = 'svc-preco font-serif text-2xl font-bold';
+              vl.textContent = rm[2];
+              precoBox.appendChild(vl);
+            } else {
+              var pd = document.createElement('p');
+              pd.className = 'svc-preco font-serif text-2xl font-bold';
+              pd.textContent = svc.preco;
+              precoBox.appendChild(pd);
+            }
+          }
+          card.appendChild(precoBox);
+
+          if (svc.nota) {
+            var nota = document.createElement('p');
+            nota.className = 'svc-nota mt-3 flex items-start gap-2 text-xs font-medium leading-relaxed';
+            var notaIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svc-nota-icon mt-0.5 h-3.5 w-3.5 shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+            nota.innerHTML = notaIcon + ' ' + svc.nota;
+            card.appendChild(nota);
+          }
+
+          var btnWrap = document.createElement('div');
+          btnWrap.className = 'mt-auto pt-5';
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'svc-btn btn w-full self-center !px-5 !py-3 text-xs font-semibold';
+          btn.textContent = 'Agendar este serviço';
+          btn.addEventListener('click', function () { abrirModal(svc.nome); });
+          btnWrap.appendChild(btn);
+          card.appendChild(btnWrap);
           catalogo.appendChild(card);
         });
       }
 
       renderCatalogo(servicos);
 
-      /* ---------- Dropdown com os 23 serviços ---------- */
-      var servicoSelect = document.getElementById('servico-select');
+      /* ---------- Buscar catálogo atualizado do CMS ---------- */
+      fetch('content/site.json?v=' + Date.now())
+        .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+        .then(function (d) {
+          var l = (d.servicos || []).slice().sort(function (a, b) { return (a.ordem || 0) - (b.ordem || 0); });
+          if (l.length) { servicos = l; if (B) B.setServicos(l); renderCatalogo(l); }
+        })
+        .catch(function () {});
 
-      function renderOptions(lista) {
-        servicoSelect.innerHTML = '<option value="" disabled selected>Selecione o serviço…</option>';
-        lista.forEach(function (svc) {
-          var opt = document.createElement('option');
-          opt.value = svc.nome;
-          opt.textContent = svc.nome;
-          servicoSelect.appendChild(opt);
-        });
+      /* ============================================================
+         MODAL DE AGENDAMENTO — Passo-a-passo
+         ============================================================ */
+      var modal       = document.getElementById('booking-modal');
+      var closeBtn    = document.getElementById('booking-close');
+      var backBtn     = document.getElementById('booking-back');
+      var nextBtn     = document.getElementById('booking-next');
+      var progressEl  = document.getElementById('booking-progress');
+      var stepLabel   = document.getElementById('booking-step-label');
+      var titleEl     = document.getElementById('booking-modal-title');
+      var steps       = [1,2,3,4,5].map(function (n) { return document.getElementById('booking-step-' + n); });
+      var titles      = ['Escolha o Serviço', 'Escolha o Dia', 'Escolha o Horário', 'Seus Dados', 'Confirmado!'];
+      var currentStep = 1;
+      var selected = { servico: null, data: null, horario: null, forma_pagamento: null };
+
+      /* ---------- Máscara de Telefone ---------- */
+      function mascararTelefone(valor) {
+        var nums = valor.replace(/\D/g, '').slice(0, 11);
+        if (nums.length <= 2) return nums.length ? '(' + nums : '';
+        if (nums.length <= 7) return '(' + nums.slice(0,2) + ') ' + nums.slice(2);
+        return '(' + nums.slice(0,2) + ') ' + nums.slice(2,7) + '-' + nums.slice(7);
       }
 
-      renderOptions(servicos);
-
-      /* Recalcula os horários disponíveis ao trocar o serviço no formulário */
-      servicoSelect.addEventListener('change', function () {
-        atualizarHorarios(servicoSelect.value);
+      var whatsappInput = document.getElementById('booking-whatsapp');
+      whatsappInput.addEventListener('input', function () {
+        var pos = this.selectionStart;
+        var antes = this.value.length;
+        this.value = mascararTelefone(this.value);
+        var diff = this.value.length - antes;
+        this.setSelectionRange(pos + diff, pos + diff);
       });
 
-      /* ---------- Selecionar serviço + rolar até o formulário ---------- */
-      var formulario = document.getElementById('formulario-agendamento');
-
-      function selecionarServico(nome) {
-        servicoSelect.value = nome;
-        // Destaque visual de que o campo foi preenchido
-        servicoSelect.classList.add('!border-gold', '!bg-cream-deep');
-        atualizarHorarios(nome);
-        formulario.scrollIntoView({ behavior: 'smooth' });
+      /* ---------- Detectar cliente existente ---------- */
+      function detectarClienteExistente(telefone) {
+        var hint = document.getElementById('booking-whatsapp-hint');
+        if (!B || !telefone || telefone.replace(/\D/g,'').length < 10) {
+          hint.classList.add('hidden');
+          return null;
+        }
+        var existente = B.getClientePorTelefone ? B.getClientePorTelefone(telefone) : null;
+        if (existente) {
+          hint.textContent = '✓ Cliente(a) ' + existente.nome + ' — ' + existente.total_atendimentos + 'ª visita';
+          hint.classList.remove('hidden');
+          return existente;
+        }
+        hint.textContent = '✓ Nova cliente — 1ª visita';
+        hint.classList.remove('hidden');
+        return null;
       }
 
-      /* ---------- Grade de horários 09:00 → 18:00 ---------- */
-      var horarioGrid = document.getElementById('horario-grid');
-      var horarioSelecionado = '';
+      whatsappInput.addEventListener('blur', function () { detectarClienteExistente(this.value); });
+      whatsappInput.addEventListener('input', function () {
+        var hint = document.getElementById('booking-whatsapp-hint');
+        if (this.value.replace(/\D/g,'').length < 10) hint.classList.add('hidden');
+      });
 
-      function buildHorarios() {
-        var horas = [];
-        for (var h = 9; h <= 18; h++) {
-          var hora = (h < 10 ? '0' + h : h);
-          horas.push(hora + ':00');
-        }
-        horas.forEach(function (valor) {
-          var btn = document.createElement('button');
-          btn.type = 'button';
-          btn.textContent = valor;
-          btn.setAttribute('data-hora', String(valor.split(':')[0]));
-          btn.className = 'rounded-xl border border-cream-deep bg-cream/50 px-3 py-2.5 text-sm font-medium text-ink-soft transition-all duration-200 hover:border-gold hover:bg-gold hover:text-black focus:outline-none focus:ring-2 focus:ring-gold/40';
-          btn.addEventListener('click', function () {
-            selecionarHorario(btn, valor);
+      /* ---------- Abrir modal ---------- */
+      function abrirModal(servicoNome) {
+        console.log('[Booking] abrirModal chamado para:', servicoNome);
+        selected = { servico: servicoNome, data: null, horario: null, forma_pagamento: null };
+        currentStep = 1;
+        try { renderStep1(); } catch (e) { console.error('[Booking] Erro no renderStep1:', e); }
+        showModal();
+      }
+
+      var clockInterval = null;
+
+      function updateClock() {
+        var el = document.getElementById('booking-clock');
+        if (!el) return;
+        var now = new Date();
+        var hh = (now.getHours() < 10 ? '0' : '') + now.getHours();
+        var mm = (now.getMinutes() < 10 ? '0' : '') + now.getMinutes();
+        el.textContent = 'Horário atual: ' + hh + ':' + mm;
+      }
+
+      function showModal() {
+        if (!modal) { modal = document.getElementById('booking-modal'); }
+        if (!modal) { console.error('[Booking] Modal #booking-modal não encontrado no DOM'); return; }
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        modal.style.display = 'flex';
+        modal.style.visibility = 'visible';
+        modal.style.opacity = '1';
+        document.body.style.overflow = 'hidden';
+        updateClock();
+        clockInterval = setInterval(updateClock, 30000);
+        updateStep();
+      }
+
+      function hideModal() {
+        if (!modal) return;
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        modal.style.display = '';
+        modal.style.visibility = '';
+        modal.style.opacity = '';
+        document.body.style.overflow = '';
+        if (clockInterval) { clearInterval(clockInterval); clockInterval = null; }
+      }
+
+      closeBtn.addEventListener('click', hideModal);
+      modal.addEventListener('click', function (e) { if (e.target === modal) hideModal(); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.classList.contains('hidden')) hideModal(); });
+
+      /* ---------- Navegação ---------- */
+      function updateStep() {
+        steps.forEach(function (el, i) { el.classList.toggle('hidden', i + 1 !== currentStep); });
+        progressEl.style.width = (currentStep * 20) + '%';
+        stepLabel.textContent = 'Passo ' + currentStep + ' de 5';
+        titleEl.textContent = titles[currentStep - 1];
+        backBtn.classList.toggle('hidden', currentStep === 1 || currentStep === 5);
+        if (currentStep === 4) { nextBtn.textContent = 'Confirmar Agendamento'; nextBtn.classList.remove('hidden'); }
+        else if (currentStep === 5) { nextBtn.classList.add('hidden'); document.getElementById('booking-whatsapp-area').classList.remove('hidden'); }
+        else { nextBtn.textContent = 'Próximo'; nextBtn.classList.remove('hidden'); }
+      }
+
+      backBtn.addEventListener('click', function () {
+        if (currentStep > 1) { currentStep--; updateStep(); }
+      });
+
+      nextBtn.addEventListener('click', function () {
+        if (currentStep === 4) { confirmarAgendamento(); return; }
+        if (currentStep < 5) { currentStep++; updateStep(); renderCurrentStep(); }
+      });
+
+      function renderCurrentStep() {
+        if (currentStep === 2) renderStep2();
+        if (currentStep === 3) renderStep3();
+        if (currentStep === 4) renderStep4();
+      }
+
+      /* ---------- PASSO 1: Seleção de serviço ---------- */
+      function renderStep1() {
+        var list = document.getElementById('booking-service-list');
+        list.innerHTML = '';
+        servicos.forEach(function (svc) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          var isSelected = selected.servico === svc.nome;
+          b.className = 'w-full rounded-xl border p-4 text-left transition-all duration-200 ' +
+            (isSelected ? 'border-gold bg-gold/10 ring-2 ring-gold/40' : 'border-gold/20 bg-cream-deep hover:border-gold/50 hover:bg-cream/50');
+          var precoFmt = svc.preco === 'Consulte' ? 'Consulte' : svc.preco.replace('A partir de ', '');
+          b.innerHTML = '<div class="flex items-center justify-between"><span class="font-serif font-semibold">' + svc.nome + '</span><span class="text-xs text-muted">' + svc.duracao + '</span></div><p class="mt-1 text-sm font-bold text-gold-dark">' + precoFmt + '</p>';
+          b.addEventListener('click', function () {
+            selected.servico = svc.nome;
+            renderStep1();
+            currentStep = 2; updateStep(); renderStep2();
           });
-          horarioGrid.appendChild(btn);
+          list.appendChild(b);
         });
       }
 
-      function selecionarHorario(btn, valor) {
-        if (btn.disabled) return;
-        horarioSelecionado = valor;
-        document.getElementById('horario-erro').classList.add('hidden');
-        Array.from(horarioGrid.children).forEach(function (b) {
-          b.classList.remove('!bg-gold', '!text-black', '!border-gold');
-        });
-        btn.classList.add('!bg-gold', '!text-black', '!border-gold');
-      }
+      /* ---------- PASSO 2: Calendário ---------- */
+      var calYear, calMonth;
+      var hojeDate = new Date();
+      hojeDate.setHours(0,0,0,0);
 
-      buildHorarios();
-
-      /* ---------- Validação por duração: fecha às 19:00 ----------
-         limiteInicio = 19:00 − duração do serviço. Horários que fariam
-         o serviço terminar após as 19:00 ficam desabilitados (opaco/cinza). */
-      var HORARIO_FECHAMENTO_MIN = 19 * 60;
-
-      function duracaoMinutos(svc) {
-        if (!svc) return 0;
-        if (typeof svc.duracao_min === 'number' && svc.duracao_min > 0) return svc.duracao_min;
-        var texto = String(svc.duracao || '');
-        var horas = parseInt((texto.match(/(\d+)\s*h/) || [null, 0])[1], 10) || 0;
-        var mins = parseInt((texto.match(/(\d+)\s*min/) || [null, 0])[1], 10) || 0;
-        return horas * 60 + mins;
-      }
-
-      function formatarDuracao(min) {
-        var h = Math.floor(min / 60);
-        var m = min % 60;
-        if (h === 0) return m + 'min';
-        if (m === 0) return h + 'h';
-        return h + 'h ' + m + 'min';
-      }
-
-      function formatarMinutos(min) {
-        var h = Math.floor(min / 60);
-        var m = min % 60;
-        return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
-      }
-
-      function atualizarHorarios(servico) {
-        var svc = null;
-        for (var i = 0; i < servicos.length; i++) {
-          if (servicos[i].nome === servico) { svc = servicos[i]; break; }
-        }
-        var aviso = document.getElementById('horario-aviso');
-        var botoes = Array.from(horarioGrid.children);
-
-        if (!svc) {
-          botoes.forEach(function (btn) {
-            btn.disabled = false;
-          });
-          if (aviso) aviso.classList.add('hidden');
-          return;
-        }
-
-        var dur = duracaoMinutos(svc);
-        var limite = HORARIO_FECHAMENTO_MIN - dur;
-
-        botoes.forEach(function (btn) {
-          var hh = parseInt(btn.getAttribute('data-hora'), 10);
-          var disponivel = hh * 60 <= limite;
-          btn.disabled = !disponivel;
-          /* Se o horário selecionado ficou indisponível, limpa a seleção */
-          if (!disponivel && horarioSelecionado === btn.textContent) {
-            horarioSelecionado = '';
-            btn.classList.remove('!bg-gold', '!text-black', '!border-gold');
+      function renderStep2() {
+        if (!calYear) { calYear = hojeDate.getFullYear(); calMonth = hojeDate.getMonth(); }
+        var grid = document.getElementById('cal-grid');
+        var label = document.getElementById('cal-month-label');
+        var meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+        label.textContent = meses[calMonth] + ' ' + calYear;
+        grid.innerHTML = '';
+        var firstDay = new Date(calYear, calMonth, 1).getDay();
+        var daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+        for (var i = 0; i < firstDay; i++) { var empty = document.createElement('div'); grid.appendChild(empty); }
+        for (var d = 1; d <= daysInMonth; d++) {
+          var ds = calYear + '-' + (calMonth + 1 < 10 ? '0' : '') + (calMonth + 1) + '-' + (d < 10 ? '0' : '') + d;
+          var dayDate = new Date(calYear, calMonth, d);
+          var dayOfWeek = dayDate.getDay();
+          var isPast = dayDate <= hojeDate;
+          var isClosed = X().DIAS_FECHADOS.indexOf(dayOfWeek) !== -1;
+          var isBlocked = X().getBloqueios().datas.indexOf(ds) !== -1;
+          var disabled = isPast || isClosed || isBlocked;
+          var isSelected = selected.data === ds;
+          var cell = document.createElement('button');
+          cell.type = 'button';
+          cell.textContent = d;
+          cell.className = 'rounded-lg py-2.5 text-sm font-medium transition-all duration-150 ' +
+            (disabled ? 'cursor-not-allowed text-gray-300' : isSelected ? 'bg-gold text-black font-bold shadow-md' : 'text-ink-soft hover:bg-gold/20 hover:text-gold-dark');
+          cell.disabled = disabled;
+          if (!disabled) {
+            (function (dateStr) {
+              cell.addEventListener('click', function () {
+                selected.data = dateStr; selected.horario = null;
+                currentStep = 3; updateStep(); renderStep3();
+              });
+            })(ds);
           }
-        });
-
-        if (aviso) {
-          aviso.textContent = 'Duração ' + formatarDuracao(dur) +
-            ' · Último horário para começar: ' + formatarMinutos(limite);
-          aviso.classList.remove('hidden');
+          grid.appendChild(cell);
         }
       }
 
-      /* ---------- Validação: destaca campos obrigatórios ---------- */
-      function marcarErro(campo) {
-        campo.focus();
-        campo.classList.add('!ring-2', '!ring-red-400');
-        setTimeout(function () { campo.classList.remove('!ring-2', '!ring-red-400'); }, 2200);
-      }
-
-      /* ---------- Confirmação e envio via WhatsApp ---------- */
-      var nomeInput = document.getElementById('nome-input');
-      var telefoneInput = document.getElementById('telefone-input');
-      var dataInput = document.getElementById('data-input');
-      var confirmarBtn = document.getElementById('confirmar-btn');
-      var numeroWhats = '5511942212626';
-
-      function formatarData(valor) {
-        if (!valor) return 'não informada';
-        var partes = valor.split('-');
-        if (partes.length !== 3) return valor;
-        return partes[2] + '/' + partes[1] + '/' + partes[0];
-      }
-
-      confirmarBtn.addEventListener('click', function () {
-        var servico = servicoSelect.value;
-        var nome = nomeInput.value.trim();
-        var telefone = telefoneInput.value.trim();
-        var data = formatarData(dataInput.value);
-
-        if (!servico) {
-          marcarErro(servicoSelect);
-          return;
-        }
-        if (!nome) {
-          marcarErro(nomeInput);
-          return;
-        }
-        if (!telefone) {
-          marcarErro(telefoneInput);
-          return;
-        }
-        if (!dataInput.value) {
-          marcarErro(dataInput);
-          return;
-        }
-        if (!horarioSelecionado) {
-          document.getElementById('horario-erro').classList.remove('hidden');
-          horarioGrid.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          return;
-        }
-
-        // Mensagem formatada conforme especificação
-        var mensagem =
-          'Olá, Jane! Gostaria de agendar um horário:\n' +
-          '• Serviço: ' + servico + '\n' +
-          '• Nome: ' + nome + '\n' +
-          '• Telefone: ' + telefone + '\n' +
-          '• Data: ' + data + '\n' +
-          '• Horário: ' + horarioSelecionado;
-
-        var url = 'https://wa.me/' + numeroWhats + '?text=' + encodeURIComponent(mensagem);
-        window.open(url, '_blank');
+      document.getElementById('cal-prev').addEventListener('click', function () {
+        calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; }
+        renderStep2();
+      });
+      document.getElementById('cal-next').addEventListener('click', function () {
+        calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; }
+        renderStep2();
       });
 
-      /* ---------- Sombra do header ao rolar ---------- */
-      var header = document.getElementById('site-header');
-      function onScroll() {
-        header.classList.toggle('shadow-md', window.scrollY > 12);
-      }
-      window.addEventListener('scroll', onScroll, { passive: true });
+      /* ---------- PASSO 3: Horários ---------- */
+      function renderStep3() {
+        var svc = X().getServicoPorNome(selected.servico);
+        var durMin = svc ? (svc.duracao_min || 60) : 60;
+        var slots = X().horariosDisponiveis(selected.data, durMin);
+        var grid = document.getElementById('booking-time-grid');
+        var noSlots = document.getElementById('booking-no-slots');
+        var waitArea = document.getElementById('booking-waitlist-area');
+        grid.innerHTML = '';
+        var nomeData = X().nomeDiaSemana(selected.data) + ', ' + X().fmtDataBR(selected.data);
+        document.getElementById('booking-selected-date').textContent = nomeData;
 
-      /* ---------- Ano dinâmico ---------- */
+        if (slots.length === 0) {
+          noSlots.classList.remove('hidden');
+          waitArea.classList.remove('hidden');
+          grid.classList.add('hidden');
+          return;
+        }
+        noSlots.classList.add('hidden');
+        waitArea.classList.add('hidden');
+        grid.classList.remove('hidden');
+
+        slots.forEach(function (h) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.textContent = h;
+          b.className = 'rounded-xl border border-gold/20 bg-cream-deep px-3 py-2.5 text-sm font-medium text-ink-soft transition-all duration-200 hover:border-gold hover:bg-gold hover:text-black';
+          if (selected.horario === h) b.classList.add('!bg-gold', '!text-black', '!border-gold');
+          b.addEventListener('click', function () {
+            selected.horario = h;
+            grid.querySelectorAll('button').forEach(function (x) { x.classList.remove('!bg-gold', '!text-black', '!border-gold'); });
+            b.classList.add('!bg-gold', '!text-black', '!border-gold');
+          });
+          grid.appendChild(b);
+        });
+      }
+
+      /* Lista de espera */
+      document.getElementById('booking-join-waitlist').addEventListener('click', function () {
+        var nome = prompt('Informe seu nome:');
+        if (!nome) return;
+        var whatsapp = prompt('Informe seu WhatsApp:');
+        if (!whatsapp) return;
+        X().adicionarListaEspera({ servico: selected.servico, data_preferida: selected.data, cliente_nome: nome, cliente_whatsapp: whatsapp });
+        alert('Você foi adicionado(a) à lista de espera! Notificaremos quando uma vaga abrir.');
+        hideModal();
+      });
+
+      /* ---------- PASSO 4: Dados do cliente ---------- */
+      function renderStep4() {
+        var svc = X().getServicoPorNome(selected.servico);
+        var summary = document.getElementById('booking-summary');
+        summary.innerHTML =
+          '<p><strong>Serviço:</strong> ' + selected.servico + '</p>' +
+          '<p><strong>Data:</strong> ' + X().nomeDiaSemana(selected.data) + ', ' + X().fmtDataBR(selected.data) + '</p>' +
+          '<p><strong>Horário:</strong> ' + selected.horario + '</p>' +
+          (svc ? '<p><strong>Duração:</strong> ' + svc.duracao + '</p>' : '');
+        renderPagBtns();
+      }
+
+      function renderPagBtns() {
+        document.querySelectorAll('.pag-btn').forEach(function (btn) {
+          var isActive = selected.forma_pagamento === btn.getAttribute('data-pag');
+          btn.classList.toggle('border-gold', isActive);
+          btn.classList.toggle('bg-gold/15', isActive);
+          btn.classList.toggle('ring-2', isActive);
+          btn.classList.toggle('ring-gold/40', isActive);
+        });
+        var errEl = document.getElementById('booking-pagamento-error');
+        if (selected.forma_pagamento) errEl.classList.add('hidden');
+      }
+
+      document.getElementById('booking-pagamento').addEventListener('click', function (e) {
+        var btn = e.target.closest('.pag-btn');
+        if (!btn) return;
+        selected.forma_pagamento = btn.getAttribute('data-pag');
+        renderPagBtns();
+      });
+
+      /* ---------- PASSO 5: Confirmação ---------- */
+      function confirmarAgendamento() {
+        var nome = document.getElementById('booking-name').value.trim();
+        var whatsapp = document.getElementById('booking-whatsapp').value.trim();
+        var email = document.getElementById('booking-email').value.trim();
+        var obs = document.getElementById('booking-obs').value.trim();
+        var telefoneNums = whatsapp.replace(/\D/g, '');
+
+        if (!whatsapp || telefoneNums.length < 10) { alert('Informe um telefone/WhatsApp válido com DDD.'); document.getElementById('booking-whatsapp').focus(); return; }
+        if (!nome) { alert('Informe seu nome completo.'); document.getElementById('booking-name').focus(); return; }
+        if (!selected.forma_pagamento) { document.getElementById('booking-pagamento-error').classList.remove('hidden'); alert('Selecione uma forma de pagamento.'); return; }
+        if (!selected.horario) { alert('Selecione um horário.'); currentStep = 3; updateStep(); renderStep3(); return; }
+
+        var svc = X().getServicoPorNome(selected.servico);
+        var durMin = svc ? (svc.duracao_min || 60) : 60;
+
+        var ag = X().criarAgendamento({
+          servico: selected.servico,
+          duracao_min: durMin,
+          data: selected.data,
+          horario: selected.horario,
+          cliente_nome: nome,
+          cliente_whatsapp: whatsapp,
+          cliente_email: email,
+          forma_pagamento: selected.forma_pagamento,
+          observacoes: obs
+        });
+
+        /* Cadastro/atualização automática do cliente */
+        X().registrarCliente(nome, whatsapp, email, selected.servico);
+
+        var msg = X().montarMsgWhatsApp(ag);
+        var msgCliente = 'Olá! Gostaria de confirmar meu agendamento no Studio Jane Barreiros:\n\n👤 *Cliente:* ' + nome + ' (' + whatsapp + ')\n💇 *Serviço:* ' + selected.servico + '\n📅 *Data/Hora:* ' + X().fmtDataBR(selected.data) + ' às ' + selected.horario + '\n💳 *Pagamento:* ' + selected.forma_pagamento + (svc && svc.preco && svc.preco !== 'Consulte' ? '\n💰 *Valor:* ' + svc.preco : '');
+        document.getElementById('booking-confirm-msg').textContent =
+          nome + ', sua solicitação foi enviada com sucesso! Aguarde a confirmação do salão via WhatsApp.';
+        document.getElementById('booking-whatsapp-link').href =
+          'https://wa.me/5511930657871?text=' + encodeURIComponent(msg);
+        document.getElementById('booking-whatsapp-cliente').href =
+          'https://wa.me/55' + telefoneNums + '?text=' + encodeURIComponent(msgCliente);
+
+        currentStep = 5; updateStep();
+      }
+
+      document.getElementById('booking-new').addEventListener('click', function () {
+        selected = { servico: null, data: null, horario: null, forma_pagamento: null };
+        currentStep = 1; updateStep(); renderStep1();
+      });
+
+      /* ============================================================
+         SCROLL + ANO + HEADER
+         ============================================================ */
+      var header = document.getElementById('site-header');
+      window.addEventListener('scroll', function () {
+        header.classList.toggle('shadow-md', window.scrollY > 12);
+      }, { passive: true });
       document.getElementById('year').textContent = new Date().getFullYear();
 
-      /* ---------- Carregar catálogo do content/site.json ----------
-         Se o JSON estiver disponível, ele prevalece sobre o array embutido
-         acima (fallback para quando o arquivo não puder ser lido). */
-      fetch('content/site.json?v=' + Date.now())
-        .then(function (res) {
-          if (!res.ok) throw new Error('HTTP ' + res.status);
-          return res.json();
-        })
-        .then(function (data) {
-          var lista = (data.servicos || []).slice().sort(function (a, b) {
-            return (a.ordem || 0) - (b.ordem || 0);
-          });
-          if (lista.length) {
-            servicos = lista;
-            renderCatalogo(lista);
-            renderOptions(lista);
-          }
-        })
-        .catch(function () {
-          // Fallback: mantém o array embutido já renderizado.
-        });
+      /* ---------- Delegação de clique global para botões de agendamento ---------- */
+      document.addEventListener('click', function (e) {
+        var btn = e.target.closest('.svc-btn');
+        if (!btn) return;
+        var card = btn.closest('article');
+        if (!card) return;
+        var nomeEl = card.querySelector('h3');
+        var nome = nomeEl ? nomeEl.textContent.trim() : null;
+        console.log('[Agendamento] Clique no botão — serviço:', nome);
+        if (nome) { abrirModal(nome); }
+      });
+
     })();
+    });
   </script>
   <script>
     (function () {
@@ -1226,6 +1442,128 @@
     <div class="relative max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-gold/30 bg-[#111111] p-8 text-ink shadow-[0_30px_80px_-20px_rgba(0,0,0,.9)] sm:p-10">
       <h3 id="modal-legal-titulo" class="font-serif text-2xl font-semibold text-ink">Termos e Condições de Uso</h3>
       <div id="modal-legal-corpo" class="mt-5 space-y-4 text-sm font-light leading-relaxed text-muted"></div>
+    </div>
+  </div>
+
+  <!-- ==============================================================
+       MODAL DE AGENDAMENTO — Passo-a-passo
+  =============================================================== -->
+  <div id="booking-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 backdrop-blur-sm p-4" role="dialog" aria-modal="true" aria-labelledby="booking-modal-title">
+    <div class="booking-modal-box relative mx-auto w-full max-w-lg rounded-2xl border border-gold/30 bg-cream-soft p-6 shadow-2xl sm:p-8" style="max-height:90vh;overflow-y:auto;">
+
+      <!-- Botão fechar -->
+      <button id="booking-close" type="button" class="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-cream-deep text-muted transition-colors hover:text-gold-dark" aria-label="Fechar">&times;</button>
+
+      <!-- Header do modal -->
+      <div class="mb-6 text-center">
+        <p id="booking-step-label" class="eyebrow text-xs">Passo 1 de 5</p>
+        <p id="booking-clock" class="mt-1 text-[11px] font-mono text-muted"></p>
+        <h3 id="booking-modal-title" class="mt-2 font-serif text-2xl font-semibold">Escolha o Serviço</h3>
+      </div>
+
+      <!-- Barra de progresso -->
+      <div class="mb-6 h-1.5 w-full overflow-hidden rounded-full bg-gold/20">
+        <div id="booking-progress" class="h-full rounded-full bg-gradient-to-r from-[#BF953F] via-[#FCF6BA] to-[#B38728] transition-all duration-500" style="width:25%"></div>
+      </div>
+
+      <!-- PASSO 1 — Serviço -->
+      <div id="booking-step-1" class="booking-step">
+        <div class="max-h-60 space-y-2 overflow-y-auto pr-1" id="booking-service-list"></div>
+      </div>
+
+      <!-- PASSO 2 — Calendário -->
+      <div id="booking-step-2" class="booking-step hidden">
+        <div class="mb-4 flex items-center justify-between">
+          <button id="cal-prev" type="button" class="rounded-lg bg-cream-deep px-3 py-1.5 text-sm font-medium text-muted transition-colors hover:text-gold-dark">&larr; Ant.</button>
+          <span id="cal-month-label" class="font-serif text-lg font-semibold"></span>
+          <button id="cal-next" type="button" class="rounded-lg bg-cream-deep px-3 py-1.5 text-sm font-medium text-muted transition-colors hover:text-gold-dark">Próx. &rarr;</button>
+        </div>
+        <div class="mb-2 grid grid-cols-7 gap-1 text-center text-[11px] font-semibold uppercase tracking-wider text-muted">
+          <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
+        </div>
+        <div id="cal-grid" class="grid grid-cols-7 gap-1"></div>
+        <p class="mt-3 text-center text-xs text-muted">Dias em cinza estão indisponíveis.</p>
+      </div>
+
+      <!-- PASSO 3 — Horário -->
+      <div id="booking-step-3" class="booking-step hidden">
+        <p id="booking-selected-date" class="mb-4 text-center text-sm text-muted"></p>
+        <div id="booking-time-grid" class="grid grid-cols-3 gap-2 sm:grid-cols-4"></div>
+        <p id="booking-no-slots" class="hidden mt-4 text-center text-sm text-muted">Nenhum horário disponível para esta data.</p>
+        <div id="booking-waitlist-area" class="hidden mt-4 rounded-xl border border-gold/30 bg-cream-deep p-4 text-center">
+          <p class="text-sm font-medium text-muted">Deseja entrar na <strong>lista de espera</strong>?</p>
+          <p class="mt-1 text-xs text-muted">Notificaremos você quando uma vaga abrir.</p>
+          <button id="booking-join-waitlist" type="button" class="btn btn-primary mt-3 !py-2.5 text-sm">Entrar na Lista de Espera</button>
+        </div>
+      </div>
+
+      <!-- PASSO 4 — Dados do Cliente + Confirmação -->
+      <div id="booking-step-4" class="booking-step hidden">
+        <div id="booking-summary" class="mb-5 rounded-xl border border-gold/20 bg-cream-deep p-4 text-sm"></div>
+        <div class="space-y-4">
+          <div>
+            <label for="booking-whatsapp" class="form-label">Telefone / WhatsApp <span class="text-red-400">*</span></label>
+            <input id="booking-whatsapp" type="tel" class="form-input" placeholder="(11) 98765-4321" autocomplete="tel" inputmode="tel" required />
+            <p id="booking-whatsapp-hint" class="mt-1 hidden text-xs text-gold-dark font-medium"></p>
+          </div>
+          <div>
+            <label for="booking-name" class="form-label">Nome Completo <span class="text-red-400">*</span></label>
+            <input id="booking-name" type="text" class="form-input" placeholder="Seu nome completo" autocomplete="name" required />
+          </div>
+          <div>
+            <label for="booking-email" class="form-label">E-mail <span class="text-muted">(opcional)</span></label>
+            <input id="booking-email" type="email" class="form-input" placeholder="seu@email.com" autocomplete="email" />
+          </div>
+          <div>
+            <label for="booking-obs" class="form-label">Observações <span class="text-muted">(opcional)</span></label>
+            <textarea id="booking-obs" rows="2" class="form-input" placeholder="Alguma informação adicional..."></textarea>
+          </div>
+          <div>
+            <label class="form-label">Forma de Pagamento <span class="text-red-400">*</span></label>
+            <div id="booking-pagamento" class="grid grid-cols-2 gap-2 mt-1">
+              <button type="button" data-pag="Pix" class="pag-btn rounded-xl border border-gold/20 bg-cream-deep px-3 py-3 text-center transition-all duration-200 hover:border-gold/50 hover:bg-gold/5">
+                <span class="block text-lg mb-0.5">📱</span>
+                <span class="block text-xs font-semibold text-ink-soft">Pix</span>
+              </button>
+              <button type="button" data-pag="Cartão de Crédito" class="pag-btn rounded-xl border border-gold/20 bg-cream-deep px-3 py-3 text-center transition-all duration-200 hover:border-gold/50 hover:bg-gold/5">
+                <span class="block text-lg mb-0.5">💳</span>
+                <span class="block text-xs font-semibold text-ink-soft">Cartão de Crédito</span>
+              </button>
+              <button type="button" data-pag="Cartão de Débito" class="pag-btn rounded-xl border border-gold/20 bg-cream-deep px-3 py-3 text-center transition-all duration-200 hover:border-gold/50 hover:bg-gold/5">
+                <span class="block text-lg mb-0.5">💳</span>
+                <span class="block text-xs font-semibold text-ink-soft">Cartão de Débito</span>
+              </button>
+              <button type="button" data-pag="Dinheiro" class="pag-btn rounded-xl border border-gold/20 bg-cream-deep px-3 py-3 text-center transition-all duration-200 hover:border-gold/50 hover:bg-gold/5">
+                <span class="block text-lg mb-0.5">💵</span>
+                <span class="block text-xs font-semibold text-ink-soft">Dinheiro no Salão</span>
+              </button>
+            </div>
+            <p id="booking-pagamento-error" class="mt-1 hidden text-xs text-red-400 font-medium">Selecione uma forma de pagamento.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASSO 5 — Confirmação Final -->
+      <div id="booking-step-5" class="booking-step hidden text-center">
+        <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-green-600">
+          <svg class="h-8 w-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        </div>
+        <h4 class="font-serif text-xl font-semibold">Agendamento Confirmado!</h4>
+        <p id="booking-confirm-msg" class="mt-2 text-sm text-muted"></p>
+      </div>
+
+      <!-- Botões de navegação -->
+      <div class="mt-6 flex items-center gap-3">
+        <button id="booking-back" type="button" class="hidden flex-1 rounded-xl border border-gold/30 bg-cream-deep py-3 text-sm font-semibold text-muted transition-colors hover:border-gold hover:text-gold-dark">Voltar</button>
+        <button id="booking-next" type="button" class="flex-1 btn btn-primary !py-3 text-sm">Próximo</button>
+      </div>
+
+      <!-- Passo 5: botão WhatsApp -->
+      <div id="booking-whatsapp-area" class="hidden mt-4 space-y-2">
+        <a id="booking-whatsapp-link" href="#" target="_blank" rel="noopener" class="btn btn-primary block w-full !py-3.5 text-center text-sm font-semibold">Confirmar no WhatsApp do Salão</a>
+        <a id="booking-whatsapp-cliente" href="#" target="_blank" rel="noopener" class="block w-full rounded-xl border border-green-500/30 bg-green-500/10 py-3 text-center text-sm font-semibold text-green-400 transition-colors hover:bg-green-500/20">Enviar Cópia para Meu WhatsApp</a>
+        <button id="booking-new" type="button" class="mt-2 block w-full text-center text-xs font-medium text-muted transition-colors hover:text-gold-dark">Novo agendamento</button>
+      </div>
     </div>
   </div>
 

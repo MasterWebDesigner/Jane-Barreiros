@@ -1,0 +1,2304 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#121212">
+  <title>Painel Administrativo — Studio Jane Barreiros</title>
+  <link rel="icon" href="Logomarca.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            dark: { 900:'#0A0A0A', 800:'#121212', 700:'#1A1A1A', 600:'#1E1E1E', 500:'#2A2A2A', 400:'#333333', 300:'#444444' },
+            gold: { DEFAULT:'#D4AF37', light:'#F3E5B2', dark:'#B8860B', muted:'#AA771C' },
+          },
+          fontFamily: {
+            display: ['"Playfair Display"','Georgia','serif'],
+            body: ['Inter','system-ui','sans-serif'],
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter',system-ui,sans-serif; background:#0A0A0A; color:#E5E7EB; overflow:hidden; height:100vh; }
+    .font-display { font-family:'Playfair Display',Georgia,serif; }
+    .font-numeric {
+      font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.02em;
+    }
+    ::-webkit-scrollbar { width:6px; }
+    ::-webkit-scrollbar-track { background:#1A1A1A; }
+    ::-webkit-scrollbar-thumb { background:#D4AF37; border-radius:3px; }
+    .sidebar-link { transition:all .2s; border-left:3px solid transparent; }
+    .sidebar-link:hover, .sidebar-link.active { background:rgba(212,175,55,.08); border-left-color:#D4AF37; color:#D4AF37; }
+    .gold-btn { background:linear-gradient(135deg,#BF953F,#FCF6BA,#B38728); color:#000; font-weight:600; transition:all .2s; }
+    .gold-btn:hover { filter:brightness(1.1); transform:translateY(-1px); }
+    .card-dark { background:#1E1E1E; border:1px solid rgba(212,175,55,.12); border-radius:12px; }
+    .card-dark:hover { border-color:rgba(212,175,55,.3); }
+    .tab-active { color:#D4AF37; border-bottom:2px solid #D4AF37; }
+    input, select, textarea { background:#121212; border:1px solid #333; color:#E5E7EB; border-radius:8px; padding:10px 14px; font-size:14px; width:100%; transition:border .2s; }
+    input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(.7) sepia(.3) hue-rotate(10deg) brightness(1.5); }
+    input:focus, select:focus, textarea:focus { outline:none; border-color:#D4AF37; box-shadow:0 0 0 3px rgba(212,175,55,.1); }
+    .badge { display:inline-flex; align-items:center; padding:3px 10px; border-radius:9999px; font-size:11px; font-weight:600; }
+    .badge-active { background:rgba(34,197,94,.15); color:#22C55E; }
+    .badge-inactive { background:rgba(239,68,68,.15); color:#EF4444; }
+    .modal-overlay { background:rgba(0,0,0,.7); backdrop-filter:blur(4px); }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+    .fade-in { animation:fadeIn .3s ease-out; }
+    .ag-salon-layout { display:flex; flex-direction:column; height:100%; overflow:hidden; }
+
+    /* Toast notification */
+    @keyframes toastIn { from{opacity:0;transform:translateX(40px)} to{opacity:1;transform:translateX(0)} }
+    @keyframes toastOut { from{opacity:1;transform:translateX(0)} to{opacity:0;transform:translateX(40px)} }
+    .toast-notif { animation:toastIn .35s ease-out; }
+    .toast-notif.hide { animation:toastOut .3s ease-in forwards; }
+
+    /* Badge pulse */
+    @keyframes badgePulse { 0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.6)} 50%{box-shadow:0 0 0 6px rgba(239,68,68,0)} }
+    .badge-pulse { animation:badgePulse 1.5s infinite; }
+
+    /* Audio unlock btn */
+    #audio-unlock-btn { position:fixed; bottom:20px; right:20px; z-index:9999; }
+  </style>
+</head>
+<body>
+
+<!-- Toast Container -->
+<div id="toast-container" class="fixed top-4 right-4 z-[9998] flex flex-col gap-3 pointer-events-none"></div>
+
+<!-- Audio Unlock Button (hidden by default) -->
+<button id="audio-unlock-btn" class="hidden gold-btn rounded-xl px-4 py-2 text-xs font-semibold shadow-lg" title="Ativar som de notificação">
+  🔔 Ativar Som
+</button>
+
+<!-- ============================================================
+     LOGIN
+============================================================ -->
+<div id="login-screen" class="flex h-screen items-center justify-center" style="background:radial-gradient(ellipse at center,#1A1A1A 0%,#0A0A0A 70%);">
+  <div class="w-full max-w-sm rounded-2xl border border-gold/20 bg-dark-700 p-8 shadow-2xl fade-in">
+    <div class="text-center">
+      <img src="Logomarca.png" alt="Studio Jane Barreiros" class="mx-auto mb-4 h-16 w-auto">
+      <h1 class="font-display text-2xl font-semibold text-white">Painel Admin</h1>
+      <p class="mt-2 text-sm text-gray-400">Acesso restrito ao Studio</p>
+    </div>
+    <form id="login-form" class="mt-6 space-y-4">
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Senha</label>
+        <input id="login-senha" type="password" placeholder="Digite a senha" autocomplete="current-password">
+      </div>
+      <p id="login-erro" class="hidden text-center text-xs font-medium text-red-400">Senha incorreta.</p>
+      <button type="submit" class="gold-btn w-full rounded-xl py-3 text-sm">Entrar</button>
+    </form>
+  </div>
+</div>
+
+<!-- ============================================================
+     APP — SIDEBAR + MAIN
+============================================================ -->
+<div id="admin-app" class="hidden h-screen flex">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar" class="flex w-64 flex-col border-r border-dark-300/50 bg-dark-700" style="min-width:256px;">
+    <!-- Logo -->
+    <div class="flex items-center gap-3 border-b border-dark-300/50 px-5 py-5">
+      <img src="Logomarca.png" alt="" class="h-8 w-auto">
+      <div>
+        <p class="font-display text-sm font-semibold text-white leading-tight">JANE BARREIROS</p>
+        <p class="text-[10px] font-medium uppercase tracking-wider text-gold">Painel Administrativo</p>
+      </div>
+    </div>
+
+    <!-- Menu -->
+    <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+      <button data-page="dashboard" class="sidebar-link active flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-300">
+        <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </button>
+      <button data-page="agendamentos" class="sidebar-link flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-300 relative">
+        <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        Agendamentos
+        <span id="notif-badge" class="hidden absolute right-2 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white animate-pulse">0</span>
+      </button>
+      <button data-page="servicos" class="sidebar-link flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-300">
+        <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        Serviços
+      </button>
+      <button data-page="produtos" class="sidebar-link flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-300">
+        <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        Estoque / Produtos
+      </button>
+      <button data-page="faturamento" class="sidebar-link flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-300">
+        <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        Faturamento
+      </button>
+      <button data-page="desempenho" class="sidebar-link flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-300">
+        <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Desempenho & Tráfego
+      </button>
+      <button data-page="clientes" class="sidebar-link flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-300">
+        <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Clientes
+      </button>
+      <div class="border-t border-dark-300/50 my-3"></div>
+      <button data-page="config" class="sidebar-link flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-300">
+        <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.32 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Configurações
+      </button>
+    </nav>
+
+    <!-- Sair -->
+    <div class="border-t border-dark-300/50 px-3 py-4">
+      <button id="logout-btn" class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-400 transition-colors hover:bg-red-500/10">
+        <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sair
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="flex-1 overflow-y-auto bg-dark-900">
+
+    <!-- ==================== DASHBOARD ==================== -->
+    <section id="page-dashboard" class="admin-page p-6 lg:p-8">
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-3">
+          <div>
+            <h1 class="font-display text-2xl font-semibold text-white">Dashboard Operacional</h1>
+            <p id="dash-date" class="mt-1 text-sm text-gray-400"></p>
+          </div>
+          <span id="dash-pendente-badge" class="hidden items-center gap-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 px-3 py-1 text-[11px] font-bold text-amber-400 badge-pulse">
+            <span class="h-2 w-2 rounded-full bg-amber-400 animate-pulse"></span>
+            <span id="dash-pendente-count">0</span> pendente(s)
+          </span>
+        </div>
+        <button id="dash-encaixe-btn" class="gold-btn rounded-xl px-5 py-2.5 text-sm font-semibold flex items-center gap-2">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          + Agendamento Encaixe
+        </button>
+      </div>
+
+      <!-- Cards de Métricas -->
+      <div class="grid grid-cols-2 gap-4 lg:grid-cols-4 mb-6">
+        <div class="card-dark p-5 relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-16 h-16 bg-green-500/5 rounded-bl-full"></div>
+          <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Atendimentos do Dia</p>
+          <p class="mt-2 font-numeric text-3xl font-bold"><span id="dash-concluidos" class="text-green-400">0</span><span class="text-gray-500 text-lg"> / </span><span id="dash-total-dia" class="text-white">0</span></p>
+          <p class="text-[10px] text-gray-500 mt-1">concluídos / total</p>
+        </div>
+        <div class="card-dark p-5 relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-16 h-16 bg-gold/5 rounded-bl-full"></div>
+          <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Faturamento Hoje</p>
+          <p id="dash-fat-previsto" class="mt-2 font-numeric text-xl font-bold text-gold">R$ 0</p>
+          <p class="text-[10px] text-gray-500 mt-1">previsto</p>
+          <p id="dash-fat-realizado" class="mt-1 font-numeric text-sm font-semibold text-green-400">R$ 0 realizado</p>
+        </div>
+        <div class="card-dark p-5 relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-16 h-16 bg-blue-500/5 rounded-bl-full"></div>
+          <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Clientes Únicos</p>
+          <p id="dash-clientes-pedidos" class="mt-2 font-numeric text-3xl font-bold text-gold">0</p>
+          <p class="text-[10px] text-gray-500 mt-1">com pedidos realizados</p>
+        </div>
+        <div class="card-dark p-5 relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-16 h-16 bg-purple-500/5 rounded-bl-full"></div>
+          <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Lista de Espera</p>
+          <p id="dash-espera" class="mt-2 font-numeric text-3xl font-bold text-amber-400">0</p>
+          <p class="text-[10px] text-gray-500 mt-1">aguardando vaga</p>
+        </div>
+      </div>
+
+      <!-- Lista Operacional do Dia -->
+      <div class="card-dark p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-display text-base font-semibold text-white">Atendimentos de Hoje</h3>
+          <span id="dash-hora-agora" class="text-xs text-gray-500 font-mono"></span>
+        </div>
+        <div id="dash-lista" class="space-y-3"></div>
+      </div>
+    </section>
+
+    <!-- ==================== AGENDAMENTOS ==================== -->
+    <section id="page-agendamentos" class="admin-page hidden ag-salon-layout">
+
+      <!-- Header com View Toggles + Mês -->
+      <div class="flex items-center justify-between px-6 pt-5 pb-3 flex-shrink-0">
+        <div class="flex items-center gap-1 rounded-xl bg-dark-700 border border-dark-300/40 p-1">
+          <button id="ag-view-dia" class="ag-view-btn rounded-lg px-4 py-1.5 text-xs font-bold bg-gold/20 text-gold" data-view="dia">Dia</button>
+          <button id="ag-view-grade" class="ag-view-btn rounded-lg px-4 py-1.5 text-xs font-semibold text-gray-400 hover:text-gray-200" data-view="grade">Grade</button>
+          <button id="ag-view-lista" class="ag-view-btn rounded-lg px-4 py-1.5 text-xs font-semibold text-gray-400 hover:text-gray-200" data-view="lista">Lista</button>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="ag-month-prev" class="flex h-8 w-8 items-center justify-center rounded-lg bg-dark-700 border border-dark-300/40 text-gray-400 hover:text-white hover:border-gold/30 transition-colors">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
+          </button>
+          <button id="ag-month-selector" class="flex items-center gap-1.5 rounded-lg bg-dark-700 border border-dark-300/40 px-4 py-1.5 text-sm font-semibold text-white hover:border-gold/30 transition-colors">
+            <span id="ag-month-label">Agosto 2026</span>
+            <svg class="h-3.5 w-3.5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <button id="ag-month-next" class="flex h-8 w-8 items-center justify-center rounded-lg bg-dark-700 border border-dark-300/40 text-gray-400 hover:text-white hover:border-gold/30 transition-colors">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Calendário Semanal Compacto -->
+      <div class="px-6 pb-3 flex-shrink-0">
+        <div id="ag-week-calendar" class="rounded-xl bg-dark-700 border border-dark-300/40 p-3">
+          <div class="grid grid-cols-7 gap-1" id="ag-week-header">
+            <div class="text-center text-[10px] font-bold uppercase tracking-wider text-gray-500 py-1">Dom</div>
+            <div class="text-center text-[10px] font-bold uppercase tracking-wider text-gray-500 py-1">Seg</div>
+            <div class="text-center text-[10px] font-bold uppercase tracking-wider text-gray-500 py-1">Ter</div>
+            <div class="text-center text-[10px] font-bold uppercase tracking-wider text-gray-500 py-1">Qua</div>
+            <div class="text-center text-[10px] font-bold uppercase tracking-wider text-gray-500 py-1">Qui</div>
+            <div class="text-center text-[10px] font-bold uppercase tracking-wider text-gray-500 py-1">Sex</div>
+            <div class="text-center text-[10px] font-bold uppercase tracking-wider text-gray-500 py-1">Sáb</div>
+          </div>
+          <div class="grid grid-cols-7 gap-1 mt-1" id="ag-week-days"></div>
+        </div>
+        <!-- Info bar: Data + Horário de expediente -->
+        <div class="flex items-center justify-between mt-2 px-1">
+          <p id="ag-info-data" class="text-xs font-semibold text-gold"></p>
+          <p class="text-[10px] text-gray-500">09:00 — 18:00</p>
+        </div>
+      </div>
+
+      <!-- Filtro por Profissional + Origem -->
+      <div class="px-6 pb-3 flex-shrink-0">
+        <div class="flex items-center gap-2 flex-wrap">
+          <button id="ag-prof-filter" class="flex items-center gap-2 rounded-xl bg-dark-700 border border-dark-300/40 px-4 py-2 text-xs font-semibold text-gray-300 hover:border-gold/30 transition-colors">
+            <svg class="h-3.5 w-3.5 text-gold" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+            <span id="ag-prof-label">Todos os Funcionários</span>
+            <svg class="h-3 w-3 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div id="ag-prof-dropdown" class="hidden absolute mt-1 rounded-xl bg-dark-700 border border-dark-300/50 shadow-2xl py-1 z-50 min-w-[220px]"></div>
+          <div class="flex items-center gap-1 rounded-xl bg-dark-700 border border-dark-300/40 p-0.5">
+            <button data-origem="todos" class="ag-origem-btn rounded-lg px-3 py-1.5 text-[10px] font-semibold transition-colors bg-gold/15 text-gold">Todos</button>
+            <button data-origem="online" class="ag-origem-btn rounded-lg px-3 py-1.5 text-[10px] font-semibold transition-colors text-gray-400 hover:text-blue-400">Online</button>
+            <button data-origem="recepcao" class="ag-origem-btn rounded-lg px-3 py-1.5 text-[10px] font-semibold transition-colors text-gray-400 hover:text-gold">Recepção</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conteúdo principal: Grade / Lista / Dia -->
+      <div class="flex-1 overflow-y-auto px-6 pb-4" id="ag-content-area">
+        <div id="ag-timeline" class="space-y-2"></div>
+      </div>
+
+      <!-- Barra inferior: Alerta + Busca + Hoje -->
+      <div class="flex-shrink-0 border-t border-dark-300/40 bg-dark-800 px-6 py-3">
+        <div id="ag-alert-bar" class="hidden rounded-xl bg-green-500/10 border border-green-500/20 px-4 py-2.5 mb-2">
+          <p class="text-xs font-semibold text-green-400" id="ag-alert-text"></p>
+        </div>
+        <div class="flex items-center justify-between">
+          <button id="ag-busca-btn" class="flex items-center gap-2 rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-xs text-gray-400 hover:text-white transition-colors">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            Buscar
+          </button>
+          <button id="ag-hoje-btn" class="gold-btn rounded-xl px-5 py-2 text-xs font-bold">Hoje</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SERVIÇOS ==================== -->
+    <section id="page-servicos" class="admin-page p-6 lg:p-8 hidden">
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="font-display text-2xl font-semibold text-white">Serviços</h1>
+        <button id="btn-novo-servico" class="gold-btn rounded-xl px-5 py-2.5 text-sm flex items-center gap-2">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Criar Novo Serviço
+        </button>
+      </div>
+
+      <!-- Tabs -->
+      <div class="flex border-b border-dark-300/50 mb-6 gap-6">
+        <button class="svc-tab tab-active pb-3 text-sm font-semibold" data-svc-tab="servicos">Serviços</button>
+        <button class="svc-tab pb-3 text-sm font-semibold text-gray-400 hover:text-gray-200" data-svc-tab="profissionais">Profissionais</button>
+        <button class="svc-tab pb-3 text-sm font-semibold text-gray-400 hover:text-gray-200" data-svc-tab="secoes">Seções</button>
+        <button class="svc-tab pb-3 text-sm font-semibold text-gray-400 hover:text-gray-200" data-svc-tab="clientes-tab">Clientes</button>
+      </div>
+
+      <!-- Lista de serviços -->
+      <div id="svc-lista" class="space-y-3"></div>
+      <p id="svc-vazio" class="hidden text-center text-gray-500 py-12">Nenhum serviço cadastrado.</p>
+    </section>
+
+    <!-- ==================== ESTOQUE ==================== -->
+    <section id="page-produtos" class="admin-page p-6 lg:p-8 hidden">
+      <h1 class="font-display text-2xl font-semibold text-white mb-6">Estoque / Produtos</h1>
+      <div class="card-dark p-8 text-center">
+        <p class="text-gray-400">Módulo em desenvolvimento. Em breve disponível.</p>
+      </div>
+    </section>
+
+    <!-- ==================== FATURAMENTO ==================== -->
+    <section id="page-faturamento" class="admin-page p-6 lg:p-8 hidden">
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="font-display text-2xl font-semibold text-white">Faturamento</h1>
+        <div class="flex items-center gap-2">
+          <button id="fat-filter-prev" class="rounded-lg bg-dark-600 px-3 py-1.5 text-sm text-gray-300 hover:bg-dark-500">&larr;</button>
+          <span id="fat-periodo-label" class="font-display text-sm font-semibold text-white min-w-[140px] text-center"></span>
+          <button id="fat-filter-next" class="rounded-lg bg-dark-600 px-3 py-1.5 text-sm text-gray-300 hover:bg-dark-500">&rarr;</button>
+        </div>
+      </div>
+
+      <!-- Cards de Faturamento Principal -->
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-6">
+        <div class="card-dark p-5 relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-20 h-20 bg-gold/5 rounded-bl-full"></div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Faturamento Hoje</p>
+          <p id="fat-hoje-valor" class="mt-2 font-numeric text-3xl font-bold text-gold">R$ 0</p>
+          <p id="fat-hoje-count" class="mt-1 text-xs text-gray-500">0 atendimentos concluídos</p>
+        </div>
+        <div class="card-dark p-5 relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-20 h-20 bg-gold/5 rounded-bl-full"></div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Faturamento do Mês</p>
+          <p id="fat-mes-valor" class="mt-2 font-numeric text-3xl font-bold text-gold">R$ 0</p>
+          <p id="fat-mes-count" class="mt-1 text-xs text-gray-500">0 atendimentos concluídos</p>
+        </div>
+        <div class="card-dark p-5 relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-20 h-20 bg-gold/5 rounded-bl-full"></div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Faturamento do Ano</p>
+          <p id="fat-ano-valor" class="mt-2 font-numeric text-3xl font-bold text-gold">R$ 0</p>
+          <p id="fat-ano-count" class="mt-1 text-xs text-gray-500">0 atendimentos concluídos</p>
+        </div>
+      </div>
+
+      <!-- Status de Agendamentos -->
+      <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 mb-6">
+        <div class="card-dark p-4 text-center">
+          <p id="fat-agendados" class="font-numeric text-2xl font-bold text-blue-400">0</p>
+          <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mt-1">Agendados</p>
+          <p class="fat-period-sub text-[9px] text-gray-500 mt-0.5"></p>
+        </div>
+        <div class="card-dark p-4 text-center">
+          <p id="fat-em-atendimento" class="font-numeric text-2xl font-bold text-yellow-400">0</p>
+          <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mt-1">Em Atendimento</p>
+          <p class="fat-period-sub text-[9px] text-gray-500 mt-0.5"></p>
+        </div>
+        <div class="card-dark p-4 text-center">
+          <p id="fat-concluidos" class="font-numeric text-2xl font-bold text-green-400">0</p>
+          <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mt-1">Concluídos</p>
+          <p class="fat-period-sub text-[9px] text-gray-500 mt-0.5"></p>
+        </div>
+        <div class="card-dark p-4 text-center">
+          <p id="fat-cancelados" class="font-numeric text-2xl font-bold text-red-400">0</p>
+          <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mt-1">Cancelados</p>
+          <p class="fat-period-sub text-[9px] text-gray-500 mt-0.5"></p>
+        </div>
+        <div class="card-dark p-4 text-center">
+          <p id="fat-espera" class="font-numeric text-2xl font-bold text-amber-400">0</p>
+          <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mt-1">Lista de Espera</p>
+        </div>
+      </div>
+
+      <!-- Faturamento por Forma de Pagamento + Top Serviços -->
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 mb-6">
+
+        <!-- Forma de Pagamento -->
+        <div class="card-dark p-5">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-display text-base font-semibold text-white">Por Forma de Pagamento</h3>
+            <div class="flex gap-1">
+              <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gold bg-gold/15" data-pag="dia">Dia</button>
+              <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-pag="mes">Mês</button>
+              <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-pag="ano">Ano</button>
+              <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-pag="total">Total</button>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="rounded-xl bg-dark-600 border border-dark-300/30 p-4 text-center">
+              <p class="text-xs text-gray-400 mb-1">Pix</p>
+              <p id="fat-pag-pix" class="font-numeric text-xl font-bold text-green-400">R$ 0</p>
+            </div>
+            <div class="rounded-xl bg-dark-600 border border-dark-300/30 p-4 text-center">
+              <p class="text-xs text-gray-400 mb-1">Cartão de Crédito</p>
+              <p id="fat-pag-credito" class="font-numeric text-xl font-bold text-blue-400">R$ 0</p>
+            </div>
+            <div class="rounded-xl bg-dark-600 border border-dark-300/30 p-4 text-center">
+              <p class="text-xs text-gray-400 mb-1">Cartão de Débito</p>
+              <p id="fat-pag-debito" class="font-numeric text-xl font-bold text-purple-400">R$ 0</p>
+            </div>
+            <div class="rounded-xl bg-dark-600 border border-dark-300/30 p-4 text-center">
+              <p class="text-xs text-gray-400 mb-1">Dinheiro</p>
+              <p id="fat-pag-dinheiro" class="font-numeric text-xl font-bold text-amber-400">R$ 0</p>
+            </div>
+          </div>
+          <p class="mt-3 text-[10px] text-gray-500 text-center">Valores estimados com base nos preços dos serviços</p>
+        </div>
+
+        <!-- Top Serviços -->
+        <div class="card-dark p-5">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-display text-base font-semibold text-white">Top 5 Serviços</h3>
+            <select id="fat-cat-filter" class="!w-auto !py-1 !text-[10px] !rounded-lg">
+              <option value="todas">Todas as Seções</option>
+              <option value="Cabelo">Cabelo</option>
+              <option value="Coloração">Coloração</option>
+              <option value="Tratamento">Tratamento</option>
+              <option value="Alisamento">Alisamento</option>
+              <option value="Mega Hair">Mega Hair</option>
+            </select>
+          </div>
+          <div id="fat-top-servicos" class="space-y-3"></div>
+        </div>
+      </div>
+
+      <!-- Tabela de Últimos Atendimentos -->
+      <div class="card-dark p-5">
+        <h3 class="font-display text-base font-semibold text-white mb-4">Últimos Atendimentos</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-dark-300/50 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                <th class="px-3 py-2">ID</th>
+                <th class="px-3 py-2">Data & Hora</th>
+                <th class="px-3 py-2">Cliente</th>
+                <th class="px-3 py-2">Serviço(s)</th>
+                <th class="px-3 py-2 text-right">Total (R$)</th>
+                <th class="px-3 py-2 text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody id="fat-tbody" class="divide-y divide-dark-300/30"></tbody>
+          </table>
+        </div>
+        <p id="fat-vazio" class="hidden text-center text-gray-500 py-8 text-sm">Nenhum atendimento registrado.</p>
+      </div>
+    </section>
+
+    <!-- ==================== DESEMPENHO ==================== -->
+    <section id="page-desempenho" class="admin-page p-6 lg:p-8 hidden">
+      <h1 class="font-display text-2xl font-semibold text-white mb-6">Desempenho & Tráfego</h1>
+      <div class="card-dark p-8 text-center">
+        <p class="text-gray-400">Módulo em desenvolvimento. Em breve disponível.</p>
+      </div>
+    </section>
+
+    <!-- ==================== CLIENTES ==================== -->
+    <section id="page-clientes" class="admin-page p-6 lg:p-8 hidden">
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="font-display text-2xl font-semibold text-white">Clientes</h1>
+        <input id="cli-busca" type="text" class="w-72" placeholder="Buscar por nome ou WhatsApp...">
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm">
+          <thead>
+            <tr class="border-b border-dark-300/50 text-xs font-semibold uppercase tracking-wider text-gray-400">
+              <th class="px-4 py-3">Nome</th>
+              <th class="px-4 py-3">WhatsApp</th>
+              <th class="px-4 py-3 text-center">Visitas</th>
+              <th class="px-4 py-3 text-right">Valor Estimado</th>
+              <th class="px-4 py-3">Último Agendamento</th>
+              <th class="px-4 py-3">Status</th>
+              <th class="px-4 py-3 text-center">Ação</th>
+            </tr>
+          </thead>
+          <tbody id="cli-tbody" class="divide-y divide-dark-300/30"></tbody>
+        </table>
+      </div>
+      <p id="cli-vazio" class="hidden text-center text-gray-500 py-12">Nenhum cliente encontrado.</p>
+    </section>
+
+    <!-- ==================== CONFIGURAÇÕES ==================== -->
+    <section id="page-config" class="admin-page p-6 lg:p-8 hidden">
+      <h1 class="font-display text-2xl font-semibold text-white mb-6">Configurações</h1>
+
+      <div class="card-dark p-6 mb-6">
+        <h3 class="font-display text-lg font-semibold text-white mb-4">Bloquear Dias</h3>
+        <p class="text-sm text-gray-400 mb-4">Selecione um dia para impedir agendamentos.</p>
+        <div class="flex flex-wrap gap-3">
+          <input id="cfg-bloq-dia" type="date">
+          <button id="cfg-bloq-btn" class="rounded-xl bg-red-500/20 px-5 py-2.5 text-sm font-semibold text-red-400 hover:bg-red-500/30">Bloquear Dia</button>
+        </div>
+        <div id="cfg-dias-bloq" class="mt-4 flex flex-wrap gap-2"></div>
+      </div>
+
+      <div class="card-dark p-6">
+        <h3 class="font-display text-lg font-semibold text-white mb-4">Lista de Espera</h3>
+        <div id="cfg-espera" class="space-y-3"></div>
+        <p id="cfg-espera-vazio" class="text-sm text-gray-500">Nenhuma pessoa na lista de espera.</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ============================================================
+     MODAL — Agendamento Encaixe
+============================================================ -->
+<div id="modal-encaixe" class="fixed inset-0 z-50 hidden items-center justify-center modal-overlay">
+  <div class="w-full max-w-md rounded-2xl border border-gold/20 bg-dark-700 p-6 shadow-2xl fade-in mx-4">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="font-display text-lg font-semibold text-white">Agendamento Encaixe</h3>
+      <button id="encaixe-close" class="text-gray-400 hover:text-white transition-colors">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="space-y-4">
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Nome Completo *</label>
+        <input id="enc-nome" type="text" placeholder="Nome da cliente" autocomplete="name">
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">WhatsApp *</label>
+        <input id="enc-whatsapp" type="tel" placeholder="(11) 98765-4321" autocomplete="tel" inputmode="tel">
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Serviço *</label>
+        <select id="enc-servico"></select>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Data *</label>
+          <input id="enc-data" type="date" required>
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Horário *</label>
+          <select id="enc-horario"></select>
+        </div>
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Pagamento *</label>
+        <select id="enc-pagamento">
+            <option value="">Selecione</option>
+            <option value="Pix">Pix</option>
+            <option value="Cartão de Crédito">Cartão de Crédito</option>
+            <option value="Cartão de Débito">Cartão de Débito</option>
+            <option value="Dinheiro">Dinheiro</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Observações</label>
+        <textarea id="enc-obs" rows="2" placeholder="Opcional..."></textarea>
+      </div>
+    </div>
+    <div class="flex gap-3 mt-6">
+      <button id="enc-cancelar" class="flex-1 rounded-xl border border-dark-300/50 py-2.5 text-sm font-semibold text-gray-400 hover:text-white transition-colors">Cancelar</button>
+      <button id="enc-salvar" class="flex-1 gold-btn rounded-xl py-2.5 text-sm font-semibold">Salvar Encaixe</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL — Criar/Editar Serviço
+============================================================ -->
+<div id="svc-modal" class="fixed inset-0 z-50 hidden items-center justify-center modal-overlay">
+  <div class="w-full max-w-lg rounded-2xl border border-gold/20 bg-dark-700 p-6 shadow-2xl fade-in" style="max-height:90vh;overflow-y:auto;">
+    <div class="flex items-center justify-between mb-6">
+      <h3 id="svc-modal-title" class="font-display text-xl font-semibold text-white">Novo Serviço</h3>
+      <button id="svc-modal-close" class="flex h-8 w-8 items-center justify-center rounded-full bg-dark-600 text-gray-400 hover:text-white">&times;</button>
+    </div>
+    <form id="svc-form" class="space-y-4">
+      <input type="hidden" id="svc-id">
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Nome do Serviço</label>
+        <input id="svc-nome" type="text" placeholder="Ex.: Corte Feminino" required>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Categoria</label>
+          <select id="svc-categoria">
+            <option value="Cabelo">Cabelo</option>
+            <option value="Coloração">Coloração</option>
+            <option value="Tratamento">Tratamento</option>
+            <option value="Alisamento">Alisamento</option>
+            <option value="Mega Hair">Mega Hair</option>
+            <option value="Outro">Outro</option>
+          </select>
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Status</label>
+          <select id="svc-status">
+            <option value="ativo">Ativo</option>
+            <option value="inativo">Inativo</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Duração</label>
+          <input id="svc-duracao" type="text" placeholder="Ex.: 1h 30min">
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Duração (minutos)</label>
+          <input id="svc-duracao-min" type="number" placeholder="Ex.: 90" min="5" step="5">
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Preço</label>
+          <input id="svc-preco" type="text" placeholder="Ex.: A partir de R$ 150,00">
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Preço Mínimo</label>
+          <input id="svc-preco-min" type="text" placeholder="Ex.: R$ 100,00 (opcional)">
+        </div>
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Observação / Nota</label>
+        <textarea id="svc-nota" rows="2" placeholder="Informação adicional sobre o serviço..."></textarea>
+      </div>
+      <div class="flex gap-3 pt-2">
+        <button type="submit" class="gold-btn flex-1 rounded-xl py-3 text-sm">Salvar Serviço</button>
+        <button type="button" id="svc-cancelar" class="flex-1 rounded-xl border border-dark-300 bg-dark-600 py-3 text-sm font-semibold text-gray-300 hover:border-gray-400">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- app-booking.js -->
+<script src="app-booking.js?v=1.2"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  'use strict';
+
+  console.log('[Admin] DOMContentLoaded disparado');
+
+  var B = window.Booking;
+  var KEY_AUTH = 'jane-admin-auth';
+
+  /* ============================================================
+     LOGIN
+     ============================================================ */
+  var loginScreen = document.getElementById('login-screen');
+  var adminApp = document.getElementById('admin-app');
+
+  console.log('[Admin] login-screen:', !!loginScreen, 'admin-app:', !!adminApp, 'Booking:', !!B);
+
+  function isLoggedIn() {
+    try { return sessionStorage.getItem(KEY_AUTH) === '1'; } catch (e) { return false; }
+  }
+
+  document.getElementById('login-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var senha = document.getElementById('login-senha').value;
+    if (B && B.adminLogin(senha)) {
+      try { sessionStorage.setItem(KEY_AUTH, '1'); } catch (e) {}
+      showApp();
+    } else if (senha === 'jane2026') {
+      try { sessionStorage.setItem(KEY_AUTH, '1'); } catch (e) {}
+      showApp();
+    } else {
+      var erro = document.getElementById('login-erro');
+      erro.classList.remove('hidden');
+      setTimeout(function () { erro.classList.add('hidden'); }, 3000);
+    }
+  });
+
+  document.getElementById('logout-btn').addEventListener('click', function () {
+    try { sessionStorage.removeItem(KEY_AUTH); } catch (e) {}
+    adminApp.classList.add('hidden');
+    loginScreen.classList.remove('hidden');
+    document.getElementById('login-senha').value = '';
+  });
+
+  function showApp() {
+    loginScreen.classList.add('hidden');
+    adminApp.classList.remove('hidden');
+    unlockAudio();
+    init();
+    showPage('dashboard');
+  }
+
+  if (isLoggedIn()) showApp();
+
+  /* ============================================================
+     SIDEBAR NAVIGATION — Event Delegation
+     ============================================================ */
+  var _currentPage = 'dashboard';
+
+  function showPage(pageName) {
+    console.log('[Admin] showPage:', pageName);
+    _currentPage = pageName;
+    var allLinks = document.querySelectorAll('.sidebar-link');
+    var allPages = document.querySelectorAll('.admin-page');
+    allLinks.forEach(function (l) { l.classList.remove('active'); });
+    allPages.forEach(function (p) {
+      p.classList.add('hidden');
+      p.style.display = '';
+    });
+    var target = document.getElementById('page-' + pageName);
+    if (target) {
+      target.classList.remove('hidden');
+      if (pageName === 'agendamentos') {
+        target.style.display = 'flex';
+      } else {
+        target.style.display = 'block';
+      }
+    } else {
+      console.warn('[Admin] page-' + pageName + ' NAO ENCONTRADO');
+    }
+    allLinks.forEach(function (l) {
+      if (l.getAttribute('data-page') === pageName) l.classList.add('active');
+    });
+    if (pageName === 'dashboard') renderDashboard();
+    if (pageName === 'agendamentos') renderAgendamentos();
+    if (pageName === 'servicos') renderServicos();
+    if (pageName === 'clientes') renderClientes();
+    if (pageName === 'faturamento') renderFaturamento();
+    if (pageName === 'config') renderConfig();
+  }
+
+  /* Event Delegation: capture ALL clicks on sidebar buttons */
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.sidebar-link');
+    if (!btn) return;
+    var page = btn.getAttribute('data-page');
+    if (!page) return;
+    e.preventDefault();
+    console.log('[Admin] Sidebar clicada:', page);
+    showPage(page);
+  });
+
+  /* ============================================================
+     INIT
+     ============================================================ */
+  function init() {
+    startNotifPolling();
+    initEncaixe();
+    /* Set initial display states for all admin pages */
+    pages.forEach(function (p) { p.style.display = 'none'; });
+    document.getElementById('page-dashboard').style.display = 'block';
+  }
+
+  /* ============================================================
+     NOTIFICAÇÕES — Áudio, Toast, Badge, Polling
+     ============================================================ */
+
+  /* --- Web Audio API: chime de notificação --- */
+  var _audioCtx = null;
+  var _audioUnlocked = false;
+
+  function getAudioCtx() {
+    if (!_audioCtx) {
+      try { _audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+    }
+    return _audioCtx;
+  }
+
+  function unlockAudio() {
+    var ctx = getAudioCtx();
+    if (!ctx) return;
+    if (ctx.state === 'suspended') ctx.resume().then(function() { _audioUnlocked = true; });
+    else _audioUnlocked = true;
+    document.getElementById('audio-unlock-btn').classList.add('hidden');
+  }
+
+  /* Show unlock button on first interaction if not yet unlocked */
+  document.addEventListener('click', function _firstClick() {
+    if (!_audioUnlocked) {
+      var ctx = getAudioCtx();
+      if (ctx && ctx.state === 'suspended') {
+        document.getElementById('audio-unlock-btn').classList.remove('hidden');
+      }
+    }
+  }, { once: false });
+  document.getElementById('audio-unlock-btn').addEventListener('click', function (e) {
+    e.stopPropagation();
+    unlockAudio();
+  });
+
+  function playNotifSound() {
+    if (!_audioUnlocked) return;
+    var ctx = getAudioCtx();
+    if (!ctx) return;
+    try {
+      /* Two-tone chime: 880Hz → 1320Hz */
+      var now = ctx.currentTime;
+      [880, 1320].forEach(function (freq, i) {
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.18, now + i * 0.15);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.15 + 0.35);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now + i * 0.15);
+        osc.stop(now + i * 0.15 + 0.4);
+      });
+    } catch(e) {}
+  }
+
+  /* --- Toast Flutuante --- */
+  function showToast(title, body, onClick) {
+    var container = document.getElementById('toast-container');
+    var toast = document.createElement('div');
+    toast.className = 'toast-notif pointer-events-auto w-80 rounded-xl border border-amber-500/30 bg-dark-700 p-4 shadow-2xl cursor-pointer hover:border-amber-500/50 transition-colors';
+    toast.innerHTML =
+      '<div class="flex items-start gap-3">' +
+        '<span class="text-2xl mt-0.5">🔔</span>' +
+        '<div class="flex-1 min-w-0">' +
+          '<p class="text-sm font-bold text-amber-400">' + title + '</p>' +
+          '<p class="text-xs text-gray-400 mt-1 truncate">' + body + '</p>' +
+        '</div>' +
+        '<button onclick="this.closest(\'.toast-notif\').remove()" class="text-gray-500 hover:text-white text-xs shrink-0">✕</button>' +
+      '</div>';
+    if (onClick) toast.addEventListener('click', function (e) {
+      if (e.target.tagName === 'BUTTON') return;
+      onClick();
+      toast.remove();
+    });
+    container.appendChild(toast);
+    setTimeout(function () { toast.classList.add('hide'); setTimeout(function () { toast.remove(); }, 350); }, 6000);
+  }
+
+  /* --- Badge helpers --- */
+  var _notifBadge = document.getElementById('notif-badge');
+  var _dashBadge = document.getElementById('dash-pendente-badge');
+  var _dashBadgeCount = document.getElementById('dash-pendente-count');
+
+  function updatePendenteBadge(count) {
+    /* Sidebar badge */
+    if (count > 0) {
+      _notifBadge.textContent = count;
+      _notifBadge.classList.remove('hidden');
+      _notifBadge.classList.add('flex');
+    } else {
+      _notifBadge.classList.add('hidden');
+      _notifBadge.classList.remove('flex');
+    }
+    /* Dashboard header badge */
+    if (count > 0) {
+      _dashBadgeCount.textContent = count;
+      _dashBadge.classList.remove('hidden');
+      _dashBadge.classList.add('flex');
+    } else {
+      _dashBadge.classList.add('hidden');
+      _dashBadge.classList.remove('flex');
+    }
+  }
+
+  /* --- Polling + Storage Event --- */
+  var _lastKnownIds = {};
+
+  function getPendingIds() {
+    try {
+      var ags = JSON.parse(localStorage.getItem('jane-booking-agendamentos')) || [];
+      return ags.filter(function (a) { return a.status === 'pendente'; });
+    } catch (e) { return []; }
+  }
+
+  function getPendingCount() {
+    return getPendingIds().length;
+  }
+
+  function scanForNewPendentes() {
+    var pendentes = getPendingIds();
+    var currentIds = {};
+    var newOnes = [];
+    pendentes.forEach(function (a) {
+      currentIds[a.id] = true;
+      if (!_lastKnownIds[a.id]) newOnes.push(a);
+    });
+    _lastKnownIds = currentIds;
+
+    /* Update badge always */
+    updatePendenteBadge(pendentes.length);
+
+    /* Notify for new ones */
+    if (newOnes.length > 0) {
+      playNotifSound();
+      newOnes.forEach(function (ag) {
+        showToast(
+          'Novo agendamento recebido!',
+          ag.cliente_nome + ' — ' + ag.servico + ' • ' + ag.horario,
+          function () {
+            showPage('agendamentos');
+            var card = document.querySelector('[data-aceitar="' + ag.id + '"], [data-st="' + ag.id + '"]');
+            if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        );
+      });
+    }
+  }
+
+  function startNotifPolling() {
+    /* Initialize known IDs */
+    var pendentes = getPendingIds();
+    pendentes.forEach(function (a) { _lastKnownIds[a.id] = true; });
+    updatePendenteBadge(pendentes.length);
+
+    /* Poll every 5s */
+    setInterval(scanForNewPendentes, 5000);
+  }
+
+  /* Storage event: fires in OTHER tabs when same-origin localStorage changes */
+  window.addEventListener('storage', function (e) {
+    if (e.key === 'jane-booking-agendamentos') {
+      scanForNewPendentes();
+      /* Also refresh visible views */
+      renderAgendamentos();
+      renderDashboard();
+    }
+  });
+
+  /* ============================================================
+     HELPERS
+     ============================================================ */
+  function fmtBR(ds) {
+    if (!ds) return '—';
+    var p = ds.split('-');
+    return p[2] + '/' + p[1] + '/' + p[0];
+  }
+
+  function nomeDia(ds) {
+    var d = new Date(ds + 'T12:00:00');
+    return ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][d.getDay()];
+  }
+
+  function hoje() {
+    var d = new Date();
+    var y = d.getFullYear();
+    var m = (d.getMonth()+1 < 10 ? '0':'') + (d.getMonth()+1);
+    var day = (d.getDate() < 10 ? '0':'') + d.getDate();
+    return y + '-' + m + '-' + day;
+  }
+
+  /* ============================================================
+     DASHBOARD OPERACIONAL
+     ============================================================ */
+  function parsePreco(precoStr) {
+    if (!precoStr || precoStr === 'Consulte') return 0;
+    var m = precoStr.replace(/\./g, '').match(/([\d,]+)/);
+    if (!m) return 0;
+    return parseFloat(m[1].replace(',', '.')) || 0;
+  }
+
+  function servicoPreco(nome, agValorInformado) {
+    if (agValorInformado && agValorInformado > 0) return agValorInformado;
+    var servicos = B ? B.getServicos() : [];
+    var s = servicos.find(function (x) { return x.nome === nome; });
+    if (!s || !s.preco) return 0;
+    return parsePreco(s.preco);
+  }
+
+  function clienteTag(whatsapp) {
+    if (!B) return 'Cliente';
+    var cli = B.getClientePorTelefone(whatsapp);
+    if (!cli) return '1ª Visita';
+    var total = cli.total_atendimentos || 0;
+    if (total >= 5) return 'VIP';
+    if (total >= 2) return 'Cliente Ativa';
+    return '1ª Visita';
+  }
+
+  function tagBadge(tag) {
+    if (tag === 'VIP') return '<span class="inline-flex items-center rounded-full bg-purple-500/15 px-2 py-0.5 text-[10px] font-semibold text-purple-400">VIP</span>';
+    if (tag === 'Cliente Ativa') return '<span class="inline-flex items-center rounded-full bg-blue-500/15 px-2 py-0.5 text-[10px] font-semibold text-blue-400">Cliente Ativa</span>';
+    return '<span class="inline-flex items-center rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold text-amber-400">1ª Visita</span>';
+  }
+
+  function renderDashboard() {
+    var h = hoje();
+    document.getElementById('dash-date').textContent = nomeDia(h) + ', ' + fmtBR(h);
+
+    var agora = new Date();
+    var hhmm = (agora.getHours()<10?'0':'') + agora.getHours() + ':' + (agora.getMinutes()<10?'0':'') + agora.getMinutes();
+    document.getElementById('dash-hora-agora').textContent = 'Horário atual: ' + hhmm;
+
+    /* Todos os agendamentos do dia (qualquer status) */
+    var todosAgs = B ? B.getAgendamentos().filter(function (a) { return a.data === h; }) : [];
+    var agsAtivos = todosAgs.filter(function (a) { return a.status === 'pendente' || a.status === 'confirmado' || a.status === 'em_atendimento'; });
+    var stats = B ? B.statsGerais() : { total_agendamentos:0, pendentes:0, confirmados:0, total_clientes:0, clientes_com_pedidos:0, lista_espera:0 };
+    var espera = B ? B.getListaEspera().filter(function (i) { return i.status === 'aguardando'; }) : [];
+
+    /* Métricas */
+    var concluidosHoje = todosAgs.filter(function (a) { return a.status === 'concluido'; }).length;
+    var canceladosHoje = todosAgs.filter(function (a) { return a.status === 'cancelado'; }).length;
+    document.getElementById('dash-concluidos').textContent = concluidosHoje;
+    document.getElementById('dash-total-dia').textContent = (todosAgs.length - canceladosHoje);
+    document.getElementById('dash-clientes-pedidos').textContent = stats.clientes_com_pedidos;
+    document.getElementById('dash-espera').textContent = espera.length;
+
+    /* Badge de pendentes */
+    updatePendenteBadge(stats.pendentes || 0);
+
+    /* Faturamento previsto vs realizado — exclui cancelados */
+    var fatPrevisto = 0, fatRealizado = 0;
+    todosAgs.forEach(function (ag) {
+      if (ag.status === 'cancelado') return;
+      var valor = servicoPreco(ag.servico, ag.valor_informado);
+      fatPrevisto += valor;
+      if (ag.status === 'concluido') fatRealizado += valor;
+    });
+    document.getElementById('dash-fat-previsto').textContent = 'R$ ' + fatPrevisto.toFixed(0).replace('.',',');
+    document.getElementById('dash-fat-realizado').textContent = 'R$ ' + fatRealizado.toFixed(0).replace('.',',') + ' realizado';
+
+    /* Lista operacional */
+    var lista = document.getElementById('dash-lista');
+    agsAtivos.sort(function (a,b) { return a.horario < b.horario ? -1 : 1; });
+    if (!agsAtivos.length) {
+      lista.innerHTML = '<p class="text-gray-500 text-sm py-8 text-center">Nenhum atendimento ativo no momento.</p>';
+      return;
+    }
+    lista.innerHTML = '';
+    agsAtivos.forEach(function (ag) {
+      var valor = servicoPreco(ag.servico, ag.valor_informado);
+      var tag = clienteTag(ag.cliente_whatsapp);
+      var tel = (ag.cliente_whatsapp || '').replace(/\D/g, '');
+      var status = ag.status || 'confirmado';
+      var card = document.createElement('div');
+      card.className = 'rounded-xl bg-dark-600 border border-dark-300/50 p-4 hover:border-gold/20 transition-colors';
+      card.innerHTML =
+        '<div class="flex flex-col sm:flex-row sm:items-center gap-3">' +
+          '<div class="flex items-center gap-3 flex-1 min-w-0">' +
+            '<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gold/10 font-mono text-sm font-bold text-gold">' + ag.horario + '</div>' +
+            '<div class="min-w-0">' +
+              '<div class="flex items-center gap-2 flex-wrap">' +
+                '<p class="font-semibold text-white text-sm truncate">' + ag.cliente_nome + '</p>' +
+                tagBadge(tag) +
+                (ag.origem === 'online' ? '<span class="inline-flex items-center rounded-full bg-blue-500/15 px-2 py-0.5 text-[10px] font-semibold text-blue-400">Online</span>' :
+                 ag.origem === 'recepcao' ? '<span class="inline-flex items-center rounded-full bg-dark-500 border border-dark-300/50 px-2 py-0.5 text-[10px] font-semibold text-gold">Recepção</span>' : '') +
+              '</div>' +
+              '<p class="text-xs text-gray-400 truncate">' + ag.servico + '</p>' +
+            '</div>' +
+          '</div>' +
+          '<div class="flex items-center gap-3 flex-wrap">' +
+            '<div class="text-right hidden sm:block">' +
+              '<p class="font-numeric text-sm font-semibold text-gold">R$ ' + valor.toFixed(0) + '</p>' +
+              '<p class="text-[10px] text-gray-500">' + (ag.forma_pagamento || '—') + '</p>' +
+            '</div>' +
+            (tel ? '<a href="https://wa.me/55' + tel + '" target="_blank" rel="noopener" class="shrink-0 rounded-lg bg-green-500/15 px-2.5 py-1.5 text-[10px] font-semibold text-green-400 hover:bg-green-500/25 transition-colors">WhatsApp</a>' : '') +
+            '<div class="flex gap-1 shrink-0">' +
+              '<button data-st-ag="' + ag.id + '" data-st="confirmado" class="status-btn rounded-lg px-2.5 py-1.5 text-[10px] font-semibold transition-colors ' + (status==='confirmado'?'bg-yellow-500/25 text-yellow-300 border border-yellow-500/40':'bg-dark-500 text-gray-500 hover:text-yellow-400') + '" title="Aguardando">🟡</button>' +
+              '<button data-st-ag="' + ag.id + '" data-st="em_atendimento" class="status-btn rounded-lg px-2.5 py-1.5 text-[10px] font-semibold transition-colors ' + (status==='em_atendimento'?'bg-blue-500/25 text-blue-300 border border-blue-500/40':'bg-dark-500 text-gray-500 hover:text-blue-400') + '" title="Em Atendimento">🔵</button>' +
+              '<button data-st-ag="' + ag.id + '" data-st="concluido" class="status-btn rounded-lg px-2.5 py-1.5 text-[10px] font-semibold transition-colors ' + (status==='concluido'?'bg-green-500/25 text-green-300 border border-green-500/40':'bg-dark-500 text-gray-500 hover:text-green-400') + '" title="Concluído">🟢</button>' +
+              '<button data-st-ag="' + ag.id + '" data-st="cancelado" class="status-btn rounded-lg px-2.5 py-1.5 text-[10px] font-semibold transition-colors ' + (status==='cancelado'?'bg-red-500/25 text-red-300 border border-red-500/40':'bg-dark-500 text-gray-500 hover:text-red-400') + '" title="Cancelado">🔴</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      lista.appendChild(card);
+    });
+
+    /* Status buttons */
+    lista.querySelectorAll('.status-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var agId = btn.getAttribute('data-st-ag');
+        var newStatus = btn.getAttribute('data-st');
+        if (newStatus === 'cancelado' && !confirm('Cancelar este agendamento?')) return;
+
+        if (newStatus === 'concluido') {
+          var agDados = null;
+          try {
+            var agsCheck = JSON.parse(localStorage.getItem('jane-booking-agendamentos')) || [];
+            agDados = agsCheck.find(function (a) { return a.id === agId; }) || null;
+          } catch(e) {}
+          if (agDados) {
+            var svcLista = B ? B.getServicos() : [];
+            var svcInfo = svcLista.find(function (s) { return s.nome === agDados.servico; }) || null;
+            var valorCatalogo = 0;
+            if (svcInfo && svcInfo.preco && svcInfo.preco !== 'Consulte') {
+              var mVal = svcInfo.preco.replace(/\./g, '').match(/[\d,]+/);
+              if (mVal) valorCatalogo = parseFloat(mVal[0].replace(',', '.')) || 0;
+            }
+            if (valorCatalogo === 0) {
+              var inputValor = prompt('O servico "' + agDados.servico + '" esta com valor R$ 0,00.\n\nInforme o valor cobrado (use ponto para decimal, ex: 150.00):\nDeixe vazio para R$ 0,00.', '');
+              if (inputValor === null) return;
+              var valorInformado = parseFloat(inputValor) || 0;
+              if (svcInfo && valorInformado > 0) {
+                try {
+                  var agsUpd = JSON.parse(localStorage.getItem('jane-booking-agendamentos')) || [];
+                  agsUpd.forEach(function (a) { if (a.id === agId) a.valor_informado = valorInformado; });
+                  localStorage.setItem('jane-booking-agendamentos', JSON.stringify(agsUpd));
+                } catch(e) {}
+              }
+            }
+          }
+        }
+
+        if (B) {
+          B.setAgendamentoStatus(agId, newStatus);
+        } else {
+          try {
+            var ags = JSON.parse(localStorage.getItem('jane-booking-agendamentos')) || [];
+            ags.forEach(function (a) { if (a.id === agId) a.status = newStatus; });
+            localStorage.setItem('jane-booking-agendamentos', JSON.stringify(ags));
+          } catch(e) {}
+        }
+        renderDashboard();
+      });
+    });
+  }
+
+  /* ============================================================
+     ENCAIXE (Agendamento Presencial)
+     ============================================================ */
+  function initEncaixe() {
+    var modal = document.getElementById('modal-encaixe');
+    var btnAbrir = document.getElementById('dash-encaixe-btn');
+    var btnFechar = document.getElementById('encaixe-close');
+    var btnCancelar = document.getElementById('enc-cancelar');
+    var btnSalvar = document.getElementById('enc-salvar');
+    var selServico = document.getElementById('enc-servico');
+    var selHorario = document.getElementById('enc-horario');
+    var inputData = document.getElementById('enc-data');
+    var inputWhatsApp = document.getElementById('enc-whatsapp');
+
+    /* Máscara de telefone: (XX) XXXXX-XXXX */
+    inputWhatsApp.addEventListener('input', function () {
+      var v = this.value.replace(/\D/g, '').substring(0, 11);
+      if (v.length > 6) this.value = '(' + v.substring(0,2) + ') ' + v.substring(2,7) + '-' + v.substring(7);
+      else if (v.length > 2) this.value = '(' + v.substring(0,2) + ') ' + v.substring(2);
+      else if (v.length > 0) this.value = '(' + v;
+    });
+
+    function formatarTel(v) {
+      var d = v.replace(/\D/g, '').substring(0, 11);
+      if (d.length > 6) return '(' + d.substring(0,2) + ') ' + d.substring(2,7) + '-' + d.substring(7);
+      if (d.length > 2) return '(' + d.substring(0,2) + ') ' + d.substring(2);
+      return d;
+    }
+
+    function hojeStr() {
+      var d = new Date();
+      return d.getFullYear() + '-' + (d.getMonth()+1 < 10 ? '0' : '') + (d.getMonth()+1) + '-' + (d.getDate() < 10 ? '0' : '') + d.getDate();
+    }
+
+    function agDateStr() {
+      return agDate.getFullYear() + '-' + (agDate.getMonth()+1 < 10 ? '0' : '') + (agDate.getMonth()+1) + '-' + (agDate.getDate() < 10 ? '0' : '') + agDate.getDate();
+    }
+
+    function abrir() {
+      /* Preencher serviços */
+      var servicos = B ? B.getServicos() : [];
+      selServico.innerHTML = '<option value="">Selecione o serviço</option>';
+      servicos.forEach(function (s) {
+        selServico.innerHTML += '<option value="' + s.nome + '">' + s.nome + ' — ' + s.preco + '</option>';
+      });
+      /* Preencher horários */
+      selHorario.innerHTML = '<option value="">Horário</option>';
+      for (var hh = 9; hh < 18; hh++) {
+        for (var mm = 0; mm < 60; mm += 30) {
+          var h = (hh<10?'0':'') + hh + ':' + (mm<10?'0':'') + mm;
+          selHorario.innerHTML += '<option value="' + h + '">' + h + '</option>';
+        }
+      }
+      /* Data: usar a data selecionada na agenda ou hoje */
+      inputData.value = agDateStr();
+      /* Limpar campos */
+      document.getElementById('enc-nome').value = '';
+      inputWhatsApp.value = '';
+      document.getElementById('enc-pagamento').value = '';
+      document.getElementById('enc-obs').value = '';
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function fechar() {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.body.style.overflow = '';
+    }
+
+    btnAbrir.addEventListener('click', abrir);
+    btnFechar.addEventListener('click', fechar);
+    btnCancelar.addEventListener('click', fechar);
+    modal.addEventListener('click', function (e) { if (e.target === modal) fechar(); });
+
+    btnSalvar.addEventListener('click', function () {
+      var nome = document.getElementById('enc-nome').value.trim();
+      var whatsapp = formatarTel(inputWhatsApp.value);
+      var servico = selServico.value;
+      var horario = selHorario.value;
+      var data = inputData.value;
+      var pagamento = document.getElementById('enc-pagamento').value;
+      var obs = document.getElementById('enc-obs').value.trim();
+
+      if (!nome) { alert('Informe o nome da cliente.'); return; }
+      if (!whatsapp) { alert('Informe o WhatsApp.'); return; }
+      if (!servico) { alert('Selecione o serviço.'); return; }
+      if (!data) { alert('Selecione a data.'); return; }
+      if (!horario) { alert('Selecione o horário.'); return; }
+      if (!pagamento) { alert('Selecione a forma de pagamento.'); return; }
+
+      var svc = B ? B.getServicoPorNome(servico) : null;
+      var durMin = svc ? (svc.duracao_min || 60) : 60;
+
+      if (B) {
+        B.criarAgendamento({
+          servico: servico,
+          duracao_min: durMin,
+          data: data,
+          horario: horario,
+          cliente_nome: nome,
+          cliente_whatsapp: whatsapp,
+          forma_pagamento: pagamento,
+          observacoes: obs,
+          origem: 'recepcao',
+          status: 'confirmado'
+        });
+        B.registrarCliente(nome, whatsapp, '', servico);
+      } else {
+        /* Fallback direto no localStorage */
+        var ag = {
+          id: 'ag-' + Date.now() + '-' + Math.random().toString(36).substr(2,5),
+          servico: servico, duracao_min: durMin, data: data, horario: horario,
+          cliente_nome: nome, cliente_whatsapp: whatsapp, forma_pagamento: pagamento,
+          observacoes: obs, origem: 'recepcao', status: 'confirmado', criado_em: new Date().toISOString()
+        };
+        try {
+          var lista = JSON.parse(localStorage.getItem('jane-booking-agendamentos')) || [];
+          lista.push(ag);
+          localStorage.setItem('jane-booking-agendamentos', JSON.stringify(lista));
+        } catch(e) {}
+      }
+
+      fechar();
+      renderDashboard();
+    });
+  }
+
+  /* ============================================================
+     AGENDAMENTOS — SALON STYLE
+     ============================================================ */
+  var agDate = new Date(); agDate.setHours(12,0,0,0);
+  var agView = 'dia';
+  var agProfissional = 'Todos';
+  var agOrigem = 'todos';
+  var _nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  var _nomesMesesShort = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  var _nomesDiasShort = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+
+  function agDateStr(d) {
+    var y = d.getFullYear(), m = (d.getMonth()+1<10?'0':'')+(d.getMonth()+1), day = (d.getDate()<10?'0':'')+d.getDate();
+    return y+'-'+m+'-'+day;
+  }
+
+  function renderAgendamentos() {
+    var ds = agDateStr(agDate);
+    /* Month label */
+    document.getElementById('ag-month-label').textContent = _nomesMeses[agDate.getMonth()] + ' ' + agDate.getFullYear();
+    /* Week calendar */
+    renderAgWeekCalendar();
+    /* Info data */
+    var hojeStr = agDateStr(new Date());
+    var dObj = new Date(ds + 'T12:00:00');
+    var diaSemana = _nomesDiasShort[dObj.getDay()];
+    var infoHoje = ds === hojeStr ? 'Hoje ' : '';
+    document.getElementById('ag-info-data').textContent = infoHoje + diaSemana + '. ' + dObj.getDate() + ' de ' + _nomesMesesShort[dObj.getMonth()] + '.';
+    /* Profissionais dropdown */
+    renderAgProfDropdown();
+    /* Content */
+    if (agView === 'dia') renderAgDiaView(ds);
+    else if (agView === 'grade') renderAgGradeView(ds);
+    else renderAgListaView(ds);
+    /* Alert bar */
+    renderAgAlert(ds);
+  }
+
+  /* --- Week Calendar --- */
+  function renderAgWeekCalendar() {
+    var container = document.getElementById('ag-week-days');
+    container.innerHTML = '';
+    var base = new Date(agDate);
+    var diaSemana = base.getDay();
+    var inicio = new Date(base);
+    inicio.setDate(base.getDate() - diaSemana);
+    var hojeStr = agDateStr(new Date());
+    var agsMes = B ? B.getDiasComAgendamento(agDate.getFullYear(), agDate.getMonth()+1) : [];
+
+    for (var i = 0; i < 7; i++) {
+      var d = new Date(inicio);
+      d.setDate(inicio.getDate() + i);
+      var ds = agDateStr(d);
+      var isSelected = ds === agDateStr(agDate);
+      var isHoje = ds === hojeStr;
+      var isFechado = d.getDay() === 0 || d.getDay() === 1;
+      var temAgendamento = agsMes.indexOf(d.getDate()) !== -1;
+      var isCurrentMonth = d.getMonth() === agDate.getMonth();
+
+      var btn = document.createElement('button');
+      btn.className = 'relative flex flex-col items-center py-2 rounded-lg transition-all ';
+      if (isSelected) btn.className += 'bg-gold/20 border border-gold/40 ';
+      else btn.className += 'hover:bg-dark-600 ';
+      if (isFechado) btn.className += 'opacity-40 ';
+
+      var numClass = 'text-sm font-bold ';
+      if (isSelected) numClass += 'text-gold ';
+      else if (isHoje) numClass += 'text-white bg-gold/10 rounded-full w-7 h-7 flex items-center justify-center ';
+      else numClass += 'text-gray-400 ';
+
+      var html = '<span class="' + numClass + '">' + d.getDate() + '</span>';
+      if (temAgendamento && !isFechado) {
+        html += '<span class="mt-1 flex gap-0.5"><span class="h-1 w-1 rounded-full bg-gold"></span></span>';
+      }
+      btn.innerHTML = html;
+      btn.setAttribute('data-date', ds);
+      btn.addEventListener('click', function () {
+        var parts = this.getAttribute('data-date').split('-');
+        agDate = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]), 12, 0, 0);
+        renderAgendamentos();
+      });
+      container.appendChild(btn);
+    }
+  }
+
+  /* --- Profissional Dropdown --- */
+  function renderAgProfDropdown() {
+    var profissionais = B ? B.getProfissionais() : ['Jane Barreiros'];
+    var dd = document.getElementById('ag-prof-dropdown');
+    dd.innerHTML = '';
+    var optAll = document.createElement('button');
+    optAll.className = 'w-full text-left px-4 py-2.5 text-xs font-semibold ' + (agProfissional==='Todos'?'text-gold bg-gold/10':'text-gray-300 hover:bg-dark-600') + ' transition-colors';
+    optAll.textContent = 'Todos os Funcionários';
+    optAll.addEventListener('click', function () { agProfissional='Todos'; document.getElementById('ag-prof-label').textContent='Todos os Funcionários'; dd.classList.add('hidden'); renderAgendamentos(); });
+    dd.appendChild(optAll);
+    profissionais.forEach(function (p) {
+      var opt = document.createElement('button');
+      opt.className = 'w-full text-left px-4 py-2.5 text-xs font-semibold ' + (agProfissional===p?'text-gold bg-gold/10':'text-gray-300 hover:bg-dark-600') + ' transition-colors';
+      opt.textContent = p;
+      opt.addEventListener('click', function () { agProfissional=p; document.getElementById('ag-prof-label').textContent=p; dd.classList.add('hidden'); renderAgendamentos(); });
+      dd.appendChild(opt);
+    });
+  }
+
+  /* --- Status Color Mapping --- */
+  function agStatusColor(status) {
+    if (status === 'pendente') return { border:'border-l-amber-500', badge:'bg-amber-500/15 text-amber-400', label:'Aguardando Aprovação', dot:'bg-amber-400' };
+    if (status === 'em_atendimento') return { border:'border-l-blue-500', badge:'bg-blue-500/15 text-blue-400', label:'Em Atendimento', dot:'bg-blue-400' };
+    if (status === 'concluido') return { border:'border-l-green-500', badge:'bg-green-500/15 text-green-400', label:'Concluído', dot:'bg-green-400' };
+    if (status === 'cancelado') return { border:'border-l-red-500', badge:'bg-red-500/15 text-red-400', label:'Cancelado', dot:'bg-red-400' };
+    return { border:'border-l-yellow-500', badge:'bg-yellow-500/15 text-yellow-400', label:'Agendado', dot:'bg-yellow-400' };
+  }
+
+  /* --- Avatar (Iniciais) --- */
+  function agAvatar(nome) {
+    if (!nome) return '?';
+    var partes = nome.trim().split(/\s+/);
+    if (partes.length >= 2) return (partes[0][0] + partes[partes.length-1][0]).toUpperCase();
+    return partes[0].substring(0, 2).toUpperCase();
+  }
+
+  /* --- Build Appointment Card --- */
+  function agBuildCard(ag) {
+    var sc = agStatusColor(ag.status);
+    var valor = servicoPreco(ag.servico, ag.valor_informado);
+    var durMin = ag.duracao_min || (svc ? svc.duracao_min : 60);
+    var hInicio = ag.horario || '??:??';
+    var pInicio = hInicio.split(':');
+    var totalMin = parseInt(pInicio[0],10)*60 + parseInt(pInicio[1],10) + durMin;
+    var hFim = (Math.floor(totalMin/60)<10?'0':'') + Math.floor(totalMin/60) + ':' + ((totalMin%60)<10?'0':'') + (totalMin%60);
+    var prof = ag.profissional || 'Jane Barreiros';
+    var isOnline = ag.origem === 'online';
+    var tel = (ag.cliente_whatsapp || '').replace(/\D/g, '');
+
+    var card = document.createElement('div');
+    card.className = 'rounded-xl bg-dark-700 border border-dark-300/40 border-l-4 ' + sc.border + ' p-4 hover:border-gold/20 transition-all cursor-pointer';
+    card.innerHTML =
+      '<div class="flex gap-4">' +
+        /* Left: Time */
+        '<div class="flex flex-col items-center shrink-0 w-14">' +
+          '<span class="font-numeric text-sm font-bold text-white">' + hInicio + '</span>' +
+          '<span class="text-[10px] text-gray-500 font-mono">' + hFim + '</span>' +
+        '</div>' +
+        /* Center: Service + Client */
+        '<div class="flex-1 min-w-0">' +
+          '<div class="flex items-center gap-2 mb-1">' +
+            '<p class="font-semibold text-white text-sm truncate">' + ag.servico + '</p>' +
+            '<span class="inline-flex items-center rounded-full ' + sc.badge + ' px-2 py-0.5 text-[10px] font-semibold shrink-0">' + sc.label + '</span>' +
+            (isOnline ? '<span class="inline-flex items-center rounded-full bg-blue-500/15 px-2 py-0.5 text-[10px] font-semibold text-blue-400 shrink-0">Online</span>' :
+             ag.origem === 'recepcao' ? '<span class="inline-flex items-center rounded-full bg-dark-500 border border-dark-300/50 px-2 py-0.5 text-[10px] font-semibold text-gold shrink-0">Recepção</span>' : '') +
+          '</div>' +
+          '<p class="text-xs text-gray-400 truncate">' + ag.cliente_nome + (ag.cliente_whatsapp ? ' · ' + ag.cliente_whatsapp : '') + '</p>' +
+          '<div class="flex items-center gap-3 mt-1.5">' +
+            (valor > 0 ? '<span class="font-numeric text-xs font-bold text-gold">R$ ' + valor.toFixed(0) + '</span>' : '') +
+            (ag.forma_pagamento ? '<span class="text-[10px] text-gray-500">' + ag.forma_pagamento + '</span>' : '') +
+          '</div>' +
+        '</div>' +
+        /* Right: Avatar + Profissional */
+        '<div class="flex flex-col items-end shrink-0 gap-2">' +
+          '<div class="flex h-9 w-9 items-center justify-center rounded-full bg-gold/15 text-[11px] font-bold text-gold">' + agAvatar(prof) + '</div>' +
+          '<span class="text-[10px] text-gray-500 font-medium max-w-[80px] text-right truncate">' + prof.split(' ')[0] + '</span>' +
+        '</div>' +
+      '</div>' +
+      /* Footer: Status buttons */
+      '<div class="flex items-center gap-2 mt-3 pt-3 border-t border-dark-300/30">' +
+        (ag.status === 'pendente'
+          ? '<button data-aceitar="' + ag.id + '" class="aceitar-btn rounded-lg px-3 py-1.5 text-[11px] font-bold transition-colors bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30">✅ Aceitar Agendamento</button>' +
+            '<button data-recusar="' + ag.id + '" class="recusar-btn rounded-lg px-3 py-1.5 text-[11px] font-bold transition-colors bg-dark-500 text-gray-500 hover:text-red-400 border border-transparent hover:border-red-500/30">❌ Recusar</button>'
+          : '<button data-st="' + ag.id + '" data-stv="confirmado" class="status-btn rounded-lg px-2.5 py-1 text-[10px] font-semibold transition-colors ' + (ag.status==='confirmado'?'bg-yellow-500/25 text-yellow-300 border border-yellow-500/40':'bg-dark-500 text-gray-500 hover:text-yellow-400') + '" title="Aguardando">🟡 Aguardando</button>' +
+            '<button data-st="' + ag.id + '" data-stv="em_atendimento" class="status-btn rounded-lg px-2.5 py-1 text-[10px] font-semibold transition-colors ' + (ag.status==='em_atendimento'?'bg-blue-500/25 text-blue-300 border border-blue-500/40':'bg-dark-500 text-gray-500 hover:text-blue-400') + '" title="Em Atendimento">🔵 Atender</button>' +
+            '<button data-st="' + ag.id + '" data-stv="concluido" class="status-btn rounded-lg px-2.5 py-1 text-[10px] font-semibold transition-colors ' + (ag.status==='concluido'?'bg-green-500/25 text-green-300 border border-green-500/40':'bg-dark-500 text-gray-500 hover:text-green-400') + '" title="Concluído">🟢 Concluir</button>' +
+            '<button data-st="' + ag.id + '" data-stv="cancelado" class="status-btn rounded-lg px-2.5 py-1 text-[10px] font-semibold transition-colors ' + (ag.status==='cancelado'?'bg-red-500/25 text-red-300 border border-red-500/40':'bg-dark-500 text-gray-500 hover:text-red-400') + '" title="Cancelado">🔴 Cancelar</button>'
+        ) +
+        (tel ? '<a href="https://wa.me/55' + tel + '" target="_blank" rel="noopener" class="ml-auto rounded-lg bg-green-500/15 px-2.5 py-1 text-[10px] font-semibold text-green-400 hover:bg-green-500/25 transition-colors">WhatsApp</a>' : '') +
+      '</div>';
+    return card;
+  }
+
+  /* --- DIA View --- */
+  function renderAgDiaView(ds) {
+    var timeline = document.getElementById('ag-timeline');
+    timeline.innerHTML = '';
+    var agsAll = B ? B.getAgendamentos().filter(function (a) { return a.data === ds; }) : [];
+    var ags = agsAll.filter(function (a) {
+      if (agProfissional !== 'Todos' && a.profissional && a.profissional !== agProfissional) return false;
+      if (agOrigem === 'online' && a.origem !== 'online') return false;
+      if (agOrigem === 'recepcao' && a.origem !== 'recepcao') return false;
+      return true;
+    });
+    ags.sort(function (a,b) { return a.horario < b.horario ? -1 : 1; });
+
+    if (!ags.length) {
+      /* Show empty slots */
+      for (var h = 9; h < 18; h++) {
+        for (var m = 0; m < 60; m += 30) {
+          var hh = (h<10?'0':'') + h + ':' + (m<10?'0':'') + m;
+          var row = document.createElement('div');
+          row.className = 'flex items-center gap-4 rounded-xl bg-dark-700/50 border border-dashed border-dark-300/30 p-3 opacity-50';
+          row.innerHTML = '<span class="w-14 shrink-0 font-mono text-xs font-semibold text-gray-600">' + hh + '</span><span class="flex-1 text-xs text-gray-600">—</span>';
+          timeline.appendChild(row);
+        }
+      }
+      return;
+    }
+
+    /* Group by time blocks */
+    var lastH = '';
+    ags.forEach(function (ag) {
+      var hBlock = ag.horario.substring(0, 2);
+      if (hBlock !== lastH) {
+        var header = document.createElement('div');
+        header.className = 'flex items-center gap-3 mt-3 mb-1';
+        header.innerHTML = '<span class="font-mono text-[10px] font-bold text-gold/60 uppercase tracking-wider">' + hBlock + ':00</span><div class="flex-1 h-px bg-dark-300/30"></div>';
+        timeline.appendChild(header);
+        lastH = hBlock;
+      }
+      timeline.appendChild(agBuildCard(ag));
+    });
+
+    /* Attach status button listeners */
+    agAttachStatusListeners(timeline);
+  }
+
+  /* --- GRADE View (Month overview) --- */
+  function renderAgGradeView(ds) {
+    var timeline = document.getElementById('ag-timeline');
+    timeline.innerHTML = '';
+    var year = agDate.getFullYear(), month = agDate.getMonth();
+    var firstDay = new Date(year, month, 1);
+    var lastDay = new Date(year, month+1, 0);
+    var iniStr = agDateStr(firstDay);
+    var fimStr = agDateStr(lastDay);
+    var ags = B ? B.getAgendamentos().filter(function (a) {
+      return a.data >= iniStr && a.data <= fimStr;
+    }) : [];
+    if (agProfissional !== 'Todos') {
+      ags = ags.filter(function (a) { return !a.profissional || a.profissional === agProfissional; });
+    }
+    if (agOrigem !== 'todos') {
+      ags = ags.filter(function (a) { return a.origem === agOrigem; });
+    }
+    ags.sort(function (a,b) { return a.data+a.horario < b.data+b.horario ? -1 : 1; });
+
+    if (!ags.length) {
+      timeline.innerHTML = '<p class="text-gray-500 text-sm py-8 text-center">Nenhum agendamento neste mês.</p>';
+      return;
+    }
+
+    var lastDayStr = '';
+    ags.forEach(function (ag) {
+      if (ag.data !== lastDayStr) {
+        var dObj = new Date(ag.data + 'T12:00:00');
+        var diacabecalho = document.createElement('div');
+        diacabecalho.className = 'flex items-center gap-3 mt-4 mb-2 first:mt-0';
+        diacabecalho.innerHTML = '<span class="font-semibold text-sm text-white">' + dObj.getDate() + ' de ' + _nomesMesesShort[dObj.getMonth()] + '</span><div class="flex-1 h-px bg-dark-300/30"></div><span class="text-[10px] text-gray-500">' + _nomesDiasShort[dObj.getDay()] + '</span>';
+        timeline.appendChild(diacabecalho);
+        lastDayStr = ag.data;
+      }
+      timeline.appendChild(agBuildCard(ag));
+    });
+    agAttachStatusListeners(timeline);
+  }
+
+  /* --- LISTA View --- */
+  function renderAgListaView(ds) {
+    var timeline = document.getElementById('ag-timeline');
+    timeline.innerHTML = '';
+    var ags = B ? B.getAgendamentos().slice() : [];
+    if (agProfissional !== 'Todos') {
+      ags = ags.filter(function (a) { return !a.profissional || a.profissional === agProfissional; });
+    }
+    if (agOrigem !== 'todos') {
+      ags = ags.filter(function (a) { return a.origem === agOrigem; });
+    }
+    ags.sort(function (a,b) { return a.data+a.horario > b.data+b.horario ? -1 : 1; });
+    ags = ags.slice(0, 50);
+
+    if (!ags.length) {
+      timeline.innerHTML = '<p class="text-gray-500 text-sm py-8 text-center">Nenhum agendamento registrado.</p>';
+      return;
+    }
+
+    var lastDayStr = '';
+    ags.forEach(function (ag) {
+      if (ag.data !== lastDayStr) {
+        var dObj = new Date(ag.data + 'T12:00:00');
+        var diacabecalho = document.createElement('div');
+        diacabecalho.className = 'flex items-center gap-3 mt-4 mb-2 first:mt-0';
+        diacabecalho.innerHTML = '<span class="font-semibold text-sm text-white">' + dObj.getDate() + ' de ' + _nomesMesesShort[dObj.getMonth()] + ' — ' + _nomesDiasShort[dObj.getDay()] + '</span><div class="flex-1 h-px bg-dark-300/30"></div>';
+        timeline.appendChild(diacabecalho);
+        lastDayStr = ag.data;
+      }
+      timeline.appendChild(agBuildCard(ag));
+    });
+    agAttachStatusListeners(timeline);
+  }
+
+  /* --- Alert Bar --- */
+  function renderAgAlert(ds) {
+    var bar = document.getElementById('ag-alert-bar');
+    var text = document.getElementById('ag-alert-text');
+    var ags = B ? B.getAgendamentos().filter(function (a) { return a.data === ds && a.status === 'confirmado'; }) : [];
+    if (ags.length > 0) {
+      bar.classList.remove('hidden');
+      var plural = ags.length === 1 ? 'agendamento' : 'agendamentos';
+      text.textContent = 'Agendamentos novos: ' + ags.length + ' — Toque para visualizar um compromisso';
+    } else {
+      bar.classList.add('hidden');
+    }
+  }
+
+  /* --- Status Button Listeners --- */
+  function agAttachStatusListeners(container) {
+    container.querySelectorAll('.status-btn').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var agId = btn.getAttribute('data-st');
+        var newStatus = btn.getAttribute('data-stv');
+        if (newStatus === 'cancelado' && !confirm('Cancelar este agendamento?')) return;
+
+        /* Validação: ao concluir, verificar se valor > 0 */
+        if (newStatus === 'concluido') {
+          var agDados = null;
+          try {
+            var agsCheck = JSON.parse(localStorage.getItem('jane-booking-agendamentos')) || [];
+            agDados = agsCheck.find(function (a) { return a.id === agId; }) || null;
+          } catch(e) {}
+          if (agDados) {
+            var svcLista = B ? B.getServicos() : [];
+            var svcInfo = svcLista.find(function (s) { return s.nome === agDados.servico; }) || null;
+            var valorCatalogo = 0;
+            if (svcInfo && svcInfo.preco && svcInfo.preco !== 'Consulte') {
+              var mVal = svcInfo.preco.replace(/\./g, '').match(/[\d,]+/);
+              if (mVal) valorCatalogo = parseFloat(mVal[0].replace(',', '.')) || 0;
+            }
+            if (valorCatalogo === 0) {
+              var inputValor = prompt('O servico "' + agDados.servico + '" esta com valor R$ 0,00.\n\nInforme o valor cobrado (use ponto para decimal, ex: 150.00):\nDeixe vazio para R$ 0,00.', '');
+              if (inputValor === null) return;
+              var valorInformado = parseFloat(inputValor) || 0;
+              if (svcInfo && valorInformado > 0) {
+                var valorStr = 'R$ ' + valorInformado.toFixed(2).replace('.', ',');
+                try {
+                  var agsUpd = JSON.parse(localStorage.getItem('jane-booking-agendamentos')) || [];
+                  agsUpd.forEach(function (a) { if (a.id === agId) a.valor_informado = valorInformado; });
+                  localStorage.setItem('jane-booking-agendamentos', JSON.stringify(agsUpd));
+                } catch(e) {}
+              }
+            }
+          }
+        }
+
+        if (B) {
+          B.setAgendamentoStatus(agId, newStatus);
+        } else {
+          try {
+            var ags = JSON.parse(localStorage.getItem('jane-booking-agendamentos')) || [];
+            ags.forEach(function (a) { if (a.id === agId) a.status = newStatus; });
+            localStorage.setItem('jane-booking-agendamentos', JSON.stringify(ags));
+          } catch(e) {}
+        }
+        renderAgendamentos();
+        renderDashboard();
+      });
+    });
+
+    /* Aceitar Agendamento → status confirmado + WhatsApp */
+    container.querySelectorAll('.aceitar-btn').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var agId = btn.getAttribute('data-aceitar');
+        var ag = null;
+        try {
+          var ags = JSON.parse(localStorage.getItem('jane-booking-agendamentos')) || [];
+          ag = ags.find(function (a) { return a.id === agId; }) || null;
+        } catch(e) {}
+        if (!ag) return;
+        if (B) B.setAgendamentoStatus(agId, 'confirmado');
+        else {
+          try {
+            var ags2 = JSON.parse(localStorage.getItem('jane-booking-agendamentos')) || [];
+            ags2.forEach(function (a) { if (a.id === agId) a.status = 'confirmado'; });
+            localStorage.setItem('jane-booking-agendamentos', JSON.stringify(ags2));
+          } catch(e) {}
+        }
+        var tel = (ag.cliente_whatsapp || '').replace(/\D/g, '');
+        var diaSemana = (function(ds){ var d=new Date(ds+'T12:00:00'); return ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'][d.getDay()]; })(ag.data);
+        var dataBR = (function(ds){ var p=ds.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; })(ag.data);
+        var prof = ag.profissional || 'Jane Barreiros';
+        var msg = 'Olá ' + ag.cliente_nome + '! ✅\n\nSeu agendamento no *Studio Jane Barreiros* foi confirmado!\n\n' +
+          '💇 *Serviço:* ' + ag.servico + '\n' +
+          '📅 *Data:* ' + diaSemana + ', ' + dataBR + '\n' +
+          '⏰ *Horário:* ' + ag.horario + '\n' +
+          '👩‍💼 *Profissional:* ' + prof + '\n' +
+          '📍 *Endereço:* Rua Rio Grande do Sul, 348 — Santo André/SP\n\n' +
+          'Aguardamos você! 💛';
+        renderAgendamentos();
+        renderDashboard();
+        if (tel) {
+          window.open('https://wa.me/55' + tel + '?text=' + encodeURIComponent(msg), '_blank');
+        }
+      });
+    });
+
+    /* Recusar Agendamento → status cancelado + WhatsApp opcional */
+    container.querySelectorAll('.recusar-btn').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var agId = btn.getAttribute('data-recusar');
+        var ag = null;
+        try {
+          var ags = JSON.parse(localStorage.getItem('jane-booking-agendamentos')) || [];
+          ag = ags.find(function (a) { return a.id === agId; }) || null;
+        } catch(e) {}
+        if (!ag) return;
+        if (!confirm('Recusar este agendamento? Uma mensagem será enviada ao cliente informando que o horário não está disponível.')) return;
+        if (B) B.setAgendamentoStatus(agId, 'cancelado');
+        else {
+          try {
+            var ags3 = JSON.parse(localStorage.getItem('jane-booking-agendamentos')) || [];
+            ags3.forEach(function (a) { if (a.id === agId) a.status = 'cancelado'; });
+            localStorage.setItem('jane-booking-agendamentos', JSON.stringify(ags3));
+          } catch(e) {}
+        }
+        var tel = (ag.cliente_whatsapp || '').replace(/\D/g, '');
+        var dataBR = (function(ds){ var p=ds.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; })(ag.data);
+        var msg = 'Olá ' + ag.cliente_nome + '!\n\nInfelizmente o horário solicitado para *' + ag.servico + '* no dia *' + dataBR + ' às ' + ag.horario + '* não está disponível no momento.\n\n' +
+          'Por favor, acesse nosso agendamento online e escolha outro horário:\nhttps://agendamento.janebarreiros.com.br\n\n' +
+          'Pedimos desculpas pelo inconveniente. 🙏\n*Studio Jane Barreiros*';
+        renderAgendamentos();
+        renderDashboard();
+        if (tel) {
+          window.open('https://wa.me/55' + tel + '?text=' + encodeURIComponent(msg), '_blank');
+        }
+      });
+    });
+  }
+
+  /* --- View Toggle Buttons + Month Nav + Hoje + Busca (Event Delegation) --- */
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    /* View toggles */
+    if (t.closest('.ag-view-btn')) {
+      var btn = t.closest('.ag-view-btn');
+      agView = btn.getAttribute('data-view');
+      document.querySelectorAll('.ag-view-btn').forEach(function (b) {
+        b.classList.remove('bg-gold/20', 'text-gold');
+        b.classList.add('text-gray-400');
+      });
+      btn.classList.add('bg-gold/20', 'text-gold');
+      btn.classList.remove('text-gray-400');
+      renderAgendamentos();
+      return;
+    }
+    /* Month prev */
+    if (t.closest('#ag-month-prev')) {
+      agDate.setMonth(agDate.getMonth() - 1);
+      agDate.setDate(1);
+      renderAgendamentos();
+      return;
+    }
+    /* Month next */
+    if (t.closest('#ag-month-next')) {
+      agDate.setMonth(agDate.getMonth() + 1);
+      agDate.setDate(1);
+      renderAgendamentos();
+      return;
+    }
+    /* Month selector (volta pra hoje) */
+    if (t.closest('#ag-month-selector')) {
+      agDate = new Date();
+      agDate.setHours(12, 0, 0, 0);
+      renderAgendamentos();
+      return;
+    }
+    /* Hoje button */
+    if (t.closest('#ag-hoje-btn')) {
+      agDate = new Date();
+      agDate.setHours(12, 0, 0, 0);
+      agProfissional = 'Todos';
+      agOrigem = 'todos';
+      var plabel = document.getElementById('ag-prof-label');
+      if (plabel) plabel.textContent = 'Todos os Funcionários';
+      document.querySelectorAll('.ag-origem-btn').forEach(function (b) {
+        b.classList.toggle('bg-gold/15', b.getAttribute('data-origem') === 'todos');
+        b.classList.toggle('text-gold', b.getAttribute('data-origem') === 'todos');
+        b.classList.toggle('text-gray-400', b.getAttribute('data-origem') !== 'todos');
+      });
+      showPage('agendamentos');
+      return;
+    }
+    /* Origem filter */
+    if (t.closest('.ag-origem-btn')) {
+      var ob = t.closest('.ag-origem-btn');
+      agOrigem = ob.getAttribute('data-origem');
+      document.querySelectorAll('.ag-origem-btn').forEach(function (b) {
+        var isActive = b.getAttribute('data-origem') === agOrigem;
+        b.classList.toggle('bg-gold/15', isActive);
+        b.classList.toggle('text-gold', isActive);
+        if (!isActive) {
+          b.classList.remove('text-gold');
+          b.classList.add('text-gray-400');
+        } else {
+          b.classList.remove('text-gray-400');
+        }
+      });
+      renderAgendamentos();
+      return;
+    }
+    /* Busca button */
+    if (t.closest('#ag-busca-btn')) {
+      var termo = prompt('Buscar agendamento por nome do cliente:');
+      if (!termo) return;
+      var timeline = document.getElementById('ag-timeline');
+      var ags = B ? B.getAgendamentos().filter(function (a) {
+        return a.cliente_nome && a.cliente_nome.toLowerCase().indexOf(termo.toLowerCase()) !== -1;
+      }) : [];
+      ags.sort(function (a,b) { return a.data+a.horario > b.data+b.horario ? -1 : 1; });
+      ags = ags.slice(0, 30);
+      timeline.innerHTML = '';
+      if (!ags.length) {
+        timeline.innerHTML = '<p class="text-gray-500 text-sm py-8 text-center">Nenhum resultado para "' + termo + '"</p>';
+        return;
+      }
+      var lastDayStr = '';
+      ags.forEach(function (ag) {
+        if (ag.data !== lastDayStr) {
+          var dObj = new Date(ag.data + 'T12:00:00');
+          var hdr = document.createElement('div');
+          hdr.className = 'flex items-center gap-3 mt-4 mb-2 first:mt-0';
+          hdr.innerHTML = '<span class="font-semibold text-sm text-white">' + dObj.getDate() + ' de ' + _nomesMesesShort[dObj.getMonth()] + '</span><div class="flex-1 h-px bg-dark-300/30"></div>';
+          timeline.appendChild(hdr);
+          lastDayStr = ag.data;
+        }
+        timeline.appendChild(agBuildCard(ag));
+      });
+      agAttachStatusListeners(timeline);
+      return;
+    }
+    /* Profissional filter toggle */
+    if (t.closest('#ag-prof-filter')) {
+      e.stopPropagation();
+      var dd = document.getElementById('ag-prof-dropdown');
+      dd.classList.toggle('hidden');
+      if (!dd.classList.contains('hidden')) {
+        var rect = document.getElementById('ag-prof-filter').getBoundingClientRect();
+        dd.style.position = 'fixed';
+        dd.style.top = (rect.bottom + 4) + 'px';
+        dd.style.left = rect.left + 'px';
+      }
+      return;
+    }
+  });
+
+  /* Close prof dropdown on outside click */
+  document.addEventListener('click', function (e) {
+    var dd = document.getElementById('ag-prof-dropdown');
+    if (dd && !dd.classList.contains('hidden') && !e.target.closest('#ag-prof-filter') && !e.target.closest('#ag-prof-dropdown')) {
+      dd.classList.add('hidden');
+    }
+  });
+
+  /* ============================================================
+     SERVIÇOS — CRUD
+     ============================================================ */
+  function getServicos() {
+    if (B) return B.getServicos();
+    try { return JSON.parse(localStorage.getItem('jane-booking-servicos')) || []; } catch (e) { return []; }
+  }
+
+  function setServicos(lista) {
+    if (B) B.setServicos(lista);
+    try { localStorage.setItem('jane-booking-servicos', JSON.stringify(lista)); } catch (e) {}
+  }
+
+  function renderServicos() {
+    var lista = getServicos();
+    var container = document.getElementById('svc-lista');
+    var vazio = document.getElementById('svc-vazio');
+    container.innerHTML = '';
+    if (!lista.length) { vazio.classList.remove('hidden'); return; }
+    vazio.classList.add('hidden');
+
+    lista.sort(function (a,b) { return (a.ordem||0) - (b.ordem||0); });
+
+    lista.forEach(function (svc, idx) {
+      var card = document.createElement('div');
+      card.className = 'card-dark flex items-center justify-between p-4 fade-in';
+      var statusBadge = svc.status === 'inativo'
+        ? '<span class="badge badge-inactive">Inativo</span>'
+        : '<span class="badge badge-active">Ativo</span>';
+      var precoFmt = svc.preco || 'Consulte';
+      card.innerHTML =
+        '<div class="flex-1 min-w-0 mr-4">' +
+          '<div class="flex items-center gap-3 mb-1">' +
+            '<h4 class="font-semibold text-white truncate">' + svc.nome + '</h4>' +
+            statusBadge +
+          '</div>' +
+          '<div class="flex items-center gap-4 text-xs text-gray-400">' +
+            '<span>' + (svc.categoria || 'Geral') + '</span>' +
+            '<span>' + (svc.duracao || '—') + '</span>' +
+            '<span class="text-gold font-semibold">' + precoFmt + '</span>' +
+          '</div>' +
+          (svc.nota ? '<p class="mt-1 text-xs text-gray-500 truncate">' + svc.nota + '</p>' : '') +
+        '</div>' +
+        '<div class="flex items-center gap-1 shrink-0">' +
+          (idx > 0 ? '<button data-move-up="' + idx + '" class="rounded-lg p-2 text-gray-400 hover:bg-dark-500 hover:text-white" title="Mover para cima">&#9650;</button>' : '') +
+          (idx < lista.length - 1 ? '<button data-move-down="' + idx + '" class="rounded-lg p-2 text-gray-400 hover:bg-dark-500 hover:text-white" title="Mover para baixo">&#9660;</button>' : '') +
+          '<button data-edit="' + idx + '" class="rounded-lg px-3 py-1.5 text-xs font-semibold text-gold hover:bg-gold/10">Editar</button>' +
+          '<button data-dup="' + idx + '" class="rounded-lg px-3 py-1.5 text-xs font-semibold text-blue-400 hover:bg-blue-500/10">Duplicar</button>' +
+          '<button data-del="' + idx + '" class="rounded-lg px-3 py-1.5 text-xs font-semibold text-red-400 hover:bg-red-500/10">Excluir</button>' +
+        '</div>';
+      container.appendChild(card);
+    });
+
+    /* Mover para cima */
+    container.querySelectorAll('[data-move-up]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var idx = parseInt(btn.getAttribute('data-move-up'));
+        var l = getServicos();
+        if (idx <= 0) return;
+        var tmp = l[idx]; l[idx] = l[idx-1]; l[idx-1] = tmp;
+        reordenar(l); setServicos(l); renderServicos();
+      });
+    });
+
+    /* Mover para baixo */
+    container.querySelectorAll('[data-move-down]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var idx = parseInt(btn.getAttribute('data-move-down'));
+        var l = getServicos();
+        if (idx >= l.length - 1) return;
+        var tmp = l[idx]; l[idx] = l[idx+1]; l[idx+1] = tmp;
+        reordenar(l); setServicos(l); renderServicos();
+      });
+    });
+
+    /* Editar */
+    container.querySelectorAll('[data-edit]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var idx = parseInt(btn.getAttribute('data-edit'));
+        openSvcModal(getServicos()[idx], idx);
+      });
+    });
+
+    /* Duplicar */
+    container.querySelectorAll('[data-dup]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var idx = parseInt(btn.getAttribute('data-dup'));
+        var l = getServicos();
+        var clone = JSON.parse(JSON.stringify(l[idx]));
+        clone.nome = clone.nome + ' (Cópia)';
+        l.push(clone); reordenar(l); setServicos(l); renderServicos();
+      });
+    });
+
+    /* Excluir */
+    container.querySelectorAll('[data-del]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (!confirm('Excluir este serviço?')) return;
+        var idx = parseInt(btn.getAttribute('data-del'));
+        var l = getServicos(); l.splice(idx, 1);
+        reordenar(l); setServicos(l); renderServicos();
+      });
+    });
+  }
+
+  function reordenar(lista) {
+    lista.forEach(function (s, i) { s.ordem = i + 1; });
+  }
+
+  /* Modal */
+  function openSvcModal(svc, idx) {
+    var modal = document.getElementById('svc-modal');
+    document.getElementById('svc-modal-title').textContent = svc ? 'Editar Serviço' : 'Novo Serviço';
+    document.getElementById('svc-id').value = idx !== undefined ? idx : '';
+    document.getElementById('svc-nome').value = svc ? svc.nome : '';
+    document.getElementById('svc-categoria').value = svc ? (svc.categoria || 'Cabelo') : 'Cabelo';
+    document.getElementById('svc-status').value = svc ? (svc.status || 'ativo') : 'ativo';
+    document.getElementById('svc-duracao').value = svc ? svc.duracao : '';
+    document.getElementById('svc-duracao-min').value = svc ? (svc.duracao_min || '') : '';
+    document.getElementById('svc-preco').value = svc ? svc.preco : '';
+    document.getElementById('svc-preco-min').value = svc ? (svc.preco_min || '') : '';
+    document.getElementById('svc-nota').value = svc ? (svc.nota || '') : '';
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function closeSvcModal() {
+    var modal = document.getElementById('svc-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  document.getElementById('btn-novo-servico').addEventListener('click', function () { openSvcModal(null); });
+  document.getElementById('svc-modal-close').addEventListener('click', closeSvcModal);
+  document.getElementById('svc-cancelar').addEventListener('click', closeSvcModal);
+  document.getElementById('svc-modal').addEventListener('click', function (e) { if (e.target.id === 'svc-modal') closeSvcModal(); });
+
+  document.getElementById('svc-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var nome = document.getElementById('svc-nome').value.trim();
+    if (!nome) { alert('Informe o nome do serviço.'); return; }
+
+    var data = {
+      nome: nome,
+      categoria: document.getElementById('svc-categoria').value,
+      status: document.getElementById('svc-status').value,
+      duracao: document.getElementById('svc-duracao').value.trim(),
+      duracao_min: parseInt(document.getElementById('svc-duracao-min').value) || 60,
+      preco: document.getElementById('svc-preco').value.trim(),
+      preco_min: document.getElementById('svc-preco-min').value.trim(),
+      nota: document.getElementById('svc-nota').value.trim()
+    };
+
+    var l = getServicos();
+    var editIdx = document.getElementById('svc-id').value;
+
+    if (editIdx !== '') {
+      var idx = parseInt(editIdx);
+      data.ordem = l[idx].ordem;
+      data.destaque = l[idx].destaque || false;
+      l[idx] = data;
+    } else {
+      data.ordem = l.length + 1;
+      data.destaque = false;
+      l.push(data);
+    }
+
+    setServicos(l);
+    closeSvcModal();
+    renderServicos();
+  });
+
+  /* Tabs (apenas visual por enquanto) */
+  document.querySelectorAll('.svc-tab').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      document.querySelectorAll('.svc-tab').forEach(function (t) { t.classList.remove('tab-active'); t.classList.add('text-gray-400'); });
+      tab.classList.add('tab-active'); tab.classList.remove('text-gray-400');
+    });
+  });
+
+  /* ============================================================
+     CLIENTES
+     ============================================================ */
+  function renderClientes(filtro) {
+    var clientes = B ? B.getClientes() : [];
+    if (filtro) {
+      var f = filtro.toLowerCase();
+      clientes = clientes.filter(function (c) { return c.nome.toLowerCase().indexOf(f) !== -1 || c.whatsapp.indexOf(f) !== -1; });
+    }
+    var tbody = document.getElementById('cli-tbody');
+    var vazio = document.getElementById('cli-vazio');
+    tbody.innerHTML = '';
+    if (!clientes.length) { vazio.classList.remove('hidden'); return; }
+    vazio.classList.add('hidden');
+    clientes.sort(function (a,b) { return b.total_atendimentos - a.total_atendimentos; });
+    clientes.forEach(function (c) {
+      var tr = document.createElement('tr');
+      tr.className = 'border-b border-dark-300/30 hover:bg-dark-600/50 transition-colors';
+      var tagColors = {
+        'Nova':'bg-blue-500/15 text-blue-400',
+        'Ativa':'bg-green-500/15 text-green-400',
+        'Frequente':'bg-green-500/15 text-green-400',
+        'VIP':'bg-yellow-500/15 text-yellow-400',
+        'Aniversariante':'bg-pink-500/15 text-pink-400',
+        'Promocao':'bg-purple-500/15 text-purple-400'
+      };
+      var tagClass = tagColors[c.tag] || 'bg-gray-500/15 text-gray-400';
+      var valorGasto = 0;
+      if (B && B.calcularValorGasto) { valorGasto = B.calcularValorGasto(c); }
+      else if (c.historico && c.historico.length) {
+        var svcs = B ? B.getServicos() : [];
+        c.historico.forEach(function (h) {
+          for (var i = 0; i < svcs.length; i++) {
+            if (svcs[i].nome === h.servico && svcs[i].preco && svcs[i].preco !== 'Consulte') {
+              var m = svcs[i].preco.match(/R\$\s*([\d.,]+)/);
+              if (m) valorGasto += parseFloat(m[1].replace('.','').replace(',','.'));
+              break;
+            }
+          }
+        });
+      }
+      var ultimoAg = c.ultimo_atendimento ? fmtBR(c.ultimo_atendimento.slice(0,10)) : '—';
+      var telLimpo = c.whatsapp.replace(/\D/g, '');
+      var telLink = telLimpo.length >= 10 ? 'https://wa.me/55' + telLimpo : '#';
+      tr.innerHTML =
+        '<td class="px-4 py-3 font-medium text-white">' + c.nome + '</td>' +
+        '<td class="px-4 py-3 text-gray-400">' + c.whatsapp + '</td>' +
+        '<td class="px-4 py-3 text-center font-numeric font-bold text-gold">' + c.total_atendimentos + '</td>' +
+        '<td class="px-4 py-3 text-right font-numeric font-semibold text-green-400">' + (valorGasto > 0 ? 'R$ ' + valorGasto.toFixed(0).replace('.',',') : '—') + '</td>' +
+        '<td class="px-4 py-3 text-xs text-gray-400">' + ultimoAg + '</td>' +
+        '<td class="px-4 py-3"><span class="badge ' + tagClass + '">' + (c.tag||'Nova') + '</span></td>' +
+        '<td class="px-4 py-3 text-center"><a href="' + telLink + '" target="_blank" class="inline-flex items-center gap-1 rounded-lg bg-green-500/15 px-3 py-1.5 text-xs font-semibold text-green-400 hover:bg-green-500/25"><svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492l4.638-1.218A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.82c-2.168 0-4.18-.584-5.913-1.597l-.422-.253-2.752.722.736-2.682-.276-.44A9.79 9.79 0 012.18 12c0-5.422 4.398-9.82 9.82-9.82S21.82 6.578 21.82 12s-4.398 9.82-9.82 9.82z"/></svg> WhatsApp</a></td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  document.getElementById('cli-busca').addEventListener('input', function () { renderClientes(this.value); });
+
+  /* ============================================================
+     CONFIG
+     ============================================================ */
+  function renderConfig() {
+    renderDiasBloq();
+    renderEspera();
+  }
+
+  function renderDiasBloq() {
+    var container = document.getElementById('cfg-dias-bloq');
+    var bloqueios = B ? B.getBloqueios() : { datas:[], horarios:[] };
+    container.innerHTML = '';
+    if (!bloqueios.datas || !bloqueios.datas.length) { container.innerHTML = '<p class="text-sm text-gray-500">Nenhum dia bloqueado.</p>'; return; }
+    bloqueios.datas.forEach(function (d) {
+      var tag = document.createElement('span');
+      tag.className = 'inline-flex items-center gap-1.5 rounded-full bg-red-500/15 px-3 py-1 text-xs font-semibold text-red-400';
+      tag.innerHTML = fmtBR(d) + ' <button data-unblock="' + d + '" class="ml-1 hover:text-red-300">&times;</button>';
+      container.appendChild(tag);
+    });
+    container.querySelectorAll('[data-unblock]').forEach(function (btn) {
+      btn.addEventListener('click', function () { B.desbloquearDia(btn.getAttribute('data-unblock')); renderDiasBloq(); });
+    });
+  }
+
+  document.getElementById('cfg-bloq-btn').addEventListener('click', function () {
+    var input = document.getElementById('cfg-bloq-dia');
+    if (!input.value) { alert('Selecione um dia.'); return; }
+    B.bloquearDia(input.value); input.value = ''; renderDiasBloq();
+  });
+
+  function renderEspera() {
+    var container = document.getElementById('cfg-espera');
+    var vazio = document.getElementById('cfg-espera-vazio');
+    var lista = B ? B.getListaEspera().filter(function (i) { return i.status === 'aguardando'; }) : [];
+    container.innerHTML = '';
+    if (!lista.length) { vazio.classList.remove('hidden'); return; }
+    vazio.classList.add('hidden');
+    lista.forEach(function (item) {
+      var card = document.createElement('div');
+      card.className = 'flex items-center justify-between rounded-xl bg-dark-600 border border-dark-300/50 p-4';
+      card.innerHTML =
+        '<div><p class="font-semibold text-white">' + item.cliente_nome + '</p><p class="text-xs text-gray-400">' + item.servico + ' · ' + fmtBR(item.data_preferida) + '</p></div>' +
+        '<div class="flex gap-2">' +
+          '<a href="https://wa.me/55' + item.cliente_whatsapp.replace(/\D/g,'') + '" target="_blank" class="rounded-lg bg-green-500/15 px-3 py-1.5 text-xs font-semibold text-green-400 hover:bg-green-500/25">WhatsApp</a>' +
+          '<button data-rm-espera="' + item.id + '" class="rounded-lg bg-red-500/15 px-3 py-1.5 text-xs font-semibold text-red-400 hover:bg-red-500/25">Remover</button></div>';
+      container.appendChild(card);
+    });
+    container.querySelectorAll('[data-rm-espera]').forEach(function (btn) {
+      btn.addEventListener('click', function () { B.removerListaEspera(btn.getAttribute('data-rm-espera')); renderEspera(); });
+    });
+  }
+
+  /* ============================================================
+     FATURAMENTO
+     ============================================================ */
+  var fatPagTab = 'dia';
+  var fatPeriodo = new Date(); fatPeriodo.setHours(12,0,0,0);
+
+  function fmtFatPeriodoLabel(d) {
+    var meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    return meses[d.getMonth()] + ' ' + d.getFullYear();
+  }
+
+  function renderFatPeriodoLabel() {
+    document.getElementById('fat-periodo-label').textContent = fmtFatPeriodoLabel(fatPeriodo);
+  }
+
+  document.getElementById('fat-filter-prev').addEventListener('click', function () {
+    fatPeriodo.setMonth(fatPeriodo.getMonth() - 1);
+    renderFatPeriodoLabel();
+    renderFaturamento();
+  });
+  document.getElementById('fat-filter-next').addEventListener('click', function () {
+    fatPeriodo.setMonth(fatPeriodo.getMonth() + 1);
+    renderFatPeriodoLabel();
+    renderFaturamento();
+  });
+
+  function renderFaturamento() {
+    renderFatPeriodoLabel();
+    var ags = B ? B.getAgendamentos() : [];
+    var hojeStr = hoje();
+    var selAno = fatPeriodo.getFullYear();
+    var selMes = fatPeriodo.getMonth();
+    var selMesStr = selAno + '-' + (selMes < 9 ? '0' : '') + (selMes + 1);
+    var selAnoStr = String(selAno);
+
+    function isHoje(a) { return a.data === hojeStr; }
+    function isMesSel(a) { return a.data && a.data.slice(0, 7) === selMesStr; }
+    function isAnoSel(a) { return a.data && a.data.slice(0, 4) === selAnoStr; }
+
+    var concluidos = ags.filter(function (a) { return a.status === 'concluido'; });
+    var agendados = ags.filter(function (a) { return a.status === 'confirmado' || a.status === 'pendente'; });
+    var cancelados = ags.filter(function (a) { return a.status === 'cancelado'; });
+    var emAtend = ags.filter(function (a) { return a.status === 'em_atendimento'; });
+    var espera = B ? B.getListaEspera().filter(function (i) { return i.status === 'aguardando'; }) : [];
+
+    var fatHoje = concluidos.filter(isHoje).reduce(function (s, a) { return s + servicoPreco(a.servico, a.valor_informado); }, 0);
+    var fatMes = concluidos.filter(isMesSel).reduce(function (s, a) { return s + servicoPreco(a.servico, a.valor_informado); }, 0);
+    var fatAno = concluidos.filter(isAnoSel).reduce(function (s, a) { return s + servicoPreco(a.servico, a.valor_informado); }, 0);
+    var cntHoje = concluidos.filter(isHoje).length;
+    var cntMes = concluidos.filter(isMesSel).length;
+    var cntAno = concluidos.filter(isAnoSel).length;
+
+    document.getElementById('fat-hoje-valor').textContent = 'R$ ' + fatHoje.toFixed(2).replace('.', ',');
+    document.getElementById('fat-hoje-count').textContent = cntHoje + ' atendimento' + (cntHoje !== 1 ? 's' : '');
+    document.getElementById('fat-mes-valor').textContent = 'R$ ' + fatMes.toFixed(2).replace('.', ',');
+    document.getElementById('fat-mes-count').textContent = cntMes + ' atendimento' + (cntMes !== 1 ? 's' : '');
+    document.getElementById('fat-ano-valor').textContent = 'R$ ' + fatAno.toFixed(2).replace('.', ',');
+    document.getElementById('fat-ano-count').textContent = cntAno + ' atendimento' + (cntAno !== 1 ? 's' : '');
+
+    /* Status counts — filtered by selected month */
+    var agsMes = ags.filter(function (a) {
+      if (!a.data || a.data.slice(0, 7) !== selMesStr) return false;
+      return true;
+    });
+    var agendadosMes = agsMes.filter(function (a) { return a.status === 'confirmado' || a.status === 'pendente'; });
+    var emAtendMes = agsMes.filter(function (a) { return a.status === 'em_atendimento'; });
+    var concluidosMes = agsMes.filter(function (a) { return a.status === 'concluido'; });
+    var canceladosMes = agsMes.filter(function (a) { return a.status === 'cancelado'; });
+
+    document.getElementById('fat-agendados').textContent = agendadosMes.length;
+    document.getElementById('fat-em-atendimento').textContent = emAtendMes.length;
+    document.getElementById('fat-concluidos').textContent = concluidosMes.length;
+    document.getElementById('fat-cancelados').textContent = canceladosMes.length;
+    document.getElementById('fat-espera').textContent = espera.length;
+
+    /* Period subtitle on status cards */
+    var mesesFull = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    var periodSub = mesesFull[selMes] + ' ' + selAno;
+    document.querySelectorAll('#page-faturamento .fat-period-sub').forEach(function (el) { el.textContent = periodSub; });
+
+    renderFatPagamento(concluidos, servicoPreco, selMesStr, selAnoStr);
+    renderFatTopServicos(concluidos);
+    renderFatTabela(ags, servicoPreco);
+
+    document.querySelectorAll('.fat-pag-tab').forEach(function (btn) {
+      btn.onclick = function () {
+        fatPagTab = btn.getAttribute('data-pag');
+        document.querySelectorAll('.fat-pag-tab').forEach(function (b) {
+          b.className = 'fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold ' + (b === btn ? 'text-gold bg-gold/15' : 'text-gray-400 hover:text-gray-200');
+        });
+        renderFatPagamento(concluidos, servicoPreco, selMesStr, selAnoStr);
+      };
+    });
+    document.getElementById('fat-cat-filter').onchange = function () {
+      renderFatTopServicos(concluidos);
+    };
+  }
+
+  function renderFatPagamento(concluidos, servicoPreco, selMesStr, selAnoStr) {
+    var hojeStr = hoje();
+    var pool;
+    if (fatPagTab === 'dia') pool = concluidos.filter(function (a) { return a.data === hojeStr; });
+    else if (fatPagTab === 'mes') pool = concluidos.filter(function (a) { return a.data && a.data.slice(0, 7) === selMesStr; });
+    else if (fatPagTab === 'ano') pool = concluidos.filter(function (a) { return a.data && a.data.slice(0, 4) === selAnoStr; });
+    else pool = concluidos;
+    var pix = 0, credito = 0, debito = 0, dinheiro = 0;
+    pool.forEach(function (a) {
+      var valor = servicoPreco(a.servico, a.valor_informado);
+      var fp = (a.forma_pagamento || '').toLowerCase().trim();
+      if (fp === 'pix') pix += valor;
+      else if (fp === 'cartão de crédito' || fp === 'cartao de credito' || fp === 'cartão de credito' || fp === 'credito' || fp === 'crédito') credito += valor;
+      else if (fp === 'cartão de débito' || fp === 'cartao de debito' || fp === 'cartão de debito' || fp === 'debito' || fp === 'débito') debito += valor;
+      else if (fp === 'dinheiro' || fp === 'dinheiro' || fp === 'cash') dinheiro += valor;
+      else { pix += valor; }
+    });
+    document.getElementById('fat-pag-pix').textContent = 'R$ ' + pix.toFixed(2).replace('.', ',');
+    document.getElementById('fat-pag-credito').textContent = 'R$ ' + credito.toFixed(2).replace('.', ',');
+    document.getElementById('fat-pag-debito').textContent = 'R$ ' + debito.toFixed(2).replace('.', ',');
+    document.getElementById('fat-pag-dinheiro').textContent = 'R$ ' + dinheiro.toFixed(2).replace('.', ',');
+  }
+
+  function renderFatTopServicos(concluidos) {
+    var cat = document.getElementById('fat-cat-filter').value;
+    var contagem = {};
+    concluidos.forEach(function (a) {
+      if (!a.servico) return;
+      contagem[a.servico] = (contagem[a.servico] || 0) + 1;
+    });
+    var arr = Object.keys(contagem).map(function (k) { return { nome: k, qtd: contagem[k] }; });
+    if (cat !== 'todas') {
+      arr = arr.filter(function (item) {
+        var s = (B ? B.getServicos() : []).find(function (x) { return x.nome === item.nome; });
+        return s && ((s.categoria || '').indexOf(cat) !== -1 || item.nome.toLowerCase().indexOf(cat.toLowerCase()) !== -1);
+      });
+    }
+    arr.sort(function (a, b) { return b.qtd - a.qtd; });
+    arr = arr.slice(0, 5);
+    var container = document.getElementById('fat-top-servicos');
+    container.innerHTML = '';
+    if (!arr.length) { container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">Nenhum serviço registrado.</p>'; return; }
+    var max = arr[0].qtd;
+    arr.forEach(function (item, i) {
+      var pct = max > 0 ? (item.qtd / max * 100) : 0;
+      var medalha = i === 0 ? 'text-yellow-400' : i === 1 ? 'text-gray-300' : i === 2 ? 'text-amber-600' : 'text-gray-500';
+      var row = document.createElement('div');
+      row.className = 'flex items-center gap-3';
+      row.innerHTML =
+        '<span class="font-numeric text-sm font-bold ' + medalha + ' w-6 text-right">#' + (i + 1) + '</span>' +
+        '<div class="flex-1">' +
+          '<div class="flex justify-between mb-1"><span class="text-xs font-medium text-white">' + item.nome + '</span><span class="font-numeric text-[10px] text-gray-400">' + item.qtd + 'x</span></div>' +
+          '<div class="h-2 rounded-full bg-dark-600"><div class="h-full rounded-full bg-gradient-to-r from-gold/80 to-gold transition-all" style="width:' + pct + '%"></div></div>' +
+        '</div>';
+      container.appendChild(row);
+    });
+  }
+
+  function renderFatTabela(ags, servicoPreco) {
+    var tbody = document.getElementById('fat-tbody');
+    var vazio = document.getElementById('fat-vazio');
+    var recentes = ags.filter(function (a) { return a.status !== 'cancelado'; }).slice().sort(function (a, b) {
+      if (b.data === a.data) return (b.horario || '').localeCompare(a.horario || '');
+      return (b.data || '').localeCompare(a.data || '');
+    }).slice(0, 20);
+    tbody.innerHTML = '';
+    if (!recentes.length) { vazio.classList.remove('hidden'); return; }
+    vazio.classList.add('hidden');
+    recentes.forEach(function (a) {
+      var total = a.status === 'cancelado' ? 0 : servicoPreco(a.servico, a.valor_informado);
+      var statusMap = {
+        concluido: '<span class="inline-flex items-center rounded-full bg-green-500/15 px-2.5 py-0.5 text-[10px] font-semibold text-green-400">Concluído</span>',
+        confirmado: '<span class="inline-flex items-center rounded-full bg-yellow-500/15 px-2.5 py-0.5 text-[10px] font-semibold text-yellow-400">Agendado</span>',
+        em_atendimento: '<span class="inline-flex items-center rounded-full bg-blue-500/15 px-2.5 py-0.5 text-[10px] font-semibold text-blue-400">Em Atendimento</span>',
+        cancelado: '<span class="inline-flex items-center rounded-full bg-red-500/15 px-2.5 py-0.5 text-[10px] font-semibold text-red-400">Cancelado</span>'
+      };
+      var tr = document.createElement('tr');
+      tr.className = 'hover:bg-white/[.02]';
+      tr.innerHTML =
+        '<td class="px-3 py-2.5 text-gray-400 font-mono text-xs">' + (a.id || '—').slice(0, 12) + '</td>' +
+        '<td class="px-3 py-2.5 text-gray-300 text-xs">' + fmtBR(a.data) + ' ' + (a.horario || '—') + '</td>' +
+        '<td class="px-3 py-2.5 text-white text-xs font-medium">' + (a.cliente_nome || '—') + '</td>' +
+        '<td class="px-3 py-2.5 text-gray-300 text-xs">' + (a.servico || '—') + '</td>' +
+        '<td class="px-3 py-2.5 text-right font-numeric text-xs font-semibold text-gold">R$ ' + total.toFixed(2).replace('.', ',') + '</td>' +
+        '<td class="px-3 py-2.5 text-center">' + (statusMap[a.status] || a.status) + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+});
+</script>
+</body>
+</html>
