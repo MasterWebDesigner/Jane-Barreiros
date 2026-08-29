@@ -41,6 +41,7 @@
       main { padding-bottom:2rem; }
       .admin-page { padding:1rem !important; }
       .fat-pag-tab { padding:4px 8px !important; font-size:10px !important; }
+      #ag-calendar-dropdown { left:auto !important; right:0 !important; transform:none !important; }
     }
     @media (min-width: 769px) {
       #mobile-header { display:none !important; }
@@ -59,7 +60,7 @@
     .sidebar-link:hover, .sidebar-link.active { background:rgba(212,175,55,.08); border-left-color:#D4AF37; color:#D4AF37; }
     .gold-btn { background:linear-gradient(135deg,#BF953F,#FCF6BA,#B38728); color:#000; font-weight:600; transition:all .2s; }
     .gold-btn:hover { filter:brightness(1.1); transform:translateY(-1px); }
-    #ag-calendar-dropdown button.cal-dd-day { width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:12px; font-weight:600; color:#9CA3AF; transition:all .15s; }
+    #ag-calendar-dropdown button.cal-dd-day { width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:6px; font-size:11px; font-weight:600; color:#9CA3AF; transition:all .15s; position:relative; }
     #ag-calendar-dropdown button.cal-dd-day:hover:not(.disabled):not(.selected) { background:rgba(212,175,55,.15); color:#D4AF37; }
     #ag-calendar-dropdown button.cal-dd-day.selected { background:rgba(212,175,55,.25); color:#D4AF37; border:1px solid rgba(212,175,55,.4); }
     #ag-calendar-dropdown button.cal-dd-day.today { color:#fff; background:rgba(212,175,55,.1); }
@@ -275,16 +276,16 @@
           <button id="ag-view-grade" class="ag-view-btn rounded-lg px-4 py-1.5 text-xs font-semibold text-gray-400 hover:text-gray-200" data-view="grade">Grade</button>
           <button id="ag-view-lista" class="ag-view-btn rounded-lg px-4 py-1.5 text-xs font-semibold text-gray-400 hover:text-gray-200" data-view="lista">Lista</button>
         </div>
-        <div class="flex items-center gap-2">
+        <div class="relative flex items-center gap-2">
           <button id="ag-month-prev" class="flex h-8 w-8 items-center justify-center rounded-lg bg-dark-700 border border-dark-300/40 text-gray-400 hover:text-white hover:border-gold/30 transition-colors">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
           </button>
-          <button id="ag-month-selector" class="relative flex items-center gap-1.5 rounded-lg bg-dark-700 border border-dark-300/40 px-4 py-1.5 text-sm font-semibold text-white hover:border-gold/30 transition-colors">
+          <button id="ag-month-selector" class="flex items-center gap-1.5 rounded-lg bg-dark-700 border border-dark-300/40 px-4 py-1.5 text-sm font-semibold text-white hover:border-gold/30 transition-colors">
             <span id="ag-month-label">Agosto 2026</span>
             <svg class="h-3.5 w-3.5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
           </button>
           <!-- Calendário Dropdown -->
-          <div id="ag-calendar-dropdown" class="hidden absolute mt-2 rounded-xl bg-dark-700 border border-dark-300/50 shadow-2xl p-4 z-50" style="width:300px;">
+          <div id="ag-calendar-dropdown" class="hidden absolute left-1/2 -translate-x-1/2 mt-2 rounded-xl bg-dark-700 border border-dark-300/50 shadow-2xl p-4 z-50" style="width:300px;">
             <div class="flex items-center justify-between mb-3">
               <button id="cal-dd-prev" class="rounded-lg bg-dark-600 px-2 py-1 text-xs text-gray-400 hover:text-white transition-colors">&larr;</button>
               <span id="cal-dd-label" class="text-sm font-semibold text-white"></span>
