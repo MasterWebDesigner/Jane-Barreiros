@@ -1243,7 +1243,7 @@ document.addEventListener('DOMContentLoaded', function () {
           '</div>' +
           '<div class="flex items-center gap-3 flex-wrap">' +
             '<div class="text-right hidden sm:block">' +
-              '<p class="font-numeric text-sm font-semibold text-gold">R$ ' + valor.toFixed(0) + '</p>' +
+              '<p class="font-numeric text-sm font-semibold text-gold">R$ ' + valor.toFixed(2).replace('.',',') + '</p>' +
               '<p class="text-[10px] text-gray-500">' + (ag.forma_pagamento || '—') + '</p>' +
             '</div>' +
             (tel ? '<a href="https://wa.me/55' + tel + '" target="_blank" rel="noopener" class="shrink-0 rounded-lg bg-green-500/15 px-2.5 py-1.5 text-[10px] font-semibold text-green-400 hover:bg-green-500/25 transition-colors">WhatsApp</a>' : '') +
@@ -1340,7 +1340,7 @@ document.addEventListener('DOMContentLoaded', function () {
             '</div>' +
             '<div class="flex items-center gap-3 flex-wrap">' +
               '<div class="text-right hidden sm:block">' +
-                '<p class="font-numeric text-sm font-semibold text-gold">R$ ' + valor.toFixed(0) + '</p>' +
+                '<p class="font-numeric text-sm font-semibold text-gold">R$ ' + valor.toFixed(2).replace('.',',') + '</p>' +
                 '<p class="text-[10px] text-gray-500">' + (ag.forma_pagamento || '—') + '</p>' +
               '</div>' +
               (tel ? '<a href="https://wa.me/55' + tel + '" target="_blank" rel="noopener" class="shrink-0 rounded-lg bg-green-500/15 px-2.5 py-1.5 text-[10px] font-semibold text-green-400 hover:bg-green-500/25 transition-colors">WhatsApp</a>' : '') +
@@ -1821,7 +1821,7 @@ document.addEventListener('DOMContentLoaded', function () {
           '</div>' +
           '<p class="text-xs text-gray-400 truncate">' + ag.cliente_nome + (ag.cliente_whatsapp ? ' · ' + ag.cliente_whatsapp : '') + '</p>' +
           '<div class="flex items-center gap-3 mt-1.5">' +
-            (valor > 0 ? '<span class="font-numeric text-xs font-bold text-gold">R$ ' + valor.toFixed(0) + '</span>' : '') +
+            (valor > 0 ? '<span class="font-numeric text-xs font-bold text-gold">R$ ' + valor.toFixed(2).replace('.',',') + '</span>' : '') +
             (ag.forma_pagamento ? '<span class="text-[10px] text-gray-500">' + ag.forma_pagamento + '</span>' : '') +
           '</div>' +
         '</div>' +
@@ -2476,8 +2476,8 @@ document.addEventListener('DOMContentLoaded', function () {
     var svc = B ? B.getServicoPorNome(servico) : null;
     var durMin = svc ? (svc.duracao_min || 60) : 60;
     var dados = { data: data, horario: horario, servico: servico, duracao_min: durMin };
-    if (valor !== '' && parseFloat(valor) >= 0) {
-      dados.valor_informado = parseFloat(valor);
+    if (valor !== '' && parseFloat(valor.replace(',','.')) >= 0) {
+      dados.valor_informado = parseFloat(valor.replace(',','.'));
     }
     if (B && B.editarAgendamento) {
       B.editarAgendamento(id, dados);
