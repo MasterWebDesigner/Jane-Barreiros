@@ -286,7 +286,7 @@
             <svg class="h-3.5 w-3.5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
           </button>
           <!-- Calendário Dropdown -->
-          <div id="ag-calendar-dropdown" class="hidden absolute left-1/2 -translate-x-1/2 mt-2 rounded-xl bg-dark-700 border border-dark-300/50 shadow-2xl p-4 z-50" style="width:300px;">
+          <div id="ag-calendar-dropdown" class="hidden absolute top-full mt-2 rounded-xl bg-dark-700 border border-dark-300/50 shadow-2xl p-4 z-50" style="width:300px; right:0;">
             <div class="flex items-center justify-between mb-3">
               <button id="cal-dd-prev" class="rounded-lg bg-dark-600 px-2 py-1 text-xs text-gray-400 hover:text-white transition-colors">&larr;</button>
               <span id="cal-dd-label" class="text-sm font-semibold text-white"></span>
@@ -1530,6 +1530,27 @@ document.addEventListener('DOMContentLoaded', function () {
       if (!dropdown.classList.contains('hidden')) {
         calDdDate = new Date(agDate);
         renderCalDropdown();
+        /* Ajusta posição para não sair da tela */
+        var rect = dropdown.getBoundingClientRect();
+        var vw = window.innerWidth;
+        var vh = window.innerHeight;
+        dropdown.style.left = '';
+        dropdown.style.right = '0';
+        dropdown.style.transform = '';
+        if (rect.right > vw - 8) {
+          dropdown.style.left = 'auto';
+          dropdown.style.right = '0';
+        }
+        if (rect.left < 8) {
+          dropdown.style.left = '8px';
+          dropdown.style.right = 'auto';
+        }
+        if (rect.bottom > vh - 8) {
+          dropdown.style.top = 'auto';
+          dropdown.style.bottom = '100%';
+          dropdown.style.marginTop = '0';
+          dropdown.style.marginBottom = '0.5rem';
+        }
       }
       return;
     }
