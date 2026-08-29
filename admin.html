@@ -59,6 +59,12 @@
     .sidebar-link:hover, .sidebar-link.active { background:rgba(212,175,55,.08); border-left-color:#D4AF37; color:#D4AF37; }
     .gold-btn { background:linear-gradient(135deg,#BF953F,#FCF6BA,#B38728); color:#000; font-weight:600; transition:all .2s; }
     .gold-btn:hover { filter:brightness(1.1); transform:translateY(-1px); }
+    #ag-calendar-dropdown button.cal-dd-day { width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:12px; font-weight:600; color:#9CA3AF; transition:all .15s; }
+    #ag-calendar-dropdown button.cal-dd-day:hover:not(.disabled):not(.selected) { background:rgba(212,175,55,.15); color:#D4AF37; }
+    #ag-calendar-dropdown button.cal-dd-day.selected { background:rgba(212,175,55,.25); color:#D4AF37; border:1px solid rgba(212,175,55,.4); }
+    #ag-calendar-dropdown button.cal-dd-day.today { color:#fff; background:rgba(212,175,55,.1); }
+    #ag-calendar-dropdown button.cal-dd-day.disabled { color:#444; cursor:not-allowed; opacity:.4; }
+    #ag-calendar-dropdown button.cal-dd-day.has-dot::after { content:''; display:block; width:4px; height:4px; border-radius:50%; background:#D4AF37; position:absolute; bottom:4px; }
     .card-dark { background:#1E1E1E; border:1px solid rgba(212,175,55,.12); border-radius:12px; }
     .card-dark:hover { border-color:rgba(212,175,55,.3); }
     .tab-active { color:#D4AF37; border-bottom:2px solid #D4AF37; }
@@ -273,10 +279,22 @@
           <button id="ag-month-prev" class="flex h-8 w-8 items-center justify-center rounded-lg bg-dark-700 border border-dark-300/40 text-gray-400 hover:text-white hover:border-gold/30 transition-colors">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
           </button>
-          <button id="ag-month-selector" class="flex items-center gap-1.5 rounded-lg bg-dark-700 border border-dark-300/40 px-4 py-1.5 text-sm font-semibold text-white hover:border-gold/30 transition-colors">
+          <button id="ag-month-selector" class="relative flex items-center gap-1.5 rounded-lg bg-dark-700 border border-dark-300/40 px-4 py-1.5 text-sm font-semibold text-white hover:border-gold/30 transition-colors">
             <span id="ag-month-label">Agosto 2026</span>
             <svg class="h-3.5 w-3.5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
           </button>
+          <!-- Calendário Dropdown -->
+          <div id="ag-calendar-dropdown" class="hidden absolute mt-2 rounded-xl bg-dark-700 border border-dark-300/50 shadow-2xl p-4 z-50" style="width:300px;">
+            <div class="flex items-center justify-between mb-3">
+              <button id="cal-dd-prev" class="rounded-lg bg-dark-600 px-2 py-1 text-xs text-gray-400 hover:text-white transition-colors">&larr;</button>
+              <span id="cal-dd-label" class="text-sm font-semibold text-white"></span>
+              <button id="cal-dd-next" class="rounded-lg bg-dark-600 px-2 py-1 text-xs text-gray-400 hover:text-white transition-colors">&rarr;</button>
+            </div>
+            <div class="grid grid-cols-7 gap-0.5 text-center text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-1">
+              <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
+            </div>
+            <div id="cal-dd-grid" class="grid grid-cols-7 gap-0.5"></div>
+          </div>
           <button id="ag-month-next" class="flex h-8 w-8 items-center justify-center rounded-lg bg-dark-700 border border-dark-300/40 text-gray-400 hover:text-white hover:border-gold/30 transition-colors">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
           </button>
@@ -1422,6 +1440,83 @@ document.addEventListener('DOMContentLoaded', function () {
       container.appendChild(btn);
     }
   }
+
+  /* --- Calendar Dropdown (Month Picker) --- */
+  var calDdDate = new Date(agDate);
+  var _nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+  function renderCalDropdown() {
+    var grid = document.getElementById('cal-dd-grid');
+    var label = document.getElementById('cal-dd-label');
+    if (!grid || !label) return;
+    grid.innerHTML = '';
+    var year = calDdDate.getFullYear();
+    var month = calDdDate.getMonth();
+    label.textContent = _nomesMeses[month] + ' ' + year;
+    var firstDay = new Date(year, month, 1).getDay();
+    var daysInMonth = new Date(year, month + 1, 0).getDate();
+    var hojeStr = agDateStr(new Date());
+    var selectedStr = agDateStr(agDate);
+    var agsMes = B ? B.getDiasComAgendamento(year, month + 1) : [];
+    for (var i = 0; i < firstDay; i++) {
+      var empty = document.createElement('div');
+      grid.appendChild(empty);
+    }
+    for (var d = 1; d <= daysInMonth; d++) {
+      var ds = year + '-' + (month + 1 < 10 ? '0' : '') + (month + 1) + '-' + (d < 10 ? '0' : '') + d;
+      var dayDate = new Date(year, month, d);
+      var isFechado = dayDate.getDay() === 0 || dayDate.getDay() === 1;
+      var isHoje = ds === hojeStr;
+      var isSelected = ds === selectedStr;
+      var temAg = agsMes.indexOf(d) !== -1;
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'cal-dd-day relative';
+      if (isSelected) btn.className += ' selected';
+      else if (isHoje) btn.className += ' today';
+      if (isFechado) btn.className += ' disabled';
+      if (temAg && !isFechado) btn.className += ' has-dot';
+      btn.textContent = d;
+      btn.setAttribute('data-date', ds);
+      btn.addEventListener('click', function () {
+        var parts = this.getAttribute('data-date').split('-');
+        agDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]), 12, 0, 0);
+        calDdDate = new Date(agDate);
+        renderAgendamentos();
+        document.getElementById('ag-calendar-dropdown').classList.add('hidden');
+      });
+      grid.appendChild(btn);
+    }
+  }
+
+  /* Toggle dropdown */
+  document.addEventListener('click', function (e) {
+    var selector = document.getElementById('ag-month-selector');
+    var dropdown = document.getElementById('ag-calendar-dropdown');
+    if (!selector || !dropdown) return;
+    if (selector.contains(e.target)) {
+      dropdown.classList.toggle('hidden');
+      if (!dropdown.classList.contains('hidden')) {
+        calDdDate = new Date(agDate);
+        renderCalDropdown();
+      }
+      return;
+    }
+    if (dropdown.contains(e.target)) return;
+    dropdown.classList.add('hidden');
+  });
+
+  /* Navegação mês no dropdown */
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('#cal-dd-prev')) {
+      calDdDate.setMonth(calDdDate.getMonth() - 1);
+      renderCalDropdown();
+    }
+    if (e.target.closest('#cal-dd-next')) {
+      calDdDate.setMonth(calDdDate.getMonth() + 1);
+      renderCalDropdown();
+    }
+  });
 
   /* --- Profissional Dropdown --- */
   function renderAgProfDropdown() {
