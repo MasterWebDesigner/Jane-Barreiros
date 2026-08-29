@@ -103,9 +103,11 @@
           if (val !== null) {
             _cache[key] = val;
           } else {
-            // Firebase vazio — tenta migrar do localStorage
             var local = null;
             try { local = JSON.parse(localStorage.getItem('jane-booking-' + key)); } catch (e) {}
+            if (!local) {
+              try { local = JSON.parse(localStorage.getItem('undefined' + key)); } catch (e) {}
+            }
             if (local) {
               _cache[key] = local;
               _db.ref('jane-booking/' + key).set(local);
@@ -115,7 +117,6 @@
           done();
         }).catch(function () { done(); });
       } else {
-        // Sem Firebase — lê do localStorage
         try { _cache[key] = JSON.parse(localStorage.getItem('jane-booking-' + key)); } catch (e) {}
         _loaded[key] = true;
         done();

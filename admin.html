@@ -1014,10 +1014,8 @@ document.addEventListener('DOMContentLoaded', function () {
   var _lastKnownIds = {};
 
   function getPendingIds() {
-    try {
-      var ags = JSON.parse(localStorage.getItem('jane-booking-agendamentos')) || [];
-      return ags.filter(function (a) { return a.status === 'pendente'; });
-    } catch (e) { return []; }
+    var ags = B ? B.getAgendamentos() : [];
+    return ags.filter(function (a) { return a.status === 'pendente'; });
   }
 
   function getPendingCount() {
@@ -1223,11 +1221,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (newStatus === 'cancelado' && !confirm('Cancelar este agendamento?')) return;
 
         if (newStatus === 'concluido') {
-          var agDados = null;
-          try {
-            var agsCheck = JSON.parse(localStorage.getItem('jane-booking-agendamentos')) || [];
-            agDados = agsCheck.find(function (a) { return a.id === agId; }) || null;
-          } catch(e) {}
+          var agDados = B ? B.getAgendamentos().find(function (a) { return a.id === agId; }) || null : null;
           if (agDados) {
             var svcLista = B ? B.getServicos() : [];
             var svcInfo = svcLista.find(function (s) { return s.nome === agDados.servico; }) || null;
@@ -1249,12 +1243,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (B) {
           B.setAgendamentoStatus(agId, newStatus);
-        } else {
-          try {
-            var ags = JSON.parse(localStorage.getItem('jane-booking-agendamentos')) || [];
-            ags.forEach(function (a) { if (a.id === agId) a.status = newStatus; });
-            localStorage.setItem('jane-booking-agendamentos', JSON.stringify(ags));
-          } catch(e) {}
         }
         renderDashboard();
       });
@@ -1372,19 +1360,6 @@ document.addEventListener('DOMContentLoaded', function () {
           status: 'confirmado'
         });
         B.registrarCliente(nome, whatsapp, '', servico);
-      } else {
-        /* Fallback direto no localStorage */
-        var ag = {
-          id: 'ag-' + Date.now() + '-' + Math.random().toString(36).substr(2,5),
-          servico: servico, duracao_min: durMin, data: data, horario: horario,
-          cliente_nome: nome, cliente_whatsapp: whatsapp, forma_pagamento: pagamento,
-          observacoes: obs, origem: 'recepcao', status: 'confirmado', criado_em: new Date().toISOString()
-        };
-        try {
-          var lista = JSON.parse(localStorage.getItem('jane-booking-agendamentos')) || [];
-          lista.push(ag);
-          localStorage.setItem('jane-booking-agendamentos', JSON.stringify(lista));
-        } catch(e) {}
       }
 
       fechar();
@@ -1841,11 +1816,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         /* Validação: ao concluir, verificar se valor > 0 */
         if (newStatus === 'concluido') {
-          var agDados = null;
-          try {
-            var agsCheck = JSON.parse(localStorage.getItem('jane-booking-agendamentos')) || [];
-            agDados = agsCheck.find(function (a) { return a.id === agId; }) || null;
-          } catch(e) {}
+          var agDados = B ? B.getAgendamentos().find(function (a) { return a.id === agId; }) || null : null;
           if (agDados) {
             var svcLista = B ? B.getServicos() : [];
             var svcInfo = svcLista.find(function (s) { return s.nome === agDados.servico; }) || null;
@@ -1859,12 +1830,7 @@ document.addEventListener('DOMContentLoaded', function () {
               if (inputValor === null) return;
               var valorInformado = parseFloat(inputValor) || 0;
               if (svcInfo && valorInformado > 0) {
-                var valorStr = 'R$ ' + valorInformado.toFixed(2).replace('.', ',');
-                try {
-                  var agsUpd = JSON.parse(localStorage.getItem('jane-booking-agendamentos')) || [];
-                  agsUpd.forEach(function (a) { if (a.id === agId) a.valor_informado = valorInformado; });
-                  localStorage.setItem('jane-booking-agendamentos', JSON.stringify(agsUpd));
-                } catch(e) {}
+                if (B) B.setValorInformado(agId, valorInformado);
               }
             }
           }
@@ -1872,12 +1838,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (B) {
           B.setAgendamentoStatus(agId, newStatus);
-        } else {
-          try {
-            var ags = JSON.parse(localStorage.getItem('jane-booking-agendamentos')) || [];
-            ags.forEach(function (a) { if (a.id === agId) a.status = newStatus; });
-            localStorage.setItem('jane-booking-agendamentos', JSON.stringify(ags));
-          } catch(e) {}
         }
         renderAgendamentos();
         renderDashboard();
@@ -1889,20 +1849,9 @@ document.addEventListener('DOMContentLoaded', function () {
       btn.addEventListener('click', function (e) {
         e.stopPropagation();
         var agId = btn.getAttribute('data-aceitar');
-        var ag = null;
-        try {
-          var ags = JSON.parse(localStorage.getItem('jane-booking-agendamentos')) || [];
-          ag = ags.find(function (a) { return a.id === agId; }) || null;
-        } catch(e) {}
+        var ag = B ? B.getAgendamentos().find(function (a) { return a.id === agId; }) || null : null;
         if (!ag) return;
         if (B) B.setAgendamentoStatus(agId, 'confirmado');
-        else {
-          try {
-            var ags2 = JSON.parse(localStorage.getItem('jane-booking-agendamentos')) || [];
-            ags2.forEach(function (a) { if (a.id === agId) a.status = 'confirmado'; });
-            localStorage.setItem('jane-booking-agendamentos', JSON.stringify(ags2));
-          } catch(e) {}
-        }
         var tel = (ag.cliente_whatsapp || '').replace(/\D/g, '');
         var diaSemana = (function(ds){ var d=new Date(ds+'T12:00:00'); return ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'][d.getDay()]; })(ag.data);
         var dataBR = (function(ds){ var p=ds.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; })(ag.data);
@@ -1927,21 +1876,10 @@ document.addEventListener('DOMContentLoaded', function () {
       btn.addEventListener('click', function (e) {
         e.stopPropagation();
         var agId = btn.getAttribute('data-recusar');
-        var ag = null;
-        try {
-          var ags = JSON.parse(localStorage.getItem('jane-booking-agendamentos')) || [];
-          ag = ags.find(function (a) { return a.id === agId; }) || null;
-        } catch(e) {}
+        var ag = B ? B.getAgendamentos().find(function (a) { return a.id === agId; }) || null : null;
         if (!ag) return;
         if (!confirm('Recusar este agendamento? Uma mensagem será enviada ao cliente informando que o horário não está disponível.')) return;
         if (B) B.setAgendamentoStatus(agId, 'cancelado');
-        else {
-          try {
-            var ags3 = JSON.parse(localStorage.getItem('jane-booking-agendamentos')) || [];
-            ags3.forEach(function (a) { if (a.id === agId) a.status = 'cancelado'; });
-            localStorage.setItem('jane-booking-agendamentos', JSON.stringify(ags3));
-          } catch(e) {}
-        }
         var tel = (ag.cliente_whatsapp || '').replace(/\D/g, '');
         var dataBR = (function(ds){ var p=ds.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; })(ag.data);
         var msg = 'Olá ' + ag.cliente_nome + '!\n\nInfelizmente o horário solicitado para *' + ag.servico + '* no dia *' + dataBR + ' às ' + ag.horario + '* não está disponível no momento.\n\n' +
