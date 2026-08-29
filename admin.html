@@ -655,8 +655,11 @@
   </div>
 </div>
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- app-booking.js -->
-<script src="app-booking.js?v=1.2"></script>
+<script src="app-booking.js?v=1.3"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -665,6 +668,7 @@ document.addEventListener('DOMContentLoaded', function () {
   console.log('[Admin] DOMContentLoaded disparado');
 
   var B = window.Booking;
+  if (B && B.initFirebase) B.initFirebase();
   var KEY_AUTH = 'jane-admin-auth';
 
   /* ============================================================
@@ -764,8 +768,31 @@ document.addEventListener('DOMContentLoaded', function () {
      INIT
      ============================================================ */
   function init() {
-    startNotifPolling();
-    initEncaixe();
+    /* Carrega dados do Firebase para memória */
+    if (B && B.loadAllData) {
+      B.loadAllData(function () {
+        console.log('[Admin] Dados carregados do Firebase.');
+        startNotifPolling();
+        initEncaixe();
+        renderDashboard();
+      });
+    } else {
+      startNotifPolling();
+      initEncaixe();
+    }
+    /* Listener em tempo real para novos agendamentos */
+    if (B && B.listenFirebase) {
+      B.listenFirebase('agendamentos', function () {
+        console.log('[Admin] Agendamentos atualizados (Firebase).');
+        renderDashboard();
+        if (document.getElementById('page-agendamentos').style.display !== 'none') {
+          renderAgendamentos();
+        }
+        if (document.getElementById('page-faturamento').style.display !== 'none') {
+          renderFaturamento();
+        }
+      });
+    }
     /* Set initial display states for all admin pages */
     pages.forEach(function (p) { p.style.display = 'none'; });
     document.getElementById('page-dashboard').style.display = 'block';
@@ -1110,11 +1137,7 @@ document.addEventListener('DOMContentLoaded', function () {
               if (inputValor === null) return;
               var valorInformado = parseFloat(inputValor) || 0;
               if (svcInfo && valorInformado > 0) {
-                try {
-                  var agsUpd = JSON.parse(localStorage.getItem('jane-booking-agendamentos')) || [];
-                  agsUpd.forEach(function (a) { if (a.id === agId) a.valor_informado = valorInformado; });
-                  localStorage.setItem('jane-booking-agendamentos', JSON.stringify(agsUpd));
-                } catch(e) {}
+                if (B) { B.setValorInformado(agId, valorInformado); }
               }
             }
           }

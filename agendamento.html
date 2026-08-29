@@ -552,6 +552,8 @@
   <!-- ==============================================================
        JAVASCRIPT PURO
   =============================================================== -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script src="app-booking.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -613,6 +615,10 @@
       ];
 
       var B = window.Booking;
+      if (B && B.initFirebase) B.initFirebase();
+      if (B && B.loadAllData) B.loadAllData(function () {
+        console.log('[Agendamento] Dados carregados do Firebase.');
+      });
       var servicos;
 
       /* ---------- Fallback helpers quando Booking não carrega ---------- */

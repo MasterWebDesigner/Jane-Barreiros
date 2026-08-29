@@ -1,6 +1,6 @@
 /**
  * app-booking.js — Sistema de Agendamento e Gestão do Studio Jane Barreiros
- * Armazenamento 100% local via localStorage.
+ * Armazenamento via Firebase Realtime Database (sync entre dispositivos).
  */
 
 (function () {
@@ -9,17 +9,122 @@
   /* ================================================================
      CONSTANTES
      ================================================================ */
-  var STORAGE_PREFIX = 'jane-booking-';
-  var DURACAO_SLOT_MIN = 30;            // blocos de 30 min
-  var HORARIO_ABERTURA = 9;             // 09:00
-  var HORARIO_FECHAMENTO = 18;          // 18:00
-  var DIAS_FECHADOS = [0, 1];           // 0=Domingo, 1=Segunda
-  var ADMIN_SENHA = 'jane2026';         // senha do painel admin
-  var KEY_AUTH = STORAGE_PREFIX + 'admin_auth';
+  var DURACAO_SLOT_MIN = 30;
+  var HORARIO_ABERTURA = 9;
+  var HORARIO_FECHAMENTO = 18;
+  var DIAS_FECHADOS = [0, 1];
+  var ADMIN_SENHA = 'jane2026';
 
   /* ================================================================
-     SERVIÇOS PADRÃO (editável pelo admin)
+     FIREBASE CONFIG
      ================================================================ */
+  var FIREBASE_CONFIG = {
+    apiKey: "AIzaSyA35ij-3cbUKNId5yirK5A3BMKzVGvip0o",
+    authDomain: "jane-barreiros.firebaseapp.com",
+    databaseURL: "https://jane-barreiros-default-rtdb.firebaseio.com",
+    projectId: "jane-barreiros",
+    storageBucket: "jane-barreiros.firebasestorage.app",
+    messagingSenderId: "1086587981477",
+    appId: "1:1086587981477:web:67a1ca3816df8d64e2c74c"
+  };
+
+  var _db = null;
+  var _cache = {};       // cache em memória por chave
+  var _loaded = {};      // marco de dados já carregados do Firebase
+  var _initialized = false;
+
+  function initFirebase() {
+    if (_initialized) return;
+    if (typeof firebase === 'undefined' || !firebase.database) {
+      console.warn('[Booking] Firebase SDK não carregado. Usando fallback localStorage.');
+      _initLocalStorageFallback();
+      return;
+    }
+    if (!firebase.apps.length) {
+      firebase.initializeApp(FIREBASE_CONFIG);
+    }
+    _db = firebase.database();
+    _initialized = true;
+    console.log('[Booking] Firebase conectado.');
+  }
+
+  /* ================================================================
+     HELPERS DE ARMAZENAMENTO (Firebase + memory cache)
+     ================================================================ */
+  function getStore(key) {
+    if (_cache[key] !== undefined) return JSON.parse(JSON.stringify(_cache[key]));
+    return null;
+  }
+
+  function setStore(key, val) {
+    _cache[key] = JSON.parse(JSON.stringify(val));
+    if (_db) {
+      _db.ref('jane-booking/' + key).set(val).catch(function (e) {
+        console.error('[Booking] Firebase write error:', key, e);
+      });
+    }
+    // fallback localStorage sempre (para offline)
+    try { localStorage.setItem('jane-booking-' + key, JSON.stringify(val)); } catch (e) {}
+  }
+
+  function loadFromFirebase(key, cb) {
+    if (!_db) { cb(null); return; }
+    _db.ref('jane-booking/' + key).once('value').then(function (snap) {
+      cb(snap.val());
+    }).catch(function () { cb(null); });
+  }
+
+  function listenFirebase(key, cb) {
+    if (!_db) return;
+    _db.ref('jane-booking/' + key).on('value', function (snap) {
+      var val = snap.val();
+      _cache[key] = val;
+      _loaded[key] = true;
+      if (cb) cb(val);
+    });
+  }
+
+  /* Carrega todos os dados do Firebase para a memória */
+  function loadAllData(cb) {
+    var keys = ['agendamentos', 'clientes', 'servicos', 'bloqueios', 'lista_espera'];
+    var pending = keys.length;
+    var done = function () { pending--; if (pending <= 0 && cb) cb(); };
+    keys.forEach(function (key) {
+      if (_db) {
+        _db.ref('jane-booking/' + key).once('value').then(function (snap) {
+          var val = snap.val();
+          if (val !== null) {
+            _cache[key] = val;
+          } else {
+            // Firebase vazio — tenta migrar do localStorage
+            var local = null;
+            try { local = JSON.parse(localStorage.getItem('jane-booking-' + key)); } catch (e) {}
+            if (local) {
+              _cache[key] = local;
+              _db.ref('jane-booking/' + key).set(local);
+            }
+          }
+          _loaded[key] = true;
+          done();
+        }).catch(function () { done(); });
+      } else {
+        // Sem Firebase — lê do localStorage
+        try { _cache[key] = JSON.parse(localStorage.getItem('jane-booking-' + key)); } catch (e) {}
+        _loaded[key] = true;
+        done();
+      }
+    });
+  }
+
+  /* Fallback localStorage (se Firebase não carregar) */
+  function _initLocalStorageFallback() {
+    _initialized = true;
+    _db = null;
+    ['agendamentos', 'clientes', 'servicos', 'bloqueios', 'lista_espera'].forEach(function (key) {
+      try { _cache[key] = JSON.parse(localStorage.getItem('jane-booking-' + key)); } catch (e) {}
+      _loaded[key] = true;
+    });
+  }
   var DEFAULT_SERVICOS = [
     { ordem: 1,  nome: 'Alisamento orgânico',                  preco: 'A partir de R$ 200,00', duracao: '2h 55min', duracao_min: 175, nota: 'Os valores são a partir, consulte nossos preços antes de agendar.' },
     { ordem: 2,  nome: 'Botox',                                 preco: 'A partir de R$ 130,00', duracao: '2h',       duracao_min: 120, nota: 'Valor a partir, depende do tamanho e quantidade de cabelo.' },
@@ -234,6 +339,14 @@
     var lista = getAgendamentos();
     lista.forEach(function (a) {
       if (a.id === id) a.status = novoStatus;
+    });
+    setAgendamentos(lista);
+  }
+
+  function setValorInformado(id, valor) {
+    var lista = getAgendamentos();
+    lista.forEach(function (a) {
+      if (a.id === id) a.valor_informado = valor;
     });
     setAgendamentos(lista);
   }
@@ -534,6 +647,9 @@
      EXPORTAÇÃO PÚBLICA (window.Booking)
      ================================================================ */
   window.Booking = {
+    initFirebase: initFirebase,
+    loadAllData: loadAllData,
+    listenFirebase: listenFirebase,
     getServicos: getServicos,
     setServicos: setServicos,
     getServicoPorNome: getServicoPorNome,
@@ -543,6 +659,7 @@
     cancelarAgendamento: cancelarAgendamento,
     concluirAgendamento: concluirAgendamento,
     setAgendamentoStatus: setAgendamentoStatus,
+    setValorInformado: setValorInformado,
     agendamentosDoDia: agendamentosDoDia,
     agendamentosDaSemana: agendamentosDaSemana,
     getAgendamentosDoPeriodo: getAgendamentosDoPeriodo,
