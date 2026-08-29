@@ -866,6 +866,7 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     }
     /* Set initial display states for all admin pages */
+    var pages = document.querySelectorAll('.admin-page');
     pages.forEach(function (p) { p.style.display = 'none'; });
     document.getElementById('page-dashboard').style.display = 'block';
   }

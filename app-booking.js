@@ -14,6 +14,7 @@
   var HORARIO_FECHAMENTO = 18;
   var DIAS_FECHADOS = [0, 1];
   var ADMIN_SENHA = 'jane2026';
+  var KEY_AUTH = 'jane-admin-auth';
 
   /* ================================================================
      FIREBASE CONFIG
@@ -51,8 +52,14 @@
   /* ================================================================
      HELPERS DE ARMAZENAMENTO (Firebase + memory cache)
      ================================================================ */
+  function toArray(obj) {
+    if (Array.isArray(obj)) return obj;
+    if (!obj || typeof obj !== 'object') return [];
+    return Object.keys(obj).sort(function(a,b){return parseInt(a)-parseInt(b);}).map(function(k){return obj[k];});
+  }
+
   function getStore(key) {
-    if (_cache[key] !== undefined) return JSON.parse(JSON.stringify(_cache[key]));
+    if (_cache[key] !== undefined) return toArray(JSON.parse(JSON.stringify(_cache[key])));
     return null;
   }
 
@@ -150,19 +157,6 @@
     { ordem: 22, nome: 'Tintura com Tinta da Cliente + Escova',  preco: 'A partir de R$ 90,00',  duracao: '1h 30min', duracao_min: 90,  nota: 'Valores a partir.' },
     { ordem: 23, nome: 'Tintura com Tinta do Salão Sem Escova',  preco: 'A partir de R$ 80,00',  duracao: '40min',    duracao_min: 40,  nota: 'Valores a partir.' }
   ];
-
-  /* ================================================================
-     HELPERS DE ARMAZENAMENTO
-     ================================================================ */
-  function getStore(key) {
-    try { return JSON.parse(localStorage.getItem(STORAGE_PREFIX + key)); }
-    catch (e) { return null; }
-  }
-
-  function setStore(key, val) {
-    try { localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(val)); }
-    catch (e) { /* quota exceeded — ignore */ }
-  }
 
   /* ================================================================
      SERVIÇOS
