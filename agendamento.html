@@ -1111,6 +1111,7 @@
         if (!whatsapp || telefoneNums.length < 10) { alert('Informe um telefone/WhatsApp válido com DDD.'); document.getElementById('booking-whatsapp').focus(); return; }
         if (!nome) { alert('Informe seu nome completo.'); document.getElementById('booking-name').focus(); return; }
         if (!/^[A-ZÀ-Ú]/.test(nome)) { alert('O nome deve começar com letra maiúscula (ex: Maria, João).'); document.getElementById('booking-name').focus(); return; }
+        if (/\s/.test(nome) && !/^[A-ZÀ-Ú][a-zà-ú]+\s+[A-ZÀ-Ú]/.test(nome)) { alert('Informe nome e sobrenome, ambos com letra maiúscula (ex: Maria Silva).'); document.getElementById('booking-name').focus(); return; }
         if (!selected.forma_pagamento) { document.getElementById('booking-pagamento-error').classList.remove('hidden'); alert('Selecione uma forma de pagamento.'); return; }
         if (!selected.horario) { alert('Selecione um horário.'); currentStep = 3; updateStep(); renderStep3(); return; }
 
