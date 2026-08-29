@@ -91,7 +91,7 @@
     });
   }
 
-  /* Carrega todos os dados do Firebase para a memória */
+  /* Carrega todos os dados do Firebase para a memória + migra localStorage antigo */
   function loadAllData(cb) {
     var keys = ['agendamentos', 'clientes', 'servicos', 'bloqueios', 'lista_espera'];
     var pending = keys.length;
@@ -100,14 +100,33 @@
       if (_db) {
         _db.ref('jane-booking/' + key).once('value').then(function (snap) {
           var val = snap.val();
+          /* Sempre tenta mesclar dados do localStorage antigo (chave quebrada) */
+          var localAntigo = null;
+          try { localAntigo = JSON.parse(localStorage.getItem('undefined' + key)); } catch (e) {}
+          if (localAntigo && Array.isArray(localAntigo)) {
+            if (val === null) {
+              val = localAntigo;
+            } else if (Array.isArray(val)) {
+              var existentes = {};
+              val.forEach(function (item) { if (item && item.id) existentes[item.id] = true; });
+              localAntigo.forEach(function (item) {
+                if (item && item.id && !existentes[item.id]) {
+                  val.push(item);
+                  existentes[item.id] = true;
+                }
+              });
+            }
+            /* Limpa chave antiga */
+            try { localStorage.removeItem('undefined' + key); } catch (e) {}
+          }
           if (val !== null) {
             _cache[key] = val;
+            /* Reescreve no Firebase para garantir consistência */
+            _db.ref('jane-booking/' + key).set(val).catch(function () {});
           } else {
+            /* Tenta migrar do localStorage normal */
             var local = null;
             try { local = JSON.parse(localStorage.getItem('jane-booking-' + key)); } catch (e) {}
-            if (!local) {
-              try { local = JSON.parse(localStorage.getItem('undefined' + key)); } catch (e) {}
-            }
             if (local) {
               _cache[key] = local;
               _db.ref('jane-booking/' + key).set(local);
@@ -117,7 +136,12 @@
           done();
         }).catch(function () { done(); });
       } else {
-        try { _cache[key] = JSON.parse(localStorage.getItem('jane-booking-' + key)); } catch (e) {}
+        var localFinal = null;
+        try { localFinal = JSON.parse(localStorage.getItem('jane-booking-' + key)); } catch (e) {}
+        if (!localFinal) {
+          try { localFinal = JSON.parse(localStorage.getItem('undefined' + key)); } catch (e) {}
+        }
+        if (localFinal) _cache[key] = localFinal;
         _loaded[key] = true;
         done();
       }
