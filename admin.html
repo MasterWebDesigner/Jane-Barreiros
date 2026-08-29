@@ -61,10 +61,11 @@
     .gold-btn { background:linear-gradient(135deg,#BF953F,#FCF6BA,#B38728); color:#000; font-weight:600; transition:all .2s; }
     .gold-btn:hover { filter:brightness(1.1); transform:translateY(-1px); }
     #ag-calendar-dropdown button.cal-dd-day { width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:6px; font-size:11px; font-weight:600; color:#9CA3AF; transition:all .15s; position:relative; }
-    #ag-calendar-dropdown button.cal-dd-day:hover:not(.disabled):not(.selected) { background:rgba(212,175,55,.15); color:#D4AF37; }
+    #ag-calendar-dropdown button.cal-dd-day:hover:not(.selected) { background:rgba(212,175,55,.15); color:#D4AF37; }
     #ag-calendar-dropdown button.cal-dd-day.selected { background:rgba(212,175,55,.25); color:#D4AF37; border:1px solid rgba(212,175,55,.4); }
     #ag-calendar-dropdown button.cal-dd-day.today { color:#fff; background:rgba(212,175,55,.1); }
-    #ag-calendar-dropdown button.cal-dd-day.disabled { color:#444; cursor:not-allowed; opacity:.4; }
+    #ag-calendar-dropdown button.cal-dd-day.opacity-50 { opacity:.5; }
+    #ag-calendar-dropdown button.cal-dd-day.text-red-400 { color:#F87171; font-weight:800; }
     #ag-calendar-dropdown button.cal-dd-day.has-dot::after { content:''; display:block; width:4px; height:4px; border-radius:50%; background:#D4AF37; position:absolute; bottom:4px; }
     .card-dark { background:#1E1E1E; border:1px solid rgba(212,175,55,.12); border-radius:12px; }
     .card-dark:hover { border-color:rgba(212,175,55,.3); }
@@ -291,8 +292,8 @@
               <span id="cal-dd-label" class="text-sm font-semibold text-white"></span>
               <button id="cal-dd-next" class="rounded-lg bg-dark-600 px-2 py-1 text-xs text-gray-400 hover:text-white transition-colors">&rarr;</button>
             </div>
-            <div class="grid grid-cols-7 gap-0.5 text-center text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-1">
-              <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
+            <div class="grid grid-cols-7 gap-0.5 text-center text-[10px] font-semibold tracking-wider text-gray-500 mb-1">
+              <span>Dom</span><span class="text-gold">Seg</span><span class="text-gold">Ter</span><span class="text-gold">Qua</span><span class="text-gold">Qui</span><span class="text-gold">Sex</span><span>Sáb</span>
             </div>
             <div id="cal-dd-grid" class="grid grid-cols-7 gap-0.5"></div>
           </div>
@@ -1396,6 +1397,25 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   /* --- Week Calendar --- */
+  /* Feriados nacionais fixos (mês indexado 0-11, dia) */
+  var FERIADOS_FIXOS = [
+    [0, 1],   // 1 de Janeiro — Ano Novo
+    [3, 21],  // 21 de Abril — Tiradentes
+    [4, 1],   // 1 de Maio — Dia do Trabalho
+    [5, 3],   // 3 de Junho — Corpus Christi (varia)
+    [8, 7],   // 7 de Setembro — Independência
+    [9, 12],  // 12 de Outubro — Padroeira
+    [10, 2],  // 2 de Novembro — Finados
+    [10, 15], // 15 de Novembro — Proclamação
+    [11, 25]  // 25 de Dezembro — Natal
+  ];
+  function isFeriado(year, month, day) {
+    for (var i = 0; i < FERIADOS_FIXOS.length; i++) {
+      if (FERIADOS_FIXOS[i][0] === month && FERIADOS_FIXOS[i][1] === day) return true;
+    }
+    return false;
+  }
+
   function renderAgWeekCalendar() {
     var container = document.getElementById('ag-week-days');
     container.innerHTML = '';
@@ -1412,7 +1432,9 @@ document.addEventListener('DOMContentLoaded', function () {
       var ds = agDateStr(d);
       var isSelected = ds === agDateStr(agDate);
       var isHoje = ds === hojeStr;
-      var isFechado = d.getDay() === 0 || d.getDay() === 1;
+      var dow = d.getDay();
+      var isFechado = dow === 0 || dow === 1;
+      var holiday = isFeriado(d.getFullYear(), d.getMonth(), d.getDate());
       var temAgendamento = agsMes.indexOf(d.getDate()) !== -1;
       var isCurrentMonth = d.getMonth() === agDate.getMonth();
 
@@ -1420,10 +1442,11 @@ document.addEventListener('DOMContentLoaded', function () {
       btn.className = 'relative flex flex-col items-center py-2 rounded-lg transition-all ';
       if (isSelected) btn.className += 'bg-gold/20 border border-gold/40 ';
       else btn.className += 'hover:bg-dark-600 ';
-      if (isFechado) btn.className += 'opacity-40 ';
+      if (isFechado && !holiday) btn.className += 'opacity-40 ';
 
       var numClass = 'text-sm font-bold ';
-      if (isSelected) numClass += 'text-gold ';
+      if (holiday) numClass += 'text-red-400 font-extrabold ';
+      else if (isSelected) numClass += 'text-gold ';
       else if (isHoje) numClass += 'text-white bg-gold/10 rounded-full w-7 h-7 flex items-center justify-center ';
       else numClass += 'text-gray-400 ';
 
@@ -1444,7 +1467,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* --- Calendar Dropdown (Month Picker) --- */
   var calDdDate = new Date(agDate);
-  var _nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 
   function renderCalDropdown() {
     var grid = document.getElementById('cal-dd-grid');
@@ -1466,16 +1488,24 @@ document.addEventListener('DOMContentLoaded', function () {
     for (var d = 1; d <= daysInMonth; d++) {
       var ds = year + '-' + (month + 1 < 10 ? '0' : '') + (month + 1) + '-' + (d < 10 ? '0' : '') + d;
       var dayDate = new Date(year, month, d);
-      var isFechado = dayDate.getDay() === 0 || dayDate.getDay() === 1;
+      var dow = dayDate.getDay();
+      var isFechado = dow === 0 || dow === 1;
       var isHoje = ds === hojeStr;
       var isSelected = ds === selectedStr;
       var temAg = agsMes.indexOf(d) !== -1;
+      var holiday = isFeriado(year, month, d);
       var btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'cal-dd-day relative';
-      if (isSelected) btn.className += ' selected';
-      else if (isHoje) btn.className += ' today';
-      if (isFechado) btn.className += ' disabled';
+      if (holiday) {
+        btn.className += ' text-red-400 font-extrabold';
+        btn.title = 'Feriado';
+      } else if (isSelected) {
+        btn.className += ' selected';
+      } else if (isHoje) {
+        btn.className += ' today';
+      }
+      if (isFechado && !holiday) btn.className += ' opacity-50';
       if (temAg && !isFechado) btn.className += ' has-dot';
       btn.textContent = d;
       btn.setAttribute('data-date', ds);

@@ -974,6 +974,8 @@
         var firstDay = new Date(calYear, calMonth, 1).getDay();
         var daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
         for (var i = 0; i < firstDay; i++) { var empty = document.createElement('div'); grid.appendChild(empty); }
+        var FERIADOS = [[0,1],[3,21],[4,1],[6,3],[8,7],[9,12],[10,2],[10,15],[11,25]];
+        function isFeriadoNac(y,m,d){ for(var i=0;i<FERIADOS.length;i++){if(FERIADOS[i][0]===m&&FERIADOS[i][1]===d)return true;} return false; }
         for (var d = 1; d <= daysInMonth; d++) {
           var ds = calYear + '-' + (calMonth + 1 < 10 ? '0' : '') + (calMonth + 1) + '-' + (d < 10 ? '0' : '') + d;
           var dayDate = new Date(calYear, calMonth, d);
@@ -981,12 +983,14 @@
           var isPast = dayDate <= hojeDate;
           var isClosed = X().DIAS_FECHADOS.indexOf(dayOfWeek) !== -1;
           var isBlocked = X().getBloqueios().datas.indexOf(ds) !== -1;
-          var disabled = isPast || isClosed || isBlocked;
+          var holiday = isFeriadoNac(calYear, calMonth, d);
+          var disabled = isPast || isClosed || isBlocked || holiday;
           var isSelected = selected.data === ds;
           var cell = document.createElement('button');
           cell.type = 'button';
           cell.textContent = d;
           cell.className = 'rounded-lg py-2.5 text-sm font-medium transition-all duration-150 ' +
+            (holiday && !isPast ? 'text-red-400 font-extrabold cursor-not-allowed line-through ' : '') +
             (disabled ? 'cursor-not-allowed text-gray-300' : isSelected ? 'bg-gold text-black font-bold shadow-md' : 'text-ink-soft hover:bg-gold/20 hover:text-gold-dark');
           cell.disabled = disabled;
           if (!disabled) {
