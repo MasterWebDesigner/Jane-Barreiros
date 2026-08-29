@@ -258,12 +258,21 @@
       </div>
 
       <!-- Lista Operacional do Dia -->
-      <div class="card-dark p-5">
+      <div class="card-dark p-5 mb-6">
         <div class="flex items-center justify-between mb-4">
           <h3 class="font-display text-base font-semibold text-white">Atendimentos de Hoje</h3>
           <span id="dash-hora-agora" class="text-xs text-gray-500 font-mono"></span>
         </div>
         <div id="dash-lista" class="space-y-3"></div>
+      </div>
+
+      <!-- Todos os Agendamentos (todas as datas) -->
+      <div class="card-dark p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-display text-base font-semibold text-white">Todos os Agendamentos</h3>
+          <span id="dash-all-count" class="text-xs text-gray-500"></span>
+        </div>
+        <div id="dash-all-lista" class="space-y-3"></div>
       </div>
     </section>
 
@@ -1247,6 +1256,97 @@ document.addEventListener('DOMContentLoaded', function () {
         renderDashboard();
       });
     });
+
+    /* --- Lista de TODOS os agendamentos (todas as datas) --- */
+    var allAgs = B ? B.getAgendamentos().slice() : [];
+    allAgs.sort(function (a, b) {
+      if (a.data === b.data) return a.horario < b.horario ? -1 : 1;
+      return a.data < b.data ? -1 : 1;
+    });
+    var allLista = document.getElementById('dash-all-lista');
+    var allCount = document.getElementById('dash-all-count');
+    allCount.textContent = allAgs.length + ' agendamento(s)';
+    if (!allAgs.length) {
+      allLista.innerHTML = '<p class="text-gray-500 text-sm py-8 text-center">Nenhum agendamento encontrado.</p>';
+    } else {
+      allLista.innerHTML = '';
+      allAgs.forEach(function (ag) {
+        var valor = servicoPreco(ag.servico, ag.valor_informado);
+        var tag = clienteTag(ag.cliente_whatsapp);
+        var tel = (ag.cliente_whatsapp || '').replace(/\D/g, '');
+        var status = ag.status || 'confirmado';
+        var statusLabel = status === 'concluido' ? 'Concluído' : status === 'cancelado' ? 'Cancelado' : status === 'em_atendimento' ? 'Em Atendimento' : status === 'pendente' ? 'Pendente' : 'Confirmado';
+        var statusColor = status === 'concluido' ? 'text-green-400' : status === 'cancelado' ? 'text-red-400' : status === 'em_atendimento' ? 'text-blue-400' : status === 'pendente' ? 'text-amber-400' : 'text-yellow-400';
+        var isHoje = ag.data === h;
+        var isAmanha = (function () { var d = new Date(); d.setDate(d.getDate()+1); return ag.data === hoje(); })();
+        var dataLabel = isHoje ? 'Hoje' : ag.data;
+        var dObj = new Date(ag.data + 'T12:00:00');
+        if (!isHoje) dataLabel = dObj.getDate() + '/' + (dObj.getMonth()+1) + '/' + dObj.getFullYear();
+        var card = document.createElement('div');
+        card.className = 'rounded-xl bg-dark-600 border border-dark-300/50 p-4 hover:border-gold/20 transition-colors';
+        card.innerHTML =
+          '<div class="flex flex-col sm:flex-row sm:items-center gap-3">' +
+            '<div class="flex items-center gap-3 flex-1 min-w-0">' +
+              '<div class="flex flex-col items-center shrink-0 w-14">' +
+                '<span class="text-[10px] font-semibold text-gray-500">' + dataLabel + '</span>' +
+                '<div class="flex h-10 w-14 items-center justify-center rounded-lg bg-gold/10 font-mono text-sm font-bold text-gold">' + ag.horario + '</div>' +
+              '</div>' +
+              '<div class="min-w-0">' +
+                '<div class="flex items-center gap-2 flex-wrap">' +
+                  '<p class="font-semibold text-white text-sm truncate">' + ag.cliente_nome + '</p>' +
+                  tagBadge(tag) +
+                  (ag.origem === 'online' ? '<span class="inline-flex items-center rounded-full bg-blue-500/15 px-2 py-0.5 text-[10px] font-semibold text-blue-400">Online</span>' :
+                   ag.origem === 'recepcao' ? '<span class="inline-flex items-center rounded-full bg-dark-500 border border-dark-300/50 px-2 py-0.5 text-[10px] font-semibold text-gold">Recepção</span>' : '') +
+                '</div>' +
+                '<p class="text-xs text-gray-400 truncate">' + ag.servico + '</p>' +
+                '<p class="text-[10px] font-semibold ' + statusColor + '">' + statusLabel + '</p>' +
+              '</div>' +
+            '</div>' +
+            '<div class="flex items-center gap-3 flex-wrap">' +
+              '<div class="text-right hidden sm:block">' +
+                '<p class="font-numeric text-sm font-semibold text-gold">R$ ' + valor.toFixed(0) + '</p>' +
+                '<p class="text-[10px] text-gray-500">' + (ag.forma_pagamento || '—') + '</p>' +
+              '</div>' +
+              (tel ? '<a href="https://wa.me/55' + tel + '" target="_blank" rel="noopener" class="shrink-0 rounded-lg bg-green-500/15 px-2.5 py-1.5 text-[10px] font-semibold text-green-400 hover:bg-green-500/25 transition-colors">WhatsApp</a>' : '') +
+              '<div class="flex gap-1 shrink-0">' +
+                '<button data-st-ag="' + ag.id + '" data-st="confirmado" class="status-btn rounded-lg px-2 py-1 text-[10px] font-semibold transition-colors ' + (status==='confirmado'?'bg-yellow-500/25 text-yellow-300 border border-yellow-500/40':'bg-dark-500 text-gray-500 hover:text-yellow-400') + '" title="Confirmar">🟡</button>' +
+                '<button data-st-ag="' + ag.id + '" data-st="em_atendimento" class="status-btn rounded-lg px-2 py-1 text-[10px] font-semibold transition-colors ' + (status==='em_atendimento'?'bg-blue-500/25 text-blue-300 border border-blue-500/40':'bg-dark-500 text-gray-500 hover:text-blue-400') + '" title="Em Atendimento">🔵</button>' +
+                '<button data-st-ag="' + ag.id + '" data-st="concluido" class="status-btn rounded-lg px-2 py-1 text-[10px] font-semibold transition-colors ' + (status==='concluido'?'bg-green-500/25 text-green-300 border border-green-500/40':'bg-dark-500 text-gray-500 hover:text-green-400') + '" title="Concluído">🟢</button>' +
+                '<button data-st-ag="' + ag.id + '" data-st="cancelado" class="status-btn rounded-lg px-2 py-1 text-[10px] font-semibold transition-colors ' + (status==='cancelado'?'bg-red-500/25 text-red-300 border border-red-500/40':'bg-dark-500 text-gray-500 hover:text-red-400') + '" title="Cancelado">🔴</button>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+        allLista.appendChild(card);
+      });
+      /* Status buttons na lista completa */
+      allLista.querySelectorAll('.status-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var agId = btn.getAttribute('data-st-ag');
+          var newStatus = btn.getAttribute('data-st');
+          if (newStatus === 'cancelado' && !confirm('Cancelar este agendamento?')) return;
+          if (newStatus === 'concluido') {
+            var agDados = B ? B.getAgendamentos().find(function (a) { return a.id === agId; }) || null : null;
+            if (agDados) {
+              var svcLista = B ? B.getServicos() : [];
+              var svcInfo = svcLista.find(function (s) { return s.nome === agDados.servico; }) || null;
+              var valorCatalogo = 0;
+              if (svcInfo && svcInfo.preco && svcInfo.preco !== 'Consulte') {
+                var mVal = svcInfo.preco.replace(/\./g, '').match(/[\d,]+/);
+                if (mVal) valorCatalogo = parseFloat(mVal[0].replace(',', '.')) || 0;
+              }
+              if (valorCatalogo === 0) {
+                var inputValor = prompt('O servico "' + agDados.servico + '" esta com valor R$ 0,00.\n\nInforme o valor cobrado:\nDeixe vazio para R$ 0,00.', '');
+                if (inputValor === null) return;
+                var vi = parseFloat(inputValor) || 0;
+                if (svcInfo && vi > 0) { if (B) B.setValorInformado(agId, vi); }
+              }
+            }
+          }
+          if (B) B.setAgendamentoStatus(agId, newStatus);
+          renderDashboard();
+        });
+      });
+    }
   }
 
   /* ============================================================
