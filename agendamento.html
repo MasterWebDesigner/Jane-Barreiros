@@ -1002,10 +1002,12 @@
           var cell = document.createElement('button');
           cell.type = 'button';
           cell.textContent = d;
-          cell.className = 'rounded-lg py-2.5 text-sm font-medium transition-all duration-150 ' +
+          cell.className = 'rounded-lg py-2.5 text-sm font-medium transition-all duration-150 w-full h-14 flex items-center justify-center ' +
             (holiday && !isPast ? 'text-red-400 font-extrabold cursor-not-allowed line-through ' : '') +
-            (disabled ? 'cursor-not-allowed text-gray-300' : isSelected ? 'bg-gold text-black font-bold shadow-md' : 'text-ink-soft hover:bg-gold/20 hover:text-gold-dark');
+            (disabled ? 'cursor-not-allowed text-gray-300' : isSelected ? 'bg-gold text-black font-bold shadow-md' : 'text-gold-dark hover:bg-gold/20');
           cell.disabled = disabled;
+          cell.style.minWidth = '32px';
+          cell.style.textAlign = 'center';
           if (!disabled) {
             (function (dateStr) {
               cell.addEventListener('click', function () {
