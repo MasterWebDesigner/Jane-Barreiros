@@ -1089,7 +1089,7 @@ document.addEventListener('DOMContentLoaded', function () {
       newOnes.forEach(function (ag) {
         showToast(
           'Novo agendamento recebido!',
-          ag.cliente_nome + ' — ' + esc(ag.servico) + ' • ' + ag.horario,
+          esc(ag.cliente_nome) + ' — ' + esc(ag.servico) + ' • ' + esc(ag.horario),
           function () {
             showPage('agendamentos');
             var card = document.querySelector('[data-aceitar="' + ag.id + '"], [data-st="' + ag.id + '"]');
@@ -1469,7 +1469,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var servicos = B ? B.getServicos() : [];
       selServico.innerHTML = '<option value="">Selecione o serviço</option>';
       servicos.forEach(function (s) {
-        selServico.innerHTML += '<option value="' + s.nome + '">' + s.nome + ' — ' + s.preco + '</option>';
+        selServico.innerHTML += '<option value="' + esc(s.nome) + '">' + esc(s.nome) + ' — ' + esc(s.preco) + '</option>';
       });
       /* Preencher horários */
       selHorario.innerHTML = '<option value="">Horário</option>';
@@ -1825,13 +1825,13 @@ document.addEventListener('DOMContentLoaded', function () {
           '<p class="text-xs text-gray-400 truncate">' + esc(ag.cliente_nome) + (ag.cliente_whatsapp ? ' · ' + ag.cliente_whatsapp : '') + '</p>' +
           '<div class="flex items-center gap-3 mt-1.5">' +
             (valor > 0 ? '<span class="font-numeric text-xs font-bold text-gold">R$ ' + valor.toFixed(2).replace('.',',') + '</span>' : '') +
-            (ag.forma_pagamento ? '<span class="text-[10px] text-gray-500">' + ag.forma_pagamento + '</span>' : '') +
+            (ag.forma_pagamento ? '<span class="text-[10px] text-gray-500">' + esc(ag.forma_pagamento) + '</span>' : '') +
           '</div>' +
         '</div>' +
         /* Right: Avatar + Profissional */
         '<div class="flex flex-col items-end shrink-0 gap-2">' +
           '<div class="flex h-9 w-9 items-center justify-center rounded-full bg-gold/15 text-[11px] font-bold text-gold">' + agAvatar(prof) + '</div>' +
-          '<span class="text-[10px] text-gray-500 font-medium max-w-[80px] text-right truncate">' + prof.split(' ')[0] + '</span>' +
+          '<span class="text-[10px] text-gray-500 font-medium max-w-[80px] text-right truncate">' + esc(prof.split(' ')[0]) + '</span>' +
         '</div>' +
       '</div>' +
       /* Footer: Status buttons */
@@ -2544,7 +2544,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var card = document.createElement('div');
       card.className = 'flex items-center justify-between rounded-xl bg-dark-600 border border-dark-300/50 p-4';
       card.innerHTML =
-        '<div><p class="font-semibold text-white">' + esc(item.cliente_nome) + '</p><p class="text-xs text-gray-400">' + item.servico + ' · ' + fmtBR(item.data_preferida) + '</p></div>' +
+        '<div><p class="font-semibold text-white">' + esc(item.cliente_nome) + '</p><p class="text-xs text-gray-400">' + esc(item.servico) + ' · ' + fmtBR(item.data_preferida) + '</p></div>' +
         '<div class="flex gap-2">' +
           '<a href="https://wa.me/55' + item.cliente_whatsapp.replace(/\D/g,'') + '" target="_blank" class="rounded-lg bg-green-500/15 px-3 py-1.5 text-xs font-semibold text-green-400 hover:bg-green-500/25">WhatsApp</a>' +
           '<button data-rm-espera="' + item.id + '" class="rounded-lg bg-red-500/15 px-3 py-1.5 text-xs font-semibold text-red-400 hover:bg-red-500/25">Remover</button></div>';
@@ -2704,7 +2704,7 @@ document.addEventListener('DOMContentLoaded', function () {
       row.innerHTML =
         '<span class="font-numeric text-sm font-bold ' + medalha + ' w-6 text-right">#' + (i + 1) + '</span>' +
         '<div class="flex-1">' +
-          '<div class="flex justify-between mb-1"><span class="text-xs font-medium text-white">' + item.nome + '</span><span class="font-numeric text-[10px] text-gray-400">' + item.qtd + 'x</span></div>' +
+          '<div class="flex justify-between mb-1"><span class="text-xs font-medium text-white">' + esc(item.nome) + '</span><span class="font-numeric text-[10px] text-gray-400">' + item.qtd + 'x</span></div>' +
           '<div class="h-2 rounded-full bg-dark-600"><div class="h-full rounded-full bg-gradient-to-r from-gold/80 to-gold transition-all" style="width:' + pct + '%"></div></div>' +
         '</div>';
       container.appendChild(row);
@@ -2734,7 +2734,7 @@ document.addEventListener('DOMContentLoaded', function () {
       tr.innerHTML =
         '<td class="px-3 py-2.5 text-gray-400 font-mono text-xs">' + (a.id || '—').slice(0, 12) + '</td>' +
         '<td class="px-3 py-2.5 text-gray-300 text-xs">' + fmtBR(a.data) + ' ' + (a.horario || '—') + '</td>' +
-        '<td class="px-3 py-2.5 text-white text-xs font-medium">' + (a.cliente_nome || '—') + '</td>' +
+        '<td class="px-3 py-2.5 text-white text-xs font-medium">' + esc(a.cliente_nome || '—') + '</td>' +
         '<td class="px-3 py-2.5 text-gray-300 text-xs">' + (a.servico || '—') + '</td>' +
         '<td class="px-3 py-2.5 text-right font-numeric text-xs font-semibold text-gold">R$ ' + total.toFixed(2).replace('.', ',') + '</td>' +
         '<td class="px-3 py-2.5 text-center">' + (statusMap[a.status] || a.status) + '</td>';

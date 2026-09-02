@@ -749,7 +749,7 @@
 
           var duracaoBadge = document.createElement('span');
           duracaoBadge.className = 'svc-duracao shrink-0 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold';
-          duracaoBadge.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ' + svc.duracao;
+          duracaoBadge.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ' + esc(svc.duracao) +
           cabecalho.appendChild(duracaoBadge);
           card.appendChild(cabecalho);
 
@@ -962,7 +962,7 @@
           b.className = 'w-full rounded-xl border p-4 text-left transition-all duration-200 ' +
             (isSelected ? 'border-gold bg-gold/10 ring-2 ring-gold/40' : 'border-gold/20 bg-cream-deep hover:border-gold/50 hover:bg-cream/50');
           var precoFmt = svc.preco === 'Consulte' ? 'Consulte' : svc.preco.replace('A partir de ', '');
-          b.innerHTML = '<div class="flex items-center justify-between"><span class="font-serif font-semibold">' + esc(svc.nome) + '</span><span class="text-xs text-muted">' + svc.duracao + '</span></div><p class="mt-1 text-sm font-bold text-gold-dark">' + precoFmt + '</p>';
+          b.innerHTML = '<div class="flex items-center justify-between"><span class="font-serif font-semibold">' + esc(svc.nome) + '</span><span class="text-xs text-muted">' + esc(svc.duracao) + '</span></div><p class="mt-1 text-sm font-bold text-gold-dark">' + precoFmt + '</p>';
           b.addEventListener('click', function () {
             selected.servico = svc.nome;
             renderStep1();
@@ -1080,10 +1080,10 @@
         var svc = X().getServicoPorNome(selected.servico);
         var summary = document.getElementById('booking-summary');
         summary.innerHTML =
-          '<p><strong>Serviço:</strong> ' + selected.servico + '</p>' +
+          '<p><strong>Serviço:</strong> ' + esc(selected.servico) + '</p>' +
           '<p><strong>Data:</strong> ' + X().nomeDiaSemana(selected.data) + ', ' + X().fmtDataBR(selected.data) + '</p>' +
           '<p><strong>Horário:</strong> ' + selected.horario + '</p>' +
-          (svc ? '<p><strong>Duração:</strong> ' + svc.duracao + '</p>' : '');
+          (svc ? '<p><strong>Duração:</strong> ' + esc(svc.duracao) + '</p>' : '');
         renderPagBtns();
       }
 
@@ -1140,7 +1140,7 @@
         X().registrarCliente(nome, whatsapp, email, selected.servico);
 
         var msg = X().montarMsgWhatsApp(ag);
-        var msgCliente = 'Olá! Gostaria de confirmar meu agendamento no Studio Jane Barreiros:\n\n👤 *Cliente:* ' + nome + ' (' + whatsapp + ')\n💇 *Serviço:* ' + selected.servico + '\n📅 *Data/Hora:* ' + X().fmtDataBR(selected.data) + ' às ' + selected.horario + '\n💳 *Pagamento:* ' + selected.forma_pagamento + (svc && svc.preco && svc.preco !== 'Consulte' ? '\n💰 *Valor:* ' + svc.preco : '');
+        var msgCliente = 'Olá! Gostaria de confirmar meu agendamento no Studio Jane Barreiros:\n\n👤 *Cliente:* ' + nome + ' (' + whatsapp + ')\n💇 *Serviço:* ' + esc(selected.servico) + '\n📅 *Data/Hora:* ' + X().fmtDataBR(selected.data) + ' às ' + selected.horario + '\n💳 *Pagamento:* ' + selected.forma_pagamento + (svc && svc.preco && svc.preco !== 'Consulte' ? '\n💰 *Valor:* ' + svc.preco : '');
         document.getElementById('booking-confirm-msg').textContent =
           nome + ', sua solicitação foi enviada com sucesso! Aguarde a confirmação do salão via WhatsApp.';
         document.getElementById('booking-whatsapp-link').href =

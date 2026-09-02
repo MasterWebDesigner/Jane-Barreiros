@@ -207,7 +207,7 @@
   <script>
     (function () {
       /* Se já autenticado, redireciona */
-      var token = sessionStorage.getItem('jb_admin_token') || localStorage.getItem('jb_admin_token');
+      var token = sessionStorage.getItem('jane-admin-auth');
       if (token) {
         window.location.href = './admin.html';
         return;
@@ -216,12 +216,6 @@
       var form = document.getElementById('login-form');
       var erro = document.getElementById('login-erro');
       var loader = document.getElementById('loader');
-
-      /* Credenciais válidas */
-      var USERS = [
-        { email: 'jane@studiojane.com.br', senha: 'jane2026' },
-        { email: 'admin', senha: 'jane2026' }
-      ];
 
       form.addEventListener('submit', function (e) {
         e.preventDefault();
@@ -238,15 +232,18 @@
         loader.classList.add('active');
 
         setTimeout(function () {
-          var match = USERS.find(function (u) {
-            return (u.email === email || u.email === 'admin') && u.senha === senha;
-          });
+          /* Usa o Booking module se disponível */
+          var B = window.Booking;
+          var ok = false;
+          if (B && B.adminLogin) {
+            ok = B.adminLogin(senha);
+          } else {
+            ok = (senha === 'jane2026');
+          }
 
-          if (match) {
-            var token = 'jb_' + btoa(email + ':' + Date.now());
+          if (ok) {
             try {
-              sessionStorage.setItem('jb_admin_token', token);
-              sessionStorage.setItem('jb_admin_user', match.email);
+              sessionStorage.setItem('jane-admin-auth', '1');
             } catch (e) {}
             window.location.href = './admin.html';
           } else {
