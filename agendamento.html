@@ -999,45 +999,54 @@
       hojeDate.setHours(0,0,0,0);
 
       function renderStep2() {
-        if (!calYear) { calYear = hojeDate.getFullYear(); calMonth = hojeDate.getMonth(); }
-        var grid = document.getElementById('cal-grid');
-        var label = document.getElementById('cal-month-label');
-        var meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-        label.textContent = meses[calMonth] + ' ' + calYear;
-        grid.innerHTML = '';
-        var firstDay = new Date(calYear, calMonth, 1).getDay();
-        var daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
-        for (var i = 0; i < firstDay; i++) { var empty = document.createElement('div'); grid.appendChild(empty); }
-        var FERIADOS = [[0,1],[3,21],[4,1],[6,3],[8,7],[9,12],[10,2],[10,15],[11,25]];
-        function isFeriadoNac(y,m,d){ for(var i=0;i<FERIADOS.length;i++){if(FERIADOS[i][0]===m&&FERIADOS[i][1]===d)return true;} return false; }
-        for (var d = 1; d <= daysInMonth; d++) {
-          var ds = calYear + '-' + (calMonth + 1 < 10 ? '0' : '') + (calMonth + 1) + '-' + (d < 10 ? '0' : '') + d;
-          var dayDate = new Date(calYear, calMonth, d);
-          var dayOfWeek = dayDate.getDay();
-          var isPast = dayDate <= hojeDate;
-          var isClosed = X().DIAS_FECHADOS.indexOf(dayOfWeek) !== -1;
-          var isBlocked = X().getBloqueios().datas.indexOf(ds) !== -1;
-          var holiday = isFeriadoNac(calYear, calMonth, d);
-          var disabled = isPast || isClosed || isBlocked || holiday;
-          var isSelected = selected.data === ds;
-          var cell = document.createElement('button');
-          cell.type = 'button';
-          cell.textContent = d;
-          cell.className = 'rounded-lg py-2.5 text-sm font-medium transition-all duration-150 w-full h-14 flex items-center justify-center ' +
-            (holiday && !isPast ? 'text-red-400 font-extrabold cursor-not-allowed line-through ' : '') +
-            (disabled ? 'cursor-not-allowed text-gray-300' : isSelected ? 'bg-gold text-black font-bold shadow-md' : 'text-gold-dark hover:bg-gold/20');
-          cell.disabled = disabled;
-          cell.style.minWidth = '32px';
-          cell.style.textAlign = 'center';
-          if (!disabled) {
-            (function (dateStr) {
-              cell.addEventListener('click', function () {
-                selected.data = dateStr; selected.horario = null;
-                currentStep = 3; updateStep(); renderStep3();
-              });
-            })(ds);
+        try {
+          if (!calYear) { calYear = hojeDate.getFullYear(); calMonth = hojeDate.getMonth(); }
+          var grid = document.getElementById('cal-grid');
+          var label = document.getElementById('cal-month-label');
+          if (!grid || !label) return;
+          var meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+          label.textContent = meses[calMonth] + ' ' + calYear;
+          grid.innerHTML = '';
+          var firstDay = new Date(calYear, calMonth, 1).getDay();
+          var daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+          var FERIADOS = [[0,1],[3,21],[4,1],[6,3],[8,7],[9,12],[10,2],[10,15],[11,25]];
+          function isFeriadoNac(y,m,d){ for(var i=0;i<FERIADOS.length;i++){if(FERIADOS[i][0]===m&&FERIADOS[i][1]===d)return true;} return false; }
+          var bloqueios = { datas: [], horarios: [] };
+          try { bloqueios = X().getBloqueios() || bloqueios; } catch(e) {}
+          if (!bloqueios.datas) bloqueios.datas = [];
+          for (var i = 0; i < firstDay; i++) { var empty = document.createElement('div'); grid.appendChild(empty); }
+          for (var d = 1; d <= daysInMonth; d++) {
+            var ds = calYear + '-' + (calMonth + 1 < 10 ? '0' : '') + (calMonth + 1) + '-' + (d < 10 ? '0' : '') + d;
+            var dayDate = new Date(calYear, calMonth, d);
+            var dayOfWeek = dayDate.getDay();
+            var isPast = dayDate <= hojeDate;
+            var diasFechados = [];
+            try { diasFechados = X().DIAS_FECHADOS || []; } catch(e) {}
+            var isClosed = diasFechados.indexOf(dayOfWeek) !== -1;
+            var isBlocked = bloqueios.datas.indexOf(ds) !== -1;
+            var holiday = isFeriadoNac(calYear, calMonth, d);
+            var disabled = isPast || isClosed || isBlocked || holiday;
+            var isSelected = selected.data === ds;
+            var cell = document.createElement('button');
+            cell.type = 'button';
+            cell.textContent = String(d);
+            cell.disabled = disabled;
+            cell.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;width:100%;min-height:44px;min-width:32px;border-radius:8px;padding:8px 0;font-size:14px;font-weight:500;text-align:center;cursor:' + (disabled ? 'not-allowed' : 'pointer') + ';border:1px solid rgba(212,175,55,0.2);background:' + (isSelected ? '#D4AF37' : 'transparent') + ';color:' + (disabled ? '#9CA3AF' : isSelected ? '#111111' : '#D4AF37') + ';transition:all 0.15s;box-sizing:border-box;' + (isSelected ? 'font-weight:700;box-shadow:0 2px 8px rgba(212,175,55,0.3);' : '') + (holiday && !isPast ? 'color:#EF4444;font-weight:800;text-decoration:line-through;' : '');
+            if (!disabled) {
+              cell.onmouseover = function(){ if(!this.disabled){ this.style.background='rgba(212,175,55,0.15)'; this.style.borderColor='#D4AF37'; } };
+              cell.onmouseout = function(){ if(!this.disabled && selected.data !== this.getAttribute('data-ds')){ this.style.background='transparent'; this.style.borderColor='rgba(212,175,55,0.2)'; } };
+              (function (dateStr) {
+                cell.addEventListener('click', function () {
+                  selected.data = dateStr; selected.horario = null;
+                  currentStep = 3; updateStep(); renderStep3();
+                });
+              })(ds);
+              cell.setAttribute('data-ds', ds);
+            }
+            grid.appendChild(cell);
           }
-          grid.appendChild(cell);
+        } catch (e) {
+          console.error('[Booking] Erro no renderStep2:', e);
         }
       }
 
