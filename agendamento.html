@@ -210,8 +210,92 @@
     #catalogo-servicos, #catalogo-lista {
       transition: opacity 0.35s cubic-bezier(0.4,0,0.2,1), transform 0.35s cubic-bezier(0.4,0,0.2,1);
     }
+    .view-hidden {
+      opacity: 0 !important;
+      transform: translateY(8px);
+      visibility: hidden !important;
+      pointer-events: none;
+      height: 0;
+      overflow: hidden;
+    }
+    .view-visible {
+      opacity: 1 !important;
+      transform: translateY(0);
+      visibility: visible !important;
+      pointer-events: auto;
+    }
 
-    /* === Modal booking: backdrop reforçado === */
+    /* === Catalogo cards: tema adaptativo === */
+    .svc-card {
+      transition: all 0.35s cubic-bezier(0.4,0,0.2,1) !important;
+      background-color: #1E1E1E;
+      border-color: rgba(212,175,55,.12);
+    }
+    .svc-card:hover {
+      box-shadow: 0 8px 28px rgba(0,0,0,0.4), 0 0 24px rgba(212,175,55,0.1), 0 0 0 1px rgba(212,175,55,0.2) !important;
+      transform: translateY(-3px) !important;
+    }
+    html.light .svc-card {
+      background-color: #FFFFFF;
+      border-color: rgba(163,130,30,.18);
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    }
+    html.light .svc-card:hover {
+      border-color: rgba(163,130,30,.4);
+      box-shadow: 0 8px 24px rgba(0,0,0,.08), 0 0 16px rgba(163,130,30,.08);
+    }
+
+    /* === Lista rows: tema adaptativo === */
+    .svc-list-row {
+      background: #1E1E1E;
+      border-color: rgba(212,175,55,.12);
+    }
+    .svc-list-row:hover {
+      border-color: rgba(212,175,55,.3);
+    }
+    html.light .svc-list-row {
+      background: #FFFFFF;
+      border-color: rgba(163,130,30,.15);
+      box-shadow: 0 1px 4px rgba(0,0,0,.05);
+    }
+    html.light .svc-list-row:hover {
+      border-color: rgba(163,130,30,.35);
+    }
+
+    /* === Sobrescrever !important global para cards/lista do catálogo === */
+    .svc-card p, .svc-card span, .svc-list-row p, .svc-list-row span {
+      color: inherit !important;
+    }
+    .svc-card .svc-nome {
+      color: rgb(var(--t-ink)) !important;
+    }
+    html.light .svc-card .svc-nome {
+      color: #222222 !important;
+    }
+    .svc-card .svc-duracao,
+    .svc-list-row span:first-of-type {
+      color: rgb(var(--t-gold)) !important;
+    }
+    .svc-card .svc-preco,
+    .svc-list-row .svc-list-preco {
+      color: rgb(var(--t-gold)) !important;
+    }
+    .svc-card .svc-nota,
+    .svc-list-row .svc-list-nota {
+      color: rgb(var(--t-muted)) !important;
+    }
+    .svc-card .svc-meta,
+    .svc-list-row .svc-list-meta {
+      color: rgb(var(--t-muted)) !important;
+    }
+    html.light .svc-card .svc-meta,
+    html.light .svc-list-row .svc-list-meta {
+      color: #666666 !important;
+    }
+    html.light .svc-card .svc-nota,
+    html.light .svc-list-row .svc-list-nota {
+      color: #888888 !important;
+    }
     #booking-modal {
       backdrop-filter: blur(16px) saturate(1.2);
       -webkit-backdrop-filter: blur(16px) saturate(1.2);
@@ -531,10 +615,10 @@
         </div>
 
         <!-- Grid de cards — preenchido pelo JavaScript -->
-        <div id="catalogo-servicos" class="mt-8 grid gap-7 sm:grid-cols-2 lg:grid-cols-3"></div>
+        <div id="catalogo-servicos" class="mt-8 grid gap-7 sm:grid-cols-2 lg:grid-cols-3 view-visible"></div>
 
         <!-- Lista compacta — preenchido pelo JavaScript -->
-        <div id="catalogo-lista" class="mt-8 space-y-2" style="opacity:0;transform:translateY(8px);visibility:hidden;pointer-events:none;transition:opacity 0.35s cubic-bezier(0.4,0,0.2,1),transform 0.35s cubic-bezier(0.4,0,0.2,1);"></div>
+        <div id="catalogo-lista" class="mt-8 space-y-2 view-hidden"></div>
       </div>
     </section>
 
@@ -813,7 +897,7 @@
           var destacado = !!svc.destaque;
           var card = document.createElement('article');
           card.className = 'svc-card group relative flex h-full flex-col rounded-xl border ' +
-            (destacado ? 'border-2 border-gold bg-[#1E1E1E] p-5 shadow-md' : 'border-gold/12 bg-[#1E1E1E] p-5 shadow-sm') +
+            (destacado ? 'border-2 border-gold p-5 shadow-md' : 'border-gold/12 p-5 shadow-sm') +
             ' transition-all duration-300 hover:-translate-y-1.5 hover:border-gold/30 hover:shadow-md';
 
           if (destacado) {
@@ -827,21 +911,21 @@
           cabecalho.className = 'flex items-center gap-3 mb-1';
 
           var nome = document.createElement('h4');
-          nome.className = 'font-semibold text-white truncate';
-          nome.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-size:15px;';
+          nome.className = 'svc-nome font-semibold truncate';
+          nome.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-size:15px;color:rgb(var(--t-ink));';
           nome.textContent = svc.nome;
           cabecalho.appendChild(nome);
 
           var duracaoBadge = document.createElement('span');
           duracaoBadge.className = 'svc-duracao shrink-0 inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold';
-          duracaoBadge.style.cssText = 'background:rgba(212,175,55,.1);color:#D4AF37;';
+          duracaoBadge.style.cssText = 'background:rgba(var(--t-gold),.12);color:rgb(var(--t-gold));';
           duracaoBadge.textContent = esc(svc.duracao);
           cabecalho.appendChild(duracaoBadge);
           card.appendChild(cabecalho);
 
           var metaLinha = document.createElement('div');
-          metaLinha.className = 'flex items-center gap-4 text-xs';
-          metaLinha.style.cssText = 'color:#9CA3AF;';
+          metaLinha.className = 'svc-meta flex items-center gap-4 text-xs';
+          metaLinha.style.cssText = 'color:rgb(var(--t-muted));';
           var catSpan = document.createElement('span');
           catSpan.textContent = svc.categoria || 'Geral';
           metaLinha.appendChild(catSpan);
@@ -851,27 +935,27 @@
           precoBox.className = 'mt-4';
           if (svc.preco === 'Consulte') {
             var pv = document.createElement('p');
-            pv.className = 'font-semibold';
-            pv.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-size:15px;color:#D4AF37;';
+            pv.className = 'svc-preco font-semibold';
+            pv.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-size:15px;color:rgb(var(--t-gold));';
             pv.textContent = 'Consulte';
             precoBox.appendChild(pv);
           } else {
             var rm = svc.preco.match(/^(A partir de)\s*(.*)$/);
             if (rm) {
               var rl = document.createElement('p');
-              rl.className = 'text-[10px] font-semibold uppercase tracking-wider';
-              rl.style.cssText = 'color:#9CA3AF;';
+              rl.className = 'svc-preco-label text-[10px] font-semibold uppercase tracking-wider';
+              rl.style.cssText = 'color:rgb(var(--t-muted));';
               rl.textContent = rm[1];
               precoBox.appendChild(rl);
               var vl = document.createElement('p');
-              vl.className = 'font-semibold';
-              vl.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-size:15px;color:#D4AF37;';
+              vl.className = 'svc-preco font-semibold';
+              vl.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-size:15px;color:rgb(var(--t-gold));';
               vl.textContent = rm[2];
               precoBox.appendChild(vl);
             } else {
               var pd = document.createElement('p');
-              pd.className = 'font-semibold';
-              pd.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-size:15px;color:#D4AF37;';
+              pd.className = 'svc-preco font-semibold';
+              pd.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-size:15px;color:rgb(var(--t-gold));';
               pd.textContent = svc.preco;
               precoBox.appendChild(pd);
             }
@@ -880,8 +964,8 @@
 
           if (svc.nota) {
             var nota = document.createElement('p');
-            nota.className = 'mt-2 text-xs truncate';
-            nota.style.cssText = 'color:#6B7280;';
+            nota.className = 'svc-nota mt-2 text-xs truncate';
+            nota.style.cssText = 'color:rgb(var(--t-muted));';
             nota.textContent = svc.nota;
             card.appendChild(nota);
           }
@@ -908,9 +992,8 @@
         catalogoLista.innerHTML = '';
         lista.forEach(function (svc) {
           var row = document.createElement('div');
-          row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px;border:1px solid rgba(212,175,55,.12);border-radius:12px;background:#1E1E1E;transition:all 0.2s;';
-          row.onmouseover = function(){ this.style.borderColor='rgba(212,175,55,.3)'; };
-          row.onmouseout = function(){ this.style.borderColor='rgba(212,175,55,.12)'; };
+          row.className = 'svc-list-row';
+          row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px;border:1px solid;border-radius:12px;transition:all 0.2s;';
 
           var info = document.createElement('div');
           info.style.cssText = 'flex:1;min-width:0;';
@@ -919,24 +1002,26 @@
           topo.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:4px;';
 
           var nomeEl = document.createElement('h4');
-          nomeEl.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;color:#FFFFFF;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0;';
+          nomeEl.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;color:rgb(var(--t-ink));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0;';
           nomeEl.textContent = svc.nome;
           topo.appendChild(nomeEl);
 
           var durEl = document.createElement('span');
-          durEl.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-size:11px;font-weight:600;padding:2px 8px;border-radius:9999px;background:rgba(212,175,55,.1);color:#D4AF37;white-space:nowrap;';
+          durEl.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-size:11px;font-weight:600;padding:2px 8px;border-radius:9999px;background:rgba(var(--t-gold),.12);color:rgb(var(--t-gold));white-space:nowrap;';
           durEl.textContent = esc(svc.duracao);
           topo.appendChild(durEl);
           info.appendChild(topo);
 
           var meta = document.createElement('div');
-          meta.style.cssText = 'display:flex;align-items:center;gap:16px;font-family:Inter,system-ui,sans-serif;font-size:12px;color:#9CA3AF;';
+          meta.className = 'svc-list-meta';
+          meta.style.cssText = 'display:flex;align-items:center;gap:16px;font-family:Inter,system-ui,sans-serif;font-size:12px;color:rgb(var(--t-muted));';
           var catSpan = document.createElement('span');
           catSpan.textContent = svc.categoria || 'Geral';
           meta.appendChild(catSpan);
           if (svc.nota) {
             var notaSpan = document.createElement('span');
-            notaSpan.style.cssText = 'color:#6B7280;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+            notaSpan.className = 'svc-list-nota';
+            notaSpan.style.cssText = 'color:rgb(var(--t-muted));opacity:.7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
             notaSpan.textContent = svc.nota;
             meta.appendChild(notaSpan);
           }
@@ -944,7 +1029,8 @@
           row.appendChild(info);
 
           var precoEl = document.createElement('span');
-          precoEl.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;color:#D4AF37;white-space:nowrap;flex-shrink:0;';
+          precoEl.className = 'svc-list-preco';
+          precoEl.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;color:rgb(var(--t-gold));white-space:nowrap;flex-shrink:0;';
           var precoFmt = svc.preco === 'Consulte' ? 'Consulte' : svc.preco.replace('A partir de ', '');
           precoEl.textContent = precoFmt;
           row.appendChild(precoEl);
@@ -972,25 +1058,17 @@
       function setView(view) {
         currentView = view;
         if (view === 'grid') {
-          catalogo.style.opacity = '1';
-          catalogo.style.transform = 'translateY(0)';
-          catalogo.style.visibility = 'visible';
-          catalogo.style.pointerEvents = 'auto';
-          catalogoLista.style.opacity = '0';
-          catalogoLista.style.transform = 'translateY(8px)';
-          catalogoLista.style.visibility = 'hidden';
-          catalogoLista.style.pointerEvents = 'none';
+          catalogo.classList.remove('view-hidden');
+          catalogo.classList.add('view-visible');
+          catalogoLista.classList.remove('view-visible');
+          catalogoLista.classList.add('view-hidden');
           viewGridBtn.classList.add('active');
           viewListBtn.classList.remove('active');
         } else {
-          catalogo.style.opacity = '0';
-          catalogo.style.transform = 'translateY(8px)';
-          catalogo.style.visibility = 'hidden';
-          catalogo.style.pointerEvents = 'none';
-          catalogoLista.style.opacity = '1';
-          catalogoLista.style.transform = 'translateY(0)';
-          catalogoLista.style.visibility = 'visible';
-          catalogoLista.style.pointerEvents = 'auto';
+          catalogo.classList.remove('view-visible');
+          catalogo.classList.add('view-hidden');
+          catalogoLista.classList.remove('view-hidden');
+          catalogoLista.classList.add('view-visible');
           viewListBtn.classList.add('active');
           viewGridBtn.classList.remove('active');
         }
