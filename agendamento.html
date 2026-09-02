@@ -112,19 +112,19 @@
   <!-- Tema Preto & Dourado Luxo -->
   <style>
     :root {
-      --t-cream: 13 13 13;
-      --t-cream-deep: 26 26 26;
-      --t-cream-soft: 22 22 22;
-      --t-ink: 230 225 218;
-      --t-ink-soft: 195 188 178;
-      --t-muted: 155 148 138;
+      --t-cream: 10 10 10;
+      --t-cream-deep: 18 18 18;
+      --t-cream-soft: 20 20 20;
+      --t-ink: 240 235 228;
+      --t-ink-soft: 200 193 183;
+      --t-muted: 160 153 143;
       --t-gold: 212 175 55;
       --t-gold-dark: 191 149 63;
       --t-gold-light: 243 229 178;
     }
     html.light {
       --t-cream: 250 246 238;
-      --t-cream-deep: 242 236 224;
+      --t-cream-deep: 240 234 222;
       --t-cream-soft: 255 255 255;
       --t-ink: 34 34 34;
       --t-ink-soft: 55 50 45;
@@ -133,46 +133,91 @@
       --t-gold-dark: 122 90 15;
       --t-gold-light: 196 160 52;
     }
-    html.light h1, html.light h2, html.light h3 { color: #8A6A12; }
-    html.light h1 em, html.light h2 em, html.light h3 em { color: #A9811F; }
-    h1, h2, h3 { color: #D4AF37; }
+    /* === Títulos sempre dourados === */
+    h1, h2, h3 { color: #D4AF37; text-shadow: 0 0 20px rgba(212,175,55,0.15); }
     h1 em, h2 em, h3 em { color: #EBCF7D; }
+    html.light h1, html.light h2, html.light h3 { color: #8A6A12; text-shadow: none; }
+    html.light h1 em, html.light h2 em, html.light h3 em { color: #A9811F; }
     footer { border-top: 1px solid rgba(212, 175, 55, .35); }
-    /* === Header + Footer sempre escuros (modo claro) === */
-    html.light #site-header {
-      background-color: rgba(10,10,10,.88) !important;
-      border-color: rgba(212,175,55,.35) !important;
-    }
-    html.light #site-header .nav-link {
-      color: rgba(243,229,178,.85);
-    }
-    html.light #site-header .nav-link:hover {
-      color: #D4AF37;
-    }
-    html.light #site-header #menu-btn span {
-      background-color: #F3E5B2;
-    }
-    /* === Cards: fundo escuro sutil no dark mode === */
+
+    /* === Cards dark mode: glow sutil === */
     html:not(.light) .rounded-2xl.border.border-gold\/30,
     html:not(.light) .rounded-2xl.border.border-gold\/40,
     html:not(.light) .rounded-xl.border.border-gold\/30 {
-      background-color: #161616;
-      border-color: #332A15;
+      background-color: #141414;
+      border-color: #2D2413;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.4), 0 0 0 1px rgba(212,175,55,0.06);
+      transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
     }
+    html:not(.light) .rounded-2xl.border.border-gold\/30:hover,
+    html:not(.light) .rounded-2xl.border.border-gold\/40:hover,
+    html:not(.light) .rounded-xl.border.border-gold\/30:hover {
+      border-color: rgba(212,175,55,0.45);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 20px rgba(212,175,55,0.12), 0 0 0 1px rgba(212,175,55,0.15);
+      transform: translateY(-2px);
+    }
+    /* === Catalogo service cards: gold glow on hover === */
+    .svc-card {
+      transition: all 0.35s cubic-bezier(0.4,0,0.2,1) !important;
+    }
+    .svc-card:hover {
+      box-shadow: 0 8px 28px rgba(0,0,0,0.4), 0 0 24px rgba(212,175,55,0.1), 0 0 0 1px rgba(212,175,55,0.2) !important;
+      transform: translateY(-3px) !important;
+    }
+
+    /* === Light mode: sutil gradiente por seção === */
+    html.light section:nth-of-type(odd) {
+      background: linear-gradient(180deg, #FBF6EC 0%, #F5EFE3 100%);
+    }
+    html.light section:nth-of-type(even) {
+      background: linear-gradient(180deg, #F5EFE3 0%, #EDE6D6 100%);
+    }
+    html.light #site-header {
+      background-color: rgba(10,10,10,.88) !important;
+      border-color: rgba(212,175,55,.35) !important;
+      backdrop-filter: blur(12px);
+    }
+    html.light #site-header .nav-link { color: rgba(243,229,178,.85); }
+    html.light #site-header .nav-link:hover { color: #D4AF37; }
+    html.light #site-header #menu-btn span { background-color: #F3E5B2; }
+
+    /* === Header dark: glow sutil === */
+    html:not(.light) #site-header {
+      border-bottom: 1px solid rgba(212,175,55,0.15);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.4);
+    }
+
+    /* === Botões dourados: glow aprimorado === */
     .btn-primary, .btn-ghost-gold, .btn-gold, .btn-outline {
       border: 1px solid rgba(122, 85, 20, .55) !important;
       background-image: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%) !important;
       color: #241805 !important;
       text-shadow: 0 1px 0 rgba(255, 255, 255, .35);
-      box-shadow: 0 4px 12px -4px rgba(140, 100, 25, .55) !important;
+      box-shadow: 0 4px 16px -4px rgba(140, 100, 25, .5), 0 0 0 1px rgba(212,175,55,0.1) !important;
+      transition: all 0.3s cubic-bezier(0.4,0,0.2,1) !important;
     }
     .btn-primary:hover, .btn-ghost-gold:hover, .btn-gold:hover, .btn-outline:hover {
-      scale: 1.05;
-      box-shadow: 0 0 18px 3px rgba(212, 175, 55, .6);
-      filter: brightness(1.05);
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 6px 24px rgba(212, 175, 55, .45), 0 0 40px rgba(212,175,55,0.15) !important;
+      filter: brightness(1.08);
+    }
+    .btn-primary:active, .btn-ghost-gold:active, .btn-gold:active, .btn-outline:active {
+      transform: translateY(0) scale(0.98);
+      box-shadow: 0 2px 8px rgba(212, 175, 55, .3) !important;
     }
 
-    /* Horários indisponíveis (fechamento 19:00) — opaco/cinza e sem clique */
+    /* === Catalogo toggle: transição suave === */
+    #catalogo-servicos, #catalogo-lista {
+      transition: opacity 0.35s cubic-bezier(0.4,0,0.2,1), transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* === Modal booking: backdrop reforçado === */
+    #booking-modal {
+      backdrop-filter: blur(16px) saturate(1.2);
+      -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    }
+
+    /* Horários indisponíveis */
     #horario-grid button:disabled {
       opacity: .35;
       filter: grayscale(.85);
@@ -489,7 +534,7 @@
         <div id="catalogo-servicos" class="mt-8 grid gap-7 sm:grid-cols-2 lg:grid-cols-3"></div>
 
         <!-- Lista compacta — preenchido pelo JavaScript -->
-        <div id="catalogo-lista" class="mt-8 hidden space-y-2"></div>
+        <div id="catalogo-lista" class="mt-8 space-y-2" style="opacity:0;transform:translateY(8px);visibility:hidden;pointer-events:none;transition:opacity 0.35s cubic-bezier(0.4,0,0.2,1),transform 0.35s cubic-bezier(0.4,0,0.2,1);"></div>
       </div>
     </section>
 
@@ -767,9 +812,9 @@
         lista.forEach(function (svc) {
           var destacado = !!svc.destaque;
           var card = document.createElement('article');
-          card.className = 'group relative flex h-full flex-col rounded-2xl border ' +
-            (destacado ? 'border-2 border-gold bg-cream-soft p-6 shadow-md' : 'border-gold/25 bg-cream-soft p-6 shadow-sm') +
-            ' transition-all duration-300 hover:-translate-y-1.5 hover:border-gold hover:shadow-md';
+          card.className = 'svc-card group relative flex h-full flex-col rounded-xl border ' +
+            (destacado ? 'border-2 border-gold bg-[#1E1E1E] p-5 shadow-md' : 'border-gold/12 bg-[#1E1E1E] p-5 shadow-sm') +
+            ' transition-all duration-300 hover:-translate-y-1.5 hover:border-gold/30 hover:shadow-md';
 
           if (destacado) {
             var selo = document.createElement('span');
@@ -779,40 +824,54 @@
           }
 
           var cabecalho = document.createElement('div');
-          cabecalho.className = 'flex items-start justify-between gap-3';
+          cabecalho.className = 'flex items-center gap-3 mb-1';
 
-          var nome = document.createElement('h3');
-          nome.className = 'font-serif text-lg font-semibold leading-snug';
+          var nome = document.createElement('h4');
+          nome.className = 'font-semibold text-white truncate';
+          nome.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-size:15px;';
           nome.textContent = svc.nome;
           cabecalho.appendChild(nome);
 
           var duracaoBadge = document.createElement('span');
-          duracaoBadge.className = 'svc-duracao shrink-0 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold';
-          duracaoBadge.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ' + esc(svc.duracao);
+          duracaoBadge.className = 'svc-duracao shrink-0 inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold';
+          duracaoBadge.style.cssText = 'background:rgba(212,175,55,.1);color:#D4AF37;';
+          duracaoBadge.textContent = esc(svc.duracao);
           cabecalho.appendChild(duracaoBadge);
           card.appendChild(cabecalho);
 
+          var metaLinha = document.createElement('div');
+          metaLinha.className = 'flex items-center gap-4 text-xs';
+          metaLinha.style.cssText = 'color:#9CA3AF;';
+          var catSpan = document.createElement('span');
+          catSpan.textContent = svc.categoria || 'Geral';
+          metaLinha.appendChild(catSpan);
+          card.appendChild(metaLinha);
+
           var precoBox = document.createElement('div');
-          precoBox.className = 'mt-5';
+          precoBox.className = 'mt-4';
           if (svc.preco === 'Consulte') {
             var pv = document.createElement('p');
-            pv.className = 'svc-preco font-serif text-2xl font-bold';
+            pv.className = 'font-semibold';
+            pv.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-size:15px;color:#D4AF37;';
             pv.textContent = 'Consulte';
             precoBox.appendChild(pv);
           } else {
             var rm = svc.preco.match(/^(A partir de)\s*(.*)$/);
             if (rm) {
               var rl = document.createElement('p');
-              rl.className = 'svc-rotulo text-[10px] font-bold uppercase tracking-[0.2em]';
+              rl.className = 'text-[10px] font-semibold uppercase tracking-wider';
+              rl.style.cssText = 'color:#9CA3AF;';
               rl.textContent = rm[1];
               precoBox.appendChild(rl);
               var vl = document.createElement('p');
-              vl.className = 'svc-preco font-serif text-2xl font-bold';
+              vl.className = 'font-semibold';
+              vl.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-size:15px;color:#D4AF37;';
               vl.textContent = rm[2];
               precoBox.appendChild(vl);
             } else {
               var pd = document.createElement('p');
-              pd.className = 'svc-preco font-serif text-2xl font-bold';
+              pd.className = 'font-semibold';
+              pd.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-size:15px;color:#D4AF37;';
               pd.textContent = svc.preco;
               precoBox.appendChild(pd);
             }
@@ -821,14 +880,14 @@
 
           if (svc.nota) {
             var nota = document.createElement('p');
-            nota.className = 'svc-nota mt-3 flex items-start gap-2 text-xs font-medium leading-relaxed';
-            var notaIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svc-nota-icon mt-0.5 h-3.5 w-3.5 shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
-            nota.innerHTML = notaIcon + ' ' + svc.nota;
+            nota.className = 'mt-2 text-xs truncate';
+            nota.style.cssText = 'color:#6B7280;';
+            nota.textContent = svc.nota;
             card.appendChild(nota);
           }
 
           var btnWrap = document.createElement('div');
-          btnWrap.className = 'mt-auto pt-5';
+          btnWrap.className = 'mt-auto pt-4';
           var btn = document.createElement('button');
           btn.type = 'button';
           btn.className = 'svc-btn btn w-full self-center !px-5 !py-3 text-xs font-semibold';
@@ -849,34 +908,50 @@
         catalogoLista.innerHTML = '';
         lista.forEach(function (svc) {
           var row = document.createElement('div');
-          row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:14px 18px;border:1px solid rgba(212,175,55,0.2);border-radius:12px;background:rgba(255,255,255,0.03);transition:all 0.2s;';
-          row.onmouseover = function(){ this.style.borderColor='rgba(212,175,55,0.5)'; this.style.background='rgba(212,175,55,0.05)'; };
-          row.onmouseout = function(){ this.style.borderColor='rgba(212,175,55,0.2)'; this.style.background='rgba(255,255,255,0.03)'; };
+          row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px;border:1px solid rgba(212,175,55,.12);border-radius:12px;background:#1E1E1E;transition:all 0.2s;';
+          row.onmouseover = function(){ this.style.borderColor='rgba(212,175,55,.3)'; };
+          row.onmouseout = function(){ this.style.borderColor='rgba(212,175,55,.12)'; };
 
           var info = document.createElement('div');
-          info.style.cssText = 'flex:1;min-width:0;display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;';
+          info.style.cssText = 'flex:1;min-width:0;';
 
-          var nomeEl = document.createElement('span');
-          nomeEl.style.cssText = 'font-family:"Playfair Display",Georgia,serif;font-weight:600;font-size:15px;color:#D4AF37;white-space:nowrap;';
+          var topo = document.createElement('div');
+          topo.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:4px;';
+
+          var nomeEl = document.createElement('h4');
+          nomeEl.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;color:#FFFFFF;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0;';
           nomeEl.textContent = svc.nome;
-          info.appendChild(nomeEl);
+          topo.appendChild(nomeEl);
 
           var durEl = document.createElement('span');
-          durEl.style.cssText = 'font-size:12px;color:rgba(155,148,138,0.9);display:inline-flex;align-items:center;gap:4px;';
-          durEl.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' + esc(svc.duracao);
-          info.appendChild(durEl);
+          durEl.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-size:11px;font-weight:600;padding:2px 8px;border-radius:9999px;background:rgba(212,175,55,.1);color:#D4AF37;white-space:nowrap;';
+          durEl.textContent = esc(svc.duracao);
+          topo.appendChild(durEl);
+          info.appendChild(topo);
+
+          var meta = document.createElement('div');
+          meta.style.cssText = 'display:flex;align-items:center;gap:16px;font-family:Inter,system-ui,sans-serif;font-size:12px;color:#9CA3AF;';
+          var catSpan = document.createElement('span');
+          catSpan.textContent = svc.categoria || 'Geral';
+          meta.appendChild(catSpan);
+          if (svc.nota) {
+            var notaSpan = document.createElement('span');
+            notaSpan.style.cssText = 'color:#6B7280;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+            notaSpan.textContent = svc.nota;
+            meta.appendChild(notaSpan);
+          }
+          info.appendChild(meta);
+          row.appendChild(info);
 
           var precoEl = document.createElement('span');
-          precoEl.style.cssText = 'font-family:"Playfair Display",Georgia,serif;font-weight:700;font-size:14px;color:#FCF6BA;white-space:nowrap;';
+          precoEl.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;color:#D4AF37;white-space:nowrap;flex-shrink:0;';
           var precoFmt = svc.preco === 'Consulte' ? 'Consulte' : svc.preco.replace('A partir de ', '');
           precoEl.textContent = precoFmt;
-          info.appendChild(precoEl);
-
-          row.appendChild(info);
+          row.appendChild(precoEl);
 
           var agendarBtn = document.createElement('button');
           agendarBtn.type = 'button';
-          agendarBtn.style.cssText = 'flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 18px;border-radius:9999px;font-size:12px;font-weight:600;letter-spacing:0.05em;border:1px solid rgba(122,85,20,0.55);background:linear-gradient(135deg,#BF953F 0%,#FCF6BA 25%,#B38728 50%,#FBF5B7 75%,#AA771C 100%);color:#241805;cursor:pointer;transition:all 0.2s;white-space:nowrap;';
+          agendarBtn.style.cssText = 'flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 18px;border-radius:9999px;font-family:Inter,system-ui,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.05em;border:1px solid rgba(122,85,20,0.55);background:linear-gradient(135deg,#BF953F 0%,#FCF6BA 25%,#B38728 50%,#FBF5B7 75%,#AA771C 100%);color:#241805;cursor:pointer;transition:all 0.2s;white-space:nowrap;';
           agendarBtn.textContent = 'Agendar';
           agendarBtn.onmouseover = function(){ this.style.transform='scale(1.05)'; this.style.boxShadow='0 0 14px 2px rgba(212,175,55,0.5)'; };
           agendarBtn.onmouseout = function(){ this.style.transform=''; this.style.boxShadow=''; };
@@ -897,14 +972,25 @@
       function setView(view) {
         currentView = view;
         if (view === 'grid') {
-          catalogo.classList.remove('hidden');
-          catalogoLista.classList.add('hidden');
-          catalogo.className = 'mt-8 grid gap-7 sm:grid-cols-2 lg:grid-cols-3';
+          catalogo.style.opacity = '1';
+          catalogo.style.transform = 'translateY(0)';
+          catalogo.style.visibility = 'visible';
+          catalogo.style.pointerEvents = 'auto';
+          catalogoLista.style.opacity = '0';
+          catalogoLista.style.transform = 'translateY(8px)';
+          catalogoLista.style.visibility = 'hidden';
+          catalogoLista.style.pointerEvents = 'none';
           viewGridBtn.classList.add('active');
           viewListBtn.classList.remove('active');
         } else {
-          catalogo.classList.add('hidden');
-          catalogoLista.classList.remove('hidden');
+          catalogo.style.opacity = '0';
+          catalogo.style.transform = 'translateY(8px)';
+          catalogo.style.visibility = 'hidden';
+          catalogo.style.pointerEvents = 'none';
+          catalogoLista.style.opacity = '1';
+          catalogoLista.style.transform = 'translateY(0)';
+          catalogoLista.style.visibility = 'visible';
+          catalogoLista.style.pointerEvents = 'auto';
           viewListBtn.classList.add('active');
           viewGridBtn.classList.remove('active');
         }
@@ -1594,8 +1680,8 @@
   <!-- ==============================================================
        MODAL DE AGENDAMENTO — Passo-a-passo
   =============================================================== -->
-  <div id="booking-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 backdrop-blur-sm p-4" role="dialog" aria-modal="true" aria-labelledby="booking-modal-title">
-    <div class="booking-modal-box relative mx-auto w-full max-w-lg rounded-2xl border border-gold/30 bg-cream-soft p-6 shadow-2xl sm:p-8" style="max-height:90vh;overflow-y:auto;">
+  <div id="booking-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/70 backdrop-blur-md p-4" role="dialog" aria-modal="true" aria-labelledby="booking-modal-title">
+    <div class="booking-modal-box relative mx-auto w-full max-w-lg rounded-2xl border border-gold/30 bg-cream-soft p-6 shadow-[0_24px_80px_rgba(0,0,0,0.7),0_0_40px_rgba(212,175,55,0.08)] sm:p-8" style="max-height:90vh;overflow-y:auto;">
 
       <!-- Botão fechar -->
       <button id="booking-close" type="button" class="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-cream-deep text-muted transition-colors hover:text-gold-dark" aria-label="Fechar">&times;</button>
