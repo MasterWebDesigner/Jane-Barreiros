@@ -98,6 +98,15 @@
       .form-input {
         @apply w-full rounded-xl border border-gold/25 bg-cream-soft px-4 py-3.5 text-sm text-ink outline-none transition-all duration-200 placeholder:text-muted/70 focus:border-gold focus:bg-cream-deep focus:ring-2 focus:ring-gold/30;
       }
+      .svc-toggle {
+        @apply border border-gold/20 bg-cream-soft text-muted;
+      }
+      .svc-toggle.active {
+        @apply border-gold bg-gold/15 text-gold-dark font-bold;
+      }
+      .svc-toggle:hover:not(.active) {
+        @apply border-gold/40 text-ink-soft;
+      }
     }
   </style>
   <!-- Tema Preto & Dourado Luxo -->
@@ -470,8 +479,17 @@
           <p class="mt-4 font-light text-muted">Escolha um serviço abaixo e preencha o formulário para reservar seu horário.</p>
         </header>
 
+        <!-- Toggle Grade / Lista -->
+        <div class="mt-10 flex items-center justify-center gap-2">
+          <button id="view-grid" type="button" class="svc-toggle active rounded-lg px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-200">Grade</button>
+          <button id="view-list" type="button" class="svc-toggle rounded-lg px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-200">Lista</button>
+        </div>
+
         <!-- Grid de cards — preenchido pelo JavaScript -->
-        <div id="catalogo-servicos" class="mt-14 grid gap-7 sm:grid-cols-2 lg:grid-cols-3"></div>
+        <div id="catalogo-servicos" class="mt-8 grid gap-7 sm:grid-cols-2 lg:grid-cols-3"></div>
+
+        <!-- Lista compacta — preenchido pelo JavaScript -->
+        <div id="catalogo-lista" class="mt-8 hidden space-y-2"></div>
       </div>
     </section>
 
@@ -824,12 +842,83 @@
 
       renderCatalogo(servicos);
 
+      /* ---------- Lista compacta ---------- */
+      var catalogoLista = document.getElementById('catalogo-lista');
+
+      function renderCatalogoLista(lista) {
+        catalogoLista.innerHTML = '';
+        lista.forEach(function (svc) {
+          var row = document.createElement('div');
+          row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:14px 18px;border:1px solid rgba(212,175,55,0.2);border-radius:12px;background:rgba(255,255,255,0.03);transition:all 0.2s;';
+          row.onmouseover = function(){ this.style.borderColor='rgba(212,175,55,0.5)'; this.style.background='rgba(212,175,55,0.05)'; };
+          row.onmouseout = function(){ this.style.borderColor='rgba(212,175,55,0.2)'; this.style.background='rgba(255,255,255,0.03)'; };
+
+          var info = document.createElement('div');
+          info.style.cssText = 'flex:1;min-width:0;display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;';
+
+          var nomeEl = document.createElement('span');
+          nomeEl.style.cssText = 'font-family:"Playfair Display",Georgia,serif;font-weight:600;font-size:15px;color:#D4AF37;white-space:nowrap;';
+          nomeEl.textContent = svc.nome;
+          info.appendChild(nomeEl);
+
+          var durEl = document.createElement('span');
+          durEl.style.cssText = 'font-size:12px;color:rgba(155,148,138,0.9);display:inline-flex;align-items:center;gap:4px;';
+          durEl.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' + esc(svc.duracao);
+          info.appendChild(durEl);
+
+          var precoEl = document.createElement('span');
+          precoEl.style.cssText = 'font-family:"Playfair Display",Georgia,serif;font-weight:700;font-size:14px;color:#FCF6BA;white-space:nowrap;';
+          var precoFmt = svc.preco === 'Consulte' ? 'Consulte' : svc.preco.replace('A partir de ', '');
+          precoEl.textContent = precoFmt;
+          info.appendChild(precoEl);
+
+          row.appendChild(info);
+
+          var agendarBtn = document.createElement('button');
+          agendarBtn.type = 'button';
+          agendarBtn.style.cssText = 'flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 18px;border-radius:9999px;font-size:12px;font-weight:600;letter-spacing:0.05em;border:1px solid rgba(122,85,20,0.55);background:linear-gradient(135deg,#BF953F 0%,#FCF6BA 25%,#B38728 50%,#FBF5B7 75%,#AA771C 100%);color:#241805;cursor:pointer;transition:all 0.2s;white-space:nowrap;';
+          agendarBtn.textContent = 'Agendar';
+          agendarBtn.onmouseover = function(){ this.style.transform='scale(1.05)'; this.style.boxShadow='0 0 14px 2px rgba(212,175,55,0.5)'; };
+          agendarBtn.onmouseout = function(){ this.style.transform=''; this.style.boxShadow=''; };
+          agendarBtn.addEventListener('click', function () { abrirModal(svc.nome); });
+          row.appendChild(agendarBtn);
+
+          catalogoLista.appendChild(row);
+        });
+      }
+
+      renderCatalogoLista(servicos);
+
+      /* ---------- Toggle Grade / Lista ---------- */
+      var viewGridBtn = document.getElementById('view-grid');
+      var viewListBtn = document.getElementById('view-list');
+      var currentView = 'grid';
+
+      function setView(view) {
+        currentView = view;
+        if (view === 'grid') {
+          catalogo.classList.remove('hidden');
+          catalogoLista.classList.add('hidden');
+          catalogo.className = 'mt-8 grid gap-7 sm:grid-cols-2 lg:grid-cols-3';
+          viewGridBtn.classList.add('active');
+          viewListBtn.classList.remove('active');
+        } else {
+          catalogo.classList.add('hidden');
+          catalogoLista.classList.remove('hidden');
+          viewListBtn.classList.add('active');
+          viewGridBtn.classList.remove('active');
+        }
+      }
+
+      viewGridBtn.addEventListener('click', function () { setView('grid'); });
+      viewListBtn.addEventListener('click', function () { setView('list'); });
+
       /* ---------- Buscar catálogo atualizado do CMS ---------- */
       fetch('content/site.json?v=' + Date.now())
         .then(function (r) { if (!r.ok) throw 0; return r.json(); })
         .then(function (d) {
           var l = (d.servicos || []).slice().sort(function (a, b) { return (a.ordem || 0) - (b.ordem || 0); });
-          if (l.length) { servicos = l; if (B) B.setServicos(l); renderCatalogo(l); }
+          if (l.length) { servicos = l; if (B) B.setServicos(l); renderCatalogo(l); renderCatalogoLista(l); }
         })
         .catch(function () {});
 
