@@ -561,6 +561,27 @@
       'use strict';
       console.log('[Booking] IIFE iniciado — JS rodando OK');
 
+      /* ---------- Inicializar Booking (Firebase + fallback) ---------- */
+      var B = window.Booking;
+      if (B) {
+        if (B.initFirebase) B.initFirebase();
+        if (B.loadAllData) {
+          B.loadAllData(function () {
+            console.log('[Booking] Dados carregados do Firebase.');
+            // Garantir que servicos esteja disponível
+            if (!window.servicos && B.getServicos) {
+              window.servicos = B.getServicos();
+            }
+          });
+        }
+        /* Fallback: se Booking não carregou, usa servicos inline */
+        if (!window.servicos) {
+          window.servicos = FALLBACK_SERVICOS;
+        }
+      } else {
+        window.servicos = FALLBACK_SERVICOS;
+      }
+
       /* ---------- Menu mobile (hambúrguer) ---------- */
       var menuBtn = document.getElementById('menu-btn');
       var mobileMenu = document.getElementById('mobile-menu');
@@ -749,7 +770,7 @@
 
           var duracaoBadge = document.createElement('span');
           duracaoBadge.className = 'svc-duracao shrink-0 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold';
-          duracaoBadge.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ' + esc(svc.duracao) +
+          duracaoBadge.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ' + esc(svc.duracao);
           cabecalho.appendChild(duracaoBadge);
           card.appendChild(cabecalho);
 
