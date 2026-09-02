@@ -297,7 +297,10 @@
 
   /* ================================================================
      HORÁRIOS DISPONÍVEIS
+     Permite até 3 agendamentos simultâneos (3 funcionárias).
+     Única regra: serviço deve terminar até HORARIO_FECHAMENTO (19:00).
      ================================================================ */
+  var FUNCIONARIAS = 3;
   function horariosDisponiveis(dataStr, duracaoMin) {
     var ags = agendamentosDoDia(dataStr);
     var blocoMin = DURACAO_SLOT_MIN;
@@ -310,16 +313,15 @@
         var slotFim = slotInicio + duracaoMin;
         if (slotFim > HORARIO_FECHAMENTO * 60) continue;
 
-        var ocupado = false;
+        var conflitos = 0;
         for (var i = 0; i < ags.length; i++) {
           var agInicio = horarioParaMinutos(ags[i].horario);
           var agFim = agInicio + ags[i].duracao_min;
           if (slotInicio < agFim && slotFim > agInicio) {
-            ocupado = true;
-            break;
+            conflitos++;
           }
         }
-        if (!ocupado) {
+        if (conflitos < FUNCIONARIAS) {
           slots.push(hh + ':' + mm);
         }
       }

@@ -815,13 +815,13 @@
             for (var m = 0; m < 60; m += bloco) {
               var ini = h * 60 + m, fim = ini + durMin;
               if (fim > 19 * 60) continue;
-              var ocupado = false;
+              var conflitos = 0;
               for (var j = 0; j < ags.length; j++) {
                 var agIni = (function(h){var p=h.split(':');return parseInt(p[0],10)*60+parseInt(p[1],10);})(ags[j].horario);
                 var agFim = agIni + (ags[j].duracao_min || 60);
-                if (ini < agFim && fim > agIni) { ocupado = true; break; }
+                if (ini < agFim && fim > agIni) { conflitos++; }
               }
-              if (!ocupado) {
+              if (conflitos < 3) {
                 var hh = (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
                 slots.push(hh);
               }
