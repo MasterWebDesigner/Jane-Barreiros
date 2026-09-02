@@ -11,7 +11,7 @@
      ================================================================ */
   var DURACAO_SLOT_MIN = 30;
   var HORARIO_ABERTURA = 9;
-  var HORARIO_FECHAMENTO = 18;
+  var HORARIO_FECHAMENTO = 19;
   var DIAS_FECHADOS = [0, 1];
   var ADMIN_SENHA = 'jane2026';
   var KEY_AUTH = 'jane-admin-auth';
@@ -669,7 +669,7 @@
     if (ag.observacoes) msg += '📝 Obs: ' + ag.observacoes + '\n';
     msg += '\n' + linha + '\n';
     msg += 'Para cancelar ou reagendar, responda esta mensagem.\n';
-    msg += 'Terça a Sábado: 09:00 às 18:00\n';
+    msg += 'Terça a Sábado: 09:00 às 19:00\n';
     msg += 'Rua Rio Grande Do Sul, 348 — Santo André, SP';
     return msg;
   }

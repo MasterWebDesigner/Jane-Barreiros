@@ -634,7 +634,7 @@
         </header>
         <div class="mx-auto mt-10 max-w-lg rounded-2xl border border-gold/30 bg-cream-soft p-8 text-center shadow-sm">
           <p class="font-serif text-lg text-muted">Clique em <span class="font-semibold text-gold-dark">Agendar este serviço</span> em qualquer card acima para iniciar o agendamento.</p>
-          <p class="mt-3 text-sm text-muted">Terça a Sábado · 09:00 às 18:00</p>
+          <p class="mt-3 text-sm text-muted">Terça a Sábado · 09:00 às 19:00</p>
           <a href="#catalogo-servicos" class="btn btn-primary mt-6 inline-block !px-8">Ver Serviços</a>
         </div>
       </div>
@@ -799,17 +799,32 @@
       var FB = {
         DIAS_FECHADOS: [0, 1],
         HORARIO_ABERTURA: 9,
-        HORARIO_FECHAMENTO: 18,
+        HORARIO_FECHAMENTO: 19,
         getBloqueios: function () { try { return JSON.parse(localStorage.getItem('jane-booking-bloqueios')) || { datas: [], horarios: [] }; } catch (e) { return { datas: [], horarios: [] }; } },
         getServicoPorNome: function (n) { return servicos.find(function (s) { return s.nome === n; }) || null; },
         horariosDisponiveis: function (dataStr, durMin) {
           var bloco = 30, slots = [];
-          for (var h = 9; h < 18; h++) {
+          var ags = [];
+          try {
+            var all = JSON.parse(localStorage.getItem('jane-booking-agendamentos') || '[]');
+            for (var i = 0; i < all.length; i++) {
+              if (all[i].data === dataStr && all[i].status !== 'cancelado') ags.push(all[i]);
+            }
+          } catch(e) {}
+          for (var h = 9; h < 19; h++) {
             for (var m = 0; m < 60; m += bloco) {
               var ini = h * 60 + m, fim = ini + durMin;
-              if (fim > 18 * 60) continue;
-              var hh = (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
-              slots.push(hh);
+              if (fim > 19 * 60) continue;
+              var ocupado = false;
+              for (var j = 0; j < ags.length; j++) {
+                var agIni = (function(h){var p=h.split(':');return parseInt(p[0],10)*60+parseInt(p[1],10);})(ags[j].horario);
+                var agFim = agIni + (ags[j].duracao_min || 60);
+                if (ini < agFim && fim > agIni) { ocupado = true; break; }
+              }
+              if (!ocupado) {
+                var hh = (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+                slots.push(hh);
+              }
             }
           }
           return slots;
@@ -876,7 +891,7 @@
         montarMsgWhatsApp: function (ag) {
           var svc = servicos.find(function (s) { return s.nome === ag.servico; });
           var valor = (svc && svc.preco && svc.preco !== 'Consulte') ? '\n💰 Valor: *' + svc.preco + '*' : '';
-          return '📍 *Studio Jane Barreiros*\n━━━━━━━━━━━━━━━━━━━━\n✅ *Agendamento Confirmado!*\n\n💇 Serviço: *' + esc(ag.servico) + '*\n📅 Data: *' + ag.data + '*\n🕐 Horário: *' + ag.horario + '*\n👤 Cliente: *' + esc(ag.cliente_nome) + '* (' + (ag.cliente_whatsapp || '') + ')' + (ag.forma_pagamento ? '\n💳 Pagamento: *' + ag.forma_pagamento + '*' : '') + valor + '\n\n━━━━━━━━━━━━━━━━━━━━\nTerça a Sábado: 09:00 às 18:00\nRua Rio Grande Do Sul, 348 — Santo André, SP';
+          return '📍 *Studio Jane Barreiros*\n━━━━━━━━━━━━━━━━━━━━\n✅ *Agendamento Confirmado!*\n\n💇 Serviço: *' + esc(ag.servico) + '*\n📅 Data: *' + ag.data + '*\n🕐 Horário: *' + ag.horario + '*\n👤 Cliente: *' + esc(ag.cliente_nome) + '* (' + (ag.cliente_whatsapp || '') + ')' + (ag.forma_pagamento ? '\n💳 Pagamento: *' + ag.forma_pagamento + '*' : '') + valor + '\n\n━━━━━━━━━━━━━━━━━━━━\nTerça a Sábado: 09:00 às 19:00\nRua Rio Grande Do Sul, 348 — Santo André, SP';
         }
       };
 

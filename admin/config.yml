@@ -149,7 +149,7 @@ collections:
             fields:
               - { label: "Logradouro", name: "endereco_logradouro", widget: "string", default: "Rua Rio Grande Do Sul, 348" }
               - { label: "Cidade", name: "endereco_cidade", widget: "string", default: "Santo André — SP" }
-              - { label: "Horário (Terça a Sábado)", name: "horario_semana", widget: "string", default: "Terça a Sábado: 09:00 – 18:00" }
+              - { label: "Horário (Terça a Sábado)", name: "horario_semana", widget: "string", default: "Terça a Sábado: 09:00 – 19:00" }
               - { label: "Horário (Domingo/Segunda)", name: "horario_fim_de_semana", widget: "string", default: "Domingo e Segunda: Fechado" }
               - { label: "Link WhatsApp (botões de agendamento)", name: "whatsapp_link", widget: "string", default: "https://wa.me/5511942212626?text=Ol%C3%A1!%20Quero%20agendar%20um%20atendimento%20no%20Studio%20Jane%20Barreiros.", hint: "Os links de Instagram/Facebook ficam só na seção \"Redes Sociais\"." }
               - { label: "Embed do Google Maps (iframe src)", name: "mapa_embed", widget: "string", default: "https://www.google.com/maps?q=Rua+Rio+Grande+Do+Sul,+348+Santo+Andre,+SP&output=embed" }
