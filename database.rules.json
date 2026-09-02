@@ -1,0 +1,36 @@
+{
+  "rules": {
+    "jane-booking": {
+      "servicos": {
+        ".read": true,
+        ".write": false
+      },
+      "agendamentos": {
+        ".read": "auth != null || root.child('jane-booking/config/public_read').val() === true",
+        ".write": true,
+        ".validate": "newData.hasChildren(['id', 'servico', 'data', 'horario', 'cliente_nome'])",
+        "$agendamento": {
+          ".validate": "newData.child('id').val() === $agendamento"
+        }
+      },
+      "clientes": {
+        ".read": "auth != null",
+        ".write": true
+      },
+      "bloqueios": {
+        ".read": true,
+        ".write": true
+      },
+      "lista_espera": {
+        ".read": true,
+        ".write": true
+      },
+      "config": {
+        ".read": true,
+        ".write": false
+      }
+    },
+    ".read": false,
+    ".write": false
+  }
+}

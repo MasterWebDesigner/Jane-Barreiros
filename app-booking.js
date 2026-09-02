@@ -70,8 +70,11 @@
         console.error('[Booking] Firebase write error:', key, e);
       });
     }
-    // fallback localStorage sempre (para offline)
-    try { localStorage.setItem('jane-booking-' + key, JSON.stringify(val)); } catch (e) {}
+    /* fallback localStorage apenas para dados não-PII (offline) */
+    var PII_KEYS = ['clientes'];
+    if (PII_KEYS.indexOf(key) === -1) {
+      try { localStorage.setItem('jane-booking-' + key, JSON.stringify(val)); } catch (e) {}
+    }
   }
 
   function loadFromFirebase(key, cb) {

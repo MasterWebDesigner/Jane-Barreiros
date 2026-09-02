@@ -615,6 +615,12 @@
       ];
 
       var B = window.Booking;
+
+      /* --- XSS Protection --- */
+      function esc(t) {
+        if (t === null || t === undefined) return '';
+        return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+      }
       if (B && B.initFirebase) B.initFirebase();
       if (B && B.loadAllData) B.loadAllData(function () {
         console.log('[Agendamento] Dados carregados do Firebase.');
@@ -702,7 +708,7 @@
         montarMsgWhatsApp: function (ag) {
           var svc = servicos.find(function (s) { return s.nome === ag.servico; });
           var valor = (svc && svc.preco && svc.preco !== 'Consulte') ? '\n💰 Valor: *' + svc.preco + '*' : '';
-          return '📍 *Studio Jane Barreiros*\n━━━━━━━━━━━━━━━━━━━━\n✅ *Agendamento Confirmado!*\n\n💇 Serviço: *' + ag.servico + '*\n📅 Data: *' + ag.data + '*\n🕐 Horário: *' + ag.horario + '*\n👤 Cliente: *' + ag.cliente_nome + '* (' + (ag.cliente_whatsapp || '') + ')' + (ag.forma_pagamento ? '\n💳 Pagamento: *' + ag.forma_pagamento + '*' : '') + valor + '\n\n━━━━━━━━━━━━━━━━━━━━\nTerça a Sábado: 09:00 às 18:00\nRua Rio Grande Do Sul, 348 — Santo André, SP';
+          return '📍 *Studio Jane Barreiros*\n━━━━━━━━━━━━━━━━━━━━\n✅ *Agendamento Confirmado!*\n\n💇 Serviço: *' + esc(ag.servico) + '*\n📅 Data: *' + ag.data + '*\n🕐 Horário: *' + ag.horario + '*\n👤 Cliente: *' + esc(ag.cliente_nome) + '* (' + (ag.cliente_whatsapp || '') + ')' + (ag.forma_pagamento ? '\n💳 Pagamento: *' + ag.forma_pagamento + '*' : '') + valor + '\n\n━━━━━━━━━━━━━━━━━━━━\nTerça a Sábado: 09:00 às 18:00\nRua Rio Grande Do Sul, 348 — Santo André, SP';
         }
       };
 
@@ -956,7 +962,7 @@
           b.className = 'w-full rounded-xl border p-4 text-left transition-all duration-200 ' +
             (isSelected ? 'border-gold bg-gold/10 ring-2 ring-gold/40' : 'border-gold/20 bg-cream-deep hover:border-gold/50 hover:bg-cream/50');
           var precoFmt = svc.preco === 'Consulte' ? 'Consulte' : svc.preco.replace('A partir de ', '');
-          b.innerHTML = '<div class="flex items-center justify-between"><span class="font-serif font-semibold">' + svc.nome + '</span><span class="text-xs text-muted">' + svc.duracao + '</span></div><p class="mt-1 text-sm font-bold text-gold-dark">' + precoFmt + '</p>';
+          b.innerHTML = '<div class="flex items-center justify-between"><span class="font-serif font-semibold">' + esc(svc.nome) + '</span><span class="text-xs text-muted">' + svc.duracao + '</span></div><p class="mt-1 text-sm font-bold text-gold-dark">' + precoFmt + '</p>';
           b.addEventListener('click', function () {
             selected.servico = svc.nome;
             renderStep1();

@@ -797,6 +797,12 @@ document.addEventListener('DOMContentLoaded', function () {
   console.log('[Admin] DOMContentLoaded disparado');
 
   var B = window.Booking;
+
+  /* --- XSS Protection --- */
+  function esc(t) {
+    if (t === null || t === undefined) return '';
+    return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
   if (B && B.initFirebase) B.initFirebase();
   var KEY_AUTH = 'jane-admin-auth';
 
@@ -816,9 +822,6 @@ document.addEventListener('DOMContentLoaded', function () {
     e.preventDefault();
     var senha = document.getElementById('login-senha').value;
     if (B && B.adminLogin(senha)) {
-      try { sessionStorage.setItem(KEY_AUTH, '1'); } catch (e) {}
-      showApp();
-    } else if (senha === 'jane2026') {
       try { sessionStorage.setItem(KEY_AUTH, '1'); } catch (e) {}
       showApp();
     } else {
@@ -1086,7 +1089,7 @@ document.addEventListener('DOMContentLoaded', function () {
       newOnes.forEach(function (ag) {
         showToast(
           'Novo agendamento recebido!',
-          ag.cliente_nome + ' — ' + ag.servico + ' • ' + ag.horario,
+          ag.cliente_nome + ' — ' + esc(ag.servico) + ' • ' + ag.horario,
           function () {
             showPage('agendamentos');
             var card = document.querySelector('[data-aceitar="' + ag.id + '"], [data-st="' + ag.id + '"]');
@@ -1232,12 +1235,12 @@ document.addEventListener('DOMContentLoaded', function () {
             '<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gold/10 font-mono text-sm font-bold text-gold">' + ag.horario + '</div>' +
             '<div class="min-w-0">' +
               '<div class="flex items-center gap-2 flex-wrap">' +
-                '<p class="font-semibold text-white text-sm truncate">' + ag.cliente_nome + '</p>' +
+                '<p class="font-semibold text-white text-sm truncate">' + esc(ag.cliente_nome) + '</p>' +
                 tagBadge(tag) +
                 (ag.origem === 'online' ? '<span class="inline-flex items-center rounded-full bg-blue-500/15 px-2 py-0.5 text-[10px] font-semibold text-blue-400">Online</span>' :
                  ag.origem === 'recepcao' ? '<span class="inline-flex items-center rounded-full bg-dark-500 border border-dark-300/50 px-2 py-0.5 text-[10px] font-semibold text-gold">Recepção</span>' : '') +
               '</div>' +
-              '<p class="text-xs text-gray-400 truncate">' + ag.servico + '</p>' +
+              '<p class="text-xs text-gray-400 truncate">' + esc(ag.servico) + '</p>' +
               '<p class="text-[10px] font-semibold ' + statusColor + '">' + statusLabel + '</p>' +
             '</div>' +
           '</div>' +
@@ -1329,12 +1332,12 @@ document.addEventListener('DOMContentLoaded', function () {
               '</div>' +
               '<div class="min-w-0">' +
                 '<div class="flex items-center gap-2 flex-wrap">' +
-                  '<p class="font-semibold text-white text-sm truncate">' + ag.cliente_nome + '</p>' +
+                  '<p class="font-semibold text-white text-sm truncate">' + esc(ag.cliente_nome) + '</p>' +
                   tagBadge(tag) +
                   (ag.origem === 'online' ? '<span class="inline-flex items-center rounded-full bg-blue-500/15 px-2 py-0.5 text-[10px] font-semibold text-blue-400">Online</span>' :
                    ag.origem === 'recepcao' ? '<span class="inline-flex items-center rounded-full bg-dark-500 border border-dark-300/50 px-2 py-0.5 text-[10px] font-semibold text-gold">Recepção</span>' : '') +
                 '</div>' +
-                '<p class="text-xs text-gray-400 truncate">' + ag.servico + '</p>' +
+                '<p class="text-xs text-gray-400 truncate">' + esc(ag.servico) + '</p>' +
                 '<p class="text-[10px] font-semibold ' + statusColor + '">' + statusLabel + '</p>' +
               '</div>' +
             '</div>' +
@@ -1814,12 +1817,12 @@ document.addEventListener('DOMContentLoaded', function () {
         /* Center: Service + Client */
         '<div class="flex-1 min-w-0">' +
           '<div class="flex items-center gap-2 mb-1">' +
-            '<p class="font-semibold text-white text-sm truncate">' + ag.servico + '</p>' +
+            '<p class="font-semibold text-white text-sm truncate">' + esc(ag.servico) + '</p>' +
             '<span class="inline-flex items-center rounded-full ' + sc.badge + ' px-2 py-0.5 text-[10px] font-semibold shrink-0">' + sc.label + '</span>' +
             (isOnline ? '<span class="inline-flex items-center rounded-full bg-blue-500/15 px-2 py-0.5 text-[10px] font-semibold text-blue-400 shrink-0">Online</span>' :
              ag.origem === 'recepcao' ? '<span class="inline-flex items-center rounded-full bg-dark-500 border border-dark-300/50 px-2 py-0.5 text-[10px] font-semibold text-gold shrink-0">Recepção</span>' : '') +
           '</div>' +
-          '<p class="text-xs text-gray-400 truncate">' + ag.cliente_nome + (ag.cliente_whatsapp ? ' · ' + ag.cliente_whatsapp : '') + '</p>' +
+          '<p class="text-xs text-gray-400 truncate">' + esc(ag.cliente_nome) + (ag.cliente_whatsapp ? ' · ' + ag.cliente_whatsapp : '') + '</p>' +
           '<div class="flex items-center gap-3 mt-1.5">' +
             (valor > 0 ? '<span class="font-numeric text-xs font-bold text-gold">R$ ' + valor.toFixed(2).replace('.',',') + '</span>' : '') +
             (ag.forma_pagamento ? '<span class="text-[10px] text-gray-500">' + ag.forma_pagamento + '</span>' : '') +
@@ -2030,8 +2033,8 @@ document.addEventListener('DOMContentLoaded', function () {
         var diaSemana = (function(ds){ var d=new Date(ds+'T12:00:00'); return ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'][d.getDay()]; })(ag.data);
         var dataBR = (function(ds){ var p=ds.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; })(ag.data);
         var prof = ag.profissional || 'Jane Barreiros';
-        var msg = 'Olá ' + ag.cliente_nome + '! ✅\n\nSeu agendamento no *Studio Jane Barreiros* foi confirmado!\n\n' +
-          '💇 *Serviço:* ' + ag.servico + '\n' +
+        var msg = 'Olá ' + esc(ag.cliente_nome) + '! ✅\n\nSeu agendamento no *Studio Jane Barreiros* foi confirmado!\n\n' +
+          '💇 *Serviço:* ' + esc(ag.servico) + '\n' +
           '📅 *Data:* ' + diaSemana + ', ' + dataBR + '\n' +
           '⏰ *Horário:* ' + ag.horario + '\n' +
           '👩‍💼 *Profissional:* ' + prof + '\n' +
@@ -2056,7 +2059,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (B) B.setAgendamentoStatus(agId, 'cancelado');
         var tel = (ag.cliente_whatsapp || '').replace(/\D/g, '');
         var dataBR = (function(ds){ var p=ds.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; })(ag.data);
-        var msg = 'Olá ' + ag.cliente_nome + '!\n\nInfelizmente o horário solicitado para *' + ag.servico + '* no dia *' + dataBR + ' às ' + ag.horario + '* não está disponível no momento.\n\n' +
+        var msg = 'Olá ' + esc(ag.cliente_nome) + '!\n\nInfelizmente o horário solicitado para *' + esc(ag.servico) + '* no dia *' + dataBR + ' às ' + ag.horario + '* não está disponível no momento.\n\n' +
           'Por favor, acesse nosso agendamento online e escolha outro horário:\nhttps://agendamento.janebarreiros.com.br\n\n' +
           'Pedimos desculpas pelo inconveniente. 🙏\n*Studio Jane Barreiros*';
         renderAgendamentos();
@@ -2151,7 +2154,7 @@ document.addEventListener('DOMContentLoaded', function () {
       ags = ags.slice(0, 30);
       timeline.innerHTML = '';
       if (!ags.length) {
-        timeline.innerHTML = '<p class="text-gray-500 text-sm py-8 text-center">Nenhum resultado para "' + termo + '"</p>';
+        timeline.innerHTML = '<p class="text-gray-500 text-sm py-8 text-center">Nenhum resultado para "' + esc(termo) + '"</p>';
         return;
       }
       var lastDayStr = '';
@@ -2225,7 +2228,7 @@ document.addEventListener('DOMContentLoaded', function () {
       card.innerHTML =
         '<div class="flex-1 min-w-0 mr-4">' +
           '<div class="flex items-center gap-3 mb-1">' +
-            '<h4 class="font-semibold text-white truncate">' + svc.nome + '</h4>' +
+            '<h4 class="font-semibold text-white truncate">' + esc(svc.nome) + '</h4>' +
             statusBadge +
           '</div>' +
           '<div class="flex items-center gap-4 text-xs text-gray-400">' +
@@ -2233,7 +2236,7 @@ document.addEventListener('DOMContentLoaded', function () {
             '<span>' + (svc.duracao || '—') + '</span>' +
             '<span class="text-gold font-semibold">' + precoFmt + '</span>' +
           '</div>' +
-          (svc.nota ? '<p class="mt-1 text-xs text-gray-500 truncate">' + svc.nota + '</p>' : '') +
+          (svc.nota ? '<p class="mt-1 text-xs text-gray-500 truncate">' + esc(svc.nota) + '</p>' : '') +
         '</div>' +
         '<div class="flex items-center gap-1 shrink-0">' +
           (idx > 0 ? '<button data-move-up="' + idx + '" class="rounded-lg p-2 text-gray-400 hover:bg-dark-500 hover:text-white" title="Mover para cima">&#9650;</button>' : '') +
@@ -2417,8 +2420,8 @@ document.addEventListener('DOMContentLoaded', function () {
       var telLimpo = c.whatsapp.replace(/\D/g, '');
       var telLink = telLimpo.length >= 10 ? 'https://wa.me/55' + telLimpo : '#';
       tr.innerHTML =
-        '<td class="px-4 py-3 font-medium text-white">' + c.nome + '</td>' +
-        '<td class="px-4 py-3 text-gray-400">' + c.whatsapp + '</td>' +
+        '<td class="px-4 py-3 font-medium text-white">' + esc(c.nome) + '</td>' +
+        '<td class="px-4 py-3 text-gray-400">' + esc(c.whatsapp) + '</td>' +
         '<td class="px-4 py-3 text-center font-numeric font-bold text-gold">' + c.total_atendimentos + '</td>' +
         '<td class="px-4 py-3 text-right font-numeric font-semibold text-green-400">' + (valorGasto > 0 ? 'R$ ' + valorGasto.toFixed(2).replace('.',',') : '—') + '</td>' +
         '<td class="px-4 py-3 text-xs text-gray-400">' + ultimoAg + '</td>' +
@@ -2541,7 +2544,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var card = document.createElement('div');
       card.className = 'flex items-center justify-between rounded-xl bg-dark-600 border border-dark-300/50 p-4';
       card.innerHTML =
-        '<div><p class="font-semibold text-white">' + item.cliente_nome + '</p><p class="text-xs text-gray-400">' + item.servico + ' · ' + fmtBR(item.data_preferida) + '</p></div>' +
+        '<div><p class="font-semibold text-white">' + esc(item.cliente_nome) + '</p><p class="text-xs text-gray-400">' + item.servico + ' · ' + fmtBR(item.data_preferida) + '</p></div>' +
         '<div class="flex gap-2">' +
           '<a href="https://wa.me/55' + item.cliente_whatsapp.replace(/\D/g,'') + '" target="_blank" class="rounded-lg bg-green-500/15 px-3 py-1.5 text-xs font-semibold text-green-400 hover:bg-green-500/25">WhatsApp</a>' +
           '<button data-rm-espera="' + item.id + '" class="rounded-lg bg-red-500/15 px-3 py-1.5 text-xs font-semibold text-red-400 hover:bg-red-500/25">Remover</button></div>';
