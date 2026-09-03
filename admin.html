@@ -3592,7 +3592,7 @@ document.addEventListener('DOMContentLoaded', function () {
       tr.className = 'border-b border-dark-300/20 hover:bg-dark-600/30 transition';
       var telLink = 'https://wa.me/55' + c.whatsappClean;
       var dataFormatada = c.dataStr.split('-').reverse().join('/');
-      var dataPrevFormatada = c.diasRetornoSugerido ? c.dataPrevista.toISOString().split('-').reverse().join('/') : '—';
+      var dataPrevFormatada = c.diasRetornoSugerido ? c.dataPrevista.getDate().toString().padStart(2,'0') + '/' + (c.dataPrevista.getMonth()+1).toString().padStart(2,'0') + '/' + c.dataPrevista.getFullYear() : '—';
       var msg = encodeURIComponent('Olá, ' + c.nome + '! Tudo bem? Passando para lembrar que já faz ' + c.diasSemVoltar + ' dias desde o seu último ' + c.servico + ' no Studio Jane Barreiros. Vamos garantir o seu horário para esta semana? Agende por aqui: https://jane-barreiros.vercel.app/agendamento.html');
       var msgLink = telLink + '?text=' + msg;
 
