@@ -693,11 +693,11 @@
           <input id="hist-busca" type="text" placeholder="Buscar nome, serviço ou telefone..." class="w-64 sm:w-80 rounded-lg bg-dark-700 border border-dark-300/40 pl-8 pr-3 py-2 text-xs text-gray-300 placeholder-gray-500 focus:border-gold focus:outline-none">
         </div>
         <select id="hist-periodo" class="rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-xs text-gray-300 focus:border-gold outline-none">
-          <option value="mes">Este Mês</option>
+          <option value="mes" selected>Este Mês</option>
           <option value="30d">Últimos 30 dias</option>
           <option value="90d">Últimos 90 dias</option>
           <option value="ano">Este Ano</option>
-          <option value="todos" selected>Todos</option>
+          <option value="todos">Todos</option>
         </select>
         <select id="hist-status-filter" class="rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-xs text-gray-300 focus:border-gold outline-none">
           <option value="todos">Todos os Status</option>
@@ -3257,8 +3257,10 @@ document.addEventListener('DOMContentLoaded', function () {
     /* --- Período --- */
     var periodo = document.getElementById('hist-periodo').value;
     var now = new Date();
+    var mesSelStr = '';
     var dataIni = null;
     if (periodo === 'mes') {
+      mesSelStr = now.getFullYear() + '-' + (now.getMonth() < 9 ? '0' : '') + (now.getMonth() + 1);
       dataIni = new Date(now.getFullYear(), now.getMonth(), 1);
     } else if (periodo === '30d') {
       dataIni = new Date(now); dataIni.setDate(dataIni.getDate() - 30);
@@ -3278,7 +3280,9 @@ document.addEventListener('DOMContentLoaded', function () {
     /* --- Filtrar --- */
     var ags = agsAll.filter(function (a) {
       if (a.status !== 'concluido' && a.status !== 'cancelado') return false;
-      if (iniStr && a.data < iniStr) return false;
+      if (mesSelStr) {
+        if (!a.data || a.data.slice(0, 7) !== mesSelStr) return false;
+      } else if (iniStr && a.data < iniStr) return false;
       if (statusFiltro !== 'todos' && a.status !== statusFiltro) return false;
       if (buscaTermo) {
         var tel = (a.cliente_whatsapp || '').replace(/\D/g, '');
