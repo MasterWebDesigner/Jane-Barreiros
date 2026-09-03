@@ -690,7 +690,7 @@
 
     <!-- Modal Histórico do Cliente (fixo, funciona em qualquer aba) -->
     <div id="cli-history-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div class="bg-dark-700 border border-dark-300/50 rounded-2xl shadow-2xl p-6 w-full max-w-lg mx-4 max-h-[80vh] flex flex-col">
+      <div class="bg-dark-700 border border-dark-300/50 rounded-2xl shadow-2xl p-6 w-full max-w-xl mx-4 max-h-[85vh] flex flex-col">
         <div class="flex items-center justify-between mb-4">
           <div>
             <h3 class="text-lg font-semibold text-white" id="cli-history-title">Histórico do Cliente</h3>
@@ -698,7 +698,10 @@
           </div>
           <button id="cli-history-close" class="flex h-8 w-8 items-center justify-center rounded-full bg-dark-600 text-gray-400 hover:text-white">&times;</button>
         </div>
-        <div id="cli-history-list" class="flex-1 overflow-y-auto space-y-2"></div>
+        <!-- Resumo -->
+        <div id="cli-history-resumo" class="hidden grid grid-cols-3 gap-3 mb-4"></div>
+        <!-- Lista -->
+        <div id="cli-history-list" class="flex-1 overflow-y-auto space-y-4"></div>
         <div id="cli-history-vazio" class="hidden text-center text-gray-500 py-8">Nenhum agendamento encontrado.</div>
       </div>
     </div>
@@ -2660,40 +2663,134 @@ document.addEventListener('DOMContentLoaded', function () {
   /* --- Histórico do Cliente (por WhatsApp) --- */
   function abrirHistoricoCliente(whatsapp, nome) {
     var modal = document.getElementById('cli-history-modal');
-    document.getElementById('cli-history-title').textContent = 'Histórico — ' + nome;
-    document.getElementById('cli-history-subtitle').textContent = 'WhatsApp: ' + whatsapp;
+    var resumoDiv = document.getElementById('cli-history-resumo');
     var list = document.getElementById('cli-history-list');
     var vazio = document.getElementById('cli-history-vazio');
+    document.getElementById('cli-history-title').textContent = 'Histórico — ' + nome;
+    document.getElementById('cli-history-subtitle').textContent = 'WhatsApp: ' + whatsapp;
     list.innerHTML = '';
-    /* Busca TODOS os agendamentos deste WhatsApp (histórico completo) */
+    resumoDiv.innerHTML = '';
+    resumoDiv.classList.add('hidden');
+
+    /* Busca TODOS os agendamentos deste WhatsApp */
     var ags = B ? B.getAgendamentos().filter(function (a) {
       return a.cliente_whatsapp && a.cliente_whatsapp.replace(/\D/g,'') === whatsapp.replace(/\D/g,'');
     }) : [];
     ags.sort(function (a,b) { return (b.data+b.horario) > (a.data+a.horario) ? 1 : -1; });
     if (!ags.length) { vazio.classList.remove('hidden'); list.classList.add('hidden'); modal.classList.remove('hidden'); return; }
     vazio.classList.add('hidden'); list.classList.remove('hidden');
-    ags.forEach(function (ag) {
-      var card = document.createElement('div');
-      var isConcluido = ag.status === 'concluido';
-      var isPendente = ag.status === 'pendente';
-      var isCancelado = ag.status === 'cancelado';
-      var borderClass = isConcluido ? 'border-green-500/20' : isCancelado ? 'border-red-500/20' : 'border-amber-500/20';
-      var statusLabel = isConcluido ? '✓ Concluído' : isCancelado ? '✕ Cancelado' : isPendente ? '⏳ Pendente' : '● Confirmado';
-      var statusColor = isConcluido ? 'text-green-400 bg-green-500/15' : isCancelado ? 'text-red-400 bg-red-500/15' : 'text-amber-400 bg-amber-500/15';
-      card.className = 'rounded-xl border p-3 ' + borderClass + ' bg-dark-700/50';
-      card.innerHTML =
-        '<div class="flex items-center justify-between">' +
-          '<div class="flex items-center gap-3">' +
-            '<span class="font-mono text-xs font-bold text-gold">' + ag.horario + '</span>' +
-            '<div>' +
-              '<p class="text-sm font-semibold text-white">' + esc(ag.servico) + '</p>' +
-              '<p class="text-xs text-gray-400">' + fmtBR(ag.data) + '</p>' +
-            '</div>' +
-          '</div>' +
-          '<span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold ' + statusColor + '">' + statusLabel + '</span>' +
-        '</div>';
-      list.appendChild(card);
+
+    /* Ícones por serviço */
+    var iconMap = {
+      'corte': '✂️', 'alisamento': '🧴', 'botox': '💎', 'escova': '💇‍♀️',
+      'hidratação': '💧', 'luzes': '🌟', 'matização': '🎨', 'mega hair': '💇',
+      'morena': '✨', 'pacote': '📦', 'progressiva': '🔬', 'reconstrução': '🔧',
+      'selagem': '🧴', 'teste': '🧪', 'tintura': '🎨'
+    };
+    function getIcon(svc) {
+      var lower = (svc || '').toLowerCase();
+      for (var key in iconMap) { if (lower.indexOf(key) !== -1) return iconMap[key]; }
+      return '💇';
+    }
+
+    /* --- Resumo --- */
+    var concluidos = ags.filter(function (a) { return a.status === 'concluido'; });
+    var totalGasto = 0;
+    concluidos.forEach(function (a) { if (a.valor_informado) totalGasto += parseFloat(a.valor_informado) || 0; });
+    var frequencia = ags.length;
+    var ultimoAg = ags[0];
+    var mesesDiferentes = {};
+    ags.forEach(function (a) { if (a.data) mesesDiferentes[a.data.substring(0,7)] = true; });
+    var mesesUnicos = Object.keys(mesesDiferentes).length;
+
+    resumoDiv.innerHTML =
+      '<div class="rounded-xl bg-dark-600/60 border border-dark-300/30 p-3 text-center">' +
+        '<p class="text-[10px] uppercase tracking-wider text-gray-500 mb-1">Total Gasto</p>' +
+        '<p class="text-lg font-bold font-numeric ' + (totalGasto > 0 ? 'text-green-400' : 'text-gray-500') + '">' + (totalGasto > 0 ? 'R$ ' + totalGasto.toFixed(2).replace('.',',') : '—') + '</p>' +
+      '</div>' +
+      '<div class="rounded-xl bg-dark-600/60 border border-dark-300/30 p-3 text-center">' +
+        '<p class="text-[10px] uppercase tracking-wider text-gray-500 mb-1">Agendamentos</p>' +
+        '<p class="text-lg font-bold font-numeric text-gold">' + frequencia + '</p>' +
+        '<p class="text-[10px] text-gray-500">em ' + mesesUnicos + ' mes' + (mesesUnicos !== 1 ? 'es' : '') + '</p>' +
+      '</div>' +
+      '<div class="rounded-xl bg-dark-600/60 border border-dark-300/30 p-3 text-center">' +
+        '<p class="text-[10px] uppercase tracking-wider text-gray-500 mb-1">Último Serviço</p>' +
+        '<p class="text-sm font-semibold text-white">' + getIcon(ultimoAg.servico) + ' ' + esc(ultimoAg.servico) + '</p>' +
+        '<p class="text-[10px] text-gray-500">' + fmtBR(ultimoAg.data) + '</p>' +
+      '</div>';
+    resumoDiv.classList.remove('hidden');
+
+    /* --- Agrupar por mês --- */
+    var grupos = {};
+    var ordemMeses = [];
+    ags.forEach(function (a) {
+      if (!a.data) return;
+      var chave = a.data.substring(0, 7); /* YYYY-MM */
+      if (!grupos[chave]) { grupos[chave] = []; ordemMeses.push(chave); }
+      grupos[chave].push(a);
     });
+
+    var nomesMes = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+    ordemMeses.forEach(function (chave) {
+      var partes = chave.split('-');
+      var labelMes = nomesMes[parseInt(partes[1],10)-1] + ' ' + partes[0];
+      var agsMes = grupos[chave];
+
+      /* Cabeçalho do mês */
+      var mesHeader = document.createElement('div');
+      mesHeader.className = 'flex items-center gap-2 pt-2';
+      mesHeader.innerHTML = '<span class="text-xs font-bold text-gold uppercase tracking-wider">' + labelMes + '</span><span class="text-[10px] text-gray-500">(' + agsMes.length + ' agendamento' + (agsMes.length > 1 ? 's' : '') + ')</span><div class="flex-1 h-px bg-dark-300/30"></div>';
+      list.appendChild(mesHeader);
+
+      agsMes.forEach(function (ag) {
+        var card = document.createElement('div');
+        var isConcluido = ag.status === 'concluido';
+        var isPendente = ag.status === 'pendente';
+        var isCancelado = ag.status === 'cancelado';
+        var isConfirmado = ag.status === 'confirmado';
+        var borderClass = isConcluido ? 'border-l-green-500' : isCancelado ? 'border-l-red-500' : isPendente ? 'border-l-amber-500' : 'border-l-blue-500';
+        var statusLabel, statusColor;
+        if (isConcluido) { statusLabel = '✓ Concluído'; statusColor = 'text-green-400 bg-green-500/15'; }
+        else if (isCancelado) { statusLabel = '✕ Cancelado'; statusColor = 'text-red-400 bg-red-500/15'; }
+        else if (isPendente) { statusLabel = '⏳ Pendente'; statusColor = 'text-amber-400 bg-amber-500/15'; }
+        else { statusLabel = '● Confirmado'; statusColor = 'text-blue-400 bg-blue-500/15'; }
+
+        var icon = getIcon(ag.servico);
+        var svc = B ? B.getServicoPorNome(ag.servico) : null;
+        var duracao = svc ? svc.duracao : '';
+        var funcionaria = ag.funcionaria || '';
+        var pagamento = ag.forma_pagamento || '';
+        var valor = ag.valor_informado ? 'R$ ' + parseFloat(ag.valor_informado).toFixed(2).replace('.',',') : '';
+        var nota = ag.nota || '';
+
+        var details = [];
+        if (funcionaria) details.push('👤 ' + esc(funcionaria));
+        if (pagamento) details.push('💳 ' + esc(pagamento));
+        if (duracao) details.push('⏱ ' + duracao);
+        if (valor) details.push('<span class="text-green-400 font-semibold">' + valor + '</span>');
+
+        card.className = 'rounded-xl border-l-4 border border-dark-300/20 bg-dark-700/50 p-3 transition hover:bg-dark-600/50';
+        card.innerHTML =
+          '<div class="flex items-start justify-between gap-3">' +
+            '<div class="flex items-start gap-3 min-w-0">' +
+              '<span class="text-2xl mt-0.5 shrink-0">' + icon + '</span>' +
+              '<div class="min-w-0">' +
+                '<div class="flex items-center gap-2 flex-wrap">' +
+                  '<p class="text-sm font-semibold text-white">' + esc(ag.servico) + '</p>' +
+                  '<span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold ' + statusColor + '">' + statusLabel + '</span>' +
+                '</div>' +
+                '<p class="text-xs text-gray-400 mt-0.5">' + fmtBR(ag.data) + ' às ' + ag.horario + '</p>' +
+                (details.length ? '<p class="text-[11px] text-gray-500 mt-1">' + details.join(' · ') + '</p>' : '') +
+                (nota ? '<p class="text-[11px] text-gray-500 mt-1 italic">📝 ' + esc(nota) + '</p>' : '') +
+              '</div>' +
+            '</div>' +
+          '</div>';
+        card.classList.add(borderClass);
+        list.appendChild(card);
+      });
+    });
+
     modal.classList.remove('hidden');
   }
 
