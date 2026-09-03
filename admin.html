@@ -279,7 +279,7 @@
       <!-- Todos os Agendamentos (todas as datas) -->
       <div class="card-dark p-5">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="font-display text-base font-semibold text-white">Todos os Agendamentos</h3>
+          <h3 class="font-display text-base font-semibold text-white">Próximos Agendamentos</h3>
           <span id="dash-all-count" class="text-xs text-gray-500"></span>
         </div>
         <div id="dash-all-lista" class="space-y-3"></div>
@@ -1594,8 +1594,10 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     });
 
-    /* --- Lista de TODOS os agendamentos (todas as datas) --- */
-    var allAgs = B ? B.getAgendamentos().slice() : [];
+    /* --- Lista de PRÓXIMOS agendamentos (data >= hoje, status pendente/confirmado) --- */
+    var allAgs = B ? B.getAgendamentos().filter(function (a) {
+      return a.data >= h && (a.status === 'pendente' || a.status === 'confirmado');
+    }) : [];
     allAgs.sort(function (a, b) {
       if (a.data === b.data) return a.horario < b.horario ? -1 : 1;
       return a.data < b.data ? -1 : 1;
@@ -1604,7 +1606,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var allCount = document.getElementById('dash-all-count');
     allCount.textContent = allAgs.length + ' agendamento(s)';
     if (!allAgs.length) {
-      allLista.innerHTML = '<p class="text-gray-500 text-sm py-8 text-center">Nenhum agendamento encontrado.</p>';
+      allLista.innerHTML = '<p class="text-gray-500 text-sm py-8 text-center">Nenhum agendamento pendente ou confirmado para hoje ou futuro.</p>';
     } else {
       allLista.innerHTML = '';
       allAgs.forEach(function (ag) {
