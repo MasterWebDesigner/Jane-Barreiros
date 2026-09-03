@@ -217,7 +217,7 @@
             <h1 class="font-display text-2xl font-semibold text-white">Dashboard Operacional</h1>
             <p id="dash-date" class="mt-1 text-sm text-gray-400"></p>
           </div>
-          <span id="dash-pendente-badge" class="hidden items-center gap-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 px-3 py-1 text-[11px] font-bold text-amber-400 badge-pulse">
+          <span id="dash-pendente-badge" class="hidden items-center gap-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 px-3 py-1 text-[11px] font-bold text-amber-400 badge-pulse cursor-pointer hover:bg-amber-500/25 transition-colors">
             <span class="h-2 w-2 rounded-full bg-amber-400 animate-pulse"></span>
             <span id="dash-pendente-count">0</span> pendente(s)
           </span>
@@ -346,6 +346,13 @@
             <button data-origem="todos" class="ag-origem-btn rounded-lg px-3 py-1.5 text-[10px] font-semibold transition-colors bg-gold/15 text-gold">Todos</button>
             <button data-origem="online" class="ag-origem-btn rounded-lg px-3 py-1.5 text-[10px] font-semibold transition-colors text-gray-400 hover:text-blue-400">Online</button>
             <button data-origem="recepcao" class="ag-origem-btn rounded-lg px-3 py-1.5 text-[10px] font-semibold transition-colors text-gray-400 hover:text-gold">Recepção</button>
+          </div>
+          <div class="flex items-center gap-1 rounded-xl bg-dark-700 border border-dark-300/40 p-0.5">
+            <button data-status="todos" class="ag-status-btn rounded-lg px-3 py-1.5 text-[10px] font-semibold transition-colors bg-gold/15 text-gold">Todos</button>
+            <button data-status="pendente" class="ag-status-btn rounded-lg px-3 py-1.5 text-[10px] font-semibold transition-colors text-gray-400 hover:text-amber-400">Pendente</button>
+            <button data-status="confirmado" class="ag-status-btn rounded-lg px-3 py-1.5 text-[10px] font-semibold transition-colors text-gray-400 hover:text-green-400">Confirmado</button>
+            <button data-status="concluido" class="ag-status-btn rounded-lg px-3 py-1.5 text-[10px] font-semibold transition-colors text-gray-400 hover:text-blue-400">Concluído</button>
+            <button data-status="cancelado" class="ag-status-btn rounded-lg px-3 py-1.5 text-[10px] font-semibold transition-colors text-gray-400 hover:text-red-400">Cancelado</button>
           </div>
         </div>
       </div>
@@ -860,6 +867,21 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   if (isLoggedIn()) showApp();
+
+  /* Click no badge pendente → vai para Agendamentos filtrado por pendente */
+  var _dashBadgeClick = document.getElementById('dash-pendente-badge');
+  if (_dashBadgeClick) {
+    _dashBadgeClick.addEventListener('click', function () {
+      agStatusFilter = 'pendente';
+      document.querySelectorAll('.ag-status-btn').forEach(function (b) {
+        var isActive = b.getAttribute('data-status') === 'pendente';
+        b.classList.toggle('bg-gold/15', isActive);
+        b.classList.toggle('text-gold', isActive);
+        b.classList.toggle('text-gray-400', !isActive);
+      });
+      showPage('agendamentos');
+    });
+  }
 
   /* ============================================================
      SIDEBAR NAVIGATION — Event Delegation
@@ -1569,6 +1591,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var agView = 'dia';
   var agProfissional = 'Todos';
   var agOrigem = 'todos';
+  var agStatusFilter = 'todos';
   var _nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   var _nomesMesesShort = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
   var _nomesDiasShort = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
@@ -1876,6 +1899,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (agProfissional !== 'Todos' && a.profissional && a.profissional !== agProfissional) return false;
       if (agOrigem === 'online' && a.origem !== 'online') return false;
       if (agOrigem === 'recepcao' && a.origem !== 'recepcao') return false;
+      if (agStatusFilter !== 'todos' && a.status !== agStatusFilter) return false;
       return true;
     });
     ags.sort(function (a,b) { return a.horario < b.horario ? -1 : 1; });
@@ -1930,10 +1954,13 @@ document.addEventListener('DOMContentLoaded', function () {
     if (agOrigem !== 'todos') {
       ags = ags.filter(function (a) { return a.origem === agOrigem; });
     }
+    if (agStatusFilter !== 'todos') {
+      ags = ags.filter(function (a) { return a.status === agStatusFilter; });
+    }
     ags.sort(function (a,b) { return a.data+a.horario < b.data+b.horario ? -1 : 1; });
 
     if (!ags.length) {
-      timeline.innerHTML = '<p class="text-gray-500 text-sm py-8 text-center">Nenhum agendamento neste mês.</p>';
+      timeline.innerHTML = '<p class="text-gray-500 text-sm py-8 text-center">Nenhum agendamento neste mes.</p>';
       return;
     }
 
@@ -1962,6 +1989,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     if (agOrigem !== 'todos') {
       ags = ags.filter(function (a) { return a.origem === agOrigem; });
+    }
+    if (agStatusFilter !== 'todos') {
+      ags = ags.filter(function (a) { return a.status === agStatusFilter; });
     }
     ags.sort(function (a,b) { return a.data+a.horario > b.data+b.horario ? -1 : 1; });
     ags = ags.slice(0, 50);
@@ -2132,12 +2162,18 @@ document.addEventListener('DOMContentLoaded', function () {
       agDate.setHours(12, 0, 0, 0);
       agProfissional = 'Todos';
       agOrigem = 'todos';
+      agStatusFilter = 'todos';
       var plabel = document.getElementById('ag-prof-label');
       if (plabel) plabel.textContent = 'Todos os Funcionários';
       document.querySelectorAll('.ag-origem-btn').forEach(function (b) {
         b.classList.toggle('bg-gold/15', b.getAttribute('data-origem') === 'todos');
         b.classList.toggle('text-gold', b.getAttribute('data-origem') === 'todos');
         b.classList.toggle('text-gray-400', b.getAttribute('data-origem') !== 'todos');
+      });
+      document.querySelectorAll('.ag-status-btn').forEach(function (b) {
+        b.classList.toggle('bg-gold/15', b.getAttribute('data-status') === 'todos');
+        b.classList.toggle('text-gold', b.getAttribute('data-status') === 'todos');
+        b.classList.toggle('text-gray-400', b.getAttribute('data-status') !== 'todos');
       });
       showPage('agendamentos');
       return;
@@ -2148,6 +2184,24 @@ document.addEventListener('DOMContentLoaded', function () {
       agOrigem = ob.getAttribute('data-origem');
       document.querySelectorAll('.ag-origem-btn').forEach(function (b) {
         var isActive = b.getAttribute('data-origem') === agOrigem;
+        b.classList.toggle('bg-gold/15', isActive);
+        b.classList.toggle('text-gold', isActive);
+        if (!isActive) {
+          b.classList.remove('text-gold');
+          b.classList.add('text-gray-400');
+        } else {
+          b.classList.remove('text-gray-400');
+        }
+      });
+      renderAgendamentos();
+      return;
+    }
+    /* Status filter */
+    if (t.closest('.ag-status-btn')) {
+      var sb = t.closest('.ag-status-btn');
+      agStatusFilter = sb.getAttribute('data-status');
+      document.querySelectorAll('.ag-status-btn').forEach(function (b) {
+        var isActive = b.getAttribute('data-status') === agStatusFilter;
         b.classList.toggle('bg-gold/15', isActive);
         b.classList.toggle('text-gold', isActive);
         if (!isActive) {
