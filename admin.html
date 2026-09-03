@@ -1478,7 +1478,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function servicoPreco(nome, agValorInformado) {
-    if (agValorInformado && agValorInformado > 0) return agValorInformado;
+    if (agValorInformado && agValorInformado > 0) return parseFloat(agValorInformado) || 0;
     var servicos = B ? B.getServicos() : [];
     var s = servicos.find(function (x) { return x.nome === nome; });
     if (!s || !s.preco) return 0;
@@ -3298,7 +3298,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var totalCancelados = ags.filter(function (a) { return a.status === 'cancelado'; }).length;
     var faturamento = 0;
     ags.forEach(function (a) {
-      if (a.status === 'concluido' && a.valor_informado) faturamento += parseFloat(a.valor_informado) || 0;
+      if (a.status === 'concluido') faturamento += servicoPreco(a.servico, a.valor_informado) || 0;
     });
     var ticketMedio = totalConcluidos > 0 ? faturamento / totalConcluidos : 0;
     /* Serviço mais popular */
@@ -3377,7 +3377,7 @@ document.addEventListener('DOMContentLoaded', function () {
       /* Receita do mês */
       var receitaMes = 0;
       agsMes.forEach(function (a) {
-        if (a.status === 'concluido' && a.valor_informado) receitaMes += parseFloat(a.valor_informado) || 0;
+        if (a.status === 'concluido') receitaMes += servicoPreco(a.servico, a.valor_informado) || 0;
       });
 
       /* Header do mês */
@@ -3647,7 +3647,7 @@ document.addEventListener('DOMContentLoaded', function () {
     /* --- Resumo --- */
     var concluidos = ags.filter(function (a) { return a.status === 'concluido'; });
     var totalGasto = 0;
-    concluidos.forEach(function (a) { if (a.valor_informado) totalGasto += parseFloat(a.valor_informado) || 0; });
+    concluidos.forEach(function (a) { totalGasto += servicoPreco(a.servico, a.valor_informado) || 0; });
     var frequencia = ags.length;
     var ultimoAg = ags[0];
     var mesesDiferentes = {};
@@ -3712,7 +3712,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var duracao = svc ? svc.duracao : '';
         var funcionaria = ag.funcionaria || '';
         var pagamento = ag.forma_pagamento || '';
-        var valor = ag.valor_informado ? 'R$ ' + parseFloat(ag.valor_informado).toFixed(2).replace('.',',') : '';
+        var valor = servicoPreco(ag.servico, ag.valor_informado) > 0 ? 'R$ ' + servicoPreco(ag.servico, ag.valor_informado).toFixed(2).replace('.',',') : '';
         var nota = ag.nota || '';
 
         var details = [];
@@ -3965,7 +3965,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     renderFatPagamento(concluidos, servicoPreco, selMesStr, selAnoStr);
     renderFatTopServicos(concluidos);
-    renderFatTabela(ags, servicoPreco);
+    renderFatTabela(ags, servicoPreco, selMesStr);
 
     document.querySelectorAll('.fat-pag-tab').forEach(function (btn) {
       btn.onclick = function () {
@@ -4039,10 +4039,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  function renderFatTabela(ags, servicoPreco) {
+  function renderFatTabela(ags, servicoPreco, selMesStr) {
     var tbody = document.getElementById('fat-tbody');
     var vazio = document.getElementById('fat-vazio');
-    var recentes = ags.filter(function (a) { return a.status !== 'cancelado'; }).slice().sort(function (a, b) {
+    var recentes = ags.filter(function (a) { return a.status !== 'cancelado' && a.data && a.data.slice(0, 7) === selMesStr; }).slice().sort(function (a, b) {
       if (b.data === a.data) return (b.horario || '').localeCompare(a.horario || '');
       return (b.data || '').localeCompare(a.data || '');
     }).slice(0, 20);
