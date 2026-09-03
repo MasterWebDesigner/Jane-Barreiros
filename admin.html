@@ -486,7 +486,7 @@
       </div>
 
       <!-- Cards de Faturamento Principal -->
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-6">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-6">
         <div class="card-dark p-5 relative overflow-hidden">
           <div class="absolute top-0 right-0 w-20 h-20 bg-gold/5 rounded-bl-full"></div>
           <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Faturamento Hoje</p>
@@ -499,11 +499,54 @@
           <p id="fat-mes-valor" class="mt-2 font-numeric text-3xl font-bold text-gold">R$ 0</p>
           <p id="fat-mes-count" class="mt-1 text-xs text-gray-500">0 atendimentos concluídos</p>
         </div>
+        <div class="card-dark p-5 relative overflow-hidden border border-blue-500/20">
+          <div class="absolute top-0 right-0 w-20 h-20 bg-blue-500/5 rounded-bl-full"></div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-blue-400">A Receber (Previsto)</p>
+          <p id="fat-previsto-valor" class="mt-2 font-numeric text-3xl font-bold text-blue-400">R$ 0</p>
+          <p id="fat-previsto-count" class="mt-1 text-xs text-gray-500">0 agendamentos pendentes</p>
+        </div>
         <div class="card-dark p-5 relative overflow-hidden">
           <div class="absolute top-0 right-0 w-20 h-20 bg-gold/5 rounded-bl-full"></div>
           <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Faturamento do Ano</p>
           <p id="fat-ano-valor" class="mt-2 font-numeric text-3xl font-bold text-gold">R$ 0</p>
           <p id="fat-ano-count" class="mt-1 text-xs text-gray-500">0 atendimentos concluídos</p>
+        </div>
+      </div>
+
+      <!-- Ticket Médio + Divisão de Receita -->
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 mb-6">
+        <div class="card-dark p-5">
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Ticket Médio do Mês</p>
+          <p id="fat-ticket-valor" class="font-numeric text-3xl font-bold text-white">R$ 0</p>
+          <p id="fat-ticket-desc" class="mt-1 text-xs text-gray-500">Faturamento ÷ Atendimentos Concluídos</p>
+        </div>
+        <div class="card-dark p-5">
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">Divisão de Receita (Mês)</p>
+          <div class="flex items-center gap-3 mb-2">
+            <div class="flex-1">
+              <div class="flex justify-between mb-1">
+                <span class="text-xs text-gold font-semibold">Serviços</span>
+                <span id="fat-rec-serv-pct" class="font-numeric text-xs text-gray-400">0%</span>
+              </div>
+              <div class="h-3 rounded-full bg-dark-600 overflow-hidden">
+                <div id="fat-rec-serv-bar" class="h-full rounded-full bg-gradient-to-r from-gold/80 to-gold transition-all" style="width:100%"></div>
+              </div>
+              <p id="fat-rec-serv-valor" class="font-numeric text-[10px] text-gray-500 mt-1">R$ 0,00</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="flex-1">
+              <div class="flex justify-between mb-1">
+                <span class="text-xs text-purple-400 font-semibold">Produtos (Revenda)</span>
+                <span id="fat-rec-prod-pct" class="font-numeric text-xs text-gray-400">0%</span>
+              </div>
+              <div class="h-3 rounded-full bg-dark-600 overflow-hidden">
+                <div id="fat-rec-prod-bar" class="h-full rounded-full bg-gradient-to-r from-purple-500/80 to-purple-400 transition-all" style="width:0%"></div>
+              </div>
+              <p id="fat-rec-prod-valor" class="font-numeric text-[10px] text-gray-500 mt-1">R$ 0,00</p>
+            </div>
+          </div>
+          <p class="mt-2 text-[10px] text-gray-500 text-center">Receita estimada: Serviços executados vs Produtos de revenda em estoque</p>
         </div>
       </div>
 
@@ -535,8 +578,8 @@
         </div>
       </div>
 
-      <!-- Faturamento por Forma de Pagamento + Top Serviços -->
-      <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 mb-6">
+      <!-- Faturamento por Forma de Pagamento + Top Serviços + Top Clientes -->
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 mb-6">
 
         <!-- Forma de Pagamento -->
         <div class="card-dark p-5">
@@ -584,6 +627,15 @@
             </select>
           </div>
           <div id="fat-top-servicos" class="space-y-3"></div>
+        </div>
+
+        <!-- Top Clientes (LTV) -->
+        <div class="card-dark p-5">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-display text-base font-semibold text-white">Top 5 Clientes</h3>
+            <span class="text-[10px] font-semibold text-gray-500 uppercase">LTV</span>
+          </div>
+          <div id="fat-top-clientes" class="space-y-3"></div>
         </div>
       </div>
 
@@ -3989,8 +4041,37 @@ document.addEventListener('DOMContentLoaded', function () {
     var periodSub = mesesFull[selMes] + ' ' + selAno;
     document.querySelectorAll('#page-faturamento .fat-period-sub').forEach(function (el) { el.textContent = periodSub; });
 
+    /* Faturamento Previsto (A Receber) — pendente + confirmado do mês */
+    var previstosMes = agendados.filter(isMesSel);
+    var fatPrevisto = previstosMes.reduce(function (s, a) { return s + servicoPreco(a.servico, a.valor_informado); }, 0);
+    document.getElementById('fat-previsto-valor').textContent = 'R$ ' + fatPrevisto.toFixed(2).replace('.', ',');
+    document.getElementById('fat-previsto-count').textContent = previstosMes.length + ' agendamento' + (previstosMes.length !== 1 ? 's' : '') + ' pendente' + (previstosMes.length !== 1 ? 's' : '');
+
+    /* Ticket Médio do Mês */
+    var ticketMedio = cntMes > 0 ? fatMes / cntMes : 0;
+    document.getElementById('fat-ticket-valor').textContent = ticketMedio > 0 ? 'R$ ' + ticketMedio.toFixed(2).replace('.', ',') : '—';
+    document.getElementById('fat-ticket-desc').textContent = cntMes > 0 ? 'R$ ' + fatMes.toFixed(2).replace('.',',') + ' ÷ ' + cntMes + ' atendimento' + (cntMes !== 1 ? 's' : '') : 'Nenhum atendimento concluído no mês';
+
+    /* Divisão de Receita: Serviços vs Produtos (Revenda) */
+    var recServicos = fatMes;
+    var estoque = B ? B.getEstoque() : [];
+    var recProdutos = 0;
+    estoque.forEach(function (p) {
+      if (p.categoria === 'Revenda' && p.precoVenda > 0) recProdutos += (p.quantidade || 0) * p.precoVenda;
+    });
+    var recTotal = recServicos + recProdutos;
+    var pctServ = recTotal > 0 ? Math.round(recServicos / recTotal * 100) : 100;
+    var pctProd = recTotal > 0 ? 100 - pctServ : 0;
+    document.getElementById('fat-rec-serv-pct').textContent = pctServ + '%';
+    document.getElementById('fat-rec-serv-bar').style.width = pctServ + '%';
+    document.getElementById('fat-rec-serv-valor').textContent = 'R$ ' + recServicos.toFixed(2).replace('.', ',');
+    document.getElementById('fat-rec-prod-pct').textContent = pctProd + '%';
+    document.getElementById('fat-rec-prod-bar').style.width = pctProd + '%';
+    document.getElementById('fat-rec-prod-valor').textContent = 'R$ ' + recProdutos.toFixed(2).replace('.', ',');
+
     renderFatPagamento(concluidos, servicoPreco, selMesStr, selAnoStr);
     renderFatTopServicos(concluidos);
+    renderFatTopClientes(ags, servicoPreco, selMesStr);
     renderFatTabela(ags, servicoPreco, selMesStr);
 
     document.querySelectorAll('.fat-pag-tab').forEach(function (btn) {
@@ -4060,6 +4141,40 @@ document.addEventListener('DOMContentLoaded', function () {
         '<div class="flex-1">' +
           '<div class="flex justify-between mb-1"><span class="text-xs font-medium text-white">' + esc(item.nome) + '</span><span class="font-numeric text-[10px] text-gray-400">' + item.qtd + 'x</span></div>' +
           '<div class="h-2 rounded-full bg-dark-600"><div class="h-full rounded-full bg-gradient-to-r from-gold/80 to-gold transition-all" style="width:' + pct + '%"></div></div>' +
+        '</div>';
+      container.appendChild(row);
+    });
+  }
+
+  function renderFatTopClientes(ags, servicoPreco, selMesStr) {
+    var concluidosMes = ags.filter(function (a) { return a.status === 'concluido' && a.data && a.data.slice(0, 7) === selMesStr; });
+    var clientes = {};
+    concluidosMes.forEach(function (a) {
+      var nome = a.cliente_nome || 'Cliente';
+      var tel = (a.cliente_whatsapp || '').replace(/\D/g, '');
+      var key = tel || nome;
+      if (!clientes[key]) clientes[key] = { nome: nome, whatsapp: tel, total: 0, qtd: 0 };
+      clientes[key].total += servicoPreco(a.servico, a.valor_informado);
+      clientes[key].qtd++;
+    });
+    var arr = Object.keys(clientes).map(function (k) { return clientes[k]; });
+    arr.sort(function (a, b) { return b.total - a.total; });
+    arr = arr.slice(0, 5);
+    var container = document.getElementById('fat-top-clientes');
+    container.innerHTML = '';
+    if (!arr.length) { container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">Nenhum cliente no mês.</p>'; return; }
+    var max = arr[0].total;
+    arr.forEach(function (c, i) {
+      var pct = max > 0 ? (c.total / max * 100) : 0;
+      var medalha = i === 0 ? 'text-yellow-400' : i === 1 ? 'text-gray-300' : i === 2 ? 'text-amber-600' : 'text-gray-500';
+      var tag = c.qtd >= 5 ? '<span class="ml-1.5 rounded-full bg-purple-500/15 px-1.5 py-0.5 text-[8px] font-bold text-purple-400">VIP</span>' : c.qtd >= 2 ? '<span class="ml-1.5 rounded-full bg-blue-500/15 px-1.5 py-0.5 text-[8px] font-bold text-blue-400">Recorrente</span>' : '';
+      var row = document.createElement('div');
+      row.className = 'flex items-center gap-3';
+      row.innerHTML =
+        '<span class="font-numeric text-sm font-bold ' + medalha + ' w-6 text-right">#' + (i + 1) + '</span>' +
+        '<div class="flex-1">' +
+          '<div class="flex justify-between mb-1"><span class="text-xs font-medium text-white truncate">' + esc(c.nome) + tag + '</span><span class="font-numeric text-[10px] text-green-400 font-semibold">R$ ' + c.total.toFixed(2).replace('.',',') + '</span></div>' +
+          '<div class="h-2 rounded-full bg-dark-600"><div class="h-full rounded-full bg-gradient-to-r from-green-500/80 to-green-400 transition-all" style="width:' + pct + '%"></div></div>' +
         '</div>';
       container.appendChild(row);
     });
