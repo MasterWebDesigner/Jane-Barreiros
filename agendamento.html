@@ -710,23 +710,13 @@
 
       /* ---------- Inicializar Booking (Firebase + fallback) ---------- */
       var B = window.Booking;
-      if (B) {
-        if (B.initFirebase) B.initFirebase();
-        if (B.loadAllData) {
-          B.loadAllData(function () {
-            console.log('[Booking] Dados carregados do Firebase.');
-            // Garantir que servicos esteja disponível
-            if (!window.servicos && B.getServicos) {
-              window.servicos = B.getServicos();
-            }
-          });
-        }
-        /* Fallback: se Booking não carregou, usa servicos inline */
-        if (!window.servicos) {
-          window.servicos = FALLBACK_SERVICOS;
-        }
-      } else {
-        window.servicos = FALLBACK_SERVICOS;
+      if (B && B.initFirebase) B.initFirebase();
+      var servicos = [];
+
+      /* --- XSS Protection --- */
+      function esc(t) {
+        if (t === null || t === undefined) return '';
+        return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
       }
 
       /* ---------- Menu mobile (hambúrguer) ---------- */
@@ -754,7 +744,7 @@
       });
 
       /* ============================================================
-         CATÁLOGO DE SERVIÇOS (usa Booking API do app-booking.js)
+         CATÁLOGO DE SERVIÇOS
          ============================================================ */
       var FALLBACK_SERVICOS = [
         { ordem:1,  nome:'Alisamento orgânico', preco:'A partir de R$ 200,00', duracao:'2h 55min', duracao_min:175, nota:'Os valores são a partir, consulte nossos preços antes de agendar.' },
@@ -782,26 +772,16 @@
         { ordem:23, nome:'Tintura com Tinta do Salão Sem Escova', preco:'A partir de R$ 80,00', duracao:'40min', duracao_min:40, nota:'Valores a partir.' }
       ];
 
-      var B = window.Booking;
-
-      /* --- XSS Protection --- */
-      function esc(t) {
-        if (t === null || t === undefined) return '';
-        return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-      }
-      if (B && B.initFirebase) B.initFirebase();
+      /* --- loadAllData: quando Firebase responde, atualiza catálogo --- */
       if (B && B.loadAllData) B.loadAllData(function () {
         console.log('[Agendamento] Dados carregados do Firebase.');
-        /* Atualizar catálogo com dados do Firebase (mais recentes que site.json) */
         var fbServicos = B.getServicos();
         if (fbServicos && fbServicos.length) {
           servicos = fbServicos;
-          B.setServicos(fbServicos);
           renderCatalogo(servicos);
           renderCatalogoLista(servicos);
         }
       });
-      var servicos;
 
       /* ---------- Fallback helpers quando Booking não carrega ---------- */
       var FB = {
@@ -1100,27 +1080,32 @@
       viewGridBtn.addEventListener('click', function () { setView('grid'); });
       viewListBtn.addEventListener('click', function () { setView('list'); });
 
-      /* ---------- Buscar catálogo: localStorage primeiro, site.json como fallback ---------- */
+      /* ---------- Carregar catálogo: Firebase > localStorage > site.json ---------- */
+      /* 1) Renderiza imediatamente do localStorage (offline rápido) */
       var servicosLS = [];
       try { servicosLS = JSON.parse(localStorage.getItem('jane-booking-servicos') || '[]'); } catch(e) {}
       if (servicosLS.length) {
         servicos = servicosLS;
-        if (B) B.setServicos(servicos);
         renderCatalogo(servicos);
         renderCatalogoLista(servicos);
       }
-      fetch('content/site.json?v=' + Date.now())
-        .then(function (r) { if (!r.ok) throw 0; return r.json(); })
-        .then(function (d) {
-          var l = (d.servicos || []).slice().sort(function (a, b) { return (a.ordem || 0) - (b.ordem || 0); });
-          if (l.length && !servicosLS.length) {
-            servicos = l;
-            if (B) B.setServicos(l);
-            renderCatalogo(l);
-            renderCatalogoLista(l);
-          }
-        })
-        .catch(function () {});
+      /* 2) Busca site.json só como seed inicial (primeira visita sem nada) */
+      if (!servicosLS.length) {
+        fetch('content/site.json?v=' + Date.now())
+          .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+          .then(function (d) {
+            var l = (d.servicos || []).slice().sort(function (a, b) { return (a.ordem || 0) - (b.ordem || 0); });
+            if (l.length && !servicos.length) {
+              servicos = l;
+              if (B) B.setServicos(l);
+              renderCatalogo(l);
+              renderCatalogoLista(l);
+            }
+          })
+          .catch(function () {});
+      }
+      /* 3) Firebase loadAllData (async) já configurado acima — quando responder,
+            sobrescreve com dados reais do Admin. */
 
       /* ============================================================
          MODAL DE AGENDAMENTO — Passo-a-passo

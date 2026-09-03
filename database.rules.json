@@ -3,7 +3,7 @@
     "jane-booking": {
       "servicos": {
         ".read": true,
-        ".write": false
+        ".write": true
       },
       "agendamentos": {
         ".read": true,
