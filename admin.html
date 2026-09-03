@@ -1603,13 +1603,11 @@ document.addEventListener('DOMContentLoaded', function () {
               var mVal = svcInfo.preco.replace(/\./g, '').match(/[\d,]+/);
               if (mVal) valorCatalogo = parseFloat(mVal[0].replace(',', '.')) || 0;
             }
-            if (valorCatalogo === 0) {
-              var inputValor = prompt('O servico "' + agDados.servico + '" esta com valor R$ 0,00.\n\nInforme o valor cobrado (use ponto para decimal, ex: 150.00):\nDeixe vazio para R$ 0,00.', '');
-              if (inputValor === null) return;
-              var valorInformado = parseFloat(inputValor) || 0;
-              if (svcInfo && valorInformado > 0) {
-                if (B) { B.setValorInformado(agId, valorInformado); }
-              }
+            var inputValor = prompt('Informe o valor cobrado pelo servico "' + agDados.servico + '":\n(Valor do catalogo: R$ ' + valorCatalogo.toFixed(2).replace('.',',') + ')\n\nDeixe vazio para R$ 0,00.', valorCatalogo > 0 ? valorCatalogo.toFixed(2).replace('.',',') : '');
+            if (inputValor === null) return;
+            var valorInformado = parseFloat(inputValor.replace(',','.')) || 0;
+            if (svcInfo && valorInformado > 0) {
+              if (B) { B.setValorInformado(agId, valorInformado); }
             }
           }
         }
@@ -1701,12 +1699,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 var mVal = svcInfo.preco.replace(/\./g, '').match(/[\d,]+/);
                 if (mVal) valorCatalogo = parseFloat(mVal[0].replace(',', '.')) || 0;
               }
-              if (valorCatalogo === 0) {
-                var inputValor = prompt('O servico "' + agDados.servico + '" esta com valor R$ 0,00.\n\nInforme o valor cobrado:\nDeixe vazio para R$ 0,00.', '');
-                if (inputValor === null) return;
-                var vi = parseFloat(inputValor) || 0;
-                if (svcInfo && vi > 0) { if (B) B.setValorInformado(agId, vi); }
-              }
+              var inputValor = prompt('Informe o valor cobrado pelo servico "' + agDados.servico + '":\n(Valor do catalogo: R$ ' + valorCatalogo.toFixed(2).replace('.',',') + ')\n\nDeixe vazio para R$ 0,00.', valorCatalogo > 0 ? valorCatalogo.toFixed(2).replace('.',',') : '');
+              if (inputValor === null) return;
+              var vi = parseFloat(inputValor.replace(',','.')) || 0;
+              if (svcInfo && vi > 0) { if (B) B.setValorInformado(agId, vi); }
             }
           }
           if (B) B.setAgendamentoStatus(agId, newStatus);
@@ -2419,13 +2415,11 @@ document.addEventListener('DOMContentLoaded', function () {
               var mVal = svcInfo.preco.replace(/\./g, '').match(/[\d,]+/);
               if (mVal) valorCatalogo = parseFloat(mVal[0].replace(',', '.')) || 0;
             }
-            if (valorCatalogo === 0) {
-              var inputValor = prompt('O servico "' + agDados.servico + '" esta com valor R$ 0,00.\n\nInforme o valor cobrado (use ponto para decimal, ex: 150.00):\nDeixe vazio para R$ 0,00.', '');
-              if (inputValor === null) return;
-              var valorInformado = parseFloat(inputValor) || 0;
-              if (svcInfo && valorInformado > 0) {
-                if (B) B.setValorInformado(agId, valorInformado);
-              }
+            var inputValor = prompt('Informe o valor cobrado pelo servico "' + agDados.servico + '":\n(Valor do catalogo: R$ ' + valorCatalogo.toFixed(2).replace('.',',') + ')\n\nDeixe vazio para R$ 0,00.', valorCatalogo > 0 ? valorCatalogo.toFixed(2).replace('.',',') : '');
+            if (inputValor === null) return;
+            var valorInformado = parseFloat(inputValor.replace(',','.')) || 0;
+            if (svcInfo && valorInformado > 0) {
+              if (B) B.setValorInformado(agId, valorInformado);
             }
           }
         }
@@ -3403,7 +3397,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var statusLabel = isConcluido ? '✓ Concluído' : '✕ Cancelado';
         var statusColor = isConcluido ? 'text-green-400 bg-green-500/15' : 'text-red-400 bg-red-500/15';
         var icon = getIcon(ag.servico);
-        var valor = ag.valor_informado ? parseFloat(ag.valor_informado) : 0;
+        var valor = servicoPreco(ag.servico, ag.valor_informado);
         var telLimpo = (ag.cliente_whatsapp || '').replace(/\D/g, '');
         var telLink = telLimpo.length >= 10 ? 'https://wa.me/55' + telLimpo : '';
 
@@ -3457,7 +3451,7 @@ document.addEventListener('DOMContentLoaded', function () {
         '"' + (a.servico || '').replace(/"/g, '""') + '"',
         '"' + (a.funcionaria || '').replace(/"/g, '""') + '"',
         a.status || '',
-        a.valor_informado || '0',
+        servicoPreco(a.servico, a.valor_informado) || '0',
         a.forma_pagamento || ''
       ].join(',') + '\n';
     });
