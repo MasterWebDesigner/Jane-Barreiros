@@ -196,6 +196,10 @@
         <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         Histórico
       </button>
+      <button data-page="retencao" class="sidebar-link flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-300">
+        <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Retenção
+      </button>
       <div class="border-t border-dark-300/50 my-3"></div>
       <button data-page="config" class="sidebar-link flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-300">
         <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.32 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
@@ -667,6 +671,42 @@
       </div>
     </div>
 
+    <!-- ==================== RETENÇÃO ==================== -->
+    <section id="page-retencao" class="admin-page p-6 lg:p-8 hidden">
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="font-display text-2xl font-semibold text-white">Retenção & Clientes</h1>
+        <div class="flex items-center gap-2">
+          <select id="ret-filtro" class="rounded-lg border border-dark-300 bg-dark-700 px-3 py-2 text-sm text-gray-300">
+            <option value="todos">Todos</option>
+            <option value="atrasado">Atrasados</option>
+            <option value="proximo">Próximos de vencer</option>
+            <option value="em_dia">Em dia</option>
+          </select>
+        </div>
+      </div>
+      <!-- KPIs -->
+      <div id="ret-kpis" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6"></div>
+      <!-- Tabela -->
+      <div class="overflow-x-auto rounded-xl border border-dark-300/30 bg-dark-700/40">
+        <table class="w-full text-left text-sm">
+          <thead>
+            <tr class="border-b border-dark-300/30 text-[11px] uppercase tracking-wider text-gray-500">
+              <th class="px-4 py-3">Cliente</th>
+              <th class="px-4 py-3">WhatsApp</th>
+              <th class="px-4 py-3">Último Serviço</th>
+              <th class="px-4 py-3 text-center">Data do Atendimento</th>
+              <th class="px-4 py-3 text-center">Dias Sem Vir</th>
+              <th class="px-4 py-3 text-center">Previsto Retorno</th>
+              <th class="px-4 py-3 text-center">Status</th>
+              <th class="px-4 py-3 text-center">Ação</th>
+            </tr>
+          </thead>
+          <tbody id="ret-tbody" class="divide-y divide-dark-300/20"></tbody>
+        </table>
+        <div id="ret-vazio" class="hidden p-8 text-center text-gray-500">Nenhum cliente encontrado.</div>
+      </div>
+    </section>
+
     <!-- ==================== CONFIGURAÇÕES ==================== -->
     <section id="page-config" class="admin-page p-6 lg:p-8 hidden">
       <h1 class="font-display text-2xl font-semibold text-white mb-6">Configurações</h1>
@@ -813,13 +853,18 @@
       </div>
       <div class="grid grid-cols-2 gap-4">
         <div>
+          <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Dias para Retorno Sugerido</label>
+          <input id="svc-dias-retorno" type="number" placeholder="Ex.: 30" min="1">
+          <p class="mt-1 text-[10px] text-gray-500">Dias sugeridos para a cliente retornar após este serviço.</p>
+        </div>
+        <div>
           <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Preço</label>
           <input id="svc-preco" type="text" placeholder="Ex.: A partir de R$ 150,00">
         </div>
-        <div>
-          <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Preço Mínimo</label>
-          <input id="svc-preco-min" type="text" placeholder="Ex.: R$ 100,00 (opcional)">
-        </div>
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Preço Mínimo</label>
+        <input id="svc-preco-min" type="text" placeholder="Ex.: R$ 100,00 (opcional)">
       </div>
       <div>
         <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Observação / Nota</label>
@@ -837,7 +882,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- app-booking.js -->
-<script src="app-booking.js?v=1.4"></script>
+<script src="app-booking.js?v=1.5"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -959,6 +1004,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (pageName === 'servicos') renderServicos();
     if (pageName === 'clientes') renderClientes();
     if (pageName === 'historico') renderHistorico();
+    if (pageName === 'retencao') renderRetencao();
     if (pageName === 'faturamento') renderFaturamento();
     if (pageName === 'config') renderConfig();
   }
@@ -1009,6 +1055,7 @@ document.addEventListener('DOMContentLoaded', function () {
         try { if (document.getElementById('page-agendamentos').style.display !== 'none') renderAgendamentos(); } catch (e) {}
         try { if (document.getElementById('page-clientes').style.display !== 'none') renderClientes(); } catch (e) {}
         try { if (document.getElementById('page-historico').style.display !== 'none') renderHistorico(); } catch (e) {}
+        try { if (document.getElementById('page-retencao').style.display !== 'none') renderRetencao(); } catch (e) {}
         try { if (document.getElementById('page-faturamento').style.display !== 'none') renderFaturamento(); } catch (e) {}
       });
     } else {
@@ -1021,6 +1068,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('[Admin] Agendamentos atualizados (Firebase).');
         try { renderDashboard(); } catch (e) {}
         try { if (document.getElementById('page-agendamentos').style.display !== 'none') renderAgendamentos(); } catch (e) {}
+        try { if (document.getElementById('page-retencao').style.display !== 'none') renderRetencao(); } catch (e) {}
         try { if (document.getElementById('page-faturamento').style.display !== 'none') renderFaturamento(); } catch (e) {}
       });
     }
@@ -2379,6 +2427,7 @@ document.addEventListener('DOMContentLoaded', function () {
           '<div class="flex items-center gap-4 text-xs text-gray-400">' +
             '<span>' + (svc.categoria || 'Geral') + '</span>' +
             '<span>' + (svc.duracao || '—') + '</span>' +
+            (svc.diasRetorno ? '<span class="text-purple-400">🔄 ' + svc.diasRetorno + ' dias</span>' : '') +
             '<span class="text-gold font-semibold">' + precoFmt + '</span>' +
           '</div>' +
           (svc.nota ? '<p class="mt-1 text-xs text-gray-500 truncate">' + esc(svc.nota) + '</p>' : '') +
@@ -2459,6 +2508,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('svc-status').value = svc ? (svc.status || 'ativo') : 'ativo';
     document.getElementById('svc-duracao').value = svc ? svc.duracao : '';
     document.getElementById('svc-duracao-min').value = svc ? (svc.duracao_min || '') : '';
+    document.getElementById('svc-dias-retorno').value = svc ? (svc.diasRetorno || '') : '';
     document.getElementById('svc-preco').value = svc ? svc.preco : '';
     document.getElementById('svc-preco-min').value = svc ? (svc.preco_min || '') : '';
     document.getElementById('svc-nota').value = svc ? (svc.nota || '') : '';
@@ -2488,6 +2538,7 @@ document.addEventListener('DOMContentLoaded', function () {
       status: document.getElementById('svc-status').value,
       duracao: document.getElementById('svc-duracao').value.trim(),
       duracao_min: parseInt(document.getElementById('svc-duracao-min').value) || 60,
+      diasRetorno: parseInt(document.getElementById('svc-dias-retorno').value) || 0,
       preco: document.getElementById('svc-preco').value.trim(),
       preco_min: document.getElementById('svc-preco-min').value.trim(),
       nota: document.getElementById('svc-nota').value.trim()
@@ -2659,6 +2710,155 @@ document.addEventListener('DOMContentLoaded', function () {
 
   document.getElementById('hist-busca').addEventListener('input', function () { renderHistorico(this.value); });
   document.getElementById('hist-periodo').addEventListener('change', function () { renderHistorico(); });
+
+  /* ============================================================
+     RETENÇÃO & CLIENTES
+     ============================================================ */
+  function renderRetencao(filtroStatus) {
+    var tbody = document.getElementById('ret-tbody');
+    var vazio = document.getElementById('ret-vazio');
+    var kpisDiv = document.getElementById('ret-kpis');
+    tbody.innerHTML = '';
+    if (!B) return;
+    var ags = B.getAgendamentos();
+    var svcs = B.getServicos();
+
+    /* Mapa de retorno por serviço */
+    var retornoMap = {};
+    svcs.forEach(function (s) { if (s.diasRetorno) retornoMap[s.nome] = s.diasRetorno; });
+
+    /* Para cada cliente, pegar o ÚLTIMO agendamento concluído */
+    var clientesMap = {};
+    ags.forEach(function (a) {
+      if (a.status !== 'concluido' || !a.cliente_whatsapp) return;
+      var key = a.cliente_whatsapp.replace(/\D/g, '');
+      if (!clientesMap[key]) { clientesMap[key] = a; return }
+      /* Mais recente */
+      var atual = clientesMap[key];
+      if ((a.data + a.horario) > (atual.data + atual.horario)) clientesMap[key] = a;
+    });
+
+    var hoje = new Date();
+    hoje.setHours(0,0,0,0);
+    var lista = [];
+
+    Object.keys(clientesMap).forEach(function (key) {
+      var ag = clientesMap[key];
+      var diasRetornoSugerido = retornoMap[ag.servico] || 0;
+      var dataAg = new Date(ag.data + 'T00:00:00');
+      var diffMs = hoje - dataAg;
+      var diasSemVoltar = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      var dataPrevista = new Date(dataAg);
+      dataPrevista.setDate(dataPrevista.getDate() + diasRetornoSugerido);
+      var diasAtePrevisto = Math.ceil((dataPrevista - hoje) / (1000 * 60 * 60 * 24));
+
+      var status, statusLabel, statusColor, borderClass;
+      if (!diasRetornoSugerido) {
+        status = 'sem_info';
+        statusLabel = 'Sem prazo';
+        statusColor = 'text-gray-400 bg-gray-500/15';
+        borderClass = 'border-l-gray-500';
+      } else if (diasAtePrevisto > 5) {
+        status = 'em_dia';
+        statusLabel = 'Em dia';
+        statusColor = 'text-green-400 bg-green-500/15';
+        borderClass = 'border-l-green-500';
+      } else if (diasAtePrevisto >= 0) {
+        status = 'proximo';
+        statusLabel = 'Vence em ' + diasAtePrevisto + ' dia' + (diasAtePrevisto !== 1 ? 's' : '');
+        statusColor = 'text-amber-400 bg-amber-500/15';
+        borderClass = 'border-l-amber-500';
+      } else {
+        status = 'atrasado';
+        statusLabel = 'Atrasado ' + Math.abs(diasAtePrevisto) + ' dia' + (Math.abs(diasAtePrevisto) !== 1 ? 's' : '');
+        statusColor = 'text-red-400 bg-red-500/15';
+        borderClass = 'border-l-red-500';
+      }
+
+      /* Filtro */
+      if (filtroStatus && filtroStatus !== 'todos' && status !== filtroStatus && !(filtroStatus === 'proximo' && status === 'proximo')) return;
+
+      var whatsappClean = ag.cliente_whatsapp.replace(/\D/g, '');
+      var nome = ag.cliente_nome || 'Cliente';
+
+      lista.push({
+        nome: nome,
+        whatsapp: ag.cliente_whatsapp,
+        whatsappClean: whatsappClean,
+        servico: ag.servico,
+        dataAg: dataAg,
+        dataStr: ag.data,
+        diasSemVoltar: diasSemVoltar,
+        diasRetornoSugerido: diasRetornoSugerido,
+        dataPrevista: dataPrevista,
+        status: status,
+        statusLabel: statusLabel,
+        statusColor: statusColor,
+        borderClass: borderClass
+      });
+    });
+
+    /* Ordenar: atrasados primeiro, depois próximos, depois em dia */
+    var ordemStatus = { atrasado: 0, proximo: 1, em_dia: 2, sem_info: 3 };
+    lista.sort(function (a, b) { return (ordemStatus[a.status] || 9) - (ordemStatus[b.status] || 9); });
+
+    /* KPIs */
+    var total = lista.length;
+    var atrasados = lista.filter(function (c) { return c.status === 'atrasado'; }).length;
+    var proximos = lista.filter(function (c) { return c.status === 'proximo'; }).length;
+    var emDia = lista.filter(function (c) { return c.status === 'em_dia'; }).length;
+
+    kpisDiv.innerHTML =
+      '<div class="rounded-xl bg-dark-600/60 border border-dark-300/30 p-4 text-center">' +
+        '<p class="text-[10px] uppercase tracking-wider text-gray-500 mb-1">Total Clientes</p>' +
+        '<p class="text-2xl font-bold font-numeric text-white">' + total + '</p>' +
+      '</div>' +
+      '<div class="rounded-xl bg-red-500/10 border border-red-500/20 p-4 text-center">' +
+        '<p class="text-[10px] uppercase tracking-wider text-red-400 mb-1">Atrasados</p>' +
+        '<p class="text-2xl font-bold font-numeric text-red-400">' + atrasados + '</p>' +
+      '</div>' +
+      '<div class="rounded-xl bg-amber-500/10 border border-amber-500/20 p-4 text-center">' +
+        '<p class="text-[10px] uppercase tracking-wider text-amber-400 mb-1">Próximos de Vencer</p>' +
+        '<p class="text-2xl font-bold font-numeric text-amber-400">' + proximos + '</p>' +
+      '</div>' +
+      '<div class="rounded-xl bg-green-500/10 border border-green-500/20 p-4 text-center">' +
+        '<p class="text-[10px] uppercase tracking-wider text-green-400 mb-1">Em Dia</p>' +
+        '<p class="text-2xl font-bold font-numeric text-green-400">' + emDia + '</p>' +
+      '</div>';
+
+    /* Tabela */
+    if (!lista.length) { vazio.classList.remove('hidden'); return; }
+    vazio.classList.add('hidden');
+
+    lista.forEach(function (c) {
+      var tr = document.createElement('tr');
+      tr.className = 'border-b border-dark-300/20 hover:bg-dark-600/30 transition';
+      var telLink = 'https://wa.me/55' + c.whatsappClean;
+      var dataFormatada = c.dataStr.split('-').reverse().join('/');
+      var dataPrevFormatada = c.diasRetornoSugerido ? c.dataPrevista.toISOString().split('-').reverse().join('/') : '—';
+      var msg = encodeURIComponent('Olá, ' + c.nome + '! Tudo bem? Passando para lembrar que já faz ' + c.diasSemVoltar + ' dias desde o seu último ' + c.servico + ' no Studio Jane Barreiros. Vamos garantir o seu horário para esta semana? Agende por aqui: https://jane-barreiros.vercel.app/agendamento.html');
+      var msgLink = telLink + '?text=' + msg;
+
+      tr.innerHTML =
+        '<td class="px-4 py-3 font-medium text-white">' + esc(c.nome) + '</td>' +
+        '<td class="px-4 py-3 text-gray-400">' + esc(c.whatsapp) + '</td>' +
+        '<td class="px-4 py-3"><span class="text-gold font-semibold">' + esc(c.servico) + '</span></td>' +
+        '<td class="px-4 py-3 text-center text-gray-400">' + dataFormatada + '</td>' +
+        '<td class="px-4 py-3 text-center font-numeric font-bold ' + (c.diasSemVoltar > (c.diasRetornoSugerido || 999) ? 'text-red-400' : c.diasSemVoltar > ((c.diasRetornoSugerido || 999) - 5) ? 'text-amber-400' : 'text-green-400') + '">' + c.diasSemVoltar + ' dia' + (c.diasSemVoltar !== 1 ? 's' : '') + '</td>' +
+        '<td class="px-4 py-3 text-center text-gray-400">' + dataPrevFormatada + '</td>' +
+        '<td class="px-4 py-3 text-center"><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold ' + c.statusColor + '">' + c.statusLabel + '</span></td>' +
+        '<td class="px-4 py-3 text-center">' +
+          '<a href="' + msgLink + '" target="_blank" class="inline-flex items-center gap-1 rounded-lg bg-green-500/15 px-3 py-1.5 text-xs font-semibold text-green-400 hover:bg-green-500/25">' +
+            '<svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492l4.638-1.218A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.82c-2.168 0-4.18-.584-5.913-1.597l-.422-.253-2.752.722.736-2.682-.276-.44A9.79 9.79 0 012.18 12c0-5.422 4.398-9.82 9.82-9.82S21.82 6.578 21.82 12s-4.398 9.82-9.82 9.82z"/></svg>' +
+            ' Lembrete' +
+          '</a>' +
+        '</td>';
+      tr.classList.add(c.borderClass);
+      tbody.appendChild(tr);
+    });
+  }
+
+  document.getElementById('ret-filtro').addEventListener('change', function () { renderRetencao(this.value); });
 
   /* --- Histórico do Cliente (por WhatsApp) --- */
   function abrirHistoricoCliente(whatsapp, nome) {
