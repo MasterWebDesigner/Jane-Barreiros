@@ -35,7 +35,7 @@
   var _initialized = false;
 
   function initFirebase() {
-    if (_initialized) return;
+    if (_initialized) { console.log('[Booking] Firebase já inicializado.'); return; }
     if (typeof firebase === 'undefined' || !firebase.database) {
       console.warn('[Booking] Firebase SDK não carregado. Usando fallback localStorage.');
       _initLocalStorageFallback();
@@ -46,7 +46,7 @@
     }
     _db = firebase.database();
     _initialized = true;
-    console.log('[Booking] Firebase conectado.');
+    console.log('[Booking] Firebase conectado. db:', !!_db);
   }
 
   /* ================================================================
@@ -65,10 +65,15 @@
 
   function setStore(key, val) {
     _cache[key] = JSON.parse(JSON.stringify(val));
+    console.log('[Booking] setStore:', key, '| _db:', !!_db, '| itens:', Array.isArray(val) ? val.length : typeof val);
     if (_db) {
-      _db.ref('jane-booking/' + key).set(val).catch(function (e) {
-        console.error('[Booking] Firebase write error:', key, e);
+      _db.ref('jane-booking/' + key).set(val).then(function () {
+        console.log('[Booking] Firebase OK:', key);
+      }).catch(function (e) {
+        console.error('[Booking] Firebase ERRO:', key, e.message || e);
       });
+    } else {
+      console.warn('[Booking] Firebase NÃO conectado. Dados só em localStorage.');
     }
     /* fallback localStorage apenas para dados não-PII (offline) */
     var PII_KEYS = ['clientes'];
@@ -124,9 +129,11 @@
           }
           if (val !== null) {
             _cache[key] = val;
+            console.log('[Booking] Firebase load:', key, '| itens:', Array.isArray(val) ? val.length : typeof val);
             /* Reescreve no Firebase para garantir consistência */
             _db.ref('jane-booking/' + key).set(val).catch(function () {});
           } else {
+            console.log('[Booking] Firebase vazio:', key, '| tentando localStorage...');
             /* Tenta migrar do localStorage normal */
             var local = null;
             try { local = JSON.parse(localStorage.getItem('jane-booking-' + key)); } catch (e) {}
@@ -192,9 +199,11 @@
   function getServicos() {
     var data = getStore('servicos');
     if (!data || !data.length) {
+      console.log('[Booking] getServicos: cache vazio, usando DEFAULT_SERVICOS (' + DEFAULT_SERVICOS.length + ' itens)');
       setStore('servicos', DEFAULT_SERVICOS);
       return DEFAULT_SERVICOS.slice();
     }
+    console.log('[Booking] getServicos:', data.length, 'itens do cache');
     return data;
   }
 
