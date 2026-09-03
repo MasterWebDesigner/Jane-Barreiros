@@ -939,6 +939,11 @@ document.addEventListener('DOMContentLoaded', function () {
         startNotifPolling();
         initEncaixe();
         renderDashboard();
+        /* Re-renderiza QUALQUER aba que esteja visível */
+        if (document.getElementById('page-servicos').style.display !== 'none') renderServicos();
+        if (document.getElementById('page-agendamentos').style.display !== 'none') renderAgendamentos();
+        if (document.getElementById('page-clientes').style.display !== 'none') renderClientes();
+        if (document.getElementById('page-faturamento').style.display !== 'none') renderFaturamento();
       });
     } else {
       startNotifPolling();
