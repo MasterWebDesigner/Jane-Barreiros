@@ -33,6 +33,7 @@
   var _cache = {};       // cache em memória por chave
   var _loaded = {};      // marco de dados já carregados do Firebase
   var _initialized = false;
+  var _loadingComplete = false;
   var REST_BASE = FIREBASE_CONFIG.databaseURL + '/jane-booking';
 
   /* ================================================================
@@ -224,10 +225,14 @@
   function loadAllData(cb) {
     var keys = ['agendamentos', 'clientes', 'servicos', 'bloqueios', 'lista_espera'];
     var pending = keys.length;
-    var done = function () { pending--; if (pending <= 0 && cb) cb(); };
+    var done = function () { pending--; if (pending <= 0) { _loadingComplete = true; console.log('[Booking] loadAllData COMPLETO. Cache atualizado.'); if (cb) cb(); } };
 
     function _processVal(key, val, fonte) {
       console.log('[Booking] _processVal:', key, '| fonte:', fonte, '| dados:', val === null ? 'NULL' : (Array.isArray(val) ? val.length + ' itens' : typeof val));
+      if (key === 'servicos' && val !== null && Array.isArray(val)) {
+        console.log('[DEBUG-F5] Serviços recebidos do Firebase:', val.length);
+        console.log('[DEBUG-F5] Nomes:', val.map(function(s){ return s.nome; }).join(', '));
+      }
       if (val !== null && Array.isArray(val)) {
         console.log('[Booking] Primeiros 3 itens:', JSON.stringify(val.slice(0, 3)));
       }
@@ -375,6 +380,10 @@
      SERVIÇOS
      ================================================================ */
   function getServicos() {
+    if (!_loadingComplete) {
+      console.log('[Booking] getServicos: aguardando Firebase... (retorna DEFAULT)');
+      return DEFAULT_SERVICOS.slice();
+    }
     var data = getStore('servicos');
     if (!data || !data.length) {
       console.log('[Booking] getServicos: cache vazio, usando DEFAULT_SERVICOS (' + DEFAULT_SERVICOS.length + ' itens)');
