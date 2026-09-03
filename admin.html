@@ -2081,7 +2081,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* --- Profissional Dropdown --- */
   function renderAgProfDropdown() {
-    var profissionais = B ? B.getProfissionais() : ['Jane Barreiros'];
+    var profRaw = B ? B.getProfissionais() : [{ nome: 'Jane Barreiros' }];
+    var profissionais = profRaw.map(function (p) { return typeof p === 'string' ? p : (p.nome || p.name || String(p)); });
     var dd = document.getElementById('ag-prof-dropdown');
     dd.innerHTML = '';
     var optAll = document.createElement('button');
