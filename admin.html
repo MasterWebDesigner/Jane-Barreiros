@@ -1853,11 +1853,12 @@ document.addEventListener('DOMContentLoaded', function () {
   var agOrigem = 'todos';
   var agStatusFilter = 'todos';
 
-  /* Busca em tempo real — input event listener */
-  var agBuscaInput = document.getElementById('ag-busca-input');
-  if (agBuscaInput) {
-    agBuscaInput.addEventListener('input', function () { renderAgendamentos(); });
-  }
+  /* Busca em tempo real — event delegation (mais confiável) */
+  document.addEventListener('input', function (e) {
+    if (e.target && e.target.id === 'ag-busca-input') {
+      renderAgendamentos();
+    }
+  });
   var _nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   var _nomesMesesShort = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
   var _nomesDiasShort = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
