@@ -73,14 +73,18 @@
   function _showFirebaseError(contexto, erro) {
     var msg = '[Firebase ERRO] ' + contexto + ': ' + erro;
     console.error(msg);
-    /* Cria toast visual se container existir */
+    var isPerm = erro.indexOf('PERMISSAO NEGADA') !== -1 || erro.indexOf('permission_denied') !== -1 || erro.indexOf('PERMISSION_DENIED') !== -1;
+    var border = isPerm ? '#EF4444' : '#F59E0B';
+    var textColor = isPerm ? '#FCA5A5' : '#FDE68A';
     var container = document.getElementById('toast-container');
     if (container) {
       var toast = document.createElement('div');
-      toast.style.cssText = 'pointer-events:auto;width:360px;padding:14px 18px;border-radius:12px;background:#1E1E1E;border:1px solid #EF4444;color:#FCA5A5;font-size:13px;box-shadow:0 8px 30px rgba(0,0,0,.5);animation:toastIn .35s ease-out;';
-      toast.innerHTML = '<strong style="color:#EF4444;">Erro ao salvar no Firebase</strong><br><span style="color:#9CA3AF;font-size:12px;">' + contexto + ': ' + erro + '</span><br><span style="color:#6B7280;font-size:11px;">Dados salvos localmente. Tente recarregar a página.</span>';
+      toast.style.cssText = 'pointer-events:auto;max-width:420px;padding:14px 18px;border-radius:12px;background:#1E1E1E;border:1px solid ' + border + ';color:' + textColor + ';font-size:13px;box-shadow:0 8px 30px rgba(0,0,0,.5);animation:toastIn .35s ease-out;margin-bottom:8px;';
+      var title = isPerm ? 'ERRO DE PERMISSAO - Firebase' : 'Erro ao salvar no Firebase';
+      var desc = isPerm ? 'As regras de escrita nao estao publicadas. Abra o Firebase Console > Realtime Database > Regras e publique com .write: true para jane-booking.' : erro;
+      toast.innerHTML = '<strong style="color:' + border + ';">' + title + '</strong><br><span style="color:#9CA3AF;font-size:12px;">' + desc + '</span><br><span style="color:#6B7280;font-size:11px;">Dados salvos localmente. Tente recarregar a pagina.</span>';
       container.appendChild(toast);
-      setTimeout(function () { toast.style.opacity = '0'; toast.style.transition = 'opacity .3s'; setTimeout(function () { toast.remove(); }, 300); }, 8000);
+      setTimeout(function () { toast.style.opacity = '0'; toast.style.transition = 'opacity .3s'; setTimeout(function () { toast.remove(); }, 300); }, 10000);
     }
   }
 
@@ -145,6 +149,15 @@
       try { localStorage.setItem('jane-booking-' + key, JSON.stringify(val)); } catch (e) {}
     }
 
+    function _handleError(err) {
+      var msg = (err && err.message) ? err.message : String(err);
+      if (msg.indexOf('permission_denied') !== -1 || msg.indexOf('PERMISSION_DENIED') !== -1) {
+        _showFirebaseError('Salvando ' + key, 'PERMISSAO NEGADA pelo Firebase. Verifique as rules no Console.');
+      } else {
+        _showFirebaseError('Salvar ' + key, msg);
+      }
+    }
+
     /* 1) Tenta SDK Firebase */
     if (_db) {
       try {
@@ -157,7 +170,7 @@
             console.log('[Booking] Firebase OK (REST):', key);
           }).catch(function (e2) {
             console.error('[Booking] Firebase REST ERRO:', key, e2.message || e2);
-            _showFirebaseError('Salvar ' + key, e2.message || e2);
+            _handleError(e2);
           });
         });
       } catch (e) {
@@ -165,7 +178,7 @@
         _restPut(key, val).then(function () {
           console.log('[Booking] Firebase OK (REST after exception):', key);
         }).catch(function (e2) {
-          _showFirebaseError('Salvar ' + key, e2.message || e2);
+          _handleError(e2);
         });
       }
     } else {
@@ -175,7 +188,7 @@
         console.log('[Booking] Firebase OK (REST fallback):', key);
       }).catch(function (e) {
         console.error('[Booking] Firebase REST ERRO:', key, e.message || e);
-        _showFirebaseError('Salvar ' + key, e.message || e);
+        _handleError(e);
       });
     }
   }

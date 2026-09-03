@@ -1,34 +1,19 @@
 {
   "rules": {
     "jane-booking": {
+      ".read": true,
+      ".write": true,
       "servicos": {
         ".read": true,
         ".write": true
       },
       "agendamentos": {
         ".read": true,
-        ".write": true,
-        "$agendamento": {
-          ".validate": "newData.hasChildren(['id', 'servico', 'data', 'horario', 'cliente_nome']) && newData.child('id').val().length < 60 && newData.child('servico').val().length < 200 && newData.child('data').val().matches(/^\\d{4}-\\d{2}-\\d{2}$/) && newData.child('horario').val().matches(/^\\d{2}:\\d{2}$/) && newData.child('cliente_nome').val().length < 200",
-          "cliente_nome": { ".validate": "newData.val().length > 0 && newData.val().length < 200" },
-          "cliente_whatsapp": { ".validate": "newData.val().length < 30" },
-          "cliente_email": { ".validate": "newData.val().length < 200" },
-          "servico": { ".validate": "newData.val().length > 0 && newData.val().length < 200" },
-          "data": { ".validate": "newData.val().matches(/^\\d{4}-\\d{2}-\\d{2}$/)" },
-          "horario": { ".validate": "newData.val().matches(/^\\d{2}:\\d{2}$/)" },
-          "status": { ".validate": "newData.val().matches(/^(pendente|confirmado|em_atendimento|concluido|cancelado)$/) || !newData.exists()" },
-          "origem": { ".validate": "newData.val().matches(/^(online|recepcao|)$/ ) || !newData.exists()" }
-        }
+        ".write": true
       },
       "clientes": {
         ".read": true,
-        ".write": true,
-        "$cliente": {
-          ".validate": "newData.hasChildren(['id', 'nome', 'whatsapp']) && newData.child('nome').val().length < 200 && newData.child('whatsapp').val().length < 30",
-          "nome": { ".validate": "newData.val().length > 0 && newData.val().length < 200" },
-          "whatsapp": { ".validate": "newData.val().length > 0 && newData.val().length < 30" },
-          "email": { ".validate": "newData.val().length < 200 || !newData.exists()" }
-        }
+        ".write": true
       },
       "bloqueios": {
         ".read": true,
@@ -36,14 +21,11 @@
       },
       "lista_espera": {
         ".read": true,
-        ".write": true,
-        "$item": {
-          ".validate": "newData.hasChildren(['servico', 'data_preferida', 'cliente_nome']) && newData.child('cliente_nome').val().length < 200"
-        }
+        ".write": true
       },
       "config": {
         ".read": true,
-        ".write": false
+        ".write": true
       }
     },
     ".read": false,
