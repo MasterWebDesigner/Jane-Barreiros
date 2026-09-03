@@ -402,12 +402,33 @@
         <button class="svc-tab tab-active pb-3 text-sm font-semibold" data-svc-tab="servicos">Serviços</button>
         <button class="svc-tab pb-3 text-sm font-semibold text-gray-400 hover:text-gray-200" data-svc-tab="profissionais">Profissionais</button>
         <button class="svc-tab pb-3 text-sm font-semibold text-gray-400 hover:text-gray-200" data-svc-tab="secoes">Seções</button>
-        <button class="svc-tab pb-3 text-sm font-semibold text-gray-400 hover:text-gray-200" data-svc-tab="clientes-tab">Clientes</button>
       </div>
 
-      <!-- Lista de serviços -->
-      <div id="svc-lista" class="space-y-3"></div>
-      <p id="svc-vazio" class="hidden text-center text-gray-500 py-12">Nenhum serviço cadastrado.</p>
+      <!-- Tab: Serviços -->
+      <div id="svc-tab-servicos" class="svc-tab-content">
+        <div id="svc-lista" class="space-y-3"></div>
+        <p id="svc-vazio" class="hidden text-center text-gray-500 py-12">Nenhum serviço cadastrado.</p>
+      </div>
+
+      <!-- Tab: Profissionais -->
+      <div id="svc-tab-profissionais" class="svc-tab-content hidden">
+        <div class="flex items-center justify-between mb-4">
+          <p class="text-sm text-gray-400">Gerencie as profissionais do salão.</p>
+          <button id="prof-novo-btn" class="gold-btn rounded-xl px-4 py-2 text-sm">+ Nova Profissional</button>
+        </div>
+        <div id="prof-lista" class="space-y-3"></div>
+        <p id="prof-vazio" class="hidden text-center text-gray-500 py-12">Nenhuma profissional cadastrada.</p>
+      </div>
+
+      <!-- Tab: Seções -->
+      <div id="svc-tab-secoes" class="svc-tab-content hidden">
+        <div class="flex items-center justify-between mb-4">
+          <p class="text-sm text-gray-400">Organize os serviços por seção/categoria.</p>
+          <button id="sec-novo-btn" class="gold-btn rounded-xl px-4 py-2 text-sm">+ Nova Seção</button>
+        </div>
+        <div id="sec-lista" class="space-y-3"></div>
+        <p id="sec-vazio" class="hidden text-center text-gray-500 py-12">Nenhuma seção cadastrada.</p>
+      </div>
     </section>
 
     <!-- ==================== ESTOQUE ==================== -->
@@ -878,6 +899,63 @@
   </div>
 </div>
 
+<!-- Modal Profissional -->
+<div id="prof-modal" class="fixed inset-0 z-50 hidden items-center justify-center modal-overlay">
+  <div class="bg-dark-700 border border-dark-300/50 rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4">
+    <div class="flex items-center justify-between mb-4">
+      <h3 id="prof-modal-title" class="font-display text-xl font-semibold text-white">Nova Profissional</h3>
+      <button id="prof-modal-close" class="flex h-8 w-8 items-center justify-center rounded-full bg-dark-600 text-gray-400 hover:text-white">&times;</button>
+    </div>
+    <form id="prof-form" class="space-y-4">
+      <input type="hidden" id="prof-id">
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Nome</label>
+        <input id="prof-nome" type="text" placeholder="Ex.: Maria Silva" required class="w-full rounded-xl border border-dark-300 bg-dark-600 px-4 py-3 text-sm text-white placeholder-gray-500 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold/50">
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Especialidade</label>
+        <input id="prof-especialidade" type="text" placeholder="Ex.: Cabelo, Colorimetria" class="w-full rounded-xl border border-dark-300 bg-dark-600 px-4 py-3 text-sm text-white placeholder-gray-500 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold/50">
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Status</label>
+        <select id="prof-status" class="w-full rounded-xl border border-dark-300 bg-dark-600 px-4 py-3 text-sm text-white focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold/50">
+          <option value="ativo">Ativo</option>
+          <option value="inativo">Inativo</option>
+        </select>
+      </div>
+      <div class="flex gap-3 pt-2">
+        <button type="submit" class="gold-btn flex-1 rounded-xl py-3 text-sm">Salvar</button>
+        <button type="button" id="prof-cancelar" class="flex-1 rounded-xl border border-dark-300 bg-dark-600 py-3 text-sm font-semibold text-gray-300 hover:border-gray-400">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Seção -->
+<div id="sec-modal" class="fixed inset-0 z-50 hidden items-center justify-center modal-overlay">
+  <div class="bg-dark-700 border border-dark-300/50 rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4">
+    <div class="flex items-center justify-between mb-4">
+      <h3 id="sec-modal-title" class="font-display text-xl font-semibold text-white">Nova Seção</h3>
+      <button id="sec-modal-close" class="flex h-8 w-8 items-center justify-center rounded-full bg-dark-600 text-gray-400 hover:text-white">&times;</button>
+    </div>
+    <form id="sec-form" class="space-y-4">
+      <input type="hidden" id="sec-id">
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Nome da Seção</label>
+        <input id="sec-nome" type="text" placeholder="Ex.: Cabelo" required class="w-full rounded-xl border border-dark-300 bg-dark-600 px-4 py-3 text-sm text-white placeholder-gray-500 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold/50">
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Ordem</label>
+        <input id="sec-ordem" type="number" placeholder="Ex.: 1" min="1" class="w-full rounded-xl border border-dark-300 bg-dark-600 px-4 py-3 text-sm text-white placeholder-gray-500 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold/50">
+      </div>
+      <div class="flex gap-3 pt-2">
+        <button type="submit" class="gold-btn flex-1 rounded-xl py-3 text-sm">Salvar</button>
+        <button type="button" id="sec-cancelar" class="flex-1 rounded-xl border border-dark-300 bg-dark-600 py-3 text-sm font-semibold text-gray-300 hover:border-gray-400">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -1001,7 +1079,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     if (pageName === 'dashboard') renderDashboard();
     if (pageName === 'agendamentos') renderAgendamentos();
-    if (pageName === 'servicos') renderServicos();
+    if (pageName === 'servicos') { renderServicos(); renderProfissionais(); renderSecoes(); }
     if (pageName === 'clientes') renderClientes();
     if (pageName === 'historico') renderHistorico();
     if (pageName === 'retencao') renderRetencao();
@@ -2574,12 +2652,214 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  /* Tabs (apenas visual por enquanto) */
+  /* Tabs — show/hide content panels */
   document.querySelectorAll('.svc-tab').forEach(function (tab) {
     tab.addEventListener('click', function () {
       document.querySelectorAll('.svc-tab').forEach(function (t) { t.classList.remove('tab-active'); t.classList.add('text-gray-400'); });
       tab.classList.add('tab-active'); tab.classList.remove('text-gray-400');
+      var target = tab.getAttribute('data-svc-tab');
+      document.querySelectorAll('.svc-tab-content').forEach(function (c) { c.classList.add('hidden'); });
+      var panel = document.getElementById('svc-tab-' + target);
+      if (panel) panel.classList.remove('hidden');
+      if (target === 'servicos') renderServicos();
+      if (target === 'profissionais') renderProfissionais();
+      if (target === 'secoes') renderSecoes();
     });
+  });
+
+  /* ============================================================
+     PROFISSIONAIS
+     ============================================================ */
+  function renderProfissionais() {
+    var lista = B ? B.getProfissionais() : [];
+    var container = document.getElementById('prof-lista');
+    var vazio = document.getElementById('prof-vazio');
+    container.innerHTML = '';
+    if (!lista.length) { vazio.classList.remove('hidden'); return; }
+    vazio.classList.add('hidden');
+    lista.forEach(function (p, idx) {
+      var card = document.createElement('div');
+      card.className = 'card-dark flex items-center justify-between p-4 fade-in';
+      var statusBadge = p.status === 'inativo'
+        ? '<span class="badge badge-inactive">Inativo</span>'
+        : '<span class="badge badge-active">Ativo</span>';
+      card.innerHTML =
+        '<div class="flex-1 min-w-0 mr-4">' +
+          '<div class="flex items-center gap-3 mb-1">' +
+            '<h4 class="font-semibold text-white truncate">' + esc(p.nome) + '</h4>' +
+            statusBadge +
+          '</div>' +
+          '<div class="flex items-center gap-4 text-xs text-gray-400">' +
+            '<span>💼 ' + esc(p.especialidade || 'Geral') + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="flex items-center gap-1 shrink-0">' +
+          '<button class="prof-edit-btn rounded-lg px-3 py-1.5 text-xs font-semibold text-gold hover:bg-gold/10" data-idx="' + idx + '">Editar</button>' +
+          '<button class="prof-del-btn rounded-lg px-3 py-1.5 text-xs font-semibold text-red-400 hover:bg-red-500/10" data-idx="' + idx + '">Excluir</button>' +
+        '</div>';
+      container.appendChild(card);
+    });
+  }
+
+  function openProfModal(prof, idx) {
+    document.getElementById('prof-modal-title').textContent = prof ? 'Editar Profissional' : 'Nova Profissional';
+    document.getElementById('prof-id').value = idx !== undefined ? idx : '';
+    document.getElementById('prof-nome').value = prof ? prof.nome : '';
+    document.getElementById('prof-especialidade').value = prof ? (prof.especialidade || '') : '';
+    document.getElementById('prof-status').value = prof ? (prof.status || 'ativo') : 'ativo';
+    document.getElementById('prof-modal').classList.remove('hidden');
+    document.getElementById('prof-modal').classList.add('flex');
+  }
+
+  function closeProfModal() {
+    document.getElementById('prof-modal').classList.add('hidden');
+    document.getElementById('prof-modal').classList.remove('flex');
+  }
+
+  document.getElementById('prof-novo-btn').addEventListener('click', function () { openProfModal(); });
+  document.getElementById('prof-modal-close').addEventListener('click', closeProfModal);
+  document.getElementById('prof-cancelar').addEventListener('click', closeProfModal);
+  document.getElementById('prof-modal').addEventListener('click', function (e) { if (e.target.id === 'prof-modal') closeProfModal(); });
+
+  document.getElementById('prof-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var nome = document.getElementById('prof-nome').value.trim();
+    if (!nome) { alert('Informe o nome da profissional.'); return; }
+    var data = {
+      id: document.getElementById('prof-id').value || Date.now() + '',
+      nome: nome,
+      especialidade: document.getElementById('prof-especialidade').value.trim(),
+      status: document.getElementById('prof-status').value
+    };
+    var lista = B ? B.getProfissionais() : [];
+    var editIdx = document.getElementById('prof-id').value;
+    if (editIdx !== '') {
+      var idx = lista.findIndex(function (p) { return p.id === editIdx; });
+      if (idx !== -1) lista[idx] = data; else lista.push(data);
+    } else {
+      lista.push(data);
+    }
+    if (B && B.setProfissionais) {
+      B.setProfissionais(lista).then(function () {
+        closeProfModal();
+        renderProfissionais();
+        showToast('Profissional salvo', nome, null);
+      });
+    }
+  });
+
+  document.addEventListener('click', function (e) {
+    var editBtn = e.target.closest('.prof-edit-btn');
+    if (editBtn) {
+      var idx = parseInt(editBtn.getAttribute('data-idx'));
+      var lista = B ? B.getProfissionais() : [];
+      if (lista[idx]) openProfModal(lista[idx], lista[idx].id);
+      return;
+    }
+    var delBtn = e.target.closest('.prof-del-btn');
+    if (delBtn) {
+      if (!confirm('Excluir esta profissional?')) return;
+      var delIdx = parseInt(delBtn.getAttribute('data-idx'));
+      var delLista = B ? B.getProfissionais() : [];
+      delLista.splice(delIdx, 1);
+      if (B && B.setProfissionais) {
+        B.setProfissionais(delLista).then(function () { renderProfissionais(); });
+      }
+    }
+  });
+
+  /* ============================================================
+     SEÇÕES
+     ============================================================ */
+  function renderSecoes() {
+    var lista = B ? B.getSecoes() : [];
+    var container = document.getElementById('sec-lista');
+    var vazio = document.getElementById('sec-vazio');
+    container.innerHTML = '';
+    if (!lista.length) { vazio.classList.remove('hidden'); return; }
+    vazio.classList.add('hidden');
+    lista.sort(function (a, b) { return (a.ordem || 0) - (b.ordem || 0); });
+    lista.forEach(function (s, idx) {
+      var card = document.createElement('div');
+      card.className = 'card-dark flex items-center justify-between p-4 fade-in';
+      card.innerHTML =
+        '<div class="flex-1 min-w-0 mr-4">' +
+          '<div class="flex items-center gap-3 mb-1">' +
+            '<h4 class="font-semibold text-white truncate">' + esc(s.nome) + '</h4>' +
+            '<span class="text-xs text-gray-500">Ordem: ' + (s.ordem || '—') + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="flex items-center gap-1 shrink-0">' +
+          '<button class="sec-edit-btn rounded-lg px-3 py-1.5 text-xs font-semibold text-gold hover:bg-gold/10" data-idx="' + idx + '">Editar</button>' +
+          '<button class="sec-del-btn rounded-lg px-3 py-1.5 text-xs font-semibold text-red-400 hover:bg-red-500/10" data-idx="' + idx + '">Excluir</button>' +
+        '</div>';
+      container.appendChild(card);
+    });
+  }
+
+  function openSecModal(sec, idx) {
+    document.getElementById('sec-modal-title').textContent = sec ? 'Editar Seção' : 'Nova Seção';
+    document.getElementById('sec-id').value = idx !== undefined ? idx : '';
+    document.getElementById('sec-nome').value = sec ? sec.nome : '';
+    document.getElementById('sec-ordem').value = sec ? (sec.ordem || '') : '';
+    document.getElementById('sec-modal').classList.remove('hidden');
+    document.getElementById('sec-modal').classList.add('flex');
+  }
+
+  function closeSecModal() {
+    document.getElementById('sec-modal').classList.add('hidden');
+    document.getElementById('sec-modal').classList.remove('flex');
+  }
+
+  document.getElementById('sec-novo-btn').addEventListener('click', function () { openSecModal(); });
+  document.getElementById('sec-modal-close').addEventListener('click', closeSecModal);
+  document.getElementById('sec-cancelar').addEventListener('click', closeSecModal);
+  document.getElementById('sec-modal').addEventListener('click', function (e) { if (e.target.id === 'sec-modal') closeSecModal(); });
+
+  document.getElementById('sec-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var nome = document.getElementById('sec-nome').value.trim();
+    if (!nome) { alert('Informe o nome da seção.'); return; }
+    var data = {
+      id: document.getElementById('sec-id').value || Date.now() + '',
+      nome: nome,
+      ordem: parseInt(document.getElementById('sec-ordem').value) || 99
+    };
+    var lista = B ? B.getSecoes() : [];
+    var editIdx = document.getElementById('sec-id').value;
+    if (editIdx !== '') {
+      var idx = lista.findIndex(function (s) { return s.id === editIdx; });
+      if (idx !== -1) lista[idx] = data; else lista.push(data);
+    } else {
+      lista.push(data);
+    }
+    if (B && B.setSecoes) {
+      B.setSecoes(lista).then(function () {
+        closeSecModal();
+        renderSecoes();
+        showToast('Seção salva', nome, null);
+      });
+    }
+  });
+
+  document.addEventListener('click', function (e) {
+    var editBtn = e.target.closest('.sec-edit-btn');
+    if (editBtn) {
+      var idx = parseInt(editBtn.getAttribute('data-idx'));
+      var lista = B ? B.getSecoes() : [];
+      if (lista[idx]) openSecModal(lista[idx], lista[idx].id);
+      return;
+    }
+    var delBtn = e.target.closest('.sec-del-btn');
+    if (delBtn) {
+      if (!confirm('Excluir esta seção?')) return;
+      var delIdx = parseInt(delBtn.getAttribute('data-idx'));
+      var delLista = B ? B.getSecoes() : [];
+      delLista.splice(delIdx, 1);
+      if (B && B.setSecoes) {
+        B.setSecoes(delLista).then(function () { renderSecoes(); });
+      }
+    }
   });
 
   /* ============================================================

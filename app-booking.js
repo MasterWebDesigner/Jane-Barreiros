@@ -223,7 +223,7 @@
 
   /* Carrega todos os dados do Firebase para a memória + migra localStorage antigo */
   function loadAllData(cb) {
-    var keys = ['agendamentos', 'clientes', 'servicos', 'bloqueios', 'lista_espera'];
+    var keys = ['agendamentos', 'clientes', 'servicos', 'bloqueios', 'lista_espera', 'profissionais', 'secoes'];
     var pending = keys.length;
     var done = function () { pending--; if (pending <= 0) { _loadingComplete = true; console.log('[Booking] loadAllData COMPLETO. Cache atualizado.'); if (cb) cb(); } };
 
@@ -408,6 +408,43 @@
   }
 
   /* ================================================================
+     PROFISSIONAIS
+     ================================================================ */
+  var DEFAULT_PROFISSIONAIS = [
+    { id: '1', nome: 'Jane Barreiros', especialidade: 'Geral', status: 'ativo' }
+  ];
+
+  function getProfissionais() {
+    var lista = getStore('profissionais');
+    if (lista && lista.length) return lista;
+    return DEFAULT_PROFISSIONAIS.slice();
+  }
+
+  function setProfissionais(lista) {
+    return setStore('profissionais', lista);
+  }
+
+  /* ================================================================
+     SEÇÕES
+     ================================================================ */
+  var DEFAULT_SECOES = [
+    { id: '1', nome: 'Cabelo', ordem: 1 },
+    { id: '2', nome: 'Tratamento', ordem: 2 },
+    { id: '3', nome: 'Alisamento', ordem: 3 },
+    { id: '4', nome: 'Mega Hair', ordem: 4 }
+  ];
+
+  function getSecoes() {
+    var lista = getStore('secoes');
+    if (lista && lista.length) return lista;
+    return DEFAULT_SECOES.slice();
+  }
+
+  function setSecoes(lista) {
+    return setStore('secoes', lista);
+  }
+
+  /* ================================================================
      AGENDAMENTOS
      ================================================================ */
   function getAgendamentos() {
@@ -554,16 +591,6 @@
       }
     });
     return Object.keys(dias).map(function (d) { return parseInt(d, 10); });
-  }
-
-  function getProfissionais() {
-    var mapa = {};
-    getAgendamentos().forEach(function (a) {
-      if (a.profissional) mapa[a.profissional] = true;
-    });
-    var lista = Object.keys(mapa);
-    if (!lista.length) lista = ['Jane Barreiros'];
-    return lista.sort();
   }
 
   function getAgendamentosPorProfissional(dataStr, profissional) {
@@ -907,6 +934,9 @@
     getAgendamentosDoPeriodo: getAgendamentosDoPeriodo,
     getDiasComAgendamento: getDiasComAgendamento,
     getProfissionais: getProfissionais,
+    setProfissionais: setProfissionais,
+    getSecoes: getSecoes,
+    setSecoes: setSecoes,
     getAgendamentosPorProfissional: getAgendamentosPorProfissional,
     horariosDisponiveis: horariosDisponiveis,
     getBloqueios: getBloqueios,
