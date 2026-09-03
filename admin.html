@@ -806,6 +806,19 @@ document.addEventListener('DOMContentLoaded', function () {
   if (B && B.initFirebase) B.initFirebase();
   var KEY_AUTH = 'jane-admin-auth';
 
+  /* Reconexão Firebase ao voltar de BFCache ou aba inativa */
+  window.addEventListener('pageshow', function (e) {
+    if (e.persisted && B && B.initFirebase) {
+      console.log('[Admin] pageshow BFCache — reconectando Firebase');
+      B.initFirebase();
+    }
+  });
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden && B && B.initFirebase) {
+      try { B.initFirebase(); } catch (e) {}
+    }
+  });
+
   /* ============================================================
      LOGIN
      ============================================================ */
@@ -2366,6 +2379,7 @@ document.addEventListener('DOMContentLoaded', function () {
     setServicos(l);
     closeSvcModal();
     renderServicos();
+    showToast('Serviço salvo', nome + ' — salvando no Firebase...', null);
   });
 
   /* Tabs (apenas visual por enquanto) */

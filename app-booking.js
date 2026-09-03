@@ -35,7 +35,13 @@
   var _initialized = false;
 
   function initFirebase() {
-    if (_initialized) { console.log('[Booking] Firebase já inicializado.'); return; }
+    if (_initialized) {
+      /* Reconexão: se _db existe mas estava offline, força goOnline */
+      if (_db && typeof firebase !== 'undefined' && firebase.database) {
+        try { _db.goOnline(); } catch (e) {}
+      }
+      return;
+    }
     if (typeof firebase === 'undefined' || !firebase.database) {
       console.warn('[Booking] Firebase SDK não carregado. Usando fallback localStorage.');
       _initLocalStorageFallback();
@@ -47,6 +53,22 @@
     _db = firebase.database();
     _initialized = true;
     console.log('[Booking] Firebase conectado. db:', !!_db);
+
+    /* Reconexão ao sair do Back-Forward Cache (BFCache) */
+    window.addEventListener('pageshow', function (event) {
+      if (event.persisted) {
+        console.log('[Booking] Página restaurada do BFCache. Reconectando Firebase...');
+        try {
+          _db.goOnline();
+          console.log('[Booking] Firebase goOnline() executado.');
+        } catch (e) {
+          console.warn('[Booking] goOnline falhou, reinicializando...', e);
+          _initialized = false;
+          _db = null;
+          initFirebase();
+        }
+      }
+    });
   }
 
   /* ================================================================
@@ -66,19 +88,38 @@
   function setStore(key, val) {
     _cache[key] = JSON.parse(JSON.stringify(val));
     console.log('[Booking] setStore:', key, '| _db:', !!_db, '| itens:', Array.isArray(val) ? val.length : typeof val);
-    if (_db) {
-      _db.ref('jane-booking/' + key).set(val).then(function () {
-        console.log('[Booking] Firebase OK:', key);
-      }).catch(function (e) {
-        console.error('[Booking] Firebase ERRO:', key, e.message || e);
-      });
-    } else {
-      console.warn('[Booking] Firebase NÃO conectado. Dados só em localStorage.');
-    }
-    /* fallback localStorage apenas para dados não-PII (offline) */
+
+    /* Salva em localStorage sempre (garantia offline) */
     var PII_KEYS = ['clientes'];
     if (PII_KEYS.indexOf(key) === -1) {
       try { localStorage.setItem('jane-booking-' + key, JSON.stringify(val)); } catch (e) {}
+    }
+
+    /* Tenta gravar no Firebase */
+    if (_db) {
+      try {
+        _db.ref('jane-booking/' + key).set(val).then(function () {
+          console.log('[Booking] Firebase OK:', key);
+        }).catch(function (e) {
+          console.error('[Booking] Firebase ERRO:', key, e.message || e);
+          /* Reconecta e tenta uma vez mais */
+          console.warn('[Booking] Tentando goOnline + retry...');
+          try {
+            _db.goOnline();
+            _db.ref('jane-booking/' + key).set(val).then(function () {
+              console.log('[Booking] Firebase RETRY OK:', key);
+            }).catch(function (e2) {
+              console.error('[Booking] Firebase RETRY ERRO:', key, e2.message || e2);
+            });
+          } catch (e3) {
+            console.error('[Booking] Retry falhou:', e3);
+          }
+        });
+      } catch (e) {
+        console.error('[Booking] Firebase exception:', key, e);
+      }
+    } else {
+      console.warn('[Booking] Firebase NÃO conectado. Dados só em localStorage.');
     }
   }
 
