@@ -380,7 +380,7 @@
         <div class="flex items-center justify-between">
           <div class="relative">
             <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            <input id="ag-busca-input" type="text" placeholder="Buscar por nome, serviço ou telefone..." oninput="console.log('[BUSCA]', this.value); window._agBuscaRender && window._agBuscaRender();" class="w-56 sm:w-72 rounded-lg bg-dark-700 border border-dark-300/40 pl-8 pr-3 py-2 text-xs text-gray-300 placeholder-gray-500 focus:border-gold focus:outline-none transition-colors">
+            <input id="ag-busca-input" type="text" placeholder="Buscar por nome, serviço ou telefone..." oninput="window._agBuscaRender && window._agBuscaRender();" class="w-56 sm:w-72 rounded-lg bg-dark-700 border border-dark-300/40 pl-8 pr-3 py-2 text-xs text-gray-300 placeholder-gray-500 focus:border-gold focus:outline-none transition-colors">
           </div>
           <button id="ag-hoje-btn" class="gold-btn rounded-xl px-5 py-2 text-xs font-bold">Hoje</button>
         </div>
@@ -2199,7 +2199,6 @@ document.addEventListener('DOMContentLoaded', function () {
     /* Filtro de busca */
     var elBusca = document.getElementById('ag-busca-input');
     var termoBusca = elBusca ? elBusca.value : '';
-    console.log('[FILTRO] termoBusca:', JSON.stringify(termoBusca), '| ags antes:', ags.length);
     if (termoBusca.trim()) {
       var tb = termoBusca.toLowerCase().trim();
       ags = ags.filter(function (a) {
@@ -2208,7 +2207,6 @@ document.addEventListener('DOMContentLoaded', function () {
         var matchTel = a.cliente_whatsapp && a.cliente_whatsapp.replace(/\D/g,'').indexOf(tb.replace(/\D/g,'')) !== -1;
         return matchNome || matchSvc || matchTel;
       });
-      console.log('[FILTRO] ags depois:', ags.length);
     }
     ags.sort(function (a,b) { return a.horario < b.horario ? -1 : 1; });
 
