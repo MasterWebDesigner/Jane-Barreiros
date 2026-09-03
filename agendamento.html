@@ -792,6 +792,14 @@
       if (B && B.initFirebase) B.initFirebase();
       if (B && B.loadAllData) B.loadAllData(function () {
         console.log('[Agendamento] Dados carregados do Firebase.');
+        /* Atualizar catálogo com dados do Firebase (mais recentes que site.json) */
+        var fbServicos = B.getServicos();
+        if (fbServicos && fbServicos.length) {
+          servicos = fbServicos;
+          B.setServicos(fbServicos);
+          renderCatalogo(servicos);
+          renderCatalogoLista(servicos);
+        }
       });
       var servicos;
 
@@ -1092,12 +1100,25 @@
       viewGridBtn.addEventListener('click', function () { setView('grid'); });
       viewListBtn.addEventListener('click', function () { setView('list'); });
 
-      /* ---------- Buscar catálogo atualizado do CMS ---------- */
+      /* ---------- Buscar catálogo: localStorage primeiro, site.json como fallback ---------- */
+      var servicosLS = [];
+      try { servicosLS = JSON.parse(localStorage.getItem('jane-booking-servicos') || '[]'); } catch(e) {}
+      if (servicosLS.length) {
+        servicos = servicosLS;
+        if (B) B.setServicos(servicos);
+        renderCatalogo(servicos);
+        renderCatalogoLista(servicos);
+      }
       fetch('content/site.json?v=' + Date.now())
         .then(function (r) { if (!r.ok) throw 0; return r.json(); })
         .then(function (d) {
           var l = (d.servicos || []).slice().sort(function (a, b) { return (a.ordem || 0) - (b.ordem || 0); });
-          if (l.length) { servicos = l; if (B) B.setServicos(l); renderCatalogo(l); renderCatalogoLista(l); }
+          if (l.length && !servicosLS.length) {
+            servicos = l;
+            if (B) B.setServicos(l);
+            renderCatalogo(l);
+            renderCatalogoLista(l);
+          }
         })
         .catch(function () {});
 
