@@ -1653,6 +1653,13 @@ document.addEventListener('DOMContentLoaded', function () {
     var hojeStr = agDateStr(new Date());
     var agsMes = B ? B.getDiasComAgendamento(agDate.getFullYear(), agDate.getMonth()+1) : [];
 
+    /* Mapeia dias que têm pendentes */
+    var diasComPendente = {};
+    var allAgs = B ? B.getAgendamentos() : [];
+    allAgs.forEach(function (a) {
+      if (a.status === 'pendente') diasComPendente[a.data] = true;
+    });
+
     for (var i = 0; i < 7; i++) {
       var d = new Date(inicio);
       d.setDate(inicio.getDate() + i);
@@ -1663,6 +1670,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var isFechado = dow === 0 || dow === 1;
       var holiday = isFeriado(d.getFullYear(), d.getMonth(), d.getDate());
       var temAgendamento = agsMes.indexOf(d.getDate()) !== -1;
+      var temPendente = diasComPendente[ds] === true;
       var isCurrentMonth = d.getMonth() === agDate.getMonth();
 
       var btn = document.createElement('button');
@@ -1678,7 +1686,10 @@ document.addEventListener('DOMContentLoaded', function () {
       else numClass += 'text-gray-400 ';
 
       var html = '<span class="' + numClass + '">' + d.getDate() + '</span>';
-      if (temAgendamento && !isFechado) {
+      if (temPendente && !isFechado) {
+        /* Dot pulsante amber para pendentes */
+        html += '<span class="mt-1 flex gap-0.5"><span class="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse"></span></span>';
+      } else if (temAgendamento && !isFechado) {
         html += '<span class="mt-1 flex gap-0.5"><span class="h-1 w-1 rounded-full bg-gold"></span></span>';
       }
       btn.innerHTML = html;
