@@ -33,6 +33,56 @@
   var _cache = {};       // cache em memória por chave
   var _loaded = {};      // marco de dados já carregados do Firebase
   var _initialized = false;
+  var REST_BASE = FIREBASE_CONFIG.databaseURL + '/jane-booking';
+
+  /* ================================================================
+     REST API FALLBACK — fallback HTTP quando SDK falha
+     ================================================================ */
+  function _restPut(key, val) {
+    var url = REST_BASE + '/' + key + '.json';
+    return fetch(url, { method: 'PUT', body: JSON.stringify(val) })
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      });
+  }
+
+  function _restGet(key) {
+    var url = REST_BASE + '/' + key + '.json';
+    return fetch(url)
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      });
+  }
+
+  function _restGetWithTimeout(key, ms) {
+    return new Promise(function (resolve, reject) {
+      var timer = setTimeout(function () { reject(new Error('Timeout ' + ms + 'ms')); }, ms);
+      _restGet(key).then(function (val) {
+        clearTimeout(timer);
+        resolve(val);
+      }).catch(function (e) {
+        clearTimeout(timer);
+        reject(e);
+      });
+    });
+  }
+
+  /* Toast de erro visível na tela */
+  function _showFirebaseError(contexto, erro) {
+    var msg = '[Firebase ERRO] ' + contexto + ': ' + erro;
+    console.error(msg);
+    /* Cria toast visual se container existir */
+    var container = document.getElementById('toast-container');
+    if (container) {
+      var toast = document.createElement('div');
+      toast.style.cssText = 'pointer-events:auto;width:360px;padding:14px 18px;border-radius:12px;background:#1E1E1E;border:1px solid #EF4444;color:#FCA5A5;font-size:13px;box-shadow:0 8px 30px rgba(0,0,0,.5);animation:toastIn .35s ease-out;';
+      toast.innerHTML = '<strong style="color:#EF4444;">Erro ao salvar no Firebase</strong><br><span style="color:#9CA3AF;font-size:12px;">' + contexto + ': ' + erro + '</span><br><span style="color:#6B7280;font-size:11px;">Dados salvos localmente. Tente recarregar a página.</span>';
+      container.appendChild(toast);
+      setTimeout(function () { toast.style.opacity = '0'; toast.style.transition = 'opacity .3s'; setTimeout(function () { toast.remove(); }, 300); }, 8000);
+    }
+  }
 
   function initFirebase() {
     if (_initialized) {
@@ -95,31 +145,38 @@
       try { localStorage.setItem('jane-booking-' + key, JSON.stringify(val)); } catch (e) {}
     }
 
-    /* Tenta gravar no Firebase */
+    /* 1) Tenta SDK Firebase */
     if (_db) {
       try {
         _db.ref('jane-booking/' + key).set(val).then(function () {
-          console.log('[Booking] Firebase OK:', key);
+          console.log('[Booking] Firebase OK (SDK):', key);
         }).catch(function (e) {
-          console.error('[Booking] Firebase ERRO:', key, e.message || e);
-          /* Reconecta e tenta uma vez mais */
-          console.warn('[Booking] Tentando goOnline + retry...');
-          try {
-            _db.goOnline();
-            _db.ref('jane-booking/' + key).set(val).then(function () {
-              console.log('[Booking] Firebase RETRY OK:', key);
-            }).catch(function (e2) {
-              console.error('[Booking] Firebase RETRY ERRO:', key, e2.message || e2);
-            });
-          } catch (e3) {
-            console.error('[Booking] Retry falhou:', e3);
-          }
+          console.error('[Booking] Firebase SDK ERRO:', key, e.message || e);
+          /* 2) Fallback: REST API PUT */
+          _restPut(key, val).then(function () {
+            console.log('[Booking] Firebase OK (REST):', key);
+          }).catch(function (e2) {
+            console.error('[Booking] Firebase REST ERRO:', key, e2.message || e2);
+            _showFirebaseError('Salvar ' + key, e2.message || e2);
+          });
         });
       } catch (e) {
         console.error('[Booking] Firebase exception:', key, e);
+        _restPut(key, val).then(function () {
+          console.log('[Booking] Firebase OK (REST after exception):', key);
+        }).catch(function (e2) {
+          _showFirebaseError('Salvar ' + key, e2.message || e2);
+        });
       }
     } else {
-      console.warn('[Booking] Firebase NÃO conectado. Dados só em localStorage.');
+      /* 3) SDK desconectado: REST direto */
+      console.warn('[Booking] SDK offline. Usando REST API...');
+      _restPut(key, val).then(function () {
+        console.log('[Booking] Firebase OK (REST fallback):', key);
+      }).catch(function (e) {
+        console.error('[Booking] Firebase REST ERRO:', key, e.message || e);
+        _showFirebaseError('Salvar ' + key, e.message || e);
+      });
     }
   }
 
@@ -145,59 +202,109 @@
     var keys = ['agendamentos', 'clientes', 'servicos', 'bloqueios', 'lista_espera'];
     var pending = keys.length;
     var done = function () { pending--; if (pending <= 0 && cb) cb(); };
+
+    function _processVal(key, val) {
+      /* Mescla dados antigos do localStorage */
+      var localAntigo = null;
+      try { localAntigo = JSON.parse(localStorage.getItem('undefined' + key)); } catch (e) {}
+      if (localAntigo && Array.isArray(localAntigo)) {
+        if (val === null) {
+          val = localAntigo;
+        } else if (Array.isArray(val)) {
+          var existentes = {};
+          val.forEach(function (item) { if (item && item.id) existentes[item.id] = true; });
+          localAntigo.forEach(function (item) {
+            if (item && item.id && !existentes[item.id]) {
+              val.push(item);
+              existentes[item.id] = true;
+            }
+          });
+        }
+        try { localStorage.removeItem('undefined' + key); } catch (e) {}
+      }
+      if (val !== null) {
+        _cache[key] = val;
+        console.log('[Booking] Firebase load:', key, '| itens:', Array.isArray(val) ? val.length : typeof val);
+        /* Salva no localStorage como backup */
+        var PII_KEYS = ['clientes'];
+        if (PII_KEYS.indexOf(key) === -1) {
+          try { localStorage.setItem('jane-booking-' + key, JSON.stringify(val)); } catch (e) {}
+        }
+      } else {
+        console.log('[Booking] Firebase vazio:', key, '| tentando localStorage...');
+        var local = null;
+        try { local = JSON.parse(localStorage.getItem('jane-booking-' + key)); } catch (e) {}
+        if (local) {
+          _cache[key] = local;
+        }
+      }
+      _loaded[key] = true;
+    }
+
     keys.forEach(function (key) {
       if (_db) {
+        /* 1) Tenta SDK Firebase */
+        var sdkDone = false;
+        var sdkTimeout = setTimeout(function () {
+          if (sdkDone) return;
+          sdkDone = true;
+          console.warn('[Booking] SDK timeout (2s) para', key, '| tentando REST...');
+          /* 2) Fallback: REST API GET com timeout */
+          _restGetWithTimeout(key, 5000).then(function (val) {
+            _processVal(key, val);
+            done();
+          }).catch(function (e) {
+            console.error('[Booking] REST ERRO:', key, e.message || e);
+            /* 3) Último recurso: localStorage */
+            _processVal(key, null);
+            done();
+          });
+        }, 2000);
+
         _db.ref('jane-booking/' + key).once('value').then(function (snap) {
-          var val = snap.val();
-          /* Sempre tenta mesclar dados do localStorage antigo (chave quebrada) */
-          var localAntigo = null;
-          try { localAntigo = JSON.parse(localStorage.getItem('undefined' + key)); } catch (e) {}
-          if (localAntigo && Array.isArray(localAntigo)) {
-            if (val === null) {
-              val = localAntigo;
-            } else if (Array.isArray(val)) {
-              var existentes = {};
-              val.forEach(function (item) { if (item && item.id) existentes[item.id] = true; });
-              localAntigo.forEach(function (item) {
-                if (item && item.id && !existentes[item.id]) {
-                  val.push(item);
-                  existentes[item.id] = true;
-                }
-              });
-            }
-            /* Limpa chave antiga */
-            try { localStorage.removeItem('undefined' + key); } catch (e) {}
+          if (sdkDone) return;
+          sdkDone = true;
+          clearTimeout(sdkTimeout);
+          _processVal(key, snap.val());
+          /* Reescreve no Firebase para consistência */
+          if (snap.val() !== null) {
+            _db.ref('jane-booking/' + key).set(snap.val()).catch(function () {});
           }
-          if (val !== null) {
-            _cache[key] = val;
-            console.log('[Booking] Firebase load:', key, '| itens:', Array.isArray(val) ? val.length : typeof val);
-            /* Reescreve no Firebase para garantir consistência */
-            _db.ref('jane-booking/' + key).set(val).catch(function () {});
-          } else {
-            console.log('[Booking] Firebase vazio:', key, '| tentando localStorage...');
-            /* Tenta migrar do localStorage normal */
-            var local = null;
-            try { local = JSON.parse(localStorage.getItem('jane-booking-' + key)); } catch (e) {}
-            if (local) {
-              _cache[key] = local;
-              _db.ref('jane-booking/' + key).set(local);
-            }
+          done();
+        }).catch(function (e) {
+          if (sdkDone) return;
+          sdkDone = true;
+          clearTimeout(sdkTimeout);
+          console.error('[Booking] SDK ERRO:', key, e.message || e);
+          /* Fallback REST */
+          _restGetWithTimeout(key, 5000).then(function (val) {
+            _processVal(key, val);
+            done();
+          }).catch(function (e2) {
+            _processVal(key, null);
+            done();
+          });
+        });
+      } else {
+        /* SDK desconectado: REST direto */
+        _restGetWithTimeout(key, 5000).then(function (val) {
+          _processVal(key, val);
+          done();
+        }).catch(function () {
+          /* Último recurso: localStorage */
+          var localFinal = null;
+          try { localFinal = JSON.parse(localStorage.getItem('jane-booking-' + key)); } catch (e) {}
+          if (!localFinal) {
+            try { localFinal = JSON.parse(localStorage.getItem('undefined' + key)); } catch (e) {}
           }
+          if (localFinal) _cache[key] = localFinal;
           _loaded[key] = true;
           done();
-        }).catch(function () { done(); });
-      } else {
-        var localFinal = null;
-        try { localFinal = JSON.parse(localStorage.getItem('jane-booking-' + key)); } catch (e) {}
-        if (!localFinal) {
-          try { localFinal = JSON.parse(localStorage.getItem('undefined' + key)); } catch (e) {}
-        }
-        if (localFinal) _cache[key] = localFinal;
-        _loaded[key] = true;
-        done();
+        });
       }
     });
   }
+
 
   /* Fallback localStorage (se Firebase não carregar) */
   function _initLocalStorageFallback() {
