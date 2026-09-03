@@ -938,12 +938,12 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('[Admin] Dados carregados do Firebase.');
         startNotifPolling();
         initEncaixe();
-        renderDashboard();
+        try { renderDashboard(); } catch (e) { console.error('[Admin] renderDashboard error:', e); }
         /* Re-renderiza QUALQUER aba que esteja visível */
-        if (document.getElementById('page-servicos').style.display !== 'none') renderServicos();
-        if (document.getElementById('page-agendamentos').style.display !== 'none') renderAgendamentos();
-        if (document.getElementById('page-clientes').style.display !== 'none') renderClientes();
-        if (document.getElementById('page-faturamento').style.display !== 'none') renderFaturamento();
+        try { if (document.getElementById('page-servicos').style.display !== 'none') renderServicos(); } catch (e) {}
+        try { if (document.getElementById('page-agendamentos').style.display !== 'none') renderAgendamentos(); } catch (e) {}
+        try { if (document.getElementById('page-clientes').style.display !== 'none') renderClientes(); } catch (e) {}
+        try { if (document.getElementById('page-faturamento').style.display !== 'none') renderFaturamento(); } catch (e) {}
       });
     } else {
       startNotifPolling();
@@ -953,13 +953,9 @@ document.addEventListener('DOMContentLoaded', function () {
     if (B && B.listenFirebase) {
       B.listenFirebase('agendamentos', function () {
         console.log('[Admin] Agendamentos atualizados (Firebase).');
-        renderDashboard();
-        if (document.getElementById('page-agendamentos').style.display !== 'none') {
-          renderAgendamentos();
-        }
-        if (document.getElementById('page-faturamento').style.display !== 'none') {
-          renderFaturamento();
-        }
+        try { renderDashboard(); } catch (e) {}
+        try { if (document.getElementById('page-agendamentos').style.display !== 'none') renderAgendamentos(); } catch (e) {}
+        try { if (document.getElementById('page-faturamento').style.display !== 'none') renderFaturamento(); } catch (e) {}
       });
     }
     /* Set initial display states for all admin pages */
@@ -1057,22 +1053,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function updatePendenteBadge(count) {
     /* Sidebar badge */
-    if (count > 0) {
-      _notifBadge.textContent = count;
-      _notifBadge.classList.remove('hidden');
-      _notifBadge.classList.add('flex');
-    } else {
-      _notifBadge.classList.add('hidden');
-      _notifBadge.classList.remove('flex');
+    if (_notifBadge) {
+      if (count > 0) {
+        _notifBadge.textContent = count;
+        _notifBadge.classList.remove('hidden');
+        _notifBadge.classList.add('flex');
+      } else {
+        _notifBadge.classList.add('hidden');
+        _notifBadge.classList.remove('flex');
+      }
     }
     /* Dashboard header badge */
-    if (count > 0) {
-      _dashBadgeCount.textContent = count;
-      _dashBadge.classList.remove('hidden');
-      _dashBadge.classList.add('flex');
-    } else {
-      _dashBadge.classList.add('hidden');
-      _dashBadge.classList.remove('flex');
+    if (_dashBadge && _dashBadgeCount) {
+      if (count > 0) {
+        _dashBadgeCount.textContent = count;
+        _dashBadge.classList.remove('hidden');
+        _dashBadge.classList.add('flex');
+      } else {
+        _dashBadge.classList.add('hidden');
+        _dashBadge.classList.remove('flex');
+      }
     }
   }
 
