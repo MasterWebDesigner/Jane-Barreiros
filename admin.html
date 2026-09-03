@@ -615,22 +615,6 @@
 
     <!-- ==================== HISTÓRICO ==================== -->
     <section id="page-historico" class="admin-page p-6 lg:p-8 hidden">
-
-    <!-- Modal Histórico do Cliente -->
-    <div id="cli-history-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div class="bg-dark-700 border border-dark-300/50 rounded-2xl shadow-2xl p-6 w-full max-w-lg mx-4 max-h-[80vh] flex flex-col">
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <h3 class="text-lg font-semibold text-white" id="cli-history-title">Histórico do Cliente</h3>
-            <p class="text-xs text-gray-400" id="cli-history-subtitle"></p>
-          </div>
-          <button id="cli-history-close" class="flex h-8 w-8 items-center justify-center rounded-full bg-dark-600 text-gray-400 hover:text-white">&times;</button>
-        </div>
-        <div id="cli-history-list" class="flex-1 overflow-y-auto space-y-2"></div>
-        <div id="cli-history-vazio" class="hidden text-center text-gray-500 py-8">Nenhum agendamento encontrado.</div>
-      </div>
-    </div>
-    <section id="page-historico" class="admin-page p-6 lg:p-8 hidden">
       <div class="flex items-center justify-between mb-6">
         <h1 class="font-display text-2xl font-semibold text-white">Histórico</h1>
         <div class="flex items-center gap-2">
@@ -703,6 +687,21 @@
         <p id="cfg-espera-vazio" class="text-sm text-gray-500">Nenhuma pessoa na lista de espera.</p>
       </div>
     </section>
+
+    <!-- Modal Histórico do Cliente (fixo, funciona em qualquer aba) -->
+    <div id="cli-history-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div class="bg-dark-700 border border-dark-300/50 rounded-2xl shadow-2xl p-6 w-full max-w-lg mx-4 max-h-[80vh] flex flex-col">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold text-white" id="cli-history-title">Histórico do Cliente</h3>
+            <p class="text-xs text-gray-400" id="cli-history-subtitle"></p>
+          </div>
+          <button id="cli-history-close" class="flex h-8 w-8 items-center justify-center rounded-full bg-dark-600 text-gray-400 hover:text-white">&times;</button>
+        </div>
+        <div id="cli-history-list" class="flex-1 overflow-y-auto space-y-2"></div>
+        <div id="cli-history-vazio" class="hidden text-center text-gray-500 py-8">Nenhum agendamento encontrado.</div>
+      </div>
+    </div>
 
   </main>
 </div>
