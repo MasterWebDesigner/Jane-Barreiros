@@ -447,8 +447,23 @@
   /* ================================================================
      ESTOQUE
      ================================================================ */
+  var DEFAULT_ESTOQUE = [
+    { id: 'e1',  nome: 'Pó Descolorante Dust Free 500g',           categoria: 'Uso Interno', quantidade: 6,  estoqueMinimo: 2, precoCusto: 65.00,  precoVenda: 0 },
+    { id: 'e2',  nome: 'Água Oxigenada 20 Vol 900ml',              categoria: 'Uso Interno', quantidade: 8,  estoqueMinimo: 3, precoCusto: 28.00,  precoVenda: 0 },
+    { id: 'e3',  nome: 'Água Oxigenada 30 Vol 900ml',              categoria: 'Uso Interno', quantidade: 2,  estoqueMinimo: 3, precoCusto: 28.00,  precoVenda: 0 },
+    { id: 'e4',  nome: 'Kit Progressiva Orgânica 1L',              categoria: 'Uso Interno', quantidade: 4,  estoqueMinimo: 2, precoCusto: 180.00, precoVenda: 0 },
+    { id: 'e5',  nome: 'Máscara Reconstrução Profunda 1kg',        categoria: 'Uso Interno', quantidade: 5,  estoqueMinimo: 2, precoCusto: 85.00,  precoVenda: 0 },
+    { id: 'e6',  nome: 'Óleo Reparador Sublime 60ml',              categoria: 'Revenda',    quantidade: 12, estoqueMinimo: 4, precoCusto: 35.00,  precoVenda: 79.90 },
+    { id: 'e7',  nome: 'Shampoo Pós-Química Home Care 300ml',      categoria: 'Revenda',    quantidade: 10, estoqueMinimo: 3, precoCusto: 30.00,  precoVenda: 68.00 },
+    { id: 'e8',  nome: 'Condicionador Pós-Química Home Care 300ml', categoria: 'Revenda',    quantidade: 10, estoqueMinimo: 3, precoCusto: 32.00,  precoVenda: 72.00 },
+    { id: 'e9',  nome: 'Protetor Térmico Leave-in 200ml',          categoria: 'Revenda',    quantidade: 3,  estoqueMinimo: 4, precoCusto: 28.00,  precoVenda: 65.00 },
+    { id: 'e10', nome: 'Luvas Nitrílicas Pretas P/M/G (Caixa 100un)', categoria: 'Uso Interno', quantidade: 5, estoqueMinimo: 2, precoCusto: 42.00, precoVenda: 0 }
+  ];
+
   function getEstoque() {
-    return getStore('estoque') || [];
+    var lista = getStore('estoque');
+    if (lista && lista.length) return lista;
+    return DEFAULT_ESTOQUE.slice();
   }
 
   function setEstoque(lista) {
