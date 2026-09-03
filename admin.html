@@ -378,10 +378,10 @@
           <p class="text-xs font-semibold text-green-400" id="ag-alert-text"></p>
         </div>
         <div class="flex items-center justify-between">
-          <button id="ag-busca-btn" class="flex items-center gap-2 rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-xs text-gray-400 hover:text-white transition-colors">
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            Buscar
-          </button>
+          <div class="relative">
+            <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input id="ag-busca-input" type="text" placeholder="Buscar por nome, serviço ou telefone..." class="w-56 sm:w-72 rounded-lg bg-dark-700 border border-dark-300/40 pl-8 pr-3 py-2 text-xs text-gray-300 placeholder-gray-500 focus:border-gold focus:outline-none transition-colors">
+          </div>
           <button id="ag-hoje-btn" class="gold-btn rounded-xl px-5 py-2 text-xs font-bold">Hoje</button>
         </div>
       </div>
@@ -1852,6 +1852,12 @@ document.addEventListener('DOMContentLoaded', function () {
   var agProfissional = 'Todos';
   var agOrigem = 'todos';
   var agStatusFilter = 'todos';
+
+  /* Busca em tempo real — input event listener */
+  var agBuscaInput = document.getElementById('ag-busca-input');
+  if (agBuscaInput) {
+    agBuscaInput.addEventListener('input', function () { renderAgendamentos(); });
+  }
   var _nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   var _nomesMesesShort = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
   var _nomesDiasShort = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
@@ -2179,15 +2185,29 @@ document.addEventListener('DOMContentLoaded', function () {
   function renderAgDiaView(ds) {
     var timeline = document.getElementById('ag-timeline');
     timeline.innerHTML = '';
-    var agsAll = B ? B.getAgendamentos().filter(function (a) { return a.data === ds; }) : [];
-    var ags = agsAll.filter(function (a) {
-      if (a.status === 'concluido' || a.status === 'cancelado') return false;
-      if (agProfissional !== 'Todos' && a.profissional && a.profissional !== agProfissional) return false;
-      if (agOrigem === 'online' && a.origem !== 'online') return false;
-      if (agOrigem === 'recepcao' && a.origem !== 'recepcao') return false;
-      if (agStatusFilter !== 'todos' && a.status !== agStatusFilter) return false;
-      return true;
-    });
+    var ags = B ? B.getAgendamentos().filter(function (a) { return a.data === ds; }) : [];
+    /* Filtros de profissional, origem e status */
+    if (agProfissional !== 'Todos') {
+      ags = ags.filter(function (a) { return !a.profissional || a.profissional === agProfissional; });
+    }
+    if (agOrigem === 'online') {
+      ags = ags.filter(function (a) { return a.origem === 'online'; });
+    } else if (agOrigem === 'recepcao') {
+      ags = ags.filter(function (a) { return a.origem === 'recepcao'; });
+    }
+    if (agStatusFilter !== 'todos') {
+      ags = ags.filter(function (a) { return a.status === agStatusFilter; });
+    }
+    /* Filtro de busca */
+    var termoBusca = (document.getElementById('ag-busca-input') || {}).value || '';
+    if (termoBusca.trim()) {
+      var tb = termoBusca.toLowerCase().trim();
+      ags = ags.filter(function (a) {
+        return (a.cliente_nome && a.cliente_nome.toLowerCase().indexOf(tb) !== -1) ||
+               (a.servico && a.servico.toLowerCase().indexOf(tb) !== -1) ||
+               (a.cliente_whatsapp && a.cliente_whatsapp.replace(/\D/g,'').indexOf(tb.replace(/\D/g,'')) !== -1);
+      });
+    }
     ags.sort(function (a,b) { return a.horario < b.horario ? -1 : 1; });
 
     if (!ags.length) {
@@ -2243,6 +2263,16 @@ document.addEventListener('DOMContentLoaded', function () {
     if (agStatusFilter !== 'todos') {
       ags = ags.filter(function (a) { return a.status === agStatusFilter; });
     }
+    /* Filtro de busca */
+    var termoBusca = (document.getElementById('ag-busca-input') || {}).value || '';
+    if (termoBusca.trim()) {
+      var tb = termoBusca.toLowerCase().trim();
+      ags = ags.filter(function (a) {
+        return (a.cliente_nome && a.cliente_nome.toLowerCase().indexOf(tb) !== -1) ||
+               (a.servico && a.servico.toLowerCase().indexOf(tb) !== -1) ||
+               (a.cliente_whatsapp && a.cliente_whatsapp.replace(/\D/g,'').indexOf(tb.replace(/\D/g,'')) !== -1);
+      });
+    }
     ags.sort(function (a,b) { return a.data+a.horario < b.data+b.horario ? -1 : 1; });
 
     if (!ags.length) {
@@ -2280,6 +2310,16 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     if (agStatusFilter !== 'todos') {
       ags = ags.filter(function (a) { return a.status === agStatusFilter; });
+    }
+    /* Filtro de busca */
+    var termoBusca = (document.getElementById('ag-busca-input') || {}).value || '';
+    if (termoBusca.trim()) {
+      var tb = termoBusca.toLowerCase().trim();
+      ags = ags.filter(function (a) {
+        return (a.cliente_nome && a.cliente_nome.toLowerCase().indexOf(tb) !== -1) ||
+               (a.servico && a.servico.toLowerCase().indexOf(tb) !== -1) ||
+               (a.cliente_whatsapp && a.cliente_whatsapp.replace(/\D/g,'').indexOf(tb.replace(/\D/g,'')) !== -1);
+      });
     }
     ags.sort(function (a,b) { return a.data+a.horario > b.data+b.horario ? -1 : 1; });
     ags = ags.slice(0, 50);
@@ -2502,34 +2542,9 @@ document.addEventListener('DOMContentLoaded', function () {
       renderAgendamentos();
       return;
     }
-    /* Busca button */
-    if (t.closest('#ag-busca-btn')) {
-      var termo = prompt('Buscar agendamento por nome do cliente:');
-      if (!termo) return;
-      var timeline = document.getElementById('ag-timeline');
-      var ags = B ? B.getAgendamentos().filter(function (a) {
-        return a.cliente_nome && a.cliente_nome.toLowerCase().indexOf(termo.toLowerCase()) !== -1;
-      }) : [];
-      ags.sort(function (a,b) { return a.data+a.horario > b.data+b.horario ? -1 : 1; });
-      ags = ags.slice(0, 30);
-      timeline.innerHTML = '';
-      if (!ags.length) {
-        timeline.innerHTML = '<p class="text-gray-500 text-sm py-8 text-center">Nenhum resultado para "' + esc(termo) + '"</p>';
-        return;
-      }
-      var lastDayStr = '';
-      ags.forEach(function (ag) {
-        if (ag.data !== lastDayStr) {
-          var dObj = new Date(ag.data + 'T12:00:00');
-          var hdr = document.createElement('div');
-          hdr.className = 'flex items-center gap-3 mt-4 mb-2 first:mt-0';
-          hdr.innerHTML = '<span class="font-semibold text-sm text-white">' + dObj.getDate() + ' de ' + _nomesMesesShort[dObj.getMonth()] + '</span><div class="flex-1 h-px bg-dark-300/30"></div>';
-          timeline.appendChild(hdr);
-          lastDayStr = ag.data;
-        }
-        timeline.appendChild(agBuildCard(ag));
-      });
-      agAttachStatusListeners(timeline);
+    /* Busca input — re-renderiza a view atual com o termo de busca */
+    if (t.target && t.target.id === 'ag-busca-input') {
+      /* Deixa o input event listener cuidar disso */
       return;
     }
     /* Profissional filter toggle */
