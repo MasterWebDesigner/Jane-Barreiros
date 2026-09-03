@@ -223,7 +223,7 @@
 
   /* Carrega todos os dados do Firebase para a memória + migra localStorage antigo */
   function loadAllData(cb) {
-    var keys = ['agendamentos', 'clientes', 'servicos', 'bloqueios', 'lista_espera', 'profissionais', 'secoes'];
+    var keys = ['agendamentos', 'clientes', 'servicos', 'bloqueios', 'lista_espera', 'profissionais', 'secoes', 'estoque'];
     var pending = keys.length;
     var done = function () { pending--; if (pending <= 0) { _loadingComplete = true; console.log('[Booking] loadAllData COMPLETO. Cache atualizado.'); if (cb) cb(); } };
 
@@ -442,6 +442,17 @@
 
   function setSecoes(lista) {
     return setStore('secoes', lista);
+  }
+
+  /* ================================================================
+     ESTOQUE
+     ================================================================ */
+  function getEstoque() {
+    return getStore('estoque') || [];
+  }
+
+  function setEstoque(lista) {
+    return setStore('estoque', lista);
   }
 
   /* ================================================================
@@ -937,6 +948,8 @@
     setProfissionais: setProfissionais,
     getSecoes: getSecoes,
     setSecoes: setSecoes,
+    getEstoque: getEstoque,
+    setEstoque: setEstoque,
     getAgendamentosPorProfissional: getAgendamentosPorProfissional,
     horariosDisponiveis: horariosDisponiveis,
     getBloqueios: getBloqueios,

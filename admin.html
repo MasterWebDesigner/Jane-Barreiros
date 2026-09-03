@@ -433,9 +433,43 @@
 
     <!-- ==================== ESTOQUE ==================== -->
     <section id="page-produtos" class="admin-page p-6 lg:p-8 hidden">
-      <h1 class="font-display text-2xl font-semibold text-white mb-6">Estoque / Produtos</h1>
-      <div class="card-dark p-8 text-center">
-        <p class="text-gray-400">Módulo em desenvolvimento. Em breve disponível.</p>
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="font-display text-2xl font-semibold text-white">Estoque / Produtos</h1>
+        <button id="est-novo-btn" class="gold-btn rounded-xl px-4 py-2 text-sm">+ Novo Produto</button>
+      </div>
+      <!-- KPIs -->
+      <div id="est-kpis" class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6"></div>
+      <!-- Filtros -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4">
+        <input id="est-busca" type="text" placeholder="Buscar produto..." class="w-full sm:w-64 rounded-lg border border-dark-300 bg-dark-700 px-3 py-2 text-sm text-gray-300 placeholder-gray-500 focus:border-gold focus:outline-none">
+        <select id="est-filtro-cat" class="rounded-lg border border-dark-300 bg-dark-700 px-3 py-2 text-sm text-gray-300">
+          <option value="todos">Todas as categorias</option>
+          <option value="Uso Interno">Uso Interno</option>
+          <option value="Revenda">Revenda</option>
+        </select>
+        <select id="est-filtro-status" class="rounded-lg border border-dark-300 bg-dark-700 px-3 py-2 text-sm text-gray-300">
+          <option value="todos">Todos os status</option>
+          <option value="em_dia">Em Dia</option>
+          <option value="baixo">Estoque Baixo</option>
+        </select>
+      </div>
+      <!-- Tabela -->
+      <div class="overflow-x-auto rounded-xl border border-dark-300/30 bg-dark-700/40">
+        <table class="w-full text-left text-sm">
+          <thead>
+            <tr class="border-b border-dark-300/30 text-[11px] uppercase tracking-wider text-gray-500">
+              <th class="px-4 py-3">Produto</th>
+              <th class="px-4 py-3">Categoria</th>
+              <th class="px-4 py-3 text-center">Qtd Atual</th>
+              <th class="px-4 py-3 text-center">Mínimo</th>
+              <th class="px-4 py-3 text-center">Status</th>
+              <th class="px-4 py-3 text-right">Preço Venda</th>
+              <th class="px-4 py-3 text-center">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="est-tbody" class="divide-y divide-dark-300/20"></tbody>
+        </table>
+        <div id="est-vazio" class="hidden p-8 text-center text-gray-500">Nenhum produto cadastrado.</div>
       </div>
     </section>
 
@@ -956,11 +990,59 @@
   </div>
 </div>
 
+<!-- Modal Produto -->
+<div id="est-modal" class="fixed inset-0 z-50 hidden items-center justify-center modal-overlay">
+  <div class="bg-dark-700 border border-dark-300/50 rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4">
+    <div class="flex items-center justify-between mb-4">
+      <h3 id="est-modal-title" class="font-display text-xl font-semibold text-white">Novo Produto</h3>
+      <button id="est-modal-close" class="flex h-8 w-8 items-center justify-center rounded-full bg-dark-600 text-gray-400 hover:text-white">&times;</button>
+    </div>
+    <form id="est-form" class="space-y-4">
+      <input type="hidden" id="est-id">
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Nome do Produto</label>
+        <input id="est-nome" type="text" placeholder="Ex.: Shampoo Profissional" required class="w-full rounded-xl border border-dark-300 bg-dark-600 px-4 py-3 text-sm text-white placeholder-gray-500 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold/50">
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Categoria</label>
+        <select id="est-categoria" class="w-full rounded-xl border border-dark-300 bg-dark-600 px-4 py-3 text-sm text-white focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold/50">
+          <option value="Uso Interno">Uso Interno</option>
+          <option value="Revenda">Revenda</option>
+        </select>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Qtd Atual</label>
+          <input id="est-qtd" type="number" placeholder="0" min="0" required class="w-full rounded-xl border border-dark-300 bg-dark-600 px-4 py-3 text-sm text-white placeholder-gray-500 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold/50">
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Qtd Mínima (Alerta)</label>
+          <input id="est-qtd-min" type="number" placeholder="0" min="0" required class="w-full rounded-xl border border-dark-300 bg-dark-600 px-4 py-3 text-sm text-white placeholder-gray-500 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold/50">
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Preço de Custo (R$)</label>
+          <input id="est-preco-custo" type="text" placeholder="0,00" class="w-full rounded-xl border border-dark-300 bg-dark-600 px-4 py-3 text-sm text-white placeholder-gray-500 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold/50">
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Preço de Venda (R$)</label>
+          <input id="est-preco-venda" type="text" placeholder="0,00" class="w-full rounded-xl border border-dark-300 bg-dark-600 px-4 py-3 text-sm text-white placeholder-gray-500 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold/50">
+        </div>
+      </div>
+      <div class="flex gap-3 pt-2">
+        <button type="submit" class="gold-btn flex-1 rounded-xl py-3 text-sm">Salvar</button>
+        <button type="button" id="est-cancelar" class="flex-1 rounded-xl border border-dark-300 bg-dark-600 py-3 text-sm font-semibold text-gray-300 hover:border-gray-400">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- app-booking.js -->
-<script src="app-booking.js?v=1.5"></script>
+<script src="app-booking.js?v=1.6"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -1084,6 +1166,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (pageName === 'historico') renderHistorico();
     if (pageName === 'retencao') renderRetencao();
     if (pageName === 'faturamento') renderFaturamento();
+    if (pageName === 'produtos') renderEstoque();
     if (pageName === 'config') renderConfig();
   }
 
@@ -1134,6 +1217,7 @@ document.addEventListener('DOMContentLoaded', function () {
         try { if (document.getElementById('page-clientes').style.display !== 'none') renderClientes(); } catch (e) {}
         try { if (document.getElementById('page-historico').style.display !== 'none') renderHistorico(); } catch (e) {}
         try { if (document.getElementById('page-retencao').style.display !== 'none') renderRetencao(); } catch (e) {}
+        try { if (document.getElementById('page-produtos').style.display !== 'none') renderEstoque(); } catch (e) {}
         try { if (document.getElementById('page-faturamento').style.display !== 'none') renderFaturamento(); } catch (e) {}
       });
     } else {
@@ -1148,6 +1232,10 @@ document.addEventListener('DOMContentLoaded', function () {
         try { if (document.getElementById('page-agendamentos').style.display !== 'none') renderAgendamentos(); } catch (e) {}
         try { if (document.getElementById('page-retencao').style.display !== 'none') renderRetencao(); } catch (e) {}
         try { if (document.getElementById('page-faturamento').style.display !== 'none') renderFaturamento(); } catch (e) {}
+      });
+      B.listenFirebase('estoque', function () {
+        console.log('[Admin] Estoque atualizado (Firebase).');
+        try { if (document.getElementById('page-produtos').style.display !== 'none') renderEstoque(); } catch (e) {}
       });
     }
     /* Set initial display states for all admin pages */
@@ -2859,6 +2947,189 @@ document.addEventListener('DOMContentLoaded', function () {
       if (B && B.setSecoes) {
         B.setSecoes(delLista).then(function () { renderSecoes(); });
       }
+    }
+  });
+
+  /* ============================================================
+     ESTOQUE / PRODUTOS
+     ============================================================ */
+  function renderEstoque(busca, filtroCat, filtroStatus) {
+    var tbody = document.getElementById('est-tbody');
+    var vazio = document.getElementById('est-vazio');
+    var kpisDiv = document.getElementById('est-kpis');
+    tbody.innerHTML = '';
+    if (!B) return;
+    var lista = B.getEstoque();
+
+    /* KPIs */
+    var totalProdutos = lista.length;
+    var estoqueBaixo = lista.filter(function (p) { return p.quantidade <= (p.estoqueMinimo || 0); }).length;
+    var valorTotal = 0;
+    lista.forEach(function (p) { valorTotal += (p.quantidade || 0) * (p.precoVenda || 0); });
+
+    kpisDiv.innerHTML =
+      '<div class="rounded-xl bg-dark-600/60 border border-dark-300/30 p-4 text-center">' +
+        '<p class="text-[10px] uppercase tracking-wider text-gray-500 mb-1">Total Produtos</p>' +
+        '<p class="text-2xl font-bold font-numeric text-white">' + totalProdutos + '</p>' +
+      '</div>' +
+      '<div class="rounded-xl ' + (estoqueBaixo > 0 ? 'bg-red-500/10 border border-red-500/20' : 'bg-dark-600/60 border border-dark-300/30') + ' p-4 text-center">' +
+        '<p class="text-[10px] uppercase tracking-wider ' + (estoqueBaixo > 0 ? 'text-red-400' : 'text-gray-500') + ' mb-1">Estoque Baixo</p>' +
+        '<p class="text-2xl font-bold font-numeric ' + (estoqueBaixo > 0 ? 'text-red-400' : 'text-white') + '">' + estoqueBaixo + '</p>' +
+      '</div>' +
+      '<div class="rounded-xl bg-dark-600/60 border border-dark-300/30 p-4 text-center">' +
+        '<p class="text-[10px] uppercase tracking-wider text-gray-500 mb-1">Valor Total Estoque</p>' +
+        '<p class="text-2xl font-bold font-numeric text-green-400">R$ ' + valorTotal.toFixed(2).replace('.', ',') + '</p>' +
+      '</div>';
+
+    /* Filtros */
+    if (busca) {
+      var f = busca.toLowerCase();
+      lista = lista.filter(function (p) { return p.nome && p.nome.toLowerCase().indexOf(f) !== -1; });
+    }
+    if (filtroCat && filtroCat !== 'todos') {
+      lista = lista.filter(function (p) { return p.categoria === filtroCat; });
+    }
+    if (filtroStatus && filtroStatus !== 'todos') {
+      lista = lista.filter(function (p) {
+        var isBaixo = p.quantidade <= (p.estoqueMinimo || 0);
+        return filtroStatus === 'baixo' ? isBaixo : !isBaixo;
+      });
+    }
+
+    if (!lista.length) { vazio.classList.remove('hidden'); return; }
+    vazio.classList.add('hidden');
+
+    lista.forEach(function (p) {
+      var tr = document.createElement('tr');
+      var isBaixo = p.quantidade <= (p.estoqueMinimo || 0);
+      var statusBadge = isBaixo
+        ? '<span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold text-red-400 bg-red-500/15">Estoque Baixo</span>'
+        : '<span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold text-green-400 bg-green-500/15">Em Dia</span>';
+      var precoVendaFmt = p.precoVenda ? 'R$ ' + parseFloat(p.precoVenda).toFixed(2).replace('.', ',') : '—';
+      tr.className = 'border-b border-dark-300/20 hover:bg-dark-600/30 transition';
+      tr.innerHTML =
+        '<td class="px-4 py-3 font-medium text-white">' + esc(p.nome) + '</td>' +
+        '<td class="px-4 py-3"><span class="badge ' + (p.categoria === 'Revenda' ? 'badge-active' : 'bg-purple-500/15 text-purple-400') + '">' + esc(p.categoria) + '</span></td>' +
+        '<td class="px-4 py-3 text-center font-numeric font-bold ' + (isBaixo ? 'text-red-400' : 'text-white') + '">' + (p.quantidade || 0) + '</td>' +
+        '<td class="px-4 py-3 text-center text-gray-400">' + (p.estoqueMinimo || 0) + '</td>' +
+        '<td class="px-4 py-3 text-center">' + statusBadge + '</td>' +
+        '<td class="px-4 py-3 text-right font-numeric text-gray-300">' + precoVendaFmt + '</td>' +
+        '<td class="px-4 py-3 text-center">' +
+          '<div class="flex items-center justify-center gap-1">' +
+            '<button class="est-entrada-btn rounded-lg bg-green-500/15 px-2 py-1 text-xs font-bold text-green-400 hover:bg-green-500/25" data-id="' + p.id + '" title="Entrada +1">+1</button>' +
+            '<button class="est-saida-btn rounded-lg bg-amber-500/15 px-2 py-1 text-xs font-bold text-amber-400 hover:bg-amber-500/25" data-id="' + p.id + '" title="Saída -1">-1</button>' +
+            '<button class="est-edit-btn rounded-lg px-2 py-1 text-xs font-semibold text-gold hover:bg-gold/10" data-id="' + p.id + '">Editar</button>' +
+            '<button class="est-del-btn rounded-lg px-2 py-1 text-xs font-semibold text-red-400 hover:bg-red-500/10" data-id="' + p.id + '">Excluir</button>' +
+          '</div>' +
+        '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  /* Filtros */
+  document.getElementById('est-busca').addEventListener('input', function () {
+    renderEstoque(this.value, document.getElementById('est-filtro-cat').value, document.getElementById('est-filtro-status').value);
+  });
+  document.getElementById('est-filtro-cat').addEventListener('change', function () {
+    renderEstoque(document.getElementById('est-busca').value, this.value, document.getElementById('est-filtro-status').value);
+  });
+  document.getElementById('est-filtro-status').addEventListener('change', function () {
+    renderEstoque(document.getElementById('est-busca').value, document.getElementById('est-filtro-cat').value, this.value);
+  });
+
+  /* Modal */
+  function openEstModal(prod) {
+    document.getElementById('est-modal-title').textContent = prod ? 'Editar Produto' : 'Novo Produto';
+    document.getElementById('est-id').value = prod ? prod.id : '';
+    document.getElementById('est-nome').value = prod ? prod.nome : '';
+    document.getElementById('est-categoria').value = prod ? (prod.categoria || 'Uso Interno') : 'Uso Interno';
+    document.getElementById('est-qtd').value = prod ? (prod.quantidade || 0) : '';
+    document.getElementById('est-qtd-min').value = prod ? (prod.estoqueMinimo || 0) : '';
+    document.getElementById('est-preco-custo').value = prod ? (prod.precoCusto || '') : '';
+    document.getElementById('est-preco-venda').value = prod ? (prod.precoVenda || '') : '';
+    document.getElementById('est-modal').classList.remove('hidden');
+    document.getElementById('est-modal').classList.add('flex');
+  }
+
+  function closeEstModal() {
+    document.getElementById('est-modal').classList.add('hidden');
+    document.getElementById('est-modal').classList.remove('flex');
+  }
+
+  document.getElementById('est-novo-btn').addEventListener('click', function () { openEstModal(); });
+  document.getElementById('est-modal-close').addEventListener('click', closeEstModal);
+  document.getElementById('est-cancelar').addEventListener('click', closeEstModal);
+  document.getElementById('est-modal').addEventListener('click', function (e) { if (e.target.id === 'est-modal') closeEstModal(); });
+
+  document.getElementById('est-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var nome = document.getElementById('est-nome').value.trim();
+    if (!nome) { alert('Informe o nome do produto.'); return; }
+    var data = {
+      id: document.getElementById('est-id').value || Date.now() + '',
+      nome: nome,
+      categoria: document.getElementById('est-categoria').value,
+      quantidade: parseInt(document.getElementById('est-qtd').value) || 0,
+      estoqueMinimo: parseInt(document.getElementById('est-qtd-min').value) || 0,
+      precoCusto: parseFloat(document.getElementById('est-preco-custo').value.replace(',', '.')) || 0,
+      precoVenda: parseFloat(document.getElementById('est-preco-venda').value.replace(',', '.')) || 0
+    };
+    var lista = B.getEstoque();
+    var editIdx = lista.findIndex(function (p) { return p.id === data.id; });
+    if (editIdx !== -1) {
+      lista[editIdx] = data;
+    } else {
+      lista.push(data);
+    }
+    if (B && B.setEstoque) {
+      B.setEstoque(lista).then(function () {
+        closeEstModal();
+        renderEstoque();
+        showToast('Produto salvo', nome, null);
+      });
+    }
+  });
+
+  /* Ações: entrada, saída, editar, excluir */
+  document.addEventListener('click', function (e) {
+    var entradaBtn = e.target.closest('.est-entrada-btn');
+    if (entradaBtn) {
+      var id = entradaBtn.getAttribute('data-id');
+      var lista = B.getEstoque();
+      var prod = lista.find(function (p) { return p.id === id; });
+      if (prod) {
+        prod.quantidade = (prod.quantidade || 0) + 1;
+        B.setEstoque(lista).then(function () { renderEstoque(); });
+      }
+      return;
+    }
+    var saidaBtn = e.target.closest('.est-saida-btn');
+    if (saidaBtn) {
+      var id = saidaBtn.getAttribute('data-id');
+      var lista = B.getEstoque();
+      var prod = lista.find(function (p) { return p.id === id; });
+      if (prod) {
+        if (prod.quantidade <= 0) { showToast('Erro', 'Quantidade já está zero.', null); return; }
+        prod.quantidade = (prod.quantidade || 0) - 1;
+        B.setEstoque(lista).then(function () { renderEstoque(); });
+      }
+      return;
+    }
+    var editBtn = e.target.closest('.est-edit-btn');
+    if (editBtn) {
+      var id = editBtn.getAttribute('data-id');
+      var lista = B.getEstoque();
+      var prod = lista.find(function (p) { return p.id === id; });
+      if (prod) openEstModal(prod);
+      return;
+    }
+    var delBtn = e.target.closest('.est-del-btn');
+    if (delBtn) {
+      if (!confirm('Excluir este produto?')) return;
+      var id = delBtn.getAttribute('data-id');
+      var lista = B.getEstoque();
+      lista = lista.filter(function (p) { return p.id !== id; });
+      B.setEstoque(lista).then(function () { renderEstoque(); });
     }
   });
 
