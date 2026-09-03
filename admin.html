@@ -67,6 +67,8 @@
     #ag-calendar-dropdown button.cal-dd-day.opacity-50 { opacity:.5; }
     #ag-calendar-dropdown button.cal-dd-day.text-red-400 { color:#F87171; font-weight:800; }
     #ag-calendar-dropdown button.cal-dd-day.has-dot::after { content:''; display:block; width:4px; height:4px; border-radius:50%; background:#D4AF37; position:absolute; bottom:4px; }
+    #ag-calendar-dropdown button.cal-dd-day.has-pending { background:rgba(34,197,94,.15); color:#4ADE80; border:1.5px solid rgba(34,197,94,.5); animation:calPulse 2s ease-in-out infinite; }
+    @keyframes calPulse { 0%,100%{ box-shadow:0 0 0 0 rgba(34,197,94,.3); } 50%{ box-shadow:0 0 8px 2px rgba(34,197,94,.4); } }
     .card-dark { background:#1E1E1E; border:1px solid rgba(212,175,55,.12); border-radius:12px; }
     .card-dark:hover { border-color:rgba(212,175,55,.3); }
     .tab-active { color:#D4AF37; border-bottom:2px solid #D4AF37; }
@@ -1719,6 +1721,15 @@ document.addEventListener('DOMContentLoaded', function () {
     var hojeStr = agDateStr(new Date());
     var selectedStr = agDateStr(agDate);
     var agsMes = B ? B.getDiasComAgendamento(year, month + 1) : [];
+    /* Mapeia dias com pendentes */
+    var diasComPendente = {};
+    var allAgs = B ? B.getAgendamentos() : [];
+    allAgs.forEach(function (a) {
+      if (a.status === 'pendente') {
+        var p = a.data.split('-');
+        if (parseInt(p[0]) === year && parseInt(p[1]) === month + 1) diasComPendente[parseInt(p[2])] = true;
+      }
+    });
     for (var i = 0; i < firstDay; i++) {
       var empty = document.createElement('div');
       grid.appendChild(empty);
@@ -1744,7 +1755,11 @@ document.addEventListener('DOMContentLoaded', function () {
         btn.className += ' today';
       }
       if (isFechado && !holiday) btn.className += ' opacity-50';
-      if (temAg && !isFechado) btn.className += ' has-dot';
+      if (diasComPendente[d] && !isFechado) {
+        btn.className += ' has-pending';
+      } else if (temAg && !isFechado) {
+        btn.className += ' has-dot';
+      }
       btn.textContent = d;
       btn.setAttribute('data-date', ds);
       btn.addEventListener('click', function () {
