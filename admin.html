@@ -380,7 +380,7 @@
         <div class="flex items-center justify-between">
           <div class="relative">
             <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            <input id="ag-busca-input" type="text" placeholder="Buscar por nome, serviço ou telefone..." class="w-56 sm:w-72 rounded-lg bg-dark-700 border border-dark-300/40 pl-8 pr-3 py-2 text-xs text-gray-300 placeholder-gray-500 focus:border-gold focus:outline-none transition-colors">
+            <input id="ag-busca-input" type="text" placeholder="Buscar por nome, serviço ou telefone..." oninput="try{renderAgendamentos()}catch(e){}" class="w-56 sm:w-72 rounded-lg bg-dark-700 border border-dark-300/40 pl-8 pr-3 py-2 text-xs text-gray-300 placeholder-gray-500 focus:border-gold focus:outline-none transition-colors">
           </div>
           <button id="ag-hoje-btn" class="gold-btn rounded-xl px-5 py-2 text-xs font-bold">Hoje</button>
         </div>
@@ -1853,12 +1853,14 @@ document.addEventListener('DOMContentLoaded', function () {
   var agOrigem = 'todos';
   var agStatusFilter = 'todos';
 
-  /* Busca em tempo real — event delegation (mais confiável) */
-  document.addEventListener('input', function (e) {
-    if (e.target && e.target.id === 'ag-busca-input') {
-      renderAgendamentos();
-    }
-  });
+  /* Busca em tempo real —多重 wrapper para garantir funcionamento */
+  function _attachBuscaListener() {
+    var inp = document.getElementById('ag-busca-input');
+    if (!inp || inp._buscaBound) return;
+    inp._buscaBound = true;
+    inp.addEventListener('input', function () { renderAgendamentos(); });
+  }
+  _attachBuscaListener();
   var _nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   var _nomesMesesShort = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
   var _nomesDiasShort = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
