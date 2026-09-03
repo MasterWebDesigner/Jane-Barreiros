@@ -380,18 +380,23 @@
      SERVIÇOS
      ================================================================ */
   function getServicos() {
-    if (!_loadingComplete) {
-      console.log('[Booking] getServicos: aguardando Firebase... (retorna DEFAULT)');
-      return DEFAULT_SERVICOS.slice();
-    }
+    /* 1) Tenta cache em memória */
     var data = getStore('servicos');
-    if (!data || !data.length) {
-      console.log('[Booking] getServicos: cache vazio, usando DEFAULT_SERVICOS (' + DEFAULT_SERVICOS.length + ' itens)');
-      setStore('servicos', DEFAULT_SERVICOS);
-      return DEFAULT_SERVICOS.slice();
+    if (data && data.length) {
+      console.log('[Booking] getServicos:', data.length, 'itens do cache');
+      return data;
     }
-    console.log('[Booking] getServicos:', data.length, 'itens do cache');
-    return data;
+    /* 2) Tenta localStorage (salvo na última sessão) */
+    var local = null;
+    try { local = JSON.parse(localStorage.getItem('jane-booking-servicos')); } catch (e) {}
+    if (local && local.length) {
+      console.log('[Booking] getServicos:', local.length, 'itens do localStorage');
+      _cache['servicos'] = local;
+      return toArray(local);
+    }
+    /* 3) Último recurso: DEFAULT */
+    console.log('[Booking] getServicos: sem dados, usando DEFAULT (' + DEFAULT_SERVICOS.length + ' itens)');
+    return DEFAULT_SERVICOS.slice();
   }
 
   function setServicos(lista) {
