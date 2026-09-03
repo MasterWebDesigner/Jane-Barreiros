@@ -1175,7 +1175,14 @@
         console.log('[Booking] abrirModal chamado para:', servicoNome);
         selected = { servico: servicoNome, data: null, horario: null, forma_pagamento: null };
         currentStep = 1;
-        try { renderStep1(); } catch (e) { console.error('[Booking] Erro no renderStep1:', e); }
+        try {
+          renderStep1();
+          /* Se serviço já foi pré-selecionado, pula direto pro calendário */
+          if (servicoNome) {
+            currentStep = 2;
+            renderStep2();
+          }
+        } catch (e) { console.error('[Booking] Erro no renderStep1:', e); }
         showModal();
       }
 
@@ -1250,20 +1257,48 @@
       function renderStep1() {
         var list = document.getElementById('booking-service-list');
         list.innerHTML = '';
-        servicos.forEach(function (svc) {
-          var b = document.createElement('button');
-          b.type = 'button';
-          var isSelected = selected.servico === svc.nome;
-          b.className = 'w-full rounded-xl border p-4 text-left transition-all duration-200 ' +
-            (isSelected ? 'border-gold bg-gold/10 ring-2 ring-gold/40' : 'border-gold/20 bg-cream-deep hover:border-gold/50 hover:bg-cream/50');
-          var precoFmt = svc.preco === 'Consulte' ? 'Consulte' : svc.preco.replace('A partir de ', '');
-          b.innerHTML = '<div class="flex items-center justify-between"><span class="font-serif font-semibold">' + esc(svc.nome) + '</span><span class="text-xs text-muted">' + esc(svc.duracao) + '</span></div><p class="mt-1 text-sm font-bold text-gold-dark">' + precoFmt + '</p>';
-          b.addEventListener('click', function () {
-            selected.servico = svc.nome;
-            renderStep1();
-            currentStep = 2; updateStep(); renderStep2();
+        var svc = servicos.find(function (s) { return s.nome === selected.servico; });
+        if (!svc) {
+          /* Se não encontrou o serviço, mostra a lista completa */
+          servicos.forEach(function (s) {
+            var b = document.createElement('button');
+            b.type = 'button';
+            var isSelected = selected.servico === s.nome;
+            b.className = 'w-full rounded-xl border p-4 text-left transition-all duration-200 ' +
+              (isSelected ? 'border-gold bg-gold/10 ring-2 ring-gold/40' : 'border-gold/20 bg-cream-deep hover:border-gold/50 hover:bg-cream/50');
+            var precoFmt = s.preco === 'Consulte' ? 'Consulte' : s.preco.replace('A partir de ', '');
+            b.innerHTML = '<div class="flex items-center justify-between"><span class="font-serif font-semibold">' + esc(s.nome) + '</span><span class="text-xs text-muted">' + esc(s.duracao) + '</span></div><p class="mt-1 text-sm font-bold text-gold-dark">' + precoFmt + '</p>';
+            b.addEventListener('click', function () {
+              selected.servico = s.nome;
+              renderStep1();
+              currentStep = 2; updateStep(); renderStep2();
+            });
+            list.appendChild(b);
           });
-          list.appendChild(b);
+          return;
+        }
+        /* Mostra apenas o serviço selecionado como confirmação */
+        var precoFmt = svc.preco === 'Consulte' ? 'Consulte' : svc.preco.replace('A partir de ', '');
+        var card = document.createElement('div');
+        card.className = 'rounded-xl border border-gold/30 bg-gold/5 p-5';
+        card.innerHTML =
+          '<div class="flex items-start justify-between">' +
+            '<div>' +
+              '<p class="text-[10px] font-bold uppercase tracking-wider text-gold mb-1">Serviço selecionado</p>' +
+              '<h4 class="font-serif text-lg font-bold text-ink">' + esc(svc.nome) + '</h4>' +
+            '</div>' +
+            '<button id="booking-change-svc" type="button" class="rounded-lg border border-gold/20 bg-cream-deep px-3 py-1.5 text-[10px] font-semibold text-muted hover:border-gold/50 hover:text-gold-dark transition-colors">Trocar</button>' +
+          '</div>' +
+          '<div class="mt-3 flex items-center gap-4 text-sm">' +
+            '<span class="text-muted">⏱ ' + esc(svc.duracao) + '</span>' +
+            '<span class="font-bold text-gold-dark">' + precoFmt + '</span>' +
+          '</div>' +
+          (svc.nota ? '<p class="mt-2 text-xs text-muted italic">' + esc(svc.nota) + '</p>' : '');
+        list.appendChild(card);
+
+        document.getElementById('booking-change-svc').addEventListener('click', function () {
+          selected.servico = null;
+          renderStep1();
         });
       }
 
@@ -1458,6 +1493,11 @@
       }
 
       document.getElementById('booking-new').addEventListener('click', function () {
+        selected = { servico: null, data: null, horario: null, forma_pagamento: null };
+        currentStep = 1; updateStep(); renderStep1();
+      });
+
+      document.getElementById('booking-new-service').addEventListener('click', function () {
         selected = { servico: null, data: null, horario: null, forma_pagamento: null };
         currentStep = 1; updateStep(); renderStep1();
       });
@@ -1881,6 +1921,9 @@
         </div>
         <h4 class="font-serif text-xl font-semibold">Agendamento Confirmado!</h4>
         <p id="booking-confirm-msg" class="mt-2 text-sm text-muted"></p>
+        <button id="booking-new-service" type="button" class="mt-5 rounded-xl border border-gold/30 bg-gold/10 px-5 py-2.5 text-sm font-semibold text-gold-dark hover:bg-gold/20 transition-colors">
+          + Agendar outro serviço
+        </button>
       </div>
 
       <!-- Botões de navegação -->
