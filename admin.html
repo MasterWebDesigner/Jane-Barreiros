@@ -2218,8 +2218,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function setServicos(lista) {
     console.log('[Admin] setServicos:', lista.length, 'itens');
-    if (B) B.setServicos(lista);
+    var p = B ? B.setServicos(lista) : Promise.resolve();
     try { localStorage.setItem('jane-booking-servicos', JSON.stringify(lista)); } catch (e) {}
+    return p;
   }
 
   function renderServicos() {
@@ -2376,10 +2377,20 @@ document.addEventListener('DOMContentLoaded', function () {
       l.push(data);
     }
 
-    setServicos(l);
-    closeSvcModal();
-    renderServicos();
-    showToast('Serviço salvo', nome + ' — salvando no Firebase...', null);
+    var btnSalvar = document.getElementById('svc-salvar');
+    var btnTextoOriginal = btnSalvar ? btnSalvar.textContent : '';
+    if (btnSalvar) { btnSalvar.disabled = true; btnSalvar.textContent = 'Salvando...'; }
+
+    setServicos(l).then(function (ok) {
+      if (btnSalvar) { btnSalvar.disabled = false; btnSalvar.textContent = btnTextoOriginal; }
+      closeSvcModal();
+      renderServicos();
+      if (ok !== false) {
+        showToast('Servico salvo', nome + ' — confirmado pelo Firebase.', null);
+      } else {
+        showToast('Salvo localmente', nome + ' — Firebase falhou. Dados em localStorage.', null);
+      }
+    });
   });
 
   /* Tabs (apenas visual por enquanto) */

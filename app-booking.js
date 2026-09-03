@@ -158,39 +158,49 @@
       }
     }
 
-    /* 1) Tenta SDK Firebase */
-    if (_db) {
-      try {
-        _db.ref('jane-booking/' + key).set(val).then(function () {
-          console.log('[Booking] Firebase OK (SDK):', key);
-        }).catch(function (e) {
-          console.error('[Booking] Firebase SDK ERRO:', key, e.message || e);
-          /* 2) Fallback: REST API PUT */
-          _restPut(key, val).then(function () {
-            console.log('[Booking] Firebase OK (REST):', key);
-          }).catch(function (e2) {
-            console.error('[Booking] Firebase REST ERRO:', key, e2.message || e2);
-            _handleError(e2);
+    /* Retorna Promise que resolve quando Firebase confirma */
+    return new Promise(function (resolve) {
+      /* 1) Tenta SDK Firebase */
+      if (_db) {
+        try {
+          _db.ref('jane-booking/' + key).set(val).then(function () {
+            console.log('[Booking] Firebase OK (SDK):', key);
+            resolve(true);
+          }).catch(function (e) {
+            console.error('[Booking] Firebase SDK ERRO:', key, e.message || e);
+            /* 2) Fallback: REST API PUT */
+            _restPut(key, val).then(function () {
+              console.log('[Booking] Firebase OK (REST):', key);
+              resolve(true);
+            }).catch(function (e2) {
+              console.error('[Booking] Firebase REST ERRO:', key, e2.message || e2);
+              _handleError(e2);
+              resolve(false);
+            });
           });
-        });
-      } catch (e) {
-        console.error('[Booking] Firebase exception:', key, e);
+        } catch (e) {
+          console.error('[Booking] Firebase exception:', key, e);
+          _restPut(key, val).then(function () {
+            console.log('[Booking] Firebase OK (REST after exception):', key);
+            resolve(true);
+          }).catch(function (e2) {
+            _handleError(e2);
+            resolve(false);
+          });
+        }
+      } else {
+        /* 3) SDK desconectado: REST direto */
+        console.warn('[Booking] SDK offline. Usando REST API...');
         _restPut(key, val).then(function () {
-          console.log('[Booking] Firebase OK (REST after exception):', key);
-        }).catch(function (e2) {
-          _handleError(e2);
+          console.log('[Booking] Firebase OK (REST fallback):', key);
+          resolve(true);
+        }).catch(function (e) {
+          console.error('[Booking] Firebase REST ERRO:', key, e.message || e);
+          _handleError(e);
+          resolve(false);
         });
       }
-    } else {
-      /* 3) SDK desconectado: REST direto */
-      console.warn('[Booking] SDK offline. Usando REST API...');
-      _restPut(key, val).then(function () {
-        console.log('[Booking] Firebase OK (REST fallback):', key);
-      }).catch(function (e) {
-        console.error('[Booking] Firebase REST ERRO:', key, e.message || e);
-        _handleError(e);
-      });
-    }
+    });
   }
 
   function loadFromFirebase(key, cb) {
@@ -216,8 +226,13 @@
     var pending = keys.length;
     var done = function () { pending--; if (pending <= 0 && cb) cb(); };
 
-    function _processVal(key, val) {
-      /* Mescla dados antigos do localStorage */
+    function _processVal(key, val, fonte) {
+      console.log('[Booking] _processVal:', key, '| fonte:', fonte, '| dados:', val === null ? 'NULL' : (Array.isArray(val) ? val.length + ' itens' : typeof val));
+      if (val !== null && Array.isArray(val)) {
+        console.log('[Booking] Primeiros 3 itens:', JSON.stringify(val.slice(0, 3)));
+      }
+
+      /* Mescla dados antigos do localStorage (chave quebrada 'undefined') */
       var localAntigo = null;
       try { localAntigo = JSON.parse(localStorage.getItem('undefined' + key)); } catch (e) {}
       if (localAntigo && Array.isArray(localAntigo)) {
@@ -235,20 +250,25 @@
         }
         try { localStorage.removeItem('undefined' + key); } catch (e) {}
       }
+
       if (val !== null) {
+        /* Firebase retornou dados → sobrescreve TUDO (cache + localStorage) */
         _cache[key] = val;
-        console.log('[Booking] Firebase load:', key, '| itens:', Array.isArray(val) ? val.length : typeof val);
-        /* Salva no localStorage como backup */
+        console.log('[Booking] Firebase load:', key, '| itens:', Array.isArray(val) ? val.length : typeof val, '| fonte:', fonte);
         var PII_KEYS = ['clientes'];
         if (PII_KEYS.indexOf(key) === -1) {
           try { localStorage.setItem('jane-booking-' + key, JSON.stringify(val)); } catch (e) {}
         }
       } else {
+        /* Firebase vazio → tenta localStorage como último recurso */
         console.log('[Booking] Firebase vazio:', key, '| tentando localStorage...');
         var local = null;
         try { local = JSON.parse(localStorage.getItem('jane-booking-' + key)); } catch (e) {}
         if (local) {
+          console.log('[Booking] localStorage usado:', key, '| itens:', Array.isArray(local) ? local.length : typeof local);
           _cache[key] = local;
+        } else {
+          console.log('[Booking] Nenhum dado encontrado para:', key);
         }
       }
       _loaded[key] = true;
@@ -262,14 +282,13 @@
           if (sdkDone) return;
           sdkDone = true;
           console.warn('[Booking] SDK timeout (2s) para', key, '| tentando REST...');
-          /* 2) Fallback: REST API GET com timeout */
           _restGetWithTimeout(key, 5000).then(function (val) {
-            _processVal(key, val);
+            console.log('[Carregando Servicos do Firebase REST]:', key, '|', JSON.stringify(val).substring(0, 200));
+            _processVal(key, val, 'REST');
             done();
           }).catch(function (e) {
             console.error('[Booking] REST ERRO:', key, e.message || e);
-            /* 3) Último recurso: localStorage */
-            _processVal(key, null);
+            _processVal(key, null, 'nenhum');
             done();
           });
         }, 2000);
@@ -278,33 +297,31 @@
           if (sdkDone) return;
           sdkDone = true;
           clearTimeout(sdkTimeout);
-          _processVal(key, snap.val());
-          /* Reescreve no Firebase para consistência */
-          if (snap.val() !== null) {
-            _db.ref('jane-booking/' + key).set(snap.val()).catch(function () {});
-          }
+          var val = snap.val();
+          console.log('[Carregando Servicos do Firebase]:', key, '|', JSON.stringify(val).substring(0, 200));
+          _processVal(key, val, 'SDK');
           done();
         }).catch(function (e) {
           if (sdkDone) return;
           sdkDone = true;
           clearTimeout(sdkTimeout);
           console.error('[Booking] SDK ERRO:', key, e.message || e);
-          /* Fallback REST */
           _restGetWithTimeout(key, 5000).then(function (val) {
-            _processVal(key, val);
+            console.log('[Carregando Servicos do Firebase REST]:', key, '|', JSON.stringify(val).substring(0, 200));
+            _processVal(key, val, 'REST-fallback');
             done();
           }).catch(function (e2) {
-            _processVal(key, null);
+            _processVal(key, null, 'nenhum');
             done();
           });
         });
       } else {
         /* SDK desconectado: REST direto */
         _restGetWithTimeout(key, 5000).then(function (val) {
-          _processVal(key, val);
+          console.log('[Carregando Servicos do Firebase REST]:', key, '|', JSON.stringify(val).substring(0, 200));
+          _processVal(key, val, 'REST-offline');
           done();
         }).catch(function () {
-          /* Último recurso: localStorage */
           var localFinal = null;
           try { localFinal = JSON.parse(localStorage.getItem('jane-booking-' + key)); } catch (e) {}
           if (!localFinal) {
@@ -369,7 +386,7 @@
   }
 
   function setServicos(lista) {
-    setStore('servicos', lista);
+    return setStore('servicos', lista);
   }
 
   function getServicoPorNome(nome) {
