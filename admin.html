@@ -534,10 +534,10 @@
               <p id="fat-rec-serv-valor" class="font-numeric text-[10px] text-gray-500 mt-1">R$ 0,00</p>
             </div>
           </div>
-          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-3 mb-2">
             <div class="flex-1">
               <div class="flex justify-between mb-1">
-                <span class="text-xs text-purple-400 font-semibold">Produtos (Revenda)</span>
+                <span class="text-xs text-purple-400 font-semibold">Revenda</span>
                 <span id="fat-rec-prod-pct" class="font-numeric text-xs text-gray-400">0%</span>
               </div>
               <div class="h-3 rounded-full bg-dark-600 overflow-hidden">
@@ -546,7 +546,19 @@
               <p id="fat-rec-prod-valor" class="font-numeric text-[10px] text-gray-500 mt-1">R$ 0,00</p>
             </div>
           </div>
-          <p class="mt-2 text-[10px] text-gray-500 text-center">Receita estimada: Serviços executados vs Produtos de revenda em estoque</p>
+          <div class="flex items-center gap-3">
+            <div class="flex-1">
+              <div class="flex justify-between mb-1">
+                <span class="text-xs text-amber-400 font-semibold">Cursos</span>
+                <span id="fat-rec-curso-pct" class="font-numeric text-xs text-gray-400">0%</span>
+              </div>
+              <div class="h-3 rounded-full bg-dark-600 overflow-hidden">
+                <div id="fat-rec-curso-bar" class="h-full rounded-full bg-gradient-to-r from-amber-500/80 to-amber-400 transition-all" style="width:0%"></div>
+              </div>
+              <p id="fat-rec-curso-valor" class="font-numeric text-[10px] text-gray-500 mt-1">R$ 0,00</p>
+            </div>
+          </div>
+          <p class="mt-2 text-[10px] text-gray-500 text-center">Receita por tipo de serviço cadastrado</p>
         </div>
       </div>
 
@@ -963,7 +975,15 @@
         <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Nome do Serviço</label>
         <input id="svc-nome" type="text" placeholder="Ex.: Corte Feminino" required>
       </div>
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-3 gap-4">
+        <div>
+          <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Tipo</label>
+          <select id="svc-tipo">
+            <option value="servico">Serviço</option>
+            <option value="revenda">Revenda</option>
+            <option value="curso">Curso</option>
+          </select>
+        </div>
         <div>
           <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Categoria</label>
           <select id="svc-categoria">
@@ -2698,11 +2718,13 @@ document.addEventListener('DOMContentLoaded', function () {
       var statusBadge = svc.status === 'inativo'
         ? '<span class="badge badge-inactive">Inativo</span>'
         : '<span class="badge badge-active">Ativo</span>';
+      var tipoBadge = svc.tipo === 'revenda' ? '<span class="inline-flex items-center rounded-full bg-purple-500/15 px-2 py-0.5 text-[10px] font-bold text-purple-400">Revenda</span>' : svc.tipo === 'curso' ? '<span class="inline-flex items-center rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-bold text-amber-400">Curso</span>' : '';
       var precoFmt = svc.preco || 'Consulte';
       card.innerHTML =
         '<div class="flex-1 min-w-0 mr-4">' +
           '<div class="flex items-center gap-3 mb-1">' +
             '<h4 class="font-display font-semibold text-white truncate">' + esc(svc.nome) + '</h4>' +
+            tipoBadge +
             statusBadge +
           '</div>' +
           '<div class="flex items-center gap-4 text-xs text-gray-400">' +
@@ -2785,6 +2807,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('svc-modal-title').textContent = svc ? 'Editar Serviço' : 'Novo Serviço';
     document.getElementById('svc-id').value = idx !== undefined ? idx : '';
     document.getElementById('svc-nome').value = svc ? svc.nome : '';
+    document.getElementById('svc-tipo').value = svc ? (svc.tipo || 'servico') : 'servico';
     document.getElementById('svc-categoria').value = svc ? (svc.categoria || 'Cabelo') : 'Cabelo';
     document.getElementById('svc-status').value = svc ? (svc.status || 'ativo') : 'ativo';
     document.getElementById('svc-duracao').value = svc ? svc.duracao : '';
@@ -2815,6 +2838,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var data = {
       nome: nome,
+      tipo: document.getElementById('svc-tipo').value,
       categoria: document.getElementById('svc-categoria').value,
       status: document.getElementById('svc-status').value,
       duracao: document.getElementById('svc-duracao').value.trim(),
@@ -4052,22 +4076,30 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('fat-ticket-valor').textContent = ticketMedio > 0 ? 'R$ ' + ticketMedio.toFixed(2).replace('.', ',') : '—';
     document.getElementById('fat-ticket-desc').textContent = cntMes > 0 ? 'R$ ' + fatMes.toFixed(2).replace('.',',') + ' ÷ ' + cntMes + ' atendimento' + (cntMes !== 1 ? 's' : '') : 'Nenhum atendimento concluído no mês';
 
-    /* Divisão de Receita: Serviços vs Produtos (Revenda) */
-    var recServicos = fatMes;
-    var estoque = B ? B.getEstoque() : [];
-    var recProdutos = 0;
-    estoque.forEach(function (p) {
-      if (p.categoria === 'Revenda' && p.precoVenda > 0) recProdutos += (p.quantidade || 0) * p.precoVenda;
+    /* Divisão de Receita: Serviços vs Revenda vs Cursos */
+    var recServicos = 0, recRevenda = 0, recCursos = 0;
+    var servicosLista = B ? B.getServicos() : [];
+    concluidosMes.forEach(function (a) {
+      var svc = servicosLista.find(function (s) { return s.nome === a.servico; }) || null;
+      var tipo = svc ? (svc.tipo || 'servico') : 'servico';
+      var valor = servicoPreco(a.servico, a.valor_informado);
+      if (tipo === 'revenda') recRevenda += valor;
+      else if (tipo === 'curso') recCursos += valor;
+      else recServicos += valor;
     });
-    var recTotal = recServicos + recProdutos;
+    var recTotal = recServicos + recRevenda + recCursos;
     var pctServ = recTotal > 0 ? Math.round(recServicos / recTotal * 100) : 100;
-    var pctProd = recTotal > 0 ? 100 - pctServ : 0;
+    var pctRev = recTotal > 0 ? Math.round(recRevenda / recTotal * 100) : 0;
+    var pctCur = recTotal > 0 ? 100 - pctServ - pctRev : 0;
     document.getElementById('fat-rec-serv-pct').textContent = pctServ + '%';
     document.getElementById('fat-rec-serv-bar').style.width = pctServ + '%';
     document.getElementById('fat-rec-serv-valor').textContent = 'R$ ' + recServicos.toFixed(2).replace('.', ',');
-    document.getElementById('fat-rec-prod-pct').textContent = pctProd + '%';
-    document.getElementById('fat-rec-prod-bar').style.width = pctProd + '%';
-    document.getElementById('fat-rec-prod-valor').textContent = 'R$ ' + recProdutos.toFixed(2).replace('.', ',');
+    document.getElementById('fat-rec-prod-pct').textContent = pctRev + '%';
+    document.getElementById('fat-rec-prod-bar').style.width = pctRev + '%';
+    document.getElementById('fat-rec-prod-valor').textContent = 'R$ ' + recRevenda.toFixed(2).replace('.', ',');
+    document.getElementById('fat-rec-curso-pct').textContent = pctCur + '%';
+    document.getElementById('fat-rec-curso-bar').style.width = pctCur + '%';
+    document.getElementById('fat-rec-curso-valor').textContent = 'R$ ' + recCursos.toFixed(2).replace('.', ',');
 
     renderFatPagamento(concluidos, servicoPreco, selMesStr, selAnoStr);
     renderFatTopServicos(concluidos);
