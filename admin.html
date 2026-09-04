@@ -69,10 +69,6 @@
     #ag-calendar-dropdown button.cal-dd-day.text-red-400 { color:#F87171; font-weight:800; }
     #ag-calendar-dropdown button.cal-dd-day.has-dot::after { content:''; display:block; width:4px; height:4px; border-radius:50%; background:#D4AF37; position:absolute; bottom:4px; }
     #ag-calendar-dropdown button.cal-dd-day.has-pending { background:rgba(34,197,94,.15); color:#4ADE80; border:1.5px solid rgba(34,197,94,.5); animation:calPulse 2s ease-in-out infinite; }
-    #ag-calendar-dropdown button.cal-dd-day.cal-day-off { border:2px solid #F97316; border-radius:50%; }
-    #ag-calendar-dropdown button.cal-dd-day.cal-day-confirmed { border:2px solid #EAB308; border-radius:50%; }
-    #ag-calendar-dropdown button.cal-dd-day.cal-day-holiday { border:2px solid #EF4444; border-radius:50%; color:#EF4444 !important; font-weight:800; }
-    #ag-calendar-dropdown button.cal-dd-day.cal-day-blocked { border:2px solid #A855F7; border-radius:50%; }
     @keyframes calPulse { 0%,100%{ box-shadow:0 0 0 0 rgba(34,197,94,.3); } 50%{ box-shadow:0 0 8px 2px rgba(34,197,94,.4); } }
     .card-dark { background:#1E1E1E; border:1px solid rgba(212,175,55,.12); border-radius:12px; }
     .card-dark:hover { border-color:rgba(212,175,55,.3); }
@@ -2102,24 +2098,6 @@ document.addEventListener('DOMContentLoaded', function () {
         if (parseInt(p[0]) === year && parseInt(p[1]) === month + 1) diasComPendente[parseInt(p[2])] = true;
       }
     });
-    /* Mapeia bloqueios manuais */
-    var bloqueios = B ? B.getBloqueios() : { datas:[] };
-    var diasBloqueados = {};
-    (bloqueios.datas || []).forEach(function (d) {
-      var p = d.split('-');
-      if (parseInt(p[0]) === year && parseInt(p[1]) === month + 1) diasBloqueados[parseInt(p[2])] = true;
-    });
-    /* Mapeia status dos agendamentos por dia */
-    var diasStatus = {};
-    allAgs.forEach(function (a) {
-      var p = a.data.split('-');
-      if (parseInt(p[0]) === year && parseInt(p[1]) === month + 1) {
-        var dia = parseInt(p[2]);
-        if (!diasStatus[dia]) diasStatus[dia] = { total: 0, ok: 0 };
-        diasStatus[dia].total++;
-        if (a.status === 'confirmado' || a.status === 'concluido') diasStatus[dia].ok++;
-      }
-    });
     for (var i = 0; i < firstDay; i++) {
       var empty = document.createElement('div');
       grid.appendChild(empty);
@@ -2133,33 +2111,21 @@ document.addEventListener('DOMContentLoaded', function () {
       var isSelected = ds === selectedStr;
       var temAg = agsMes.indexOf(d) !== -1;
       var holiday = isFeriado(year, month, d);
-      var bloqueado = diasBloqueados[d];
-      var statusDia = diasStatus[d];
-      var todosConfirmados = statusDia && statusDia.total > 0 && statusDia.ok === statusDia.total;
       var btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'cal-dd-day relative';
-      /* Cores: bloqueado > feriado > todos confirmados > fechado */
-      if (bloqueado) {
-        btn.className += ' cal-day-blocked';
-        btn.title = 'Bloqueado';
-      } else if (holiday) {
-        btn.className += ' cal-day-holiday';
+      if (holiday) {
+        btn.className += ' text-red-400 font-extrabold';
         btn.title = 'Feriado';
-      } else if (todosConfirmados) {
-        btn.className += ' cal-day-confirmed';
-        btn.title = 'Todos confirmados';
-      } else if (isFechado) {
-        btn.className += ' cal-day-off';
-        btn.title = 'Não trabalhado';
       } else if (isSelected) {
         btn.className += ' selected';
       } else if (isHoje) {
         btn.className += ' today';
       }
-      if (diasComPendente[d] && !isFechado && !bloqueado && !holiday) {
+      if (isFechado && !holiday) btn.className += ' opacity-50';
+      if (diasComPendente[d] && !isFechado) {
         btn.className += ' has-pending';
-      } else if (temAg && !isFechado && !bloqueado && !holiday && !todosConfirmados) {
+      } else if (temAg && !isFechado) {
         btn.className += ' has-dot';
       }
       btn.textContent = d;
