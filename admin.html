@@ -229,10 +229,16 @@
             <span id="dash-pendente-count">0</span> pendente(s)
           </span>
         </div>
-        <button id="dash-encaixe-btn" class="gold-btn rounded-xl px-5 py-2.5 text-sm font-semibold flex items-center gap-2">
-          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          + Agendamento Encaixe
-        </button>
+        <div class="flex items-center gap-2">
+          <button id="dash-venda-balcao-btn" class="rounded-xl border border-gold/40 bg-dark-600 px-4 py-2.5 text-sm font-semibold text-gold hover:bg-gold/10 transition-colors flex items-center gap-2">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            + Venda Balcão
+          </button>
+          <button id="dash-encaixe-btn" class="gold-btn rounded-xl px-5 py-2.5 text-sm font-semibold flex items-center gap-2">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            + Agendamento Encaixe
+          </button>
+        </div>
       </div>
 
       <!-- Cards de Métricas -->
@@ -265,14 +271,6 @@
       </div>
 
       <!-- Lista Operacional do Dia -->
-      <!-- Botão Venda Avulsa -->
-      <div class="flex items-center gap-3 mb-6">
-        <button id="dash-venda-avulsa-btn" class="gold-btn rounded-xl px-5 py-2.5 text-sm font-semibold flex items-center gap-2">
-          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-          Venda Avulsa (Produto)
-        </button>
-      </div>
-
       <div class="card-dark p-5 mb-6">
         <div class="flex items-center justify-between mb-4">
           <h3 class="font-display text-base font-semibold text-white">Atendimentos de Hoje</h3>
@@ -302,6 +300,10 @@
           <button id="ag-view-lista" class="ag-view-btn rounded-lg px-4 py-1.5 text-xs font-semibold text-gray-400 hover:text-gray-200" data-view="lista">Lista</button>
         </div>
         <div class="relative flex items-center gap-2">
+          <button id="ag-venda-balcao-btn" class="rounded-xl border border-gold/40 bg-dark-600 px-3 py-1.5 text-xs font-semibold text-gold hover:bg-gold/10 transition-colors flex items-center gap-1.5">
+            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            + Venda Balcão
+          </button>
           <button id="ag-month-prev" class="flex h-8 w-8 items-center justify-center rounded-lg bg-dark-700 border border-dark-300/40 text-gray-400 hover:text-white hover:border-gold/30 transition-colors">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
           </button>
@@ -751,7 +753,7 @@
       <div class="flex flex-wrap items-center gap-3 mb-5">
         <div class="relative">
           <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-          <input id="hist-busca" type="text" placeholder="Buscar nome, serviço ou telefone..." class="w-64 sm:w-80 rounded-lg bg-dark-700 border border-dark-300/40 pl-8 pr-3 py-2 text-xs text-gray-300 placeholder-gray-500 focus:border-gold focus:outline-none">
+          <input id="hist-busca" type="text" placeholder="Buscar nome, serviço, telefone ou produto..." class="w-64 sm:w-80 rounded-lg bg-dark-700 border border-dark-300/40 pl-8 pr-3 py-2 text-xs text-gray-300 placeholder-gray-500 focus:border-gold focus:outline-none">
         </div>
         <select id="hist-periodo" class="rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-xs text-gray-300 focus:border-gold outline-none">
           <option value="mes" selected>Este Mês</option>
@@ -764,6 +766,11 @@
           <option value="todos">Todos os Status</option>
           <option value="concluido">Concluídos</option>
           <option value="cancelado">Cancelados</option>
+        </select>
+        <select id="hist-tipo-filter" class="rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-xs text-gray-300 focus:border-gold outline-none">
+          <option value="todos">Todos os Tipos</option>
+          <option value="servicos">Serviços</option>
+          <option value="venda_balcao">Vendas Balcão</option>
         </select>
         <span id="hist-count" class="text-xs text-gray-500 ml-auto"></span>
       </div>
@@ -1187,21 +1194,21 @@
 </div>
 
 <!-- ============================================================
-     MODAL — Venda Avulsa (Produto sem Agendamento)
+     MODAL — Venda Balcão (Produto sem Agendamento)
 ============================================================ -->
 <div id="modal-venda-avulsa" class="fixed inset-0 z-[110] hidden items-center justify-center modal-overlay">
   <div class="w-full max-w-lg rounded-2xl border border-gold/20 bg-dark-700 p-6 shadow-2xl fade-in mx-4" style="max-height:85vh; display:flex; flex-direction:column;">
     <div class="flex items-center justify-between mb-4">
       <div>
-        <h3 class="font-display text-lg font-semibold text-white">Venda Avulsa</h3>
-        <p class="text-xs text-gray-400 mt-0.5">Venda de produto sem agendamento prévio.</p>
+        <h3 class="font-display text-lg font-semibold text-white">Venda Balcão</h3>
+        <p class="text-xs text-gray-400 mt-0.5">Venda de produto direto no balcão.</p>
       </div>
       <button id="va-close" class="flex h-8 w-8 items-center justify-center rounded-full bg-dark-600 text-gray-400 hover:text-white">&times;</button>
     </div>
     <div class="space-y-3 mb-4">
       <div>
         <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Cliente</label>
-        <input id="va-nome" type="text" placeholder="Nome da cliente">
+        <input id="va-nome" type="text" placeholder="Nome da cliente (ou deixe vazio para Anônimo)">
       </div>
       <div>
         <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">WhatsApp</label>
@@ -3419,6 +3426,9 @@ document.addEventListener('DOMContentLoaded', function () {
     /* --- Status --- */
     var statusFiltro = document.getElementById('hist-status-filter').value;
 
+    /* --- Tipo --- */
+    var tipoFiltro = document.getElementById('hist-tipo-filter').value;
+
     /* --- Busca --- */
     var buscaTermo = ((document.getElementById('hist-busca') || {}).value || '').toLowerCase().trim();
 
@@ -3429,12 +3439,24 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!a.data || a.data.slice(0, 7) !== mesSelStr) return false;
       } else if (iniStr && a.data < iniStr) return false;
       if (statusFiltro !== 'todos' && a.status !== statusFiltro) return false;
+      /* Tipo: serviço vs venda balcão */
+      if (tipoFiltro === 'servicos') {
+        if (a.servico === 'Venda Balcão') return false;
+      } else if (tipoFiltro === 'venda_balcao') {
+        if (a.servico !== 'Venda Balcão') return false;
+      }
       if (buscaTermo) {
         var tel = (a.cliente_whatsapp || '').replace(/\D/g, '');
         var buscaTel = buscaTermo.replace(/\D/g, '');
         var match = (a.cliente_nome && a.cliente_nome.toLowerCase().indexOf(buscaTermo) !== -1) ||
                     (a.servico && a.servico.toLowerCase().indexOf(buscaTermo) !== -1) ||
                     (buscaTel && tel.indexOf(buscaTel) !== -1);
+        /* Busca por nome de produto vendido */
+        if (!match && a.produtos_vendidos && a.produtos_vendidos.length) {
+          match = a.produtos_vendidos.some(function (p) {
+            return p.nome && p.nome.toLowerCase().indexOf(buscaTermo) !== -1;
+          });
+        }
         if (!match) return false;
       }
       return true;
@@ -3590,6 +3612,8 @@ document.addEventListener('DOMContentLoaded', function () {
   if (histPeriodoEl) histPeriodoEl.addEventListener('change', function () { renderHistorico(); });
   var histStatusEl = document.getElementById('hist-status-filter');
   if (histStatusEl) histStatusEl.addEventListener('change', function () { renderHistorico(); });
+  var histTipoEl = document.getElementById('hist-tipo-filter');
+  if (histTipoEl) histTipoEl.addEventListener('change', function () { renderHistorico(); });
 
   /* Exportar CSV */
   document.getElementById('hist-export-btn').addEventListener('click', function () {
@@ -4151,7 +4175,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var servicosLista = B ? B.getServicos() : [];
     concluidosMes.forEach(function (a) {
       var totalVal = a.valor_total || servicoPreco(a.servico, a.valor_informado, a.valor_total);
-      if (a.servico === 'Venda Avulsa') {
+      if (a.servico === 'Venda Balcão') {
         recRevenda += totalVal;
         return;
       }
@@ -4324,7 +4348,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   /* ============================================================
-     PRODUTOS — Venda ao Concluir + Venda Avulsa
+     PRODUTOS — Venda ao Concluir + Venda Balcão
      ============================================================ */
   var _pvAgId = null;
   var _pvValorServico = 0;
@@ -4496,7 +4520,7 @@ document.addEventListener('DOMContentLoaded', function () {
     abrirModalProdutosVenda(agId, vi);
   }
 
-  /* --- Venda Avulsa (sem agendamento) --- */
+  /* --- Venda Balcão (sem agendamento) --- */
   var _vaProdutos = {};
 
   function _vaAtualizarTotal() {
@@ -4575,7 +4599,8 @@ document.addEventListener('DOMContentLoaded', function () {
     modal.classList.remove('flex');
   }
 
-  document.getElementById('dash-venda-avulsa-btn').addEventListener('click', abrirModalVendaAvulsa);
+  document.getElementById('dash-venda-balcao-btn').addEventListener('click', abrirModalVendaAvulsa);
+  document.getElementById('ag-venda-balcao-btn').addEventListener('click', abrirModalVendaAvulsa);
   document.getElementById('va-close').addEventListener('click', fecharModalVendaAvulsa);
   document.getElementById('va-cancelar').addEventListener('click', fecharModalVendaAvulsa);
   document.getElementById('modal-venda-avulsa').addEventListener('click', function (e) { if (e.target.id === 'modal-venda-avulsa') fecharModalVendaAvulsa(); });
@@ -4595,7 +4620,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!itens.length) { showToast('Aviso', 'Selecione pelo menos um produto.', null); return; }
     if (!pagamento) { alert('Selecione a forma de pagamento.'); return; }
 
-    /* Criar agendamento "virtual" do tipo venda_avulsa */
+    /* Criar agendamento "virtual" do tipo venda_balcao */
     var hojeStr = (function () {
       var d = new Date();
       return d.getFullYear() + '-' + (d.getMonth()+1 < 10 ? '0' : '') + (d.getMonth()+1) + '-' + (d.getDate() < 10 ? '0' : '') + d.getDate();
@@ -4605,14 +4630,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (B) {
       B.criarAgendamento({
-        servico: 'Venda Avulsa',
+        servico: 'Venda Balcão',
         duracao_min: 0,
         data: hojeStr,
         horario: horaAtual,
-        cliente_nome: nome || 'Cliente Avulso',
+        cliente_nome: nome || 'Anônimo',
         cliente_whatsapp: whatsapp || '',
         forma_pagamento: pagamento,
-        observacoes: 'Venda avulsa de produto(s) — sem agendamento prévio.',
+        observacoes: 'Venda de produto(s) no balcão.',
         origem: 'recepcao',
         status: 'concluido',
         valor_servico: 0,
@@ -4636,7 +4661,7 @@ document.addEventListener('DOMContentLoaded', function () {
     fecharModalVendaAvulsa();
     renderDashboard();
     renderEstoque();
-    showToast('Venda registrada', 'Venda avulsa de R$ ' + totalProdutos.toFixed(2).replace('.',',') + ' confirmada.', null);
+    showToast('Venda registrada', 'Venda balcão de R$ ' + totalProdutos.toFixed(2).replace('.',',') + ' confirmada.', null);
   });
 
   /* --- Modificar handlers de concluir para usar iniciarConclusao --- */
