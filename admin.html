@@ -4223,9 +4223,6 @@ document.addEventListener('DOMContentLoaded', function () {
     if (B && B.editarAgendamento) {
       B.editarAgendamento(id, dados);
     }
-    if (status && B && B.setAgendamentoStatus) {
-      B.setAgendamentoStatus(id, status);
-    }
     document.getElementById('ag-edit-modal').classList.add('hidden');
     renderDashboard();
     try { renderAgendamentos(); } catch (e) {}
