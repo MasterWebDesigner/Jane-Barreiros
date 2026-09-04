@@ -1854,8 +1854,8 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function servicoPreco(nome, agValorInformado, agValorTotal) {
-    if (agValorTotal && agValorTotal > 0) return parseFloat(agValorTotal) || 0;
     if (agValorInformado && agValorInformado > 0) return parseFloat(agValorInformado) || 0;
+    if (agValorTotal && agValorTotal > 0) return parseFloat(agValorTotal) || 0;
     var servicos = B ? B.getServicos() : [];
     var s = servicos.find(function (x) { return x.nome === nome; });
     if (!s || !s.preco) return 0;
@@ -4216,6 +4216,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var dados = { data: data, horario: horario, servico: servico, duracao_min: durMin };
     if (valor !== '' && parseFloat(valor.replace(',','.')) >= 0) {
       dados.valor_informado = parseFloat(valor.replace(',','.'));
+      dados.valor_total = parseFloat(valor.replace(',','.'));
     }
     if (status) dados.status = status;
     if (pagamento) dados.forma_pagamento = pagamento;
