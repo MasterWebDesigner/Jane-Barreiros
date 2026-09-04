@@ -183,7 +183,7 @@
       </button>
       <button data-page="faturamento" class="sidebar-link flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-300">
         <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-        Faturamento
+        Financeiro
       </button>
       <button data-page="clientes" class="sidebar-link flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-300">
         <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
@@ -480,132 +480,67 @@
       </div>
     </section>
 
-    <!-- ==================== FATURAMENTO ==================== -->
+    <!-- ==================== FINANCEIRO ==================== -->
     <section id="page-faturamento" class="admin-page p-6 lg:p-8 hidden">
+      <!-- Header -->
       <div class="flex items-center justify-between mb-6">
-        <h1 class="font-display text-2xl font-semibold text-white">Faturamento</h1>
+        <h1 class="font-display text-2xl font-semibold text-white">Financeiro</h1>
         <div class="flex items-center gap-2">
+          <button id="fat-lancar-despesa-btn" class="rounded-xl border border-red-500/40 bg-dark-600 px-4 py-2.5 text-sm font-semibold text-red-400 hover:bg-red-500/10 transition-colors flex items-center gap-2">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            + Lançar Despesa
+          </button>
           <button id="fat-filter-prev" class="rounded-lg bg-dark-600 px-3 py-1.5 text-sm text-gray-300 hover:bg-dark-500">&larr;</button>
           <span id="fat-periodo-label" class="font-display text-sm font-semibold text-white min-w-[140px] text-center"></span>
           <button id="fat-filter-next" class="rounded-lg bg-dark-600 px-3 py-1.5 text-sm text-gray-300 hover:bg-dark-500">&rarr;</button>
         </div>
       </div>
 
-      <!-- Cards de Faturamento Principal -->
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-6">
+      <!-- Cards Resumo Mensal -->
+      <div class="grid grid-cols-2 gap-4 lg:grid-cols-4 mb-6">
         <div class="card-dark p-5 relative overflow-hidden">
-          <div class="absolute top-0 right-0 w-20 h-20 bg-gold/5 rounded-bl-full"></div>
-          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Faturamento Hoje</p>
-          <p id="fat-hoje-valor" class="mt-2 font-numeric text-3xl font-bold text-gold">R$ 0</p>
-          <p id="fat-hoje-count" class="mt-1 text-xs text-gray-500">0 atendimentos concluídos</p>
+          <div class="absolute top-0 right-0 w-20 h-20 bg-green-500/5 rounded-bl-full"></div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Total Entradas</p>
+          <p id="fin-entradas-valor" class="mt-2 font-numeric text-3xl font-bold text-green-400">R$ 0</p>
+          <p id="fin-entradas-desc" class="mt-1 text-xs text-gray-500">Serviços + Vendas Balcão</p>
+        </div>
+        <div class="card-dark p-5 relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-20 h-20 bg-red-500/5 rounded-bl-full"></div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Total Saídas</p>
+          <p id="fin-saidas-valor" class="mt-2 font-numeric text-3xl font-bold text-red-400">R$ 0</p>
+          <p id="fin-saidas-desc" class="mt-1 text-xs text-gray-500">Despesas do mês</p>
         </div>
         <div class="card-dark p-5 relative overflow-hidden">
           <div class="absolute top-0 right-0 w-20 h-20 bg-gold/5 rounded-bl-full"></div>
-          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Faturamento do Mês</p>
-          <p id="fat-mes-valor" class="mt-2 font-numeric text-3xl font-bold text-gold">R$ 0</p>
-          <p id="fat-mes-count" class="mt-1 text-xs text-gray-500">0 atendimentos concluídos</p>
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Lucro Líquido</p>
+          <p id="fin-lucro-valor" class="mt-2 font-numeric text-3xl font-bold">R$ 0</p>
+          <p id="fin-lucro-desc" class="mt-1 text-xs text-gray-500">Entradas − Saídas</p>
         </div>
         <div class="card-dark p-5 relative overflow-hidden border border-blue-500/20">
           <div class="absolute top-0 right-0 w-20 h-20 bg-blue-500/5 rounded-bl-full"></div>
-          <p class="text-xs font-semibold uppercase tracking-wider text-blue-400">A Receber (Previsto)</p>
+          <p class="text-xs font-semibold uppercase tracking-wider text-blue-400">Faturamento Previsto</p>
           <p id="fat-previsto-valor" class="mt-2 font-numeric text-3xl font-bold text-blue-400">R$ 0</p>
           <p id="fat-previsto-count" class="mt-1 text-xs text-gray-500">0 agendamentos pendentes</p>
         </div>
-        <div class="card-dark p-5 relative overflow-hidden">
-          <div class="absolute top-0 right-0 w-20 h-20 bg-gold/5 rounded-bl-full"></div>
-          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Faturamento do Ano</p>
-          <p id="fat-ano-valor" class="mt-2 font-numeric text-3xl font-bold text-gold">R$ 0</p>
-          <p id="fat-ano-count" class="mt-1 text-xs text-gray-500">0 atendimentos concluídos</p>
-        </div>
       </div>
 
-      <!-- Ticket Médio + Divisão de Receita -->
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 mb-6">
+      <!-- Gráfico Distribuição de Saídas + Faturamento por Pagamento -->
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 mb-6">
+
+        <!-- Distribuição de Saídas por Categoria -->
         <div class="card-dark p-5">
-          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Ticket Médio do Mês</p>
-          <p id="fat-ticket-valor" class="font-numeric text-3xl font-bold text-white">R$ 0</p>
-          <p id="fat-ticket-desc" class="mt-1 text-xs text-gray-500">Faturamento ÷ Atendimentos Concluídos</p>
-        </div>
-        <div class="card-dark p-5">
-          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">Divisão de Receita (Mês)</p>
-          <div class="flex items-center gap-3 mb-2">
-            <div class="flex-1">
-              <div class="flex justify-between mb-1">
-                <span class="text-xs text-gold font-semibold">Serviços</span>
-                <span id="fat-rec-serv-pct" class="font-numeric text-xs text-gray-400">0%</span>
-              </div>
-              <div class="h-3 rounded-full bg-dark-600 overflow-hidden">
-                <div id="fat-rec-serv-bar" class="h-full rounded-full bg-gradient-to-r from-gold/80 to-gold transition-all" style="width:100%"></div>
-              </div>
-              <p id="fat-rec-serv-valor" class="font-numeric text-[10px] text-gray-500 mt-1">R$ 0,00</p>
-            </div>
+          <h3 class="font-display text-base font-semibold text-white mb-4">Distribuição de Saídas</h3>
+          <div id="fin-saidas-chart" class="space-y-3">
+            <p class="text-sm text-gray-500 text-center py-4">Nenhuma despesa registrada neste mês.</p>
           </div>
-          <div class="flex items-center gap-3 mb-2">
-            <div class="flex-1">
-              <div class="flex justify-between mb-1">
-                <span class="text-xs text-purple-400 font-semibold">Revenda</span>
-                <span id="fat-rec-prod-pct" class="font-numeric text-xs text-gray-400">0%</span>
-              </div>
-              <div class="h-3 rounded-full bg-dark-600 overflow-hidden">
-                <div id="fat-rec-prod-bar" class="h-full rounded-full bg-gradient-to-r from-purple-500/80 to-purple-400 transition-all" style="width:0%"></div>
-              </div>
-              <p id="fat-rec-prod-valor" class="font-numeric text-[10px] text-gray-500 mt-1">R$ 0,00</p>
-            </div>
-          </div>
-          <div class="flex items-center gap-3">
-            <div class="flex-1">
-              <div class="flex justify-between mb-1">
-                <span class="text-xs text-amber-400 font-semibold">Cursos</span>
-                <span id="fat-rec-curso-pct" class="font-numeric text-xs text-gray-400">0%</span>
-              </div>
-              <div class="h-3 rounded-full bg-dark-600 overflow-hidden">
-                <div id="fat-rec-curso-bar" class="h-full rounded-full bg-gradient-to-r from-amber-500/80 to-amber-400 transition-all" style="width:0%"></div>
-              </div>
-              <p id="fat-rec-curso-valor" class="font-numeric text-[10px] text-gray-500 mt-1">R$ 0,00</p>
-            </div>
-          </div>
-          <p class="mt-2 text-[10px] text-gray-500 text-center">Receita por tipo de serviço cadastrado</p>
         </div>
-      </div>
 
-      <!-- Status de Agendamentos -->
-      <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 mb-6">
-        <div class="card-dark p-4 text-center">
-          <p id="fat-agendados" class="font-numeric text-2xl font-bold text-blue-400">0</p>
-          <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mt-1">Agendados</p>
-          <p class="fat-period-sub text-[9px] text-gray-500 mt-0.5"></p>
-        </div>
-        <div class="card-dark p-4 text-center">
-          <p id="fat-em-atendimento" class="font-numeric text-2xl font-bold text-yellow-400">0</p>
-          <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mt-1">Em Atendimento</p>
-          <p class="fat-period-sub text-[9px] text-gray-500 mt-0.5"></p>
-        </div>
-        <div class="card-dark p-4 text-center">
-          <p id="fat-concluidos" class="font-numeric text-2xl font-bold text-green-400">0</p>
-          <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mt-1">Concluídos</p>
-          <p class="fat-period-sub text-[9px] text-gray-500 mt-0.5"></p>
-        </div>
-        <div class="card-dark p-4 text-center">
-          <p id="fat-cancelados" class="font-numeric text-2xl font-bold text-red-400">0</p>
-          <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mt-1">Cancelados</p>
-          <p class="fat-period-sub text-[9px] text-gray-500 mt-0.5"></p>
-        </div>
-        <div class="card-dark p-4 text-center">
-          <p id="fat-espera" class="font-numeric text-2xl font-bold text-amber-400">0</p>
-          <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mt-1">Lista de Espera</p>
-        </div>
-      </div>
-
-      <!-- Faturamento por Forma de Pagamento + Top Serviços + Top Clientes -->
-      <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 mb-6">
-
-        <!-- Forma de Pagamento -->
+        <!-- Forma de Pagamento (Entradas) -->
         <div class="card-dark p-5">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="font-display text-base font-semibold text-white">Por Forma de Pagamento</h3>
+            <h3 class="font-display text-base font-semibold text-white">Entradas por Pagamento</h3>
             <div class="flex gap-1">
-              <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gold bg-gold/15" data-pag="dia">Dia</button>
-              <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-pag="mes">Mês</button>
+              <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gold bg-gold/15" data-pag="mes">Mês</button>
               <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-pag="ano">Ano</button>
               <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-pag="total">Total</button>
             </div>
@@ -628,10 +563,49 @@
               <p id="fat-pag-dinheiro" class="font-numeric text-xl font-bold text-amber-400">R$ 0</p>
             </div>
           </div>
-          <p class="mt-3 text-[10px] text-gray-500 text-center">Valores estimados com base nos preços dos serviços</p>
         </div>
+      </div>
 
-        <!-- Top Serviços -->
+      <!-- Tabela de Despesas do Mês -->
+      <div class="card-dark p-5 mb-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-display text-base font-semibold text-white">Despesas do Mês</h3>
+          <div class="flex items-center gap-2">
+            <select id="fin-desp-categoria-filter" class="rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-1.5 text-xs text-gray-300 focus:border-gold outline-none">
+              <option value="todas">Todas as Categorias</option>
+              <option value="Salários/Pró-Labore">Salários/Pró-Labore</option>
+              <option value="Custos Fixos">Custos Fixos</option>
+              <option value="Estoque/Insumos">Estoque/Insumos</option>
+              <option value="Ativos/Equipamentos">Ativos/Equipamentos</option>
+              <option value="Outros">Outros</option>
+            </select>
+            <select id="fin-desp-status-filter" class="rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-1.5 text-xs text-gray-300 focus:border-gold outline-none">
+              <option value="todos">Todos os Status</option>
+              <option value="pago">Pago</option>
+              <option value="pendente">Pendente</option>
+            </select>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-dark-300/50 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                <th class="px-3 py-2">Descrição</th>
+                <th class="px-3 py-2">Categoria</th>
+                <th class="px-3 py-2 text-right">Valor (R$)</th>
+                <th class="px-3 py-2">Data</th>
+                <th class="px-3 py-2 text-center">Status</th>
+                <th class="px-3 py-2 text-center">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="fin-desp-tbody" class="divide-y divide-dark-300/30"></tbody>
+          </table>
+        </div>
+        <p id="fin-desp-vazio" class="hidden text-center text-gray-500 py-8 text-sm">Nenhuma despesa registrada neste mês.</p>
+      </div>
+
+      <!-- Top Serviços + Top Clientes -->
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 mb-6">
         <div class="card-dark p-5">
           <div class="flex items-center justify-between mb-4">
             <h3 class="font-display text-base font-semibold text-white">Top 5 Serviços</h3>
@@ -646,8 +620,6 @@
           </div>
           <div id="fat-top-servicos" class="space-y-3"></div>
         </div>
-
-        <!-- Top Clientes (LTV) -->
         <div class="card-dark p-5">
           <div class="flex items-center justify-between mb-4">
             <h3 class="font-display text-base font-semibold text-white">Top 5 Clientes</h3>
@@ -657,7 +629,7 @@
         </div>
       </div>
 
-      <!-- Tabela de Últimos Atendimentos -->
+      <!-- Tabela Últimos Atendimentos -->
       <div class="card-dark p-5">
         <h3 class="font-display text-base font-semibold text-white mb-4">Últimos Atendimentos</h3>
         <div class="overflow-x-auto">
@@ -1242,6 +1214,59 @@
   </div>
 </div>
 
+<!-- ============================================================
+     MODAL — Lançar Despesa
+============================================================ -->
+<div id="modal-despesa" class="fixed inset-0 z-[110] hidden items-center justify-center modal-overlay">
+  <div class="w-full max-w-lg rounded-2xl border border-gold/20 bg-dark-700 p-6 shadow-2xl fade-in mx-4">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h3 id="desp-modal-title" class="font-display text-lg font-semibold text-white">Lançar Despesa</h3>
+        <p class="text-xs text-gray-400 mt-0.5">Registre uma saída/despesa do mês.</p>
+      </div>
+      <button id="desp-close" class="flex h-8 w-8 items-center justify-center rounded-full bg-dark-600 text-gray-400 hover:text-white">&times;</button>
+    </div>
+    <div class="space-y-3">
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Descrição</label>
+        <input id="desp-descricao" type="text" placeholder="Ex: Aluguel, Salário, Compra de Secador...">
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Categoria</label>
+        <select id="desp-categoria">
+          <option value="">Selecione</option>
+          <option value="Salários/Pró-Labore">Salários/Pró-Labore</option>
+          <option value="Custos Fixos">Custos Fixos (Aluguel/Contas)</option>
+          <option value="Estoque/Insumos">Estoque/Insumos</option>
+          <option value="Ativos/Equipamentos">Ativos/Equipamentos</option>
+          <option value="Outros">Outros</option>
+        </select>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Valor (R$)</label>
+          <input id="desp-valor" type="text" placeholder="0,00">
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Data</label>
+          <input id="desp-data" type="date">
+        </div>
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Status</label>
+        <select id="desp-status">
+          <option value="pago">Pago</option>
+          <option value="pendente" selected>Pendente</option>
+        </select>
+      </div>
+    </div>
+    <div class="flex gap-3 mt-5">
+      <button id="desp-cancelar" class="flex-1 rounded-xl border border-dark-300 bg-dark-600 py-2.5 text-sm font-semibold text-gray-300 hover:border-gray-400">Cancelar</button>
+      <button id="desp-confirmar" class="flex-1 gold-btn rounded-xl py-2.5 text-sm font-semibold">Salvar Despesa</button>
+    </div>
+  </div>
+</div>
+
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -1442,6 +1467,10 @@ document.addEventListener('DOMContentLoaded', function () {
       B.listenFirebase('estoque', function () {
         console.log('[Admin] Estoque atualizado (Firebase).');
         try { if (document.getElementById('page-produtos').style.display !== 'none') renderEstoque(); } catch (e) {}
+      });
+      B.listenFirebase('despesas', function () {
+        console.log('[Admin] Despesas atualizadas (Firebase).');
+        try { if (document.getElementById('page-faturamento').style.display !== 'none') renderFaturamento(); } catch (e) {}
       });
     }
     /* Set initial display states for all admin pages */
@@ -4080,10 +4109,11 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   /* ============================================================
-     FATURAMENTO
+     FINANCEIRO
      ============================================================ */
-  var fatPagTab = 'dia';
+  var fatPagTab = 'mes';
   var fatPeriodo = new Date(); fatPeriodo.setHours(12,0,0,0);
+  var _despEditId = null;
 
   function fmtFatPeriodoLabel(d) {
     var meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -4108,97 +4138,54 @@ document.addEventListener('DOMContentLoaded', function () {
   function renderFaturamento() {
     renderFatPeriodoLabel();
     var ags = B ? B.getAgendamentos() : [];
-    var hojeStr = hoje();
     var selAno = fatPeriodo.getFullYear();
     var selMes = fatPeriodo.getMonth();
     var selMesStr = selAno + '-' + (selMes < 9 ? '0' : '') + (selMes + 1);
     var selAnoStr = String(selAno);
 
-    function isHoje(a) { return a.data === hojeStr; }
     function isMesSel(a) { return a.data && a.data.slice(0, 7) === selMesStr; }
     function isAnoSel(a) { return a.data && a.data.slice(0, 4) === selAnoStr; }
 
     var concluidos = ags.filter(function (a) { return a.status === 'concluido'; });
     var agendados = ags.filter(function (a) { return a.status === 'confirmado' || a.status === 'pendente'; });
-    var cancelados = ags.filter(function (a) { return a.status === 'cancelado'; });
-    var emAtend = ags.filter(function (a) { return a.status === 'em_atendimento'; });
-    var espera = B ? B.getListaEspera().filter(function (i) { return i.status === 'aguardando'; }) : [];
+    var concluidosMes = concluidos.filter(isMesSel);
 
-    var fatHoje = concluidos.filter(isHoje).reduce(function (s, a) { return s + servicoPreco(a.servico, a.valor_informado, a.valor_total); }, 0);
-    var fatMes = concluidos.filter(isMesSel).reduce(function (s, a) { return s + servicoPreco(a.servico, a.valor_informado, a.valor_total); }, 0);
-    var fatAno = concluidos.filter(isAnoSel).reduce(function (s, a) { return s + servicoPreco(a.servico, a.valor_informado, a.valor_total); }, 0);
-    var cntHoje = concluidos.filter(isHoje).length;
-    var cntMes = concluidos.filter(isMesSel).length;
-    var cntAno = concluidos.filter(isAnoSel).length;
+    /* --- Entradas do mês --- */
+    var totalEntradas = concluidosMes.reduce(function (s, a) { return s + servicoPreco(a.servico, a.valor_informado, a.valor_total); }, 0);
 
-    document.getElementById('fat-hoje-valor').textContent = 'R$ ' + fatHoje.toFixed(2).replace('.', ',');
-    document.getElementById('fat-hoje-count').textContent = cntHoje + ' atendimento' + (cntHoje !== 1 ? 's' : '');
-    document.getElementById('fat-mes-valor').textContent = 'R$ ' + fatMes.toFixed(2).replace('.', ',');
-    document.getElementById('fat-mes-count').textContent = cntMes + ' atendimento' + (cntMes !== 1 ? 's' : '');
-    document.getElementById('fat-ano-valor').textContent = 'R$ ' + fatAno.toFixed(2).replace('.', ',');
-    document.getElementById('fat-ano-count').textContent = cntAno + ' atendimento' + (cntAno !== 1 ? 's' : '');
+    /* --- Saídas do mês --- */
+    var despesas = B ? B.getDespesas() : [];
+    var despesasMes = despesas.filter(function (d) { return d.data && d.data.slice(0, 7) === selMesStr; });
+    var totalSaidas = despesasMes.reduce(function (s, d) { return s + (parseFloat(d.valor) || 0); }, 0);
 
-    /* Status counts — filtered by selected month */
-    var agsMes = ags.filter(function (a) {
-      if (!a.data || a.data.slice(0, 7) !== selMesStr) return false;
-      return true;
-    });
-    var agendadosMes = agsMes.filter(function (a) { return a.status === 'confirmado' || a.status === 'pendente'; });
-    var emAtendMes = agsMes.filter(function (a) { return a.status === 'em_atendimento'; });
-    var concluidosMes = agsMes.filter(function (a) { return a.status === 'concluido'; });
-    var canceladosMes = agsMes.filter(function (a) { return a.status === 'cancelado'; });
+    /* --- Lucro Líquido --- */
+    var lucroLiquido = totalEntradas - totalSaidas;
 
-    document.getElementById('fat-agendados').textContent = agendadosMes.length;
-    document.getElementById('fat-em-atendimento').textContent = emAtendMes.length;
-    document.getElementById('fat-concluidos').textContent = concluidosMes.length;
-    document.getElementById('fat-cancelados').textContent = canceladosMes.length;
-    document.getElementById('fat-espera').textContent = espera.length;
-
-    /* Period subtitle on status cards */
-    var mesesFull = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-    var periodSub = mesesFull[selMes] + ' ' + selAno;
-    document.querySelectorAll('#page-faturamento .fat-period-sub').forEach(function (el) { el.textContent = periodSub; });
-
-    /* Faturamento Previsto (A Receber) — pendente + confirmado do mês */
+    /* --- Faturamento Previsto --- */
     var previstosMes = agendados.filter(isMesSel);
     var fatPrevisto = previstosMes.reduce(function (s, a) { return s + servicoPreco(a.servico, a.valor_informado, a.valor_total); }, 0);
+
+    /* Atualizar cards */
+    document.getElementById('fin-entradas-valor').textContent = 'R$ ' + totalEntradas.toFixed(2).replace('.', ',');
+    document.getElementById('fin-entradas-desc').textContent = concluidosMes.length + ' atendimento' + (concluidosMes.length !== 1 ? 's' : '') + ' concluído' + (concluidosMes.length !== 1 ? 's' : '');
+    document.getElementById('fin-saidas-valor').textContent = 'R$ ' + totalSaidas.toFixed(2).replace('.', ',');
+    document.getElementById('fin-saidas-desc').textContent = despesasMes.length + ' despesa' + (despesasMes.length !== 1 ? 's' : '') + ' registrada' + (despesasMes.length !== 1 ? 's' : '');
+
+    var lucroEl = document.getElementById('fin-lucro-valor');
+    lucroEl.textContent = 'R$ ' + lucroLiquido.toFixed(2).replace('.', ',');
+    lucroEl.className = 'mt-2 font-numeric text-3xl font-bold ' + (lucroLiquido >= 0 ? 'text-green-400' : 'text-red-400');
+    document.getElementById('fin-lucro-desc').textContent = lucroLiquido >= 0 ? 'Lucro do mês' : 'Prejuízo do mês';
+
     document.getElementById('fat-previsto-valor').textContent = 'R$ ' + fatPrevisto.toFixed(2).replace('.', ',');
     document.getElementById('fat-previsto-count').textContent = previstosMes.length + ' agendamento' + (previstosMes.length !== 1 ? 's' : '') + ' pendente' + (previstosMes.length !== 1 ? 's' : '');
 
-    /* Ticket Médio do Mês */
-    var ticketMedio = cntMes > 0 ? fatMes / cntMes : 0;
-    document.getElementById('fat-ticket-valor').textContent = ticketMedio > 0 ? 'R$ ' + ticketMedio.toFixed(2).replace('.', ',') : '—';
-    document.getElementById('fat-ticket-desc').textContent = cntMes > 0 ? 'R$ ' + fatMes.toFixed(2).replace('.',',') + ' ÷ ' + cntMes + ' atendimento' + (cntMes !== 1 ? 's' : '') : 'Nenhum atendimento concluído no mês';
+    /* Gráfico de saídas por categoria */
+    _renderDespesasChart(despesasMes);
 
-    /* Divisão de Receita: Serviços vs Revenda vs Cursos */
-    var recServicos = 0, recRevenda = 0, recCursos = 0;
-    var servicosLista = B ? B.getServicos() : [];
-    concluidosMes.forEach(function (a) {
-      var totalVal = a.valor_total || servicoPreco(a.servico, a.valor_informado, a.valor_total);
-      if (a.servico === 'Venda Balcão' || a.servico === 'Venda Avulsa') {
-        recRevenda += totalVal;
-        return;
-      }
-      var svc = servicosLista.find(function (s) { return s.nome === a.servico; }) || null;
-      var tipo = svc ? (svc.tipo || 'servico') : 'servico';
-      if (tipo === 'revenda') recRevenda += totalVal;
-      else if (tipo === 'curso') recCursos += totalVal;
-      else recServicos += totalVal;
-    });
-    var recTotal = recServicos + recRevenda + recCursos;
-    var pctServ = recTotal > 0 ? Math.round(recServicos / recTotal * 100) : 100;
-    var pctRev = recTotal > 0 ? Math.round(recRevenda / recTotal * 100) : 0;
-    var pctCur = recTotal > 0 ? 100 - pctServ - pctRev : 0;
-    document.getElementById('fat-rec-serv-pct').textContent = pctServ + '%';
-    document.getElementById('fat-rec-serv-bar').style.width = pctServ + '%';
-    document.getElementById('fat-rec-serv-valor').textContent = 'R$ ' + recServicos.toFixed(2).replace('.', ',');
-    document.getElementById('fat-rec-prod-pct').textContent = pctRev + '%';
-    document.getElementById('fat-rec-prod-bar').style.width = pctRev + '%';
-    document.getElementById('fat-rec-prod-valor').textContent = 'R$ ' + recRevenda.toFixed(2).replace('.', ',');
-    document.getElementById('fat-rec-curso-pct').textContent = pctCur + '%';
-    document.getElementById('fat-rec-curso-bar').style.width = pctCur + '%';
-    document.getElementById('fat-rec-curso-valor').textContent = 'R$ ' + recCursos.toFixed(2).replace('.', ',');
+    /* Tabela de despesas */
+    _renderDespesasTabela(despesasMes);
 
+    /* Pagamento */
     renderFatPagamento(concluidos, servicoPreco, selMesStr, selAnoStr);
     renderFatTopServicos(concluidos);
     renderFatTopClientes(ags, servicoPreco, selMesStr);
@@ -4218,11 +4205,162 @@ document.addEventListener('DOMContentLoaded', function () {
     };
   }
 
+  /* --- Gráfico de Distribuição de Saídas --- */
+  function _renderDespesasChart(despesasMes) {
+    var container = document.getElementById('fin-saidas-chart');
+    container.innerHTML = '';
+    if (!despesasMes.length) { container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">Nenhuma despesa registrada neste mês.</p>'; return; }
+    var catCores = { 'Salários/Pró-Labore': 'bg-blue-500', 'Custos Fixos': 'bg-amber-500', 'Estoque/Insumos': 'bg-purple-500', 'Ativos/Equipamentos': 'bg-cyan-500', 'Outros': 'bg-gray-500' };
+    var catCount = {};
+    despesasMes.forEach(function (d) {
+      var cat = d.categoria || 'Outros';
+      catCount[cat] = (catCount[cat] || 0) + (parseFloat(d.valor) || 0);
+    });
+    var total = despesasMes.reduce(function (s, d) { return s + (parseFloat(d.valor) || 0); }, 0);
+    var cats = Object.keys(catCount).map(function (k) { return { nome: k, valor: catCount[k], pct: total > 0 ? Math.round(catCount[k] / total * 100) : 0 }; });
+    cats.sort(function (a, b) { return b.valor - a.valor; });
+    cats.forEach(function (c) {
+      var barClass = catCores[c.nome] || 'bg-gray-500';
+      var row = document.createElement('div');
+      row.innerHTML =
+        '<div class="flex justify-between mb-1">' +
+          '<span class="text-xs font-medium text-white">' + esc(c.nome) + '</span>' +
+          '<span class="font-numeric text-[10px] text-gray-400">' + c.pct + '% · R$ ' + c.valor.toFixed(2).replace('.', ',') + '</span>' +
+        '</div>' +
+        '<div class="h-3 rounded-full bg-dark-600 overflow-hidden">' +
+          '<div class="h-full rounded-full ' + barClass + ' transition-all" style="width:' + c.pct + '%"></div>' +
+        '</div>';
+      container.appendChild(row);
+    });
+  }
+
+  /* --- Tabela de Despesas do Mês --- */
+  function _renderDespesasTabela(despesasMes) {
+    var catFiltro = ((document.getElementById('fin-desp-categoria-filter') || {}).value || 'todas');
+    var statusFiltro = ((document.getElementById('fin-desp-status-filter') || {}).value || 'todos');
+    var filtradas = despesasMes.filter(function (d) {
+      if (catFiltro !== 'todas' && d.categoria !== catFiltro) return false;
+      if (statusFiltro !== 'todos' && d.status !== statusFiltro) return false;
+      return true;
+    });
+    filtradas.sort(function (a, b) { return (b.data || '').localeCompare(a.data || ''); });
+
+    var tbody = document.getElementById('fin-desp-tbody');
+    var vazio = document.getElementById('fin-desp-vazio');
+    tbody.innerHTML = '';
+    if (!filtradas.length) { vazio.classList.remove('hidden'); tbody.parentElement.classList.add('hidden'); return; }
+    vazio.classList.add('hidden'); tbody.parentElement.classList.remove('hidden');
+
+    var catCores = { 'Salários/Pró-Labore': 'text-blue-400 bg-blue-500/15', 'Custos Fixos': 'text-amber-400 bg-amber-500/15', 'Estoque/Insumos': 'text-purple-400 bg-purple-500/15', 'Ativos/Equipamentos': 'text-cyan-400 bg-cyan-500/15', 'Outros': 'text-gray-400 bg-gray-500/15' };
+    filtradas.forEach(function (d) {
+      var tr = document.createElement('tr');
+      tr.className = 'hover:bg-white/[.02]';
+      var statusBadge = d.status === 'pago'
+        ? '<span class="inline-flex items-center rounded-full bg-green-500/15 px-2.5 py-0.5 text-[10px] font-semibold text-green-400">Pago</span>'
+        : '<span class="inline-flex items-center rounded-full bg-amber-500/15 px-2.5 py-0.5 text-[10px] font-semibold text-amber-400">Pendente</span>';
+      var catClass = catCores[d.categoria] || 'text-gray-400 bg-gray-500/15';
+      tr.innerHTML =
+        '<td class="px-3 py-2.5 text-white text-xs font-medium">' + esc(d.descricao) + '</td>' +
+        '<td class="px-3 py-2.5"><span class="inline-flex items-center rounded-full ' + catClass + ' px-2 py-0.5 text-[10px] font-semibold">' + esc(d.categoria) + '</span></td>' +
+        '<td class="px-3 py-2.5 text-right font-numeric text-xs font-semibold text-red-400">− R$ ' + (parseFloat(d.valor) || 0).toFixed(2).replace('.', ',') + '</td>' +
+        '<td class="px-3 py-2.5 text-gray-300 text-xs">' + fmtBR(d.data) + '</td>' +
+        '<td class="px-3 py-2.5 text-center">' + statusBadge + '</td>' +
+        '<td class="px-3 py-2.5 text-center">' +
+          (d.status !== 'pago' ? '<button data-desp-pago="' + d.id + '" class="rounded-lg bg-green-500/15 px-2 py-1 text-[10px] font-semibold text-green-400 hover:bg-green-500/25 mr-1" title="Marcar como pago">✓ Pago</button>' : '') +
+          '<button data-desp-edit="' + d.id + '" class="rounded-lg bg-dark-600 px-2 py-1 text-[10px] font-semibold text-gray-400 hover:text-white mr-1" title="Editar">✎</button>' +
+          '<button data-desp-del="' + d.id + '" class="rounded-lg bg-red-500/15 px-2 py-1 text-[10px] font-semibold text-red-400 hover:bg-red-500/25" title="Excluir">✕</button>' +
+        '</td>';
+      tbody.appendChild(tr);
+    });
+
+    /* Ações */
+    tbody.querySelectorAll('[data-desp-pago]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-desp-pago');
+        var lista = B ? B.getDespesas() : [];
+        var d = lista.find(function (x) { return x.id === id; });
+        if (d) { d.status = 'pago'; if (B) B.setDespesas(lista); renderFaturamento(); showToast('Despesa paga', esc(d.descricao) + ' marcada como paga.', null); }
+      });
+    });
+    tbody.querySelectorAll('[data-desp-edit]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-desp-edit');
+        var lista = B ? B.getDespesas() : [];
+        var d = lista.find(function (x) { return x.id === id; });
+        if (d) _abrirModalDespesa(d);
+      });
+    });
+    tbody.querySelectorAll('[data-desp-del]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-desp-del');
+        if (!confirm('Excluir esta despesa?')) return;
+        var lista = B ? B.getDespesas() : [];
+        lista = lista.filter(function (x) { return x.id !== id; });
+        if (B) B.setDespesas(lista);
+        renderFaturamento();
+        showToast('Excluído', 'Despesa removida.', null);
+      });
+    });
+  }
+
+  /* --- Modal Despesa --- */
+  function _abrirModalDespesa(desp) {
+    _despEditId = desp ? desp.id : null;
+    document.getElementById('desp-modal-title').textContent = desp ? 'Editar Despesa' : 'Lançar Despesa';
+    document.getElementById('desp-descricao').value = desp ? desp.descricao : '';
+    document.getElementById('desp-categoria').value = desp ? desp.categoria : '';
+    document.getElementById('desp-valor').value = desp ? (parseFloat(desp.valor) || 0).toFixed(2).replace('.', ',') : '';
+    document.getElementById('desp-data').value = desp ? desp.data : hoje();
+    document.getElementById('desp-status').value = desp ? desp.status : 'pendente';
+    var modal = document.getElementById('modal-despesa');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function _fecharModalDespesa() {
+    _despEditId = null;
+    var modal = document.getElementById('modal-despesa');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  document.getElementById('fat-lancar-despesa-btn').addEventListener('click', function () { _abrirModalDespesa(null); });
+  document.getElementById('desp-close').addEventListener('click', _fecharModalDespesa);
+  document.getElementById('desp-cancelar').addEventListener('click', _fecharModalDespesa);
+  document.getElementById('modal-despesa').addEventListener('click', function (e) { if (e.target.id === 'modal-despesa') _fecharModalDespesa(); });
+
+  document.getElementById('desp-confirmar').addEventListener('click', function () {
+    var descricao = document.getElementById('desp-descricao').value.trim();
+    var categoria = document.getElementById('desp-categoria').value;
+    var valorStr = document.getElementById('desp-valor').value.replace(',', '.');
+    var valor = parseFloat(valorStr) || 0;
+    var data = document.getElementById('desp-data').value;
+    var status = document.getElementById('desp-status').value;
+
+    if (!descricao) { alert('Informe a descrição da despesa.'); return; }
+    if (!categoria) { alert('Selecione a categoria.'); return; }
+    if (valor <= 0) { alert('Informe um valor válido.'); return; }
+    if (!data) { alert('Informe a data.'); return; }
+
+    var lista = B ? B.getDespesas() : [];
+    if (_despEditId) {
+      var d = lista.find(function (x) { return x.id === _despEditId; });
+      if (d) { d.descricao = descricao; d.categoria = categoria; d.valor = valor; d.data = data; d.status = status; }
+    } else {
+      lista.push({ id: 'desp-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5), descricao: descricao, categoria: categoria, valor: valor, data: data, status: status });
+    }
+    if (B) B.setDespesas(lista);
+    _fecharModalDespesa();
+    renderFaturamento();
+    showToast('Despesa salva', (_despEditId ? 'Atualizada' : 'Registrada') + ': ' + descricao + ' — R$ ' + valor.toFixed(2).replace('.', ','), null);
+  });
+
+  document.getElementById('fin-desp-categoria-filter').addEventListener('change', function () { renderFaturamento(); });
+  document.getElementById('fin-desp-status-filter').addEventListener('change', function () { renderFaturamento(); });
+
   function renderFatPagamento(concluidos, servicoPreco, selMesStr, selAnoStr) {
-    var hojeStr = hoje();
     var pool;
-    if (fatPagTab === 'dia') pool = concluidos.filter(function (a) { return a.data === hojeStr; });
-    else if (fatPagTab === 'mes') pool = concluidos.filter(function (a) { return a.data && a.data.slice(0, 7) === selMesStr; });
+    if (fatPagTab === 'mes') pool = concluidos.filter(function (a) { return a.data && a.data.slice(0, 7) === selMesStr; });
     else if (fatPagTab === 'ano') pool = concluidos.filter(function (a) { return a.data && a.data.slice(0, 4) === selAnoStr; });
     else pool = concluidos;
     var pix = 0, credito = 0, debito = 0, dinheiro = 0;
@@ -4232,7 +4370,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (fp === 'pix') pix += valor;
       else if (fp === 'cartão de crédito' || fp === 'cartao de credito' || fp === 'cartão de credito' || fp === 'credito' || fp === 'crédito') credito += valor;
       else if (fp === 'cartão de débito' || fp === 'cartao de debito' || fp === 'cartão de debito' || fp === 'debito' || fp === 'débito') debito += valor;
-      else if (fp === 'dinheiro' || fp === 'dinheiro' || fp === 'cash') dinheiro += valor;
+      else if (fp === 'dinheiro' || fp === 'cash') dinheiro += valor;
       else { pix += valor; }
     });
     document.getElementById('fat-pag-pix').textContent = 'R$ ' + pix.toFixed(2).replace('.', ',');
