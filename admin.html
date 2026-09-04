@@ -96,6 +96,69 @@
 
     /* Audio unlock btn */
     #audio-unlock-btn { position:fixed; bottom:20px; right:20px; z-index:9999; }
+
+    /* Config tabs */
+    .cfg-tab { padding:10px 20px; font-size:14px; font-weight:600; color:#6B7280; border-bottom:2px solid transparent; cursor:pointer; transition:all .2s; }
+    .cfg-tab:hover { color:#D4AF37; }
+    .cfg-tab.active { color:#D4AF37; border-bottom-color:#D4AF37; }
+
+    /* Guide cards */
+    .guide-card { background:#1E1E1E; border:1px solid rgba(212,175,55,.12); border-radius:12px; padding:20px; cursor:pointer; transition:all .25s; position:relative; overflow:hidden; }
+    .guide-card:hover { border-color:rgba(212,175,55,.4); transform:translateY(-2px); box-shadow:0 8px 24px rgba(212,175,55,.08); }
+    .guide-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#D4AF37,#FCF6BA); opacity:0; transition:opacity .25s; }
+    .guide-card:hover::before { opacity:1; }
+    .guide-card-icon { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; margin-bottom:12px; }
+    .guide-card-title { font-family:'Playfair Display',Georgia,serif; font-size:16px; font-weight:600; color:#fff; margin-bottom:4px; }
+    .guide-card-desc { font-size:13px; color:#9CA3AF; line-height:1.4; }
+
+    /* Guide accordion */
+    .guide-acc { background:#1E1E1E; border:1px solid rgba(212,175,55,.12); border-radius:12px; margin-bottom:12px; overflow:hidden; transition:border-color .2s; }
+    .guide-acc:hover { border-color:rgba(212,175,55,.25); }
+    .guide-acc-header { display:flex; align-items:center; gap:12px; padding:16px 20px; cursor:pointer; user-select:none; transition:background .2s; }
+    .guide-acc-header:hover { background:rgba(212,175,55,.04); }
+    .guide-acc-icon { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+    .guide-acc-title { font-family:'Playfair Display',Georgia,serif; font-size:15px; font-weight:600; color:#fff; flex:1; }
+    .guide-acc-arrow { color:#6B7280; font-size:12px; transition:transform .25s; }
+    .guide-acc.open .guide-acc-arrow { transform:rotate(180deg); }
+    .guide-acc-body { display:none; padding:0 20px 20px 20px; }
+    .guide-acc.open .guide-acc-body { display:block; }
+    .guide-step { display:flex; gap:12px; margin-bottom:14px; align-items:flex-start; }
+    .guide-step-num { width:24px; height:24px; border-radius:50%; background:rgba(212,175,55,.15); color:#D4AF37; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+    .guide-step-text { font-size:13px; color:#D1D5DB; line-height:1.5; }
+    .guide-step-text strong { color:#F3F4F6; font-weight:600; }
+    .guide-tip { background:rgba(34,197,94,.08); border:1px solid rgba(34,197,94,.2); border-radius:8px; padding:10px 14px; margin-top:8px; font-size:12px; color:#86EFAC; display:flex; gap:8px; align-items:flex-start; }
+    .guide-tip::before { content:'💡'; flex-shrink:0; }
+    .guide-warn { background:rgba(239,68,68,.08); border:1px solid rgba(239,68,68,.2); border-radius:8px; padding:10px 14px; margin-top:8px; font-size:12px; color:#FCA5A5; display:flex; gap:8px; align-items:flex-start; }
+    .guide-warn::before { content:'⚠️'; flex-shrink:0; }
+    .guide-go-btn { display:inline-flex; align-items:center; gap:6px; margin-top:12px; padding:6px 14px; border-radius:8px; background:rgba(212,175,55,.12); color:#D4AF37; font-size:12px; font-weight:600; cursor:pointer; transition:all .2s; border:none; }
+    .guide-go-btn:hover { background:rgba(212,175,55,.25); }
+    .guide-go-btn::after { content:'→'; }
+    .guide-badge { display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:6px; font-size:10px; font-weight:600; margin-left:8px; }
+    .guide-badge-new { background:rgba(34,197,94,.15); color:#22C55E; }
+    .guide-badge-imp { background:rgba(251,191,36,.15); color:#FBBF24; }
+
+    /* Guide detail modal */
+    .guide-detail-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); backdrop-filter:blur(4px); z-index:200; display:flex; align-items:center; justify-content:center; }
+    .guide-detail-modal { background:#141414; border:1px solid rgba(212,175,55,.2); border-radius:16px; width:90%; max-width:640px; max-height:80vh; overflow-y:auto; padding:28px; position:relative; }
+    .guide-detail-modal::-webkit-scrollbar { width:4px; }
+    .guide-detail-modal::-webkit-scrollbar-thumb { background:#D4AF37; border-radius:2px; }
+    .guide-detail-close { position:absolute; top:16px; right:16px; width:32px; height:32px; border-radius:8px; background:rgba(255,255,255,.05); border:none; color:#9CA3AF; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .2s; }
+    .guide-detail-close:hover { background:rgba(255,255,255,.1); color:#fff; }
+
+    /* Sobre tab */
+    .sobre-info-row { display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid rgba(255,255,255,.06); }
+    .sobre-info-row:last-child { border-bottom:none; }
+    .sobre-info-label { color:#9CA3AF; font-size:13px; }
+    .sobre-info-value { color:#F3F4F6; font-size:13px; font-weight:500; }
+    .sobre-status-dot { width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:6px; }
+    .sobre-status-ok { background:#22C55E; box-shadow:0 0 6px rgba(34,197,94,.5); }
+    .sobre-status-err { background:#EF4444; box-shadow:0 0 6px rgba(239,68,68,.5); }
+
+    @media (max-width:768px) {
+      .guide-card { padding:16px; }
+      .guide-detail-modal { padding:20px; width:95%; }
+      .cfg-tab { padding:8px 12px; font-size:13px; }
+    }
   </style>
 </head>
 <body>
@@ -831,29 +894,106 @@
     <section id="page-config" class="admin-page p-6 lg:p-8 hidden">
       <h1 class="font-display text-2xl font-semibold text-white mb-6">Configurações</h1>
 
-      <div class="card-dark p-6 mb-6">
-        <h3 class="font-display text-lg font-semibold text-white mb-4">Bloquear Dias</h3>
-        <p class="text-sm text-gray-400 mb-4">Selecione um dia para impedir agendamentos.</p>
-        <div class="flex flex-wrap gap-3">
-          <input id="cfg-bloq-dia" type="date">
-          <button id="cfg-bloq-btn" class="rounded-xl bg-red-500/20 px-5 py-2.5 text-sm font-semibold text-red-400 hover:bg-red-500/30">Bloquear Dia</button>
-        </div>
-        <div id="cfg-dias-bloq" class="mt-4 flex flex-wrap gap-2"></div>
+      <!-- Sub-abas -->
+      <div class="flex gap-0 border-b border-dark-300/30 mb-6">
+        <button class="cfg-tab active" data-cfg-tab="guia">📋 Guia Rápido</button>
+        <button class="cfg-tab" data-cfg-tab="config">⚙️ Configurações</button>
+        <button class="cfg-tab" data-cfg-tab="sobre">ℹ️ Sobre</button>
       </div>
 
-      <div class="card-dark p-6 mb-6">
-        <h3 class="font-display text-lg font-semibold text-white mb-4">WhatsApp Studio Jane</h3>
-        <p class="text-sm text-gray-400 mb-4">Número do WhatsApp do salão. Usado nos lembretes e agendamentos.</p>
-        <div class="flex flex-wrap items-center gap-3">
-          <input id="cfg-whatsapp" type="tel" placeholder="11930657871" class="w-64 rounded-lg bg-dark-700 border border-dark-300/40 px-4 py-2.5 text-sm text-gray-300 focus:border-gold outline-none">
-          <button id="cfg-whatsapp-save" class="rounded-xl bg-gold/20 px-5 py-2.5 text-sm font-semibold text-gold hover:bg-gold/30 transition-colors">Salvar</button>
+      <!-- TAB: Guia Rápido -->
+      <div id="cfg-tab-guia" class="cfg-tab-panel">
+        <p class="text-sm text-gray-400 mb-6">Clique em um card para ver o passo-a-passo de cada funcionalidade do painel.</p>
+
+        <!-- Grid de cards do guia -->
+        <div id="guide-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6"></div>
+
+        <!-- Lista completa (accordions) -->
+        <h3 class="font-display text-lg font-semibold text-white mb-4 mt-8">Referência Completa</h3>
+        <div id="guide-accordions"></div>
+      </div>
+
+      <!-- TAB: Configurações (conteúdo original) -->
+      <div id="cfg-tab-config" class="cfg-tab-panel hidden">
+        <div class="card-dark p-6 mb-6">
+          <h3 class="font-display text-lg font-semibold text-white mb-4">Bloquear Dias</h3>
+          <p class="text-sm text-gray-400 mb-4">Selecione um dia para impedir agendamentos.</p>
+          <div class="flex flex-wrap gap-3">
+            <input id="cfg-bloq-dia" type="date">
+            <button id="cfg-bloq-btn" class="rounded-xl bg-red-500/20 px-5 py-2.5 text-sm font-semibold text-red-400 hover:bg-red-500/30">Bloquear Dia</button>
+          </div>
+          <div id="cfg-dias-bloq" class="mt-4 flex flex-wrap gap-2"></div>
+        </div>
+
+        <div class="card-dark p-6 mb-6">
+          <h3 class="font-display text-lg font-semibold text-white mb-4">WhatsApp Studio Jane</h3>
+          <p class="text-sm text-gray-400 mb-4">Número do WhatsApp do salão. Usado nos lembretes e agendamentos.</p>
+          <div class="flex flex-wrap items-center gap-3">
+            <input id="cfg-whatsapp" type="tel" placeholder="11930657871" class="w-64 rounded-lg bg-dark-700 border border-dark-300/40 px-4 py-2.5 text-sm text-gray-300 focus:border-gold outline-none">
+            <button id="cfg-whatsapp-save" class="rounded-xl bg-gold/20 px-5 py-2.5 text-sm font-semibold text-gold hover:bg-gold/30 transition-colors">Salvar</button>
+          </div>
+        </div>
+
+        <div class="card-dark p-6">
+          <h3 class="font-display text-lg font-semibold text-white mb-4">Lista de Espera</h3>
+          <div id="cfg-espera" class="space-y-3"></div>
+          <p id="cfg-espera-vazio" class="text-sm text-gray-500">Nenhuma pessoa na lista de espera.</p>
         </div>
       </div>
 
-      <div class="card-dark p-6">
-        <h3 class="font-display text-lg font-semibold text-white mb-4">Lista de Espera</h3>
-        <div id="cfg-espera" class="space-y-3"></div>
-        <p id="cfg-espera-vazio" class="text-sm text-gray-500">Nenhuma pessoa na lista de espera.</p>
+      <!-- TAB: Sobre -->
+      <div id="cfg-tab-sobre" class="cfg-tab-panel hidden">
+        <div class="card-dark p-6 mb-6">
+          <h3 class="font-display text-lg font-semibold text-white mb-4">Sistema</h3>
+          <div id="sobre-info">
+            <div class="sobre-info-row"><span class="sobre-info-label">Sistema</span><span class="sobre-info-value">Studio Jane Barreiros — Painel Admin</span></div>
+            <div class="sobre-info-row"><span class="sobre-info-label">Versão</span><span class="sobre-info-value">2.0 — Setembro 2026</span></div>
+            <div class="sobre-info-row"><span class="sobre-info-label">Desenvolvedor</span><span class="sobre-info-value"><a href="https://masterwd.com.br" target="_blank" class="text-gold hover:underline">Master Web Designer</a></span></div>
+            <div class="sobre-info-row"><span class="sobre-info-label">Firebase</span><span class="sobre-info-value" id="sobre-firebase-status"><span class="sobre-status-dot sobre-status-ok"></span>Conectado</span></div>
+            <div class="sobre-info-row"><span class="sobre-info-label">Banco de Dados</span><span class="sobre-info-value">Realtime Database</span></div>
+            <div class="sobre-info-row"><span class="sobre-info-label">Projeto Firebase</span><span class="sobre-info-value">jane-barreiros</span></div>
+          </div>
+        </div>
+
+        <div class="card-dark p-6 mb-6">
+          <h3 class="font-display text-lg font-semibold text-white mb-4">Funcionalidades</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="flex items-center gap-3 p-3 rounded-lg bg-dark-600/50">
+              <span class="text-lg">📅</span>
+              <div><p class="text-sm font-semibold text-white">Agendamentos Online</p><p class="text-xs text-gray-400">Clientes agendam pelo site</p></div>
+            </div>
+            <div class="flex items-center gap-3 p-3 rounded-lg bg-dark-600/50">
+              <span class="text-lg">📱</span>
+              <div><p class="text-sm font-semibold text-white">Firebase Realtime</p><p class="text-xs text-gray-400">Sincronização em tempo real</p></div>
+            </div>
+            <div class="flex items-center gap-3 p-3 rounded-lg bg-dark-600/50">
+              <span class="text-lg">📦</span>
+              <div><p class="text-sm font-semibold text-white">Controle de Estoque</p><p class="text-xs text-gray-400">Produtos com alerta de estoque baixo</p></div>
+            </div>
+            <div class="flex items-center gap-3 p-3 rounded-lg bg-dark-600/50">
+              <span class="text-lg">💰</span>
+              <div><p class="text-sm font-semibold text-white">Financeiro</p><p class="text-xs text-gray-400">Entradas, saídas e lucro</p></div>
+            </div>
+            <div class="flex items-center gap-3 p-3 rounded-lg bg-dark-600/50">
+              <span class="text-lg">🔄</span>
+              <div><p class="text-sm font-semibold text-white">Retenção de Clientes</p><p class="text-xs text-gray-400">Lembretes automáticos</p></div>
+            </div>
+            <div class="flex items-center gap-3 p-3 rounded-lg bg-dark-600/50">
+              <span class="text-lg">🔔</span>
+              <div><p class="text-sm font-semibold text-white">Notificações</p><p class="text-xs text-gray-400">Alertas sonoros e visuais</p></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-dark p-6">
+          <h3 class="font-display text-lg font-semibold text-white mb-4">Suporte</h3>
+          <div class="space-y-3">
+            <p class="text-sm text-gray-400">Em caso de dúvidas ou problemas:</p>
+            <a href="https://wa.me/5511999999999?text=Ol%C3%A1!%20Preciso%20de%20ajuda%20com%20o%20painel%20do%20Studio%20Jane" target="_blank" class="inline-flex items-center gap-2 rounded-xl bg-green-500/15 px-5 py-2.5 text-sm font-semibold text-green-400 hover:bg-green-500/25 transition-colors">
+              📱 Contatar Suporte via WhatsApp
+            </a>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1399,6 +1539,10 @@ document.addEventListener('DOMContentLoaded', function () {
     if (pageName === 'faturamento') renderFaturamento();
     if (pageName === 'produtos') renderEstoque();
     if (pageName === 'config') renderConfig();
+  }
+
+  function navigateTo(pageName) {
+    showPage(pageName);
   }
 
   /* Event Delegation: capture ALL clicks on sidebar buttons */
@@ -4052,7 +4196,248 @@ document.addEventListener('DOMContentLoaded', function () {
     renderEspera();
     var cfgWhats = document.getElementById('cfg-whatsapp');
     if (cfgWhats) cfgWhats.value = localStorage.getItem('jane-whatsapp-salao') || '11930657871';
+    renderGuideCards();
+    renderGuideAccordions();
+    renderSobreStatus();
   }
+
+  /* ---- Guide Data ---- */
+  var GUIDE_DATA = [
+    {
+      id:'dashboard', icon:'🏠', iconBg:'rgba(59,130,246,.15)', title:'Dashboard',
+      desc:'Visão geral do dia — agendamentos, faturamento e clientes.',
+      page:'dashboard',
+      steps:[
+        {t:'Os <strong>4 cards no topo</strong> mostram: Atendimentos do Dia, Faturamento Hoje, Clientes Únicos e Lista de Espera.'},
+        {t:'Clique no badge <strong>"N pendente(s)"</strong> para ir direto à aba Agendamentos com filtro de pendentes.'},
+        {t:'Use <strong>"+ Agendamento Encaixe"</strong> para criar um agendamento presencial (o cliente está no salão).'},
+        {t:'Use <strong>"+ Venda Balcão"</strong> para registrar uma venda de produto sem agendamento (ex: cliente compra shampoo).'},
+        {t:'Na lista de agendamentos do dia, use os <strong>botões de status</strong> para mudar o fluxo: 🟡 Aguardando → 🔵 Em Atendimento → 🟢 Concluir.'},
+        {t:'Para <strong>concluir</strong>, o sistema pede o valor e mostra produtos de revenda para registrar a venda junto.'},
+        {t:'Clique em <strong>WhatsApp</strong> para abrir conversa com o cliente.'}
+      ],
+      tip:'O badge verde pulsante no calendário indica dias com agendamentos pendentes.'
+    },
+    {
+      id:'agendamentos', icon:'📅', iconBg:'rgba(168,85,247,.15)', title:'Agendamentos',
+      desc:'Gerenciar todos os agendamentos — visualizar, filtrar, aceitar e alterar status.',
+      page:'agendamentos',
+      steps:[
+        {t:'Escolha a <strong>visualização</strong>: Dia (timeline), Grade (mensal) ou Lista (completa).'},
+        {t:'Use os <strong>filtros</strong> no topo: Profissional, Origem (Online/Recepção) e Status (Pendente/Confirmado/Concluído/Cancelado).'},
+        {t:'A <strong>busca</strong> no rodapé procura por nome, serviço ou telefone em tempo real.'},
+        {t:'Para agendamentos <strong>pendentes</strong> (online), clique ✅ <strong>Aceitar</strong> para confirmar ou ❌ <strong>Recusar</strong> para cancelar — ambos enviam WhatsApp automaticamente.'},
+        {t:'Clique no botão <strong>Editar</strong> (caneta) em qualquer agendamento para alterar data, horário, serviço ou valor.'},
+        {t:'O botão <strong>Hoje</strong> no rodapé reseta todos os filtros e volta para o dia atual.'}
+      ],
+      tip:'Na view Grade, os dias com pontos dourados têm agendamentos. O ponto verde indica pendentes.'
+    },
+    {
+      id:'servicos', icon:'💇', iconBg:'rgba(236,72,153,.15)', title:'Serviços',
+      desc:'Cadastrar e organizar serviços, profissionais e seções do salão.',
+      page:'servicos',
+      steps:[
+        {t:'Na tab <strong>Serviços</strong>, clique "+ Criar Novo Serviço" para adicionar. Preencha nome, tipo, categoria, duração, preço e dias de retorno.'},
+        {t:'Use as <strong>setas ↑↓</strong> para reordenar os serviços na ordem que aparece no site.'},
+        {t:'Clique <strong>Duplicar</strong> para clonar um serviço (útil para variações de preço).'},
+        {t:'Na tab <strong>Profissionais</strong>, cadastre as funcionárias com nome, especialidade e status (Ativo/Inativo).'},
+        {t:'Na tab <strong>Seções</strong>, organize os serviços em grupos (Cabelo, Coloração, Tratamento, etc.) com ordem de exibição.'},
+        {t:'O campo <strong>"Dias para Retorno"</strong> alimenta o módulo de Retenção — calcula quando o cliente deveria voltar.'}
+      ],
+      tip:'Marcar um serviço como "Inativo" remove ele do catálogo público sem excluir os dados.'
+    },
+    {
+      id:'estoque', icon:'📦', iconBg:'rgba(34,197,94,.15)', title:'Estoque',
+      desc:'Controlar produtos, entradas, saídas e alertas de estoque baixo.',
+      page:'produtos',
+      steps:[
+        {t:'Os <strong>3 cards</strong> no topo mostram: Total de Produtos, Estoque Baixo e Valor Total em Estoque.'},
+        {t:'Clique <strong>"+ Novo Produto"</strong> para cadastrar. Preencha nome, categoria (Uso Interno ou Revenda), quantidades e preços.'},
+        {t:'Use os botões <strong>+1</strong> e <strong>-1</strong> na tabela para dar entrada ou saída rápida de estoque.'},
+        {t:'Use os <strong>filtros</strong> (busca, categoria, status) para localizar produtos rapidamente.'},
+        {t:'Produtos com estoque abaixo do mínimo são destacados com <strong>badge vermelho "Estoque Baixo"</strong>.'}
+      ],
+      tip:'Produtos de "Revenda" aparecem no modal de conclusão de agendamento para registrar vendas junto com o serviço.'
+    },
+    {
+      id:'financeiro', icon:'💰', iconBg:'rgba(251,191,36,.15)', title:'Financeiro',
+      desc:'Controle de entradas, saídas, lucro líquido e despesas do salão.',
+      page:'faturamento',
+      steps:[
+        {t:'Os <strong>4 cards</strong> mostram: Entradas (serviços + vendas), Saídas (despesas), Lucro Líquido e Faturamento Previsto.'},
+        {t:'Use as <strong>setas ← →</strong> para navegar entre meses.'},
+        {t:'Clique <strong>"+ Lançar Despesa"</strong> para registrar uma saída: descrição, categoria, valor, data e status (Pago/Pendente).'},
+        {t:'Na <strong>tabela de despesas</strong>, use os filtros de Categoria e Status. Clique ✓ para marcar como pago, ✎ para editar, ✕ para excluir.'},
+        {t:'O <strong>gráfico de barras</strong> mostra a distribuição de saídas por categoria (Salários, Custos Fixos, Estoque, etc.).'},
+        {t:'As abas <strong>Mês / Ano / Total</strong> alternam o período de análise das entradas.'}
+      ],
+      tip:'Despesas "Pendentes" são consideradas no cálculo do "Faturamento Previsto" junto com agendamentos pendentes.'
+    },
+    {
+      id:'clientes', icon:'👥', iconBg:'rgba(99,102,241,.15)', title:'Clientes',
+      desc:'Base de dados de clientes — busca, histórico e edição.',
+      page:'clientes',
+      steps:[
+        {t:'A <strong>tabela</strong> lista todos os clientes cadastrados com nome, WhatsApp, total de visitas e último serviço.'},
+        {t:'Use a <strong>busca</strong> para encontrar por nome ou número de WhatsApp.'},
+        {t:'Clique em <strong>WhatsApp</strong> para abrir conversa direta com o cliente.'},
+        {t:'Clique em <strong>Hist</strong> para ver o histórico completo do cliente: total gasto, agendamentos e timeline por mês.'},
+        {t:'Clique no <strong>ícone de edição</strong> para alterar dados ou tag do cliente (Nova, Ativa, Frequente, VIP, Aniversariante).'}
+      ],
+      tip:'O histórico do cliente é recalculado automaticamente a cada novo agendamento concluído.'
+    },
+    {
+      id:'historico', icon:'📊', iconBg:'rgba(20,184,166,.15)', title:'Histórico',
+      desc:'Relatório completo de atendimentos com filtros e exportação.',
+      page:'historico',
+      steps:[
+        {t:'Os <strong>6 cards</strong> mostram: Atendimentos, Cancelados, Faturamento, Ticket Médio, Serviço Top e Cliente Top.'},
+        {t:'Use os <strong>filtros</strong>: Período (Este Mês, Últimos 30/90 dias, Este Ano, Todos), Status e Tipo (Serviços ou Vendas Balcão).'},
+        {t:'A <strong>busca</strong> procura por nome, serviço, telefone ou nome de produto vendido.'},
+        {t:'A <strong>timeline</strong> mostra todos os atendimentos agrupados por data, com ícone, serviço, profissional e valor.'},
+        {t:'Clique <strong>"Exportar CSV"</strong> para baixar todos os registros filtrados em planilha.'}
+      ],
+      tip:'O CSV inclui BOM UTF-8 para abrir corretamente no Excel com acentos.'
+    },
+    {
+      id:'retencao', icon:'🔄', iconBg:'rgba(244,114,182,.15)', title:'Retenção',
+      desc:'Acompanhar clientes que estão sem retornar e enviar lembretes.',
+      page:'retencao',
+      steps:[
+        {t:'Os <strong>4 cards</strong> mostram: Total de Clientes, Atrasados, Próximos de Vencer e Em Dia.'},
+        {t:'O sistema calcula automaticamente com base nos <strong>"Dias para Retorno"</strong> configurados em cada serviço.'},
+        {t:'Use o <strong>filtro</strong> por status: Atrasados, Próximos de vencer ou Em dia.'},
+        {t:'Clique em <strong>"Lembrete"</strong> (WhatsApp) para enviar mensagem automática com link de agendamento para o cliente.'}
+      ],
+      tip:'Configure "Dias para Retorno" nos Serviços para que o cálculo funcione corretamente.'
+    },
+    {
+      id:'config', icon:'⚙️', iconBg:'rgba(156,163,175,.15)', title:'Configurações',
+      desc:'Bloquear dias, WhatsApp do salão e lista de espera.',
+      page:'config',
+      steps:[
+        {t:'<strong>Bloquear Dias</strong>: selecione uma data e clique "Bloquear Dia" para impedir agendamentos (feriados, férias, etc.).'},
+        {t:'Dias bloqueados aparecem como tags vermelhas. Clique no <strong>×</strong> para desbloquear.'},
+        {t:'<strong>WhatsApp Studio Jane</strong>: configure o número do salão (formato: 11930657871). Usado em lembretes e links.'},
+        {t:'<strong>Lista de Espera</strong>: quando não há horários disponíveis, o cliente pode entrar na fila. Clique WhatsApp para contatar ou Remover para tirar da lista.'}
+      ],
+      tip:'O número do WhatsApp deve ter DDD + 9 dígitos, sem espaços ou traços.'
+    }
+  ];
+
+  /* ---- Guide Cards ---- */
+  function renderGuideCards() {
+    var grid = document.getElementById('guide-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    GUIDE_DATA.forEach(function (g) {
+      var card = document.createElement('div');
+      card.className = 'guide-card';
+      card.setAttribute('data-guide', g.id);
+      card.innerHTML =
+        '<div class="guide-card-icon" style="background:' + g.iconBg + '">' + g.icon + '</div>' +
+        '<div class="guide-card-title">' + g.title + '</div>' +
+        '<div class="guide-card-desc">' + g.desc + '</div>';
+      card.addEventListener('click', function () {
+        openGuideDetail(g);
+      });
+      grid.appendChild(card);
+    });
+  }
+
+  /* ---- Guide Detail Modal ---- */
+  function openGuideDetail(g) {
+    var overlay = document.createElement('div');
+    overlay.className = 'guide-detail-overlay';
+    overlay.id = 'guide-detail-overlay';
+
+    var stepsHtml = '';
+    g.steps.forEach(function (s, i) {
+      stepsHtml += '<div class="guide-step"><div class="guide-step-num">' + (i + 1) + '</div><div class="guide-step-text">' + s.t + '</div></div>';
+    });
+    if (g.tip) stepsHtml += '<div class="guide-tip">' + g.tip + '</div>';
+
+    overlay.innerHTML =
+      '<div class="guide-detail-modal">' +
+        '<button class="guide-detail-close" id="guide-detail-close">✕</button>' +
+        '<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">' +
+          '<div class="guide-card-icon" style="background:' + g.iconBg + ';width:48px;height:48px;font-size:24px">' + g.icon + '</div>' +
+          '<div><h2 class="font-display text-xl font-semibold text-white">' + g.title + '</h2>' +
+          '<p class="text-sm text-gray-400">' + g.desc + '</p></div>' +
+        '</div>' +
+        stepsHtml +
+        '<button class="guide-go-btn" id="guide-go-page">Ir para ' + g.title + '</button>' +
+      '</div>';
+
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) overlay.remove();
+    });
+    document.getElementById('guide-detail-close').addEventListener('click', function () { overlay.remove(); });
+    document.getElementById('guide-go-page').addEventListener('click', function () {
+      overlay.remove();
+      navigateTo(g.page);
+    });
+  }
+
+  /* ---- Guide Accordions (Referência Completa) ---- */
+  function renderGuideAccordions() {
+    var container = document.getElementById('guide-accordions');
+    if (!container) return;
+    container.innerHTML = '';
+    GUIDE_DATA.forEach(function (g) {
+      var acc = document.createElement('div');
+      acc.className = 'guide-acc';
+
+      var stepsHtml = '';
+      g.steps.forEach(function (s, i) {
+        stepsHtml += '<div class="guide-step"><div class="guide-step-num">' + (i + 1) + '</div><div class="guide-step-text">' + s.t + '</div></div>';
+      });
+      if (g.tip) stepsHtml += '<div class="guide-tip">' + g.tip + '</div>';
+      stepsHtml += '<button class="guide-go-btn" data-guide-page="' + g.page + '">Ir para ' + g.title + '</button>';
+
+      acc.innerHTML =
+        '<div class="guide-acc-header">' +
+          '<div class="guide-acc-icon" style="background:' + g.iconBg + '">' + g.icon + '</div>' +
+          '<div class="guide-acc-title">' + g.title + '</div>' +
+          '<span class="guide-acc-arrow">▼</span>' +
+        '</div>' +
+        '<div class="guide-acc-body">' + stepsHtml + '</div>';
+
+      acc.querySelector('.guide-acc-header').addEventListener('click', function () {
+        acc.classList.toggle('open');
+      });
+      acc.querySelectorAll('[data-guide-page]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          navigateTo(btn.getAttribute('data-guide-page'));
+        });
+      });
+      container.appendChild(acc);
+    });
+  }
+
+  /* ---- Sobre: Firebase status ---- */
+  function renderSobreStatus() {
+    var el = document.getElementById('sobre-firebase-status');
+    if (!el) return;
+    if (B && typeof B.getAgendamentos === 'function') {
+      el.innerHTML = '<span class="sobre-status-dot sobre-status-ok"></span>Conectado';
+    } else {
+      el.innerHTML = '<span class="sobre-status-dot sobre-status-err"></span>Desconectado (modo local)';
+    }
+  }
+
+  /* ---- Sub-tab switching ---- */
+  document.querySelectorAll('.cfg-tab').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      document.querySelectorAll('.cfg-tab').forEach(function (t) { t.classList.remove('active'); });
+      document.querySelectorAll('.cfg-tab-panel').forEach(function (p) { p.classList.add('hidden'); });
+      tab.classList.add('active');
+      var panelId = 'cfg-tab-' + tab.getAttribute('data-cfg-tab');
+      var panel = document.getElementById(panelId);
+      if (panel) panel.classList.remove('hidden');
+    });
+  });
 
   var cfgWhatsSave = document.getElementById('cfg-whatsapp-save');
   if (cfgWhatsSave) {
