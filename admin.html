@@ -820,7 +820,7 @@
 
     <!-- Modal Editar Agendamento -->
     <div id="ag-edit-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div class="bg-dark-700 border border-dark-300/50 rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4">
+      <div class="bg-dark-700 border border-dark-300/50 rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4 max-h-[85vh] overflow-y-auto">
         <h3 class="font-display text-lg font-semibold text-white mb-4">Editar Agendamento</h3>
         <input type="hidden" id="ag-edit-id" />
         <div class="space-y-3">
@@ -843,8 +843,32 @@
             </div>
           </div>
           <div>
+            <label class="text-xs font-semibold text-gray-400 mb-1 block">Status</label>
+            <select id="ag-edit-status" class="w-full rounded-lg bg-dark-600 border border-dark-300/40 px-3 py-2 text-sm text-white focus:border-gold/50 outline-none">
+              <option value="pendente">⏳ Pendente</option>
+              <option value="confirmado">🟡 Confirmado</option>
+              <option value="em_atendimento">🔵 Em Atendimento</option>
+              <option value="concluido">🟢 Concluído</option>
+              <option value="cancelado">🔴 Cancelado</option>
+            </select>
+          </div>
+          <div>
             <label class="text-xs font-semibold text-gray-400 mb-1 block">Valor (R$)</label>
             <input id="ag-edit-valor" type="number" step="0.01" min="0" class="w-full rounded-lg bg-dark-600 border border-dark-300/40 px-3 py-2 text-sm text-white focus:border-gold/50 outline-none" placeholder="0.00" />
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-400 mb-1 block">Forma de Pagamento</label>
+            <select id="ag-edit-pagamento" class="w-full rounded-lg bg-dark-600 border border-dark-300/40 px-3 py-2 text-sm text-white focus:border-gold/50 outline-none">
+              <option value="">Não informado</option>
+              <option value="Pix">Pix</option>
+              <option value="Cartão de Crédito">Cartão de Crédito</option>
+              <option value="Cartão de Débito">Cartão de Débito</option>
+              <option value="Dinheiro">Dinheiro</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-400 mb-1 block">Observações</label>
+            <textarea id="ag-edit-obs" rows="2" class="w-full rounded-lg bg-dark-600 border border-dark-300/40 px-3 py-2 text-sm text-white focus:border-gold/50 outline-none resize-none" placeholder="Anotações internas..."></textarea>
           </div>
         </div>
         <div class="flex gap-3 mt-5">
@@ -1411,7 +1435,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <!-- app-booking.js -->
-<script src="app-booking.js?v=1.6"></script>
+<script src="app-booking.js?v=1.7"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -2051,37 +2075,50 @@ document.addEventListener('DOMContentLoaded', function () {
           var agId = btn.getAttribute('data-ag-id');
           var ag = B ? B.getAgendamentos().find(function (a) { return a.id === agId; }) || null : null;
           if (!ag) return;
-          document.getElementById('ag-edit-id').value = agId;
-          document.getElementById('ag-edit-cliente').value = ag.cliente_nome + (ag.cliente_whatsapp ? ' — ' + ag.cliente_whatsapp : '');
-          document.getElementById('ag-edit-data').value = ag.data;
-          /* Preenche select de serviços */
-          var svcSel = document.getElementById('ag-edit-servico');
-          var svcs = B ? B.getServicos() : [];
-          svcSel.innerHTML = '';
-          svcs.forEach(function (s) {
-            var opt = document.createElement('option');
-            opt.value = s.nome;
-            opt.textContent = s.nome;
-            if (s.nome === ag.servico) opt.selected = true;
-            svcSel.appendChild(opt);
-          });
-          /* Preenche horários disponíveis */
-          var horSel = document.getElementById('ag-edit-horario');
-          horSel.innerHTML = '';
-          var slots = B ? B.horariosDisponiveis(ag.data, ag.profissional) : [];
-          slots.forEach(function (h) {
-            var opt = document.createElement('option');
-            opt.value = h;
-            opt.textContent = h;
-            if (h === ag.horario) opt.selected = true;
-            horSel.appendChild(opt);
-          });
-          /* Valor */
-          document.getElementById('ag-edit-valor').value = ag.valor_informado || '';
-          document.getElementById('ag-edit-modal').classList.remove('hidden');
+          openEditModal(ag);
         });
       });
     }
+  }
+
+  function openEditModal(ag) {
+    document.getElementById('ag-edit-id').value = ag.id;
+    document.getElementById('ag-edit-cliente').value = ag.cliente_nome + (ag.cliente_whatsapp ? ' — ' + ag.cliente_whatsapp : '');
+    document.getElementById('ag-edit-data').value = ag.data;
+    /* Preenche select de serviços */
+    var svcSel = document.getElementById('ag-edit-servico');
+    var svcs = B ? B.getServicos() : [];
+    svcSel.innerHTML = '';
+    svcs.forEach(function (s) {
+      var opt = document.createElement('option');
+      opt.value = s.nome;
+      opt.textContent = s.nome;
+      if (s.nome === ag.servico) opt.selected = true;
+      svcSel.appendChild(opt);
+    });
+    /* Preenche horários disponíveis */
+    var horSel = document.getElementById('ag-edit-horario');
+    horSel.innerHTML = '';
+    var slots = B ? B.horariosDisponiveis(ag.data, ag.profissional) : [];
+    slots.forEach(function (h) {
+      var opt = document.createElement('option');
+      opt.value = h;
+      opt.textContent = h;
+      if (h === ag.horario) opt.selected = true;
+      horSel.appendChild(opt);
+    });
+    /* Valor */
+    document.getElementById('ag-edit-valor').value = ag.valor_informado || '';
+    /* Status */
+    var statusSel = document.getElementById('ag-edit-status');
+    if (statusSel) statusSel.value = ag.status || 'pendente';
+    /* Pagamento */
+    var pagSel = document.getElementById('ag-edit-pagamento');
+    if (pagSel) pagSel.value = ag.forma_pagamento || '';
+    /* Observações */
+    var obsEl = document.getElementById('ag-edit-obs');
+    if (obsEl) obsEl.value = ag.nota || '';
+    document.getElementById('ag-edit-modal').classList.remove('hidden');
   }
 
   /* ============================================================
@@ -2546,6 +2583,7 @@ document.addEventListener('DOMContentLoaded', function () {
             '<button data-st="' + ag.id + '" data-stv="cancelado" class="status-btn rounded-lg px-2.5 py-1 text-[10px] font-semibold transition-colors ' + (ag.status==='cancelado'?'bg-red-500/25 text-red-300 border border-red-500/40':'bg-dark-500 text-gray-500 hover:text-red-400') + '" title="Cancelado">🔴 Cancelar</button>'
         ) +
         (tel ? '<a href="https://wa.me/55' + tel + '" target="_blank" rel="noopener" class="ml-auto rounded-lg bg-green-500/15 px-2.5 py-1 text-[10px] font-semibold text-green-400 hover:bg-green-500/25 transition-colors">WhatsApp</a>' : '') +
+        '<button class="ag-edit-btn shrink-0 rounded-lg bg-blue-500/15 px-2.5 py-1 text-[10px] font-semibold text-blue-400 hover:bg-blue-500/25 transition-colors" data-ag-id="' + ag.id + '">Editar</button>' +
       '</div>';
     return card;
   }
@@ -2801,9 +2839,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       });
     });
-  }
 
-  /* --- View Toggle Buttons + Month Nav + Hoje + Busca (Event Delegation) --- */
+    /* Editar Agendamento */
+    container.querySelectorAll('.ag-edit-btn').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var agId = btn.getAttribute('data-ag-id');
+        var ag = B ? B.getAgendamentos().find(function (a) { return a.id === agId; }) || null : null;
+        if (!ag) return;
+        openEditModal(ag);
+      });
+    });
+  }
   document.addEventListener('click', function (e) {
     var t = e.target;
     /* View toggles */
@@ -4158,6 +4205,9 @@ document.addEventListener('DOMContentLoaded', function () {
     var horario = document.getElementById('ag-edit-horario').value;
     var servico = document.getElementById('ag-edit-servico').value;
     var valor = document.getElementById('ag-edit-valor').value;
+    var status = document.getElementById('ag-edit-status').value;
+    var pagamento = document.getElementById('ag-edit-pagamento').value;
+    var obs = document.getElementById('ag-edit-obs').value;
     if (!data) { alert('Selecione a data.'); return; }
     if (!horario) { alert('Selecione o horário.'); return; }
     if (!servico) { alert('Selecione o serviço.'); return; }
@@ -4167,11 +4217,20 @@ document.addEventListener('DOMContentLoaded', function () {
     if (valor !== '' && parseFloat(valor.replace(',','.')) >= 0) {
       dados.valor_informado = parseFloat(valor.replace(',','.'));
     }
+    if (status) dados.status = status;
+    if (pagamento) dados.forma_pagamento = pagamento;
+    if (obs !== undefined) dados.nota = obs;
     if (B && B.editarAgendamento) {
       B.editarAgendamento(id, dados);
     }
+    if (status && B && B.setAgendamentoStatus) {
+      B.setAgendamentoStatus(id, status);
+    }
     document.getElementById('ag-edit-modal').classList.add('hidden');
     renderDashboard();
+    try { renderAgendamentos(); } catch (e) {}
+    try { renderHistorico(); } catch (e) {}
+    try { renderFaturamento(); } catch (e) {}
   });
   /* Atualiza horários ao mudar data no modal de edição */
   document.getElementById('ag-edit-data').addEventListener('change', function () {

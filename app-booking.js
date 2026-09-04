@@ -1,10 +1,10 @@
 /**
  * app-booking.js — Sistema de Agendamento e Gestão do Studio Jane Barreiros
  * Armazenamento via Firebase Realtime Database (sync entre dispositivos).
- * Versão: 1.0
+ * Versão: 1.1
  */
 
-var APP_VERSION = '1.0';
+var APP_VERSION = '1.1';
 
 (function () {
   'use strict';
@@ -537,6 +537,9 @@ var APP_VERSION = '1.0';
         if (dados.duracao_min !== undefined) a.duracao_min = dados.duracao_min;
         if (dados.valor_informado !== undefined) a.valor_informado = dados.valor_informado;
         if (dados.profissional !== undefined) a.profissional = dados.profissional;
+        if (dados.forma_pagamento !== undefined) a.forma_pagamento = dados.forma_pagamento;
+        if (dados.nota !== undefined) a.nota = dados.nota;
+        if (dados.status !== undefined) a.status = dados.status;
       }
     });
     setAgendamentos(lista);
