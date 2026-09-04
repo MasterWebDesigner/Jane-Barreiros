@@ -501,6 +501,11 @@
       observacoes: dados.observacoes || '',
       origem: dados.origem || '',  // 'online' | 'recepcao' | ''
       status: dados.status || 'pendente',       // pendente | confirmado | em_atendimento | cancelado | concluido
+      valor_informado: dados.valor_informado || 0,
+      valor_servico: dados.valor_servico || 0,
+      valor_produtos: dados.valor_produtos || 0,
+      valor_total: dados.valor_total || 0,
+      produtos_vendidos: dados.produtos_vendidos || [],
       criado_em: new Date().toISOString()
     };
     lista.push(ag);
@@ -949,6 +954,7 @@
     getServicoPorNome: getServicoPorNome,
     getDuracaoServico: getDuracaoServico,
     getAgendamentos: getAgendamentos,
+    setAgendamentos: setAgendamentos,
     criarAgendamento: criarAgendamento,
     editarAgendamento: editarAgendamento,
     cancelarAgendamento: cancelarAgendamento,

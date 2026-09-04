@@ -265,6 +265,14 @@
       </div>
 
       <!-- Lista Operacional do Dia -->
+      <!-- Botão Venda Avulsa -->
+      <div class="flex items-center gap-3 mb-6">
+        <button id="dash-venda-avulsa-btn" class="gold-btn rounded-xl px-5 py-2.5 text-sm font-semibold flex items-center gap-2">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          Venda Avulsa (Produto)
+        </button>
+      </div>
+
       <div class="card-dark p-5 mb-6">
         <div class="flex items-center justify-between mb-4">
           <h3 class="font-display text-base font-semibold text-white">Atendimentos de Hoje</h3>
@@ -1133,6 +1141,100 @@
   </div>
 </div>
 
+<!-- ============================================================
+     MODAL — Seleção de Produtos ao Concluir Atendimento
+============================================================ -->
+<div id="modal-produtos-venda" class="fixed inset-0 z-[110] hidden items-center justify-center modal-overlay">
+  <div class="w-full max-w-lg rounded-2xl border border-gold/20 bg-dark-700 p-6 shadow-2xl fade-in mx-4" style="max-height:85vh; display:flex; flex-direction:column;">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h3 class="font-display text-lg font-semibold text-white">Produtos Vendidos</h3>
+        <p class="text-xs text-gray-400 mt-0.5">Selecione os produtos vendidos junto com o serviço.</p>
+      </div>
+      <button id="pv-close" class="flex h-8 w-8 items-center justify-center rounded-full bg-dark-600 text-gray-400 hover:text-white">&times;</button>
+    </div>
+    <!-- Resumo -->
+    <div class="flex items-center gap-3 mb-4 p-3 rounded-xl bg-dark-600 border border-dark-300/30">
+      <div class="flex-1">
+        <p class="text-[10px] text-gray-500 uppercase">Serviço</p>
+        <p id="pv-servico-nome" class="text-sm font-semibold text-gold">—</p>
+      </div>
+      <div class="text-right">
+        <p class="text-[10px] text-gray-500 uppercase">Valor Serviço</p>
+        <p id="pv-valor-servico" class="font-numeric text-sm font-bold text-gold">R$ 0,00</p>
+      </div>
+    </div>
+    <!-- Lista de Produtos Revenda -->
+    <div id="pv-lista" class="flex-1 overflow-y-auto space-y-2 mb-4"></div>
+    <div id="pv-vazio" class="hidden text-center text-gray-500 py-6 text-sm">Nenhum produto de revenda em estoque.</div>
+    <!-- Totais -->
+    <div class="border-t border-dark-300/30 pt-3 space-y-2">
+      <div class="flex justify-between items-center">
+        <span class="text-xs text-gray-400">Produtos</span>
+        <span id="pv-total-produtos" class="font-numeric text-sm font-semibold text-purple-400">R$ 0,00</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-xs font-bold text-white">TOTAL</span>
+        <span id="pv-total-geral" class="font-numeric text-lg font-bold text-gold">R$ 0,00</span>
+      </div>
+    </div>
+    <!-- Botões -->
+    <div class="flex gap-3 mt-4">
+      <button id="pv-pular" class="flex-1 rounded-xl border border-dark-300 bg-dark-600 py-2.5 text-sm font-semibold text-gray-300 hover:border-gray-400">Pular (Só Serviço)</button>
+      <button id="pv-confirmar" class="flex-1 gold-btn rounded-xl py-2.5 text-sm font-semibold">Confirmar Venda</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL — Venda Avulsa (Produto sem Agendamento)
+============================================================ -->
+<div id="modal-venda-avulsa" class="fixed inset-0 z-[110] hidden items-center justify-center modal-overlay">
+  <div class="w-full max-w-lg rounded-2xl border border-gold/20 bg-dark-700 p-6 shadow-2xl fade-in mx-4" style="max-height:85vh; display:flex; flex-direction:column;">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h3 class="font-display text-lg font-semibold text-white">Venda Avulsa</h3>
+        <p class="text-xs text-gray-400 mt-0.5">Venda de produto sem agendamento prévio.</p>
+      </div>
+      <button id="va-close" class="flex h-8 w-8 items-center justify-center rounded-full bg-dark-600 text-gray-400 hover:text-white">&times;</button>
+    </div>
+    <div class="space-y-3 mb-4">
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Cliente</label>
+        <input id="va-nome" type="text" placeholder="Nome da cliente">
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">WhatsApp</label>
+        <input id="va-whatsapp" type="tel" placeholder="(11) 98765-4321">
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Pagamento</label>
+        <select id="va-pagamento">
+          <option value="">Selecione</option>
+          <option value="Pix">Pix</option>
+          <option value="Cartão de Crédito">Cartão de Crédito</option>
+          <option value="Cartão de Débito">Cartão de Débito</option>
+          <option value="Dinheiro">Dinheiro</option>
+        </select>
+      </div>
+    </div>
+    <!-- Lista Produtos -->
+    <div id="va-lista" class="flex-1 overflow-y-auto space-y-2 mb-4"></div>
+    <div id="va-vazio" class="hidden text-center text-gray-500 py-4 text-sm">Nenhum produto de revenda disponível.</div>
+    <!-- Total -->
+    <div class="border-t border-dark-300/30 pt-3 mb-4">
+      <div class="flex justify-between items-center">
+        <span class="text-xs font-bold text-white">TOTAL</span>
+        <span id="va-total" class="font-numeric text-lg font-bold text-gold">R$ 0,00</span>
+      </div>
+    </div>
+    <div class="flex gap-3">
+      <button id="va-cancelar" class="flex-1 rounded-xl border border-dark-300 bg-dark-600 py-2.5 text-sm font-semibold text-gray-300 hover:border-gray-400">Cancelar</button>
+      <button id="va-confirmar" class="flex-1 gold-btn rounded-xl py-2.5 text-sm font-semibold">Registrar Venda</button>
+    </div>
+  </div>
+</div>
+
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -1547,7 +1649,8 @@ document.addEventListener('DOMContentLoaded', function () {
     return parseFloat(m[1].replace(',', '.')) || 0;
   }
 
-  function servicoPreco(nome, agValorInformado) {
+  function servicoPreco(nome, agValorInformado, agValorTotal) {
+    if (agValorTotal && agValorTotal > 0) return parseFloat(agValorTotal) || 0;
     if (agValorInformado && agValorInformado > 0) return parseFloat(agValorInformado) || 0;
     var servicos = B ? B.getServicos() : [];
     var s = servicos.find(function (x) { return x.nome === nome; });
@@ -1600,7 +1703,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var fatPrevisto = 0, fatRealizado = 0;
     todosAgs.forEach(function (ag) {
       if (ag.status === 'cancelado') return;
-      var valor = servicoPreco(ag.servico, ag.valor_informado);
+      var valor = ag.valor_total || servicoPreco(ag.servico, ag.valor_informado, ag.valor_total);
       fatPrevisto += valor;
       if (ag.status === 'concluido') fatRealizado += valor;
     });
@@ -1616,10 +1719,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     lista.innerHTML = '';
     todosAgs.forEach(function (ag) {
-      var valor = servicoPreco(ag.servico, ag.valor_informado);
+      var valor = ag.valor_total || servicoPreco(ag.servico, ag.valor_informado, ag.valor_total);
       var tag = clienteTag(ag.cliente_whatsapp);
       var tel = (ag.cliente_whatsapp || '').replace(/\D/g, '');
       var status = ag.status || 'confirmado';
+      var temProdutos = ag.produtos_vendidos && ag.produtos_vendidos.length > 0;
+      var valorFmt = temProdutos
+        ? '<p class="font-numeric text-sm font-semibold text-gold">R$ ' + valor.toFixed(2).replace('.',',') + '</p>' + (ag.valor_produtos > 0 ? '<p class="text-[10px] text-purple-400">📦 R$ ' + ag.valor_produtos.toFixed(2).replace('.',',') + '</p>' : '')
+        : '<p class="font-numeric text-sm font-semibold text-gold">R$ ' + valor.toFixed(2).replace('.',',') + '</p>';
       var card = document.createElement('div');
       card.className = 'rounded-xl bg-dark-600 border border-dark-300/50 p-4 hover:border-gold/20 transition-colors';
       var statusLabel = status === 'concluido' ? 'Concluído' : status === 'cancelado' ? 'Cancelado' : status === 'em_atendimento' ? 'Em Atendimento' : status === 'pendente' ? 'Pendente' : 'Confirmado';
@@ -1641,7 +1748,7 @@ document.addEventListener('DOMContentLoaded', function () {
           '</div>' +
           '<div class="flex items-center gap-3 flex-wrap">' +
             '<div class="text-right hidden sm:block">' +
-              '<p class="font-numeric text-sm font-semibold text-gold">R$ ' + valor.toFixed(2).replace('.',',') + '</p>' +
+              valorFmt +
               '<p class="text-[10px] text-gray-500">' + (ag.forma_pagamento || '—') + '</p>' +
             '</div>' +
             (tel ? '<a href="https://wa.me/55' + tel + '" target="_blank" rel="noopener" class="shrink-0 rounded-lg bg-green-500/15 px-2.5 py-1.5 text-[10px] font-semibold text-green-400 hover:bg-green-500/25 transition-colors">WhatsApp</a>' : '') +
@@ -1664,22 +1771,8 @@ document.addEventListener('DOMContentLoaded', function () {
         if (newStatus === 'cancelado' && !confirm('Cancelar este agendamento?')) return;
 
         if (newStatus === 'concluido') {
-          var agDados = B ? B.getAgendamentos().find(function (a) { return a.id === agId; }) || null : null;
-          if (agDados) {
-            var svcLista = B ? B.getServicos() : [];
-            var svcInfo = svcLista.find(function (s) { return s.nome === agDados.servico; }) || null;
-            var valorCatalogo = 0;
-            if (svcInfo && svcInfo.preco && svcInfo.preco !== 'Consulte') {
-              var mVal = svcInfo.preco.replace(/\./g, '').match(/[\d,]+/);
-              if (mVal) valorCatalogo = parseFloat(mVal[0].replace(',', '.')) || 0;
-            }
-            var inputValor = prompt('Informe o valor cobrado pelo servico "' + agDados.servico + '":\n(Valor do catalogo: R$ ' + valorCatalogo.toFixed(2).replace('.',',') + ')\n\nDeixe vazio para R$ 0,00.', valorCatalogo > 0 ? valorCatalogo.toFixed(2).replace('.',',') : '');
-            if (inputValor === null) return;
-            var valorInformado = parseFloat(inputValor.replace(',','.')) || 0;
-            if (svcInfo && valorInformado > 0) {
-              if (B) { B.setValorInformado(agId, valorInformado); }
-            }
-          }
+          iniciarConclusao(agId);
+          return;
         }
 
         if (B) {
@@ -1705,10 +1798,14 @@ document.addEventListener('DOMContentLoaded', function () {
     } else {
       allLista.innerHTML = '';
       allAgs.forEach(function (ag) {
-        var valor = servicoPreco(ag.servico, ag.valor_informado);
+        var valor = ag.valor_total || servicoPreco(ag.servico, ag.valor_informado, ag.valor_total);
         var tag = clienteTag(ag.cliente_whatsapp);
         var tel = (ag.cliente_whatsapp || '').replace(/\D/g, '');
         var status = ag.status || 'confirmado';
+        var temProdutos = ag.produtos_vendidos && ag.produtos_vendidos.length > 0;
+        var valorFmtAll = temProdutos
+          ? '<p class="font-numeric text-sm font-semibold text-gold">R$ ' + valor.toFixed(2).replace('.',',') + '</p>' + (ag.valor_produtos > 0 ? '<p class="text-[10px] text-purple-400">📦 R$ ' + ag.valor_produtos.toFixed(2).replace('.',',') + '</p>' : '')
+          : '<p class="font-numeric text-sm font-semibold text-gold">R$ ' + valor.toFixed(2).replace('.',',') + '</p>';
         var statusLabel = status === 'concluido' ? 'Concluído' : status === 'cancelado' ? 'Cancelado' : status === 'em_atendimento' ? 'Em Atendimento' : status === 'pendente' ? 'Pendente' : 'Confirmado';
         var statusColor = status === 'concluido' ? 'text-green-400' : status === 'cancelado' ? 'text-red-400' : status === 'em_atendimento' ? 'text-blue-400' : status === 'pendente' ? 'text-amber-400' : 'text-yellow-400';
         var isHoje = ag.data === h;
@@ -1738,7 +1835,7 @@ document.addEventListener('DOMContentLoaded', function () {
             '</div>' +
             '<div class="flex items-center gap-3 flex-wrap">' +
               '<div class="text-right hidden sm:block">' +
-                '<p class="font-numeric text-sm font-semibold text-gold">R$ ' + valor.toFixed(2).replace('.',',') + '</p>' +
+                valorFmtAll +
                 '<p class="text-[10px] text-gray-500">' + (ag.forma_pagamento || '—') + '</p>' +
               '</div>' +
               (tel ? '<a href="https://wa.me/55' + tel + '" target="_blank" rel="noopener" class="shrink-0 rounded-lg bg-green-500/15 px-2.5 py-1.5 text-[10px] font-semibold text-green-400 hover:bg-green-500/25 transition-colors">WhatsApp</a>' : '') +
@@ -1760,20 +1857,8 @@ document.addEventListener('DOMContentLoaded', function () {
           var newStatus = btn.getAttribute('data-st');
           if (newStatus === 'cancelado' && !confirm('Cancelar este agendamento?')) return;
           if (newStatus === 'concluido') {
-            var agDados = B ? B.getAgendamentos().find(function (a) { return a.id === agId; }) || null : null;
-            if (agDados) {
-              var svcLista = B ? B.getServicos() : [];
-              var svcInfo = svcLista.find(function (s) { return s.nome === agDados.servico; }) || null;
-              var valorCatalogo = 0;
-              if (svcInfo && svcInfo.preco && svcInfo.preco !== 'Consulte') {
-                var mVal = svcInfo.preco.replace(/\./g, '').match(/[\d,]+/);
-                if (mVal) valorCatalogo = parseFloat(mVal[0].replace(',', '.')) || 0;
-              }
-              var inputValor = prompt('Informe o valor cobrado pelo servico "' + agDados.servico + '":\n(Valor do catalogo: R$ ' + valorCatalogo.toFixed(2).replace('.',',') + ')\n\nDeixe vazio para R$ 0,00.', valorCatalogo > 0 ? valorCatalogo.toFixed(2).replace('.',',') : '');
-              if (inputValor === null) return;
-              var vi = parseFloat(inputValor.replace(',','.')) || 0;
-              if (svcInfo && vi > 0) { if (B) B.setValorInformado(agId, vi); }
-            }
+            iniciarConclusao(agId);
+            return;
           }
           if (B) B.setAgendamentoStatus(agId, newStatus);
           renderDashboard();
@@ -2231,7 +2316,7 @@ document.addEventListener('DOMContentLoaded', function () {
   /* --- Build Appointment Card --- */
   function agBuildCard(ag) {
     var sc = agStatusColor(ag.status);
-    var valor = servicoPreco(ag.servico, ag.valor_informado);
+    var valor = servicoPreco(ag.servico, ag.valor_informado, ag.valor_total);
     var durMin = ag.duracao_min || (svc ? svc.duracao_min : 60);
     var hInicio = ag.horario || '??:??';
     var pInicio = hInicio.split(':');
@@ -2476,22 +2561,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         /* Validação: ao concluir, verificar se valor > 0 */
         if (newStatus === 'concluido') {
-          var agDados = B ? B.getAgendamentos().find(function (a) { return a.id === agId; }) || null : null;
-          if (agDados) {
-            var svcLista = B ? B.getServicos() : [];
-            var svcInfo = svcLista.find(function (s) { return s.nome === agDados.servico; }) || null;
-            var valorCatalogo = 0;
-            if (svcInfo && svcInfo.preco && svcInfo.preco !== 'Consulte') {
-              var mVal = svcInfo.preco.replace(/\./g, '').match(/[\d,]+/);
-              if (mVal) valorCatalogo = parseFloat(mVal[0].replace(',', '.')) || 0;
-            }
-            var inputValor = prompt('Informe o valor cobrado pelo servico "' + agDados.servico + '":\n(Valor do catalogo: R$ ' + valorCatalogo.toFixed(2).replace('.',',') + ')\n\nDeixe vazio para R$ 0,00.', valorCatalogo > 0 ? valorCatalogo.toFixed(2).replace('.',',') : '');
-            if (inputValor === null) return;
-            var valorInformado = parseFloat(inputValor.replace(',','.')) || 0;
-            if (svcInfo && valorInformado > 0) {
-              if (B) B.setValorInformado(agId, valorInformado);
-            }
-          }
+          iniciarConclusao(agId);
+          return;
         }
 
         if (B) {
@@ -3376,7 +3447,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var totalCancelados = ags.filter(function (a) { return a.status === 'cancelado'; }).length;
     var faturamento = 0;
     ags.forEach(function (a) {
-      if (a.status === 'concluido') faturamento += servicoPreco(a.servico, a.valor_informado) || 0;
+      if (a.status === 'concluido') faturamento += (a.valor_total || servicoPreco(a.servico, a.valor_informado, a.valor_total)) || 0;
     });
     var ticketMedio = totalConcluidos > 0 ? faturamento / totalConcluidos : 0;
     /* Serviço mais popular */
@@ -3455,7 +3526,7 @@ document.addEventListener('DOMContentLoaded', function () {
       /* Receita do mês */
       var receitaMes = 0;
       agsMes.forEach(function (a) {
-        if (a.status === 'concluido') receitaMes += servicoPreco(a.servico, a.valor_informado) || 0;
+        if (a.status === 'concluido') receitaMes += servicoPreco(a.servico, a.valor_informado, a.valor_total) || 0;
       });
 
       /* Header do mês */
@@ -3475,7 +3546,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var statusLabel = isConcluido ? '✓ Concluído' : '✕ Cancelado';
         var statusColor = isConcluido ? 'text-green-400 bg-green-500/15' : 'text-red-400 bg-red-500/15';
         var icon = getIcon(ag.servico);
-        var valor = servicoPreco(ag.servico, ag.valor_informado);
+        var valor = servicoPreco(ag.servico, ag.valor_informado, ag.valor_total);
         var telLimpo = (ag.cliente_whatsapp || '').replace(/\D/g, '');
         var telLink = telLimpo.length >= 10 ? 'https://wa.me/55' + telLimpo : '';
 
@@ -3483,6 +3554,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (ag.funcionaria) details.push('👤 ' + esc(ag.funcionaria));
         if (ag.forma_pagamento) details.push('💳 ' + esc(ag.forma_pagamento));
         if (ag.nota) details.push('📝 ' + esc(ag.nota));
+        if (ag.produtos_vendidos && ag.produtos_vendidos.length) {
+          var prodNames = ag.produtos_vendidos.map(function (p) { return esc(p.nome) + (p.qtd > 1 ? ' x' + p.qtd : ''); });
+          details.push('📦 ' + prodNames.join(', '));
+        }
 
         card.className = 'rounded-xl border-l-4 border border-dark-300/20 bg-dark-700/50 p-4 transition hover:bg-dark-600/40 ' + borderClass;
         card.innerHTML =
@@ -3520,8 +3595,12 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('hist-export-btn').addEventListener('click', function () {
     var ags = B ? B.getAgendamentos().filter(function (a) { return a.status === 'concluido' || a.status === 'cancelado'; }) : [];
     if (!ags.length) { showToast('Aviso', 'Nenhum dado para exportar.', null); return; }
-    var csv = 'Data,Horário,Cliente,WhatsApp,Serviço,Profissional,Status,Valor,Pagamento\n';
+    var csv = 'Data,Horário,Cliente,WhatsApp,Serviço,Profissional,Status,Valor Serviço,Valor Produtos,Total,Pagamento,Produtos\n';
     ags.forEach(function (a) {
+      var srvVal = a.valor_servico || servicoPreco(a.servico, a.valor_informado, a.valor_total);
+      var prodVal = a.valor_produtos || 0;
+      var totalVal = a.valor_total || (srvVal + prodVal);
+      var prodNames = (a.produtos_vendidos || []).map(function (p) { return p.nome + (p.qtd > 1 ? ' x' + p.qtd : ''); }).join('; ');
       csv += [
         a.data || '', a.horario || '',
         '"' + (a.cliente_nome || '').replace(/"/g, '""') + '"',
@@ -3529,8 +3608,11 @@ document.addEventListener('DOMContentLoaded', function () {
         '"' + (a.servico || '').replace(/"/g, '""') + '"',
         '"' + (a.funcionaria || '').replace(/"/g, '""') + '"',
         a.status || '',
-        servicoPreco(a.servico, a.valor_informado) || '0',
-        a.forma_pagamento || ''
+        srvVal || '0',
+        prodVal || '0',
+        totalVal || '0',
+        a.forma_pagamento || '',
+        '"' + prodNames.replace(/"/g, '""') + '"'
       ].join(',') + '\n';
     });
     var blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
@@ -3725,7 +3807,7 @@ document.addEventListener('DOMContentLoaded', function () {
     /* --- Resumo --- */
     var concluidos = ags.filter(function (a) { return a.status === 'concluido'; });
     var totalGasto = 0;
-    concluidos.forEach(function (a) { totalGasto += servicoPreco(a.servico, a.valor_informado) || 0; });
+    concluidos.forEach(function (a) { totalGasto += servicoPreco(a.servico, a.valor_informado, a.valor_total) || 0; });
     var frequencia = ags.length;
     var ultimoAg = ags[0];
     var mesesDiferentes = {};
@@ -3790,7 +3872,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var duracao = svc ? svc.duracao : '';
         var funcionaria = ag.funcionaria || '';
         var pagamento = ag.forma_pagamento || '';
-        var valor = servicoPreco(ag.servico, ag.valor_informado) > 0 ? 'R$ ' + servicoPreco(ag.servico, ag.valor_informado).toFixed(2).replace('.',',') : '';
+        var valor = servicoPreco(ag.servico, ag.valor_informado, ag.valor_total) > 0 ? 'R$ ' + servicoPreco(ag.servico, ag.valor_informado, ag.valor_total).toFixed(2).replace('.',',') : '';
         var nota = ag.nota || '';
 
         var details = [];
@@ -4018,9 +4100,9 @@ document.addEventListener('DOMContentLoaded', function () {
     var emAtend = ags.filter(function (a) { return a.status === 'em_atendimento'; });
     var espera = B ? B.getListaEspera().filter(function (i) { return i.status === 'aguardando'; }) : [];
 
-    var fatHoje = concluidos.filter(isHoje).reduce(function (s, a) { return s + servicoPreco(a.servico, a.valor_informado); }, 0);
-    var fatMes = concluidos.filter(isMesSel).reduce(function (s, a) { return s + servicoPreco(a.servico, a.valor_informado); }, 0);
-    var fatAno = concluidos.filter(isAnoSel).reduce(function (s, a) { return s + servicoPreco(a.servico, a.valor_informado); }, 0);
+    var fatHoje = concluidos.filter(isHoje).reduce(function (s, a) { return s + servicoPreco(a.servico, a.valor_informado, a.valor_total); }, 0);
+    var fatMes = concluidos.filter(isMesSel).reduce(function (s, a) { return s + servicoPreco(a.servico, a.valor_informado, a.valor_total); }, 0);
+    var fatAno = concluidos.filter(isAnoSel).reduce(function (s, a) { return s + servicoPreco(a.servico, a.valor_informado, a.valor_total); }, 0);
     var cntHoje = concluidos.filter(isHoje).length;
     var cntMes = concluidos.filter(isMesSel).length;
     var cntAno = concluidos.filter(isAnoSel).length;
@@ -4055,7 +4137,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /* Faturamento Previsto (A Receber) — pendente + confirmado do mês */
     var previstosMes = agendados.filter(isMesSel);
-    var fatPrevisto = previstosMes.reduce(function (s, a) { return s + servicoPreco(a.servico, a.valor_informado); }, 0);
+    var fatPrevisto = previstosMes.reduce(function (s, a) { return s + servicoPreco(a.servico, a.valor_informado, a.valor_total); }, 0);
     document.getElementById('fat-previsto-valor').textContent = 'R$ ' + fatPrevisto.toFixed(2).replace('.', ',');
     document.getElementById('fat-previsto-count').textContent = previstosMes.length + ' agendamento' + (previstosMes.length !== 1 ? 's' : '') + ' pendente' + (previstosMes.length !== 1 ? 's' : '');
 
@@ -4068,12 +4150,16 @@ document.addEventListener('DOMContentLoaded', function () {
     var recServicos = 0, recRevenda = 0, recCursos = 0;
     var servicosLista = B ? B.getServicos() : [];
     concluidosMes.forEach(function (a) {
+      var totalVal = a.valor_total || servicoPreco(a.servico, a.valor_informado, a.valor_total);
+      if (a.servico === 'Venda Avulsa') {
+        recRevenda += totalVal;
+        return;
+      }
       var svc = servicosLista.find(function (s) { return s.nome === a.servico; }) || null;
       var tipo = svc ? (svc.tipo || 'servico') : 'servico';
-      var valor = servicoPreco(a.servico, a.valor_informado);
-      if (tipo === 'revenda') recRevenda += valor;
-      else if (tipo === 'curso') recCursos += valor;
-      else recServicos += valor;
+      if (tipo === 'revenda') recRevenda += totalVal;
+      else if (tipo === 'curso') recCursos += totalVal;
+      else recServicos += totalVal;
     });
     var recTotal = recServicos + recRevenda + recCursos;
     var pctServ = recTotal > 0 ? Math.round(recServicos / recTotal * 100) : 100;
@@ -4117,7 +4203,7 @@ document.addEventListener('DOMContentLoaded', function () {
     else pool = concluidos;
     var pix = 0, credito = 0, debito = 0, dinheiro = 0;
     pool.forEach(function (a) {
-      var valor = servicoPreco(a.servico, a.valor_informado);
+      var valor = servicoPreco(a.servico, a.valor_informado, a.valor_total);
       var fp = (a.forma_pagamento || '').toLowerCase().trim();
       if (fp === 'pix') pix += valor;
       else if (fp === 'cartão de crédito' || fp === 'cartao de credito' || fp === 'cartão de credito' || fp === 'credito' || fp === 'crédito') credito += valor;
@@ -4174,7 +4260,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var tel = (a.cliente_whatsapp || '').replace(/\D/g, '');
       var key = tel || nome;
       if (!clientes[key]) clientes[key] = { nome: nome, whatsapp: tel, total: 0, qtd: 0 };
-      clientes[key].total += servicoPreco(a.servico, a.valor_informado);
+      clientes[key].total += servicoPreco(a.servico, a.valor_informado, a.valor_total);
       clientes[key].qtd++;
     });
     var arr = Object.keys(clientes).map(function (k) { return clientes[k]; });
@@ -4211,7 +4297,13 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!recentes.length) { vazio.classList.remove('hidden'); return; }
     vazio.classList.add('hidden');
     recentes.forEach(function (a) {
-      var total = a.status === 'cancelado' ? 0 : servicoPreco(a.servico, a.valor_informado);
+      var total = a.valor_total || servicoPreco(a.servico, a.valor_informado, a.valor_total);
+      var temProdutos = a.produtos_vendidos && a.produtos_vendidos.length > 0;
+      var srvVal = a.valor_servico || servicoPreco(a.servico, a.valor_informado, a.valor_total);
+      var prodVal = a.valor_produtos || 0;
+      var valorDisplay = temProdutos
+        ? '<span class="text-gold">R$ ' + srvVal.toFixed(2).replace('.', ',') + '</span>' + (prodVal > 0 ? '<br><span class="text-purple-400 text-[10px]">+' + ' Prod: R$ ' + prodVal.toFixed(2).replace('.', ',') + '</span>' : '')
+        : 'R$ ' + total.toFixed(2).replace('.', ',');
       var statusMap = {
         concluido: '<span class="inline-flex items-center rounded-full bg-green-500/15 px-2.5 py-0.5 text-[10px] font-semibold text-green-400">Concluído</span>',
         confirmado: '<span class="inline-flex items-center rounded-full bg-yellow-500/15 px-2.5 py-0.5 text-[10px] font-semibold text-yellow-400">Agendado</span>',
@@ -4224,14 +4316,334 @@ document.addEventListener('DOMContentLoaded', function () {
         '<td class="px-3 py-2.5 text-gray-400 font-mono text-xs">' + (a.id || '—').slice(0, 12) + '</td>' +
         '<td class="px-3 py-2.5 text-gray-300 text-xs">' + fmtBR(a.data) + ' ' + (a.horario || '—') + '</td>' +
         '<td class="px-3 py-2.5 text-white text-xs font-medium">' + esc(a.cliente_nome || '—') + '</td>' +
-        '<td class="px-3 py-2.5 text-gray-300 text-xs">' + (a.servico || '—') + '</td>' +
-        '<td class="px-3 py-2.5 text-right font-numeric text-xs font-semibold text-gold">R$ ' + total.toFixed(2).replace('.', ',') + '</td>' +
+        '<td class="px-3 py-2.5 text-gray-300 text-xs">' + (a.servico || '—') + (temProdutos ? ' <span class="text-purple-400 text-[9px]">📦</span>' : '') + '</td>' +
+        '<td class="px-3 py-2.5 text-right font-numeric text-xs font-semibold">' + valorDisplay + '</td>' +
         '<td class="px-3 py-2.5 text-center">' + (statusMap[a.status] || a.status) + '</td>';
       tbody.appendChild(tr);
     });
   }
 
-});
+  /* ============================================================
+     PRODUTOS — Venda ao Concluir + Venda Avulsa
+     ============================================================ */
+  var _pvAgId = null;
+  var _pvValorServico = 0;
+  var _pvProdutos = {};
+
+  function getProdutosRevenda() {
+    if (!B) return [];
+    return B.getEstoque().filter(function (p) {
+      return p.categoria === 'Revenda' && (p.quantidade || 0) > 0;
+    });
+  }
+
+  function _pvAtualizarTotal() {
+    var totalProd = 0;
+    Object.keys(_pvProdutos).forEach(function (id) {
+      var item = _pvProdutos[id];
+      totalProd += item.preco * item.qtd;
+    });
+    var totalGeral = _pvValorServico + totalProd;
+    var elProd = document.getElementById('pv-total-produtos');
+    var elGeral = document.getElementById('pv-total-geral');
+    if (elProd) elProd.textContent = 'R$ ' + totalProd.toFixed(2).replace('.', ',');
+    if (elGeral) elGeral.textContent = 'R$ ' + totalGeral.toFixed(2).replace('.', ',');
+  }
+
+  function _pvRenderLista() {
+    var container = document.getElementById('pv-lista');
+    var vazio = document.getElementById('pv-vazio');
+    var produtos = getProdutosRevenda();
+    container.innerHTML = '';
+    if (!produtos.length) { vazio.classList.remove('hidden'); return; }
+    vazio.classList.add('hidden');
+    produtos.forEach(function (p) {
+      var qtd = (_pvProdutos[p.id] || {}).qtd || 0;
+      var row = document.createElement('div');
+      row.className = 'flex items-center gap-3 rounded-xl bg-dark-600 border border-dark-300/30 p-3';
+      row.innerHTML =
+        '<div class="flex-1 min-w-0">' +
+          '<p class="text-sm font-semibold text-white truncate">' + esc(p.nome) + '</p>' +
+          '<p class="text-[10px] text-gray-500">' + (p.quantidade || 0) + ' em estoque · R$ ' + (p.precoVenda || 0).toFixed(2).replace('.', ',') + '</p>' +
+        '</div>' +
+        '<div class="flex items-center gap-2 shrink-0">' +
+          '<button class="pv-minus rounded-lg bg-dark-500 px-2.5 py-1 text-sm font-bold text-gray-300 hover:text-white hover:bg-dark-400 transition-colors" data-pid="' + p.id + '">−</button>' +
+          '<span class="font-numeric text-sm font-bold text-white w-6 text-center">' + qtd + '</span>' +
+          '<button class="pv-plus rounded-lg bg-gold/20 px-2.5 py-1 text-sm font-bold text-gold hover:bg-gold/30 transition-colors" data-pid="' + p.id + '" data-max="' + (p.quantidade || 0) + '" data-preco="' + (p.precoVenda || 0) + '" data-nome="' + esc(p.nome).replace(/"/g, '&quot;') + '">+</button>' +
+        '</div>';
+      container.appendChild(row);
+    });
+    container.querySelectorAll('.pv-plus').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var pid = btn.getAttribute('data-pid');
+        var max = parseInt(btn.getAttribute('data-max')) || 0;
+        var preco = parseFloat(btn.getAttribute('data-preco')) || 0;
+        var nome = btn.getAttribute('data-nome');
+        var atual = (_pvProdutos[pid] || {}).qtd || 0;
+        if (atual >= max) { showToast('Estoque insuficiente', 'Apenas ' + max + ' unidade(s) disponível(is).', null); return; }
+        _pvProdutos[pid] = { qtd: atual + 1, preco: preco, nome: nome };
+        _pvRenderLista();
+        _pvAtualizarTotal();
+      });
+    });
+    container.querySelectorAll('.pv-minus').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var pid = btn.getAttribute('data-pid');
+        if (!_pvProdutos[pid]) return;
+        _pvProdutos[pid].qtd--;
+        if (_pvProdutos[pid].qtd <= 0) delete _pvProdutos[pid];
+        _pvRenderLista();
+        _pvAtualizarTotal();
+      });
+    });
+  }
+
+  function abrirModalProdutosVenda(agId, valorServico) {
+    _pvAgId = agId;
+    _pvValorServico = valorServico || 0;
+    _pvProdutos = {};
+    var ag = B ? B.getAgendamentos().find(function (a) { return a.id === agId; }) : null;
+    document.getElementById('pv-servico-nome').textContent = ag ? ag.servico : '—';
+    document.getElementById('pv-valor-servico').textContent = 'R$ ' + _pvValorServico.toFixed(2).replace('.', ',');
+    _pvRenderLista();
+    _pvAtualizarTotal();
+    var modal = document.getElementById('modal-produtos-venda');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function fecharModalProdutosVenda() {
+    var modal = document.getElementById('modal-produtos-venda');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  document.getElementById('pv-close').addEventListener('click', fecharModalProdutosVenda);
+  document.getElementById('pv-pular').addEventListener('click', function () {
+    /* Pular: confirmar só com valor do serviço */
+    if (_pvAgId && B) {
+      B.setAgendamentoStatus(_pvAgId, 'concluido');
+    }
+    fecharModalProdutosVenda();
+    renderAgendamentos();
+    renderDashboard();
+    showToast('Atendimento concluído', 'Valor do serviço registrado.', null);
+  });
+  document.getElementById('pv-confirmar').addEventListener('click', function () {
+    var totalProdutos = 0;
+    var itens = [];
+    Object.keys(_pvProdutos).forEach(function (pid) {
+      var item = _pvProdutos[pid];
+      totalProdutos += item.preco * item.qtd;
+      itens.push({ id: pid, nome: item.nome, qtd: item.qtd, precoUnitario: item.preco });
+    });
+    var totalGeral = _pvValorServico + totalProdutos;
+
+    if (_pvAgId && B) {
+      var ags = B.getAgendamentos();
+      var ag = ags.find(function (a) { return a.id === _pvAgId; });
+      if (ag) {
+        ag.valor_servico = _pvValorServico;
+        ag.valor_produtos = totalProdutos;
+        ag.valor_total = totalGeral;
+        ag.produtos_vendidos = itens;
+        ag.status = 'concluido';
+        /* Save back */
+        B.setAgendamentos(ags);
+      }
+    }
+
+    /* Baixa no estoque */
+    if (itens.length > 0 && B) {
+      var estoque = B.getEstoque();
+      itens.forEach(function (item) {
+        var prod = estoque.find(function (p) { return p.id === item.id; });
+        if (prod) {
+          prod.quantidade = Math.max(0, (prod.quantidade || 0) - item.qtd);
+        }
+      });
+      B.setEstoque(estoque);
+    }
+
+    fecharModalProdutosVenda();
+    renderAgendamentos();
+    renderDashboard();
+    renderEstoque();
+    var msg = totalProdutos > 0
+      ? 'Serviço: R$ ' + _pvValorServico.toFixed(2).replace('.',',') + ' + Produtos: R$ ' + totalProdutos.toFixed(2).replace('.',',') + ' = R$ ' + totalGeral.toFixed(2).replace('.',',')
+      : 'Valor do serviço: R$ ' + _pvValorServico.toFixed(2).replace('.',',');
+    showToast('Venda registrada', msg, null);
+  });
+
+  /* --- Função unificada para concluir agendamento --- */
+  function iniciarConclusao(agId) {
+    var agDados = B ? B.getAgendamentos().find(function (a) { return a.id === agId; }) || null : null;
+    if (!agDados) return;
+    var svcLista = B ? B.getServicos() : [];
+    var svcInfo = svcLista.find(function (s) { return s.nome === agDados.servico; }) || null;
+    var valorCatalogo = 0;
+    if (svcInfo && svcInfo.preco && svcInfo.preco !== 'Consulte') {
+      var mVal = svcInfo.preco.replace(/\./g, '').match(/[\d,]+/);
+      if (mVal) valorCatalogo = parseFloat(mVal[0].replace(',', '.')) || 0;
+    }
+    var valorInformado = agDados.valor_informado || 0;
+    var valorBase = valorInformado > 0 ? valorInformado : valorCatalogo;
+    var inputValor = prompt('Informe o valor cobrado pelo serviço "' + agDados.servico + '":\n(Valor do catálogo: R$ ' + valorCatalogo.toFixed(2).replace('.',',') + ')\n\nDeixe vazio para R$ 0,00.', valorBase > 0 ? valorBase.toFixed(2).replace('.',',') : '');
+    if (inputValor === null) return;
+    var vi = parseFloat(inputValor.replace(',','.')) || 0;
+    if (vi > 0 && B) { B.setValorInformado(agId, vi); }
+    /* Abrir modal de produtos */
+    abrirModalProdutosVenda(agId, vi);
+  }
+
+  /* --- Venda Avulsa (sem agendamento) --- */
+  var _vaProdutos = {};
+
+  function _vaAtualizarTotal() {
+    var total = 0;
+    Object.keys(_vaProdutos).forEach(function (id) {
+      var item = _vaProdutos[id];
+      total += item.preco * item.qtd;
+    });
+    var el = document.getElementById('va-total');
+    if (el) el.textContent = 'R$ ' + total.toFixed(2).replace('.', ',');
+  }
+
+  function _vaRenderLista() {
+    var container = document.getElementById('va-lista');
+    var vazio = document.getElementById('va-vazio');
+    var produtos = getProdutosRevenda();
+    container.innerHTML = '';
+    if (!produtos.length) { vazio.classList.remove('hidden'); return; }
+    vazio.classList.add('hidden');
+    produtos.forEach(function (p) {
+      var qtd = (_vaProdutos[p.id] || {}).qtd || 0;
+      var row = document.createElement('div');
+      row.className = 'flex items-center gap-3 rounded-xl bg-dark-600 border border-dark-300/30 p-3';
+      row.innerHTML =
+        '<div class="flex-1 min-w-0">' +
+          '<p class="text-sm font-semibold text-white truncate">' + esc(p.nome) + '</p>' +
+          '<p class="text-[10px] text-gray-500">' + (p.quantidade || 0) + ' em estoque · R$ ' + (p.precoVenda || 0).toFixed(2).replace('.', ',') + '</p>' +
+        '</div>' +
+        '<div class="flex items-center gap-2 shrink-0">' +
+          '<button class="va-minus rounded-lg bg-dark-500 px-2.5 py-1 text-sm font-bold text-gray-300 hover:text-white hover:bg-dark-400 transition-colors" data-pid="' + p.id + '">−</button>' +
+          '<span class="font-numeric text-sm font-bold text-white w-6 text-center">' + qtd + '</span>' +
+          '<button class="va-plus rounded-lg bg-gold/20 px-2.5 py-1 text-sm font-bold text-gold hover:bg-gold/30 transition-colors" data-pid="' + p.id + '" data-max="' + (p.quantidade || 0) + '" data-preco="' + (p.precoVenda || 0) + '" data-nome="' + esc(p.nome).replace(/"/g, '&quot;') + '">+</button>' +
+        '</div>';
+      container.appendChild(row);
+    });
+    container.querySelectorAll('.va-plus').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var pid = btn.getAttribute('data-pid');
+        var max = parseInt(btn.getAttribute('data-max')) || 0;
+        var preco = parseFloat(btn.getAttribute('data-preco')) || 0;
+        var nome = btn.getAttribute('data-nome');
+        var atual = (_vaProdutos[pid] || {}).qtd || 0;
+        if (atual >= max) { showToast('Estoque insuficiente', 'Apenas ' + max + ' unidade(s) disponível(is).', null); return; }
+        _vaProdutos[pid] = { qtd: atual + 1, preco: preco, nome: nome };
+        _vaRenderLista();
+        _vaAtualizarTotal();
+      });
+    });
+    container.querySelectorAll('.va-minus').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var pid = btn.getAttribute('data-pid');
+        if (!_vaProdutos[pid]) return;
+        _vaProdutos[pid].qtd--;
+        if (_vaProdutos[pid].qtd <= 0) delete _vaProdutos[pid];
+        _vaRenderLista();
+        _vaAtualizarTotal();
+      });
+    });
+  }
+
+  function abrirModalVendaAvulsa() {
+    _vaProdutos = {};
+    document.getElementById('va-nome').value = '';
+    document.getElementById('va-whatsapp').value = '';
+    document.getElementById('va-pagamento').value = '';
+    _vaRenderLista();
+    _vaAtualizarTotal();
+    var modal = document.getElementById('modal-venda-avulsa');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function fecharModalVendaAvulsa() {
+    var modal = document.getElementById('modal-venda-avulsa');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  document.getElementById('dash-venda-avulsa-btn').addEventListener('click', abrirModalVendaAvulsa);
+  document.getElementById('va-close').addEventListener('click', fecharModalVendaAvulsa);
+  document.getElementById('va-cancelar').addEventListener('click', fecharModalVendaAvulsa);
+  document.getElementById('modal-venda-avulsa').addEventListener('click', function (e) { if (e.target.id === 'modal-venda-avulsa') fecharModalVendaAvulsa(); });
+  document.getElementById('modal-produtos-venda').addEventListener('click', function (e) { if (e.target.id === 'modal-produtos-venda') fecharModalProdutosVenda(); });
+
+  document.getElementById('va-confirmar').addEventListener('click', function () {
+    var nome = document.getElementById('va-nome').value.trim();
+    var whatsapp = document.getElementById('va-whatsapp').value.trim();
+    var pagamento = document.getElementById('va-pagamento').value;
+    var totalProdutos = 0;
+    var itens = [];
+    Object.keys(_vaProdutos).forEach(function (pid) {
+      var item = _vaProdutos[pid];
+      totalProdutos += item.preco * item.qtd;
+      itens.push({ id: pid, nome: item.nome, qtd: item.qtd, precoUnitario: item.preco });
+    });
+    if (!itens.length) { showToast('Aviso', 'Selecione pelo menos um produto.', null); return; }
+    if (!pagamento) { alert('Selecione a forma de pagamento.'); return; }
+
+    /* Criar agendamento "virtual" do tipo venda_avulsa */
+    var hojeStr = (function () {
+      var d = new Date();
+      return d.getFullYear() + '-' + (d.getMonth()+1 < 10 ? '0' : '') + (d.getMonth()+1) + '-' + (d.getDate() < 10 ? '0' : '') + d.getDate();
+    })();
+    var agora = new Date();
+    var horaAtual = (agora.getHours() < 10 ? '0' : '') + agora.getHours() + ':' + (agora.getMinutes() < 10 ? '0' : '') + agora.getMinutes();
+
+    if (B) {
+      B.criarAgendamento({
+        servico: 'Venda Avulsa',
+        duracao_min: 0,
+        data: hojeStr,
+        horario: horaAtual,
+        cliente_nome: nome || 'Cliente Avulso',
+        cliente_whatsapp: whatsapp || '',
+        forma_pagamento: pagamento,
+        observacoes: 'Venda avulsa de produto(s) — sem agendamento prévio.',
+        origem: 'recepcao',
+        status: 'concluido',
+        valor_servico: 0,
+        valor_produtos: totalProdutos,
+        valor_total: totalProdutos,
+        produtos_vendidos: itens,
+        valor_informado: totalProdutos
+      });
+    }
+
+    /* Baixa no estoque */
+    var estoque = B ? B.getEstoque() : [];
+    itens.forEach(function (item) {
+      var prod = estoque.find(function (p) { return p.id === item.id; });
+      if (prod) {
+        prod.quantidade = Math.max(0, (prod.quantidade || 0) - item.qtd);
+      }
+    });
+    if (B && B.setEstoque) B.setEstoque(estoque);
+
+    fecharModalVendaAvulsa();
+    renderDashboard();
+    renderEstoque();
+    showToast('Venda registrada', 'Venda avulsa de R$ ' + totalProdutos.toFixed(2).replace('.',',') + ' confirmada.', null);
+  });
+
+  /* --- Modificar handlers de concluir para usar iniciarConclusao --- */
+  /* Sobrescreve os listeners originais de status-btn usando event delegation no document */
+  /* Nota: os listeners originais em agAttachStatusListeners e dash-lista usam data-st/data-stv.
+     Para não conflitar, adicionamos um override que intercepta 'concluido' */
+
 </script>
 </body>
 </html>
