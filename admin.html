@@ -3441,9 +3441,9 @@ document.addEventListener('DOMContentLoaded', function () {
       if (statusFiltro !== 'todos' && a.status !== statusFiltro) return false;
       /* Tipo: serviço vs venda balcão */
       if (tipoFiltro === 'servicos') {
-        if (a.servico === 'Venda Balcão') return false;
+        if (a.servico === 'Venda Balcão' || a.servico === 'Venda Avulsa') return false;
       } else if (tipoFiltro === 'venda_balcao') {
-        if (a.servico !== 'Venda Balcão') return false;
+        if (a.servico !== 'Venda Balcão' && a.servico !== 'Venda Avulsa') return false;
       }
       if (buscaTermo) {
         var tel = (a.cliente_whatsapp || '').replace(/\D/g, '');
@@ -4175,7 +4175,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var servicosLista = B ? B.getServicos() : [];
     concluidosMes.forEach(function (a) {
       var totalVal = a.valor_total || servicoPreco(a.servico, a.valor_informado, a.valor_total);
-      if (a.servico === 'Venda Balcão') {
+      if (a.servico === 'Venda Balcão' || a.servico === 'Venda Avulsa') {
         recRevenda += totalVal;
         return;
       }
@@ -4661,6 +4661,7 @@ document.addEventListener('DOMContentLoaded', function () {
     fecharModalVendaAvulsa();
     renderDashboard();
     renderEstoque();
+    try { renderHistorico(); } catch (e) {}
     showToast('Venda registrada', 'Venda balcão de R$ ' + totalProdutos.toFixed(2).replace('.',',') + ' confirmada.', null);
   });
 
