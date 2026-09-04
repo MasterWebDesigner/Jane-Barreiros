@@ -637,6 +637,7 @@
             <select id="fin-desp-categoria-filter" class="rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-1.5 text-xs text-gray-300 focus:border-gold outline-none">
               <option value="todas">Todas as Categorias</option>
               <option value="Salários/Pró-Labore">Salários/Pró-Labore</option>
+              <option value="Comissões da Equipe">Comissões da Equipe</option>
               <option value="Custos Fixos">Custos Fixos</option>
               <option value="Estoque/Insumos">Estoque/Insumos</option>
               <option value="Ativos/Equipamentos">Ativos/Equipamentos</option>
@@ -1400,6 +1401,7 @@
         <select id="desp-categoria">
           <option value="">Selecione</option>
           <option value="Salários/Pró-Labore">Salários/Pró-Labore</option>
+          <option value="Comissões da Equipe">Comissões da Equipe</option>
           <option value="Custos Fixos">Custos Fixos (Aluguel/Contas)</option>
           <option value="Estoque/Insumos">Estoque/Insumos</option>
           <option value="Ativos/Equipamentos">Ativos/Equipamentos</option>
@@ -4654,7 +4656,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var container = document.getElementById('fin-saidas-chart');
     container.innerHTML = '';
     if (!despesasMes.length) { container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">Nenhuma despesa registrada neste mês.</p>'; return; }
-    var catCores = { 'Salários/Pró-Labore': 'bg-blue-500', 'Custos Fixos': 'bg-amber-500', 'Estoque/Insumos': 'bg-purple-500', 'Ativos/Equipamentos': 'bg-cyan-500', 'Outros': 'bg-gray-500' };
+    var catCores = { 'Salários/Pró-Labore': 'bg-blue-500', 'Comissões da Equipe': 'bg-rose-500', 'Custos Fixos': 'bg-amber-500', 'Estoque/Insumos': 'bg-purple-500', 'Ativos/Equipamentos': 'bg-cyan-500', 'Outros': 'bg-gray-500' };
     var catCount = {};
     despesasMes.forEach(function (d) {
       var cat = d.categoria || 'Outros';
@@ -4695,7 +4697,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!filtradas.length) { vazio.classList.remove('hidden'); tbody.parentElement.classList.add('hidden'); return; }
     vazio.classList.add('hidden'); tbody.parentElement.classList.remove('hidden');
 
-    var catCores = { 'Salários/Pró-Labore': 'text-blue-400 bg-blue-500/15', 'Custos Fixos': 'text-amber-400 bg-amber-500/15', 'Estoque/Insumos': 'text-purple-400 bg-purple-500/15', 'Ativos/Equipamentos': 'text-cyan-400 bg-cyan-500/15', 'Outros': 'text-gray-400 bg-gray-500/15' };
+    var catCores = { 'Salários/Pró-Labore': 'text-blue-400 bg-blue-500/15', 'Comissões da Equipe': 'text-rose-400 bg-rose-500/15', 'Custos Fixos': 'text-amber-400 bg-amber-500/15', 'Estoque/Insumos': 'text-purple-400 bg-purple-500/15', 'Ativos/Equipamentos': 'text-cyan-400 bg-cyan-500/15', 'Outros': 'text-gray-400 bg-gray-500/15' };
     filtradas.forEach(function (d) {
       var tr = document.createElement('tr');
       tr.className = 'hover:bg-white/[.02]';
