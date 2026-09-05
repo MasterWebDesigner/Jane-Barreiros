@@ -4939,7 +4939,7 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('desp-confirmar').addEventListener('click', function () {
     var descricao = document.getElementById('desp-descricao').value.trim();
     var categoria = document.getElementById('desp-categoria').value;
-    var valorStr = document.getElementById('desp-valor').value.replace(',', '.');
+    var valorStr = document.getElementById('desp-valor').value.replace(/\./g, '').replace(',', '.');
     var valor = parseFloat(valorStr) || 0;
     var data = document.getElementById('desp-data').value;
     var status = document.getElementById('desp-status').value;
