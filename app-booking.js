@@ -251,7 +251,7 @@ var APP_VERSION = '1.3.2';
   }
 
   function loadAllData(cb) {
-    var keys = ['agendamentos', 'clientes', 'servicos', 'bloqueios', 'lista_espera', 'profissionais', 'secoes', 'estoque', 'despesas'];
+    var keys = ['agendamentos', 'clientes', 'servicos', 'bloqueios', 'lista_espera', 'profissionais', 'secoes', 'estoque', 'despesas', 'curso_vendas'];
     var pending = keys.length;
     var done = function () { pending--; if (pending <= 0) { _loadingComplete = true; console.log('[Booking] loadAllData COMPLETO. Cache atualizado.'); _sincronizarNomesClientes(); if (cb) cb(); } };
 
