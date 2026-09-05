@@ -1328,7 +1328,7 @@
             var ds = calYear + '-' + (calMonth + 1 < 10 ? '0' : '') + (calMonth + 1) + '-' + (d < 10 ? '0' : '') + d;
             var dayDate = new Date(calYear, calMonth, d);
             var dayOfWeek = dayDate.getDay();
-            var isPast = dayDate <= hojeDate;
+            var isPast = dayDate < hojeDate;
             var diasFechados = [];
             try { diasFechados = X().DIAS_FECHADOS || []; } catch(e) {}
             var isClosed = diasFechados.indexOf(dayOfWeek) !== -1;
@@ -1373,6 +1373,17 @@
         var svc = X().getServicoPorNome(selected.servico);
         var durMin = svc ? (svc.duracao_min || 60) : 60;
         var slots = X().horariosDisponiveis(selected.data, durMin);
+
+        /* Filtrar horários passados se for hoje */
+        var today = new Date();
+        var todayStr = today.getFullYear() + '-' + (today.getMonth()+1 < 10 ? '0' : '') + (today.getMonth()+1) + '-' + (today.getDate() < 10 ? '0' : '') + today.getDate();
+        if (selected.data === todayStr) {
+          var nowMin = today.getHours() * 60 + today.getMinutes();
+          slots = slots.filter(function (h) {
+            var p = h.split(':');
+            return (parseInt(p[0],10) * 60 + parseInt(p[1],10)) >= nowMin;
+          });
+        }
         var grid = document.getElementById('booking-time-grid');
         var noSlots = document.getElementById('booking-no-slots');
         var waitArea = document.getElementById('booking-waitlist-area');
