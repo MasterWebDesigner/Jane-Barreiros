@@ -630,44 +630,52 @@
         </div>
       </div>
 
-      <!-- Gráfico Distribuição de Saídas + Faturamento por Pagamento -->
+      <!-- Gráfico Distribuição de Saídas + Entradas -->
       <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 mb-6">
 
         <!-- Distribuição de Saídas por Categoria -->
         <div class="card-dark p-5">
           <h3 class="font-display text-base font-semibold text-white mb-4">Distribuição de Saídas</h3>
           <div id="fin-saidas-chart" class="space-y-3">
-            <p class="text-sm text-gray-500 text-center py-4">Nenhuma despesa registrada neste mês.</p>
+            <p class="text-sm text-gray-500 text-center py-4">Nenhuma despesa registrada.</p>
           </div>
         </div>
 
-        <!-- Forma de Pagamento (Entradas) -->
+        <!-- Distribuição de Entradas por Fonte -->
         <div class="card-dark p-5">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="font-display text-base font-semibold text-white">Entradas por Pagamento</h3>
-            <div class="flex gap-1">
-              <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gold bg-gold/15" data-pag="periodo">Período</button>
-              <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-pag="ano">Ano</button>
-              <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-pag="total">Total</button>
-            </div>
+          <h3 class="font-display text-base font-semibold text-white mb-4">Distribuição de Entradas</h3>
+          <div id="fin-entradas-chart" class="space-y-3">
+            <p class="text-sm text-gray-500 text-center py-4">Nenhuma entrada registrada.</p>
           </div>
-          <div class="grid grid-cols-2 gap-3">
-            <div class="rounded-xl bg-dark-600 border border-dark-300/30 p-4 text-center">
-              <p class="text-xs text-gray-400 mb-1">Pix</p>
-              <p id="fat-pag-pix" class="font-numeric text-xl font-bold text-green-400">R$ 0</p>
-            </div>
-            <div class="rounded-xl bg-dark-600 border border-dark-300/30 p-4 text-center">
-              <p class="text-xs text-gray-400 mb-1">Cartão de Crédito</p>
-              <p id="fat-pag-credito" class="font-numeric text-xl font-bold text-blue-400">R$ 0</p>
-            </div>
-            <div class="rounded-xl bg-dark-600 border border-dark-300/30 p-4 text-center">
-              <p class="text-xs text-gray-400 mb-1">Cartão de Débito</p>
-              <p id="fat-pag-debito" class="font-numeric text-xl font-bold text-purple-400">R$ 0</p>
-            </div>
-            <div class="rounded-xl bg-dark-600 border border-dark-300/30 p-4 text-center">
-              <p class="text-xs text-gray-400 mb-1">Dinheiro</p>
-              <p id="fat-pag-dinheiro" class="font-numeric text-xl font-bold text-amber-400">R$ 0</p>
-            </div>
+        </div>
+      </div>
+
+      <!-- Entradas por Pagamento (full width) -->
+      <div class="card-dark p-5 mb-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-display text-base font-semibold text-white">Entradas por Pagamento</h3>
+          <div class="flex gap-1">
+            <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gold bg-gold/15" data-pag="periodo">Período</button>
+            <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-pag="ano">Ano</button>
+            <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-pag="total">Total</button>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <div class="rounded-xl bg-dark-600 border border-dark-300/30 p-4 text-center">
+            <p class="text-xs text-gray-400 mb-1">Pix</p>
+            <p id="fat-pag-pix" class="font-numeric text-xl font-bold text-green-400">R$ 0</p>
+          </div>
+          <div class="rounded-xl bg-dark-600 border border-dark-300/30 p-4 text-center">
+            <p class="text-xs text-gray-400 mb-1">Cartão de Crédito</p>
+            <p id="fat-pag-credito" class="font-numeric text-xl font-bold text-blue-400">R$ 0</p>
+          </div>
+          <div class="rounded-xl bg-dark-600 border border-dark-300/30 p-4 text-center">
+            <p class="text-xs text-gray-400 mb-1">Cartão de Débito</p>
+            <p id="fat-pag-debito" class="font-numeric text-xl font-bold text-purple-400">R$ 0</p>
+          </div>
+          <div class="rounded-xl bg-dark-600 border border-dark-300/30 p-4 text-center">
+            <p class="text-xs text-gray-400 mb-1">Dinheiro</p>
+            <p id="fat-pag-dinheiro" class="font-numeric text-xl font-bold text-amber-400">R$ 0</p>
           </div>
         </div>
       </div>
@@ -4855,6 +4863,9 @@ document.addEventListener('DOMContentLoaded', function () {
     /* Gráfico de saídas por categoria */
     _renderDespesasChart(despesasPeriodo);
 
+    /* Gráfico de entradas por fonte */
+    _renderEntradasChart(concluidosPeriodo, totalCursoPeriodo);
+
     /* Tabela de despesas */
     _renderDespesasTabela(despesasPeriodo);
 
@@ -4902,6 +4913,36 @@ document.addEventListener('DOMContentLoaded', function () {
         '</div>' +
         '<div class="h-3 rounded-full bg-dark-600 overflow-hidden">' +
           '<div class="h-full rounded-full ' + barClass + ' transition-all" style="width:' + c.pct + '%"></div>' +
+        '</div>';
+      container.appendChild(row);
+    });
+  }
+
+  /* --- Gráfico de Distribuição de Entradas por Fonte --- */
+  function _renderEntradasChart(concluidosPeriodo, totalCursoPeriodo) {
+    var container = document.getElementById('fin-entradas-chart');
+    container.innerHTML = '';
+    var fontes = {};
+    concluidosPeriodo.forEach(function (a) {
+      var nome = (a.servico === 'Venda Balcão' || a.servico === 'Venda Avulsa') ? 'Vendas Balcão' : 'Serviços';
+      fontes[nome] = (fontes[nome] || 0) + servicoPreco(a.servico, a.valor_informado, a.valor_total);
+    });
+    if (totalCursoPeriodo > 0) fontes['Curso'] = totalCursoPeriodo;
+    var total = Object.values(fontes).reduce(function (s, v) { return s + v; }, 0);
+    if (total <= 0) { container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">Nenhuma entrada registrada.</p>'; return; }
+    var fonteCores = { 'Serviços': 'bg-green-500', 'Vendas Balcão': 'bg-gold', 'Curso': 'bg-cyan-500' };
+    var arr = Object.keys(fontes).map(function (k) { return { nome: k, valor: fontes[k], pct: Math.round(fontes[k] / total * 100) }; });
+    arr.sort(function (a, b) { return b.valor - a.valor; });
+    arr.forEach(function (f) {
+      var barClass = fonteCores[f.nome] || 'bg-gray-500';
+      var row = document.createElement('div');
+      row.innerHTML =
+        '<div class="flex justify-between mb-1">' +
+          '<span class="text-xs font-medium text-white">' + esc(f.nome) + '</span>' +
+          '<span class="font-numeric text-[10px] text-gray-400">' + f.pct + '% · ' + fmtBRL(f.valor) + '</span>' +
+        '</div>' +
+        '<div class="h-3 rounded-full bg-dark-600 overflow-hidden">' +
+          '<div class="h-full rounded-full ' + barClass + ' transition-all" style="width:' + f.pct + '%"></div>' +
         '</div>';
       container.appendChild(row);
     });
