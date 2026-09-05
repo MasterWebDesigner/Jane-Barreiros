@@ -1845,6 +1845,11 @@ document.addEventListener('DOMContentLoaded', function () {
     return ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][d.getDay()];
   }
 
+  function fmtBRL(valor) {
+    var v = parseFloat(valor) || 0;
+    return 'R$ ' + v.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+
   function hoje() {
     var d = new Date();
     var y = d.getFullYear();
@@ -1921,8 +1926,8 @@ document.addEventListener('DOMContentLoaded', function () {
       fatPrevisto += valor;
       if (ag.status === 'concluido') fatRealizado += valor;
     });
-    document.getElementById('dash-fat-previsto').textContent = 'R$ ' + fatPrevisto.toFixed(2).replace('.',',');
-    document.getElementById('dash-fat-realizado').textContent = 'R$ ' + fatRealizado.toFixed(2).replace('.',',') + ' realizado';
+    document.getElementById('dash-fat-previsto').textContent = fmtBRL(fatPrevisto);
+    document.getElementById('dash-fat-realizado').textContent = fmtBRL(fatRealizado) + ' realizado';
 
     /* Lista operacional — todos os agendamentos do dia, ordenados por horário */
     var lista = document.getElementById('dash-lista');
@@ -1939,8 +1944,8 @@ document.addEventListener('DOMContentLoaded', function () {
       var status = ag.status || 'confirmado';
       var temProdutos = ag.produtos_vendidos && ag.produtos_vendidos.length > 0;
       var valorFmt = temProdutos
-        ? '<p class="font-numeric text-sm font-semibold text-gold">R$ ' + valor.toFixed(2).replace('.',',') + '</p>' + (ag.valor_produtos > 0 ? '<p class="text-[10px] text-purple-400">📦 R$ ' + ag.valor_produtos.toFixed(2).replace('.',',') + '</p>' : '')
-        : '<p class="font-numeric text-sm font-semibold text-gold">R$ ' + valor.toFixed(2).replace('.',',') + '</p>';
+        ? '<p class="font-numeric text-sm font-semibold text-gold">' + fmtBRL(valor) + '</p>' + (ag.valor_produtos > 0 ? '<p class="text-[10px] text-purple-400">📦 ' + fmtBRL(ag.valor_produtos) + '</p>' : '')
+        : '<p class="font-numeric text-sm font-semibold text-gold">' + fmtBRL(valor) + '</p>';
       var card = document.createElement('div');
       card.className = 'rounded-xl bg-dark-600 border border-dark-300/50 p-4 hover:border-gold/20 transition-colors';
       var statusLabel = status === 'concluido' ? 'Concluído' : status === 'cancelado' ? 'Cancelado' : status === 'em_atendimento' ? 'Em Atendimento' : status === 'pendente' ? 'Pendente' : 'Confirmado';
@@ -2018,8 +2023,8 @@ document.addEventListener('DOMContentLoaded', function () {
         var status = ag.status || 'confirmado';
         var temProdutos = ag.produtos_vendidos && ag.produtos_vendidos.length > 0;
         var valorFmtAll = temProdutos
-          ? '<p class="font-numeric text-sm font-semibold text-gold">R$ ' + valor.toFixed(2).replace('.',',') + '</p>' + (ag.valor_produtos > 0 ? '<p class="text-[10px] text-purple-400">📦 R$ ' + ag.valor_produtos.toFixed(2).replace('.',',') + '</p>' : '')
-          : '<p class="font-numeric text-sm font-semibold text-gold">R$ ' + valor.toFixed(2).replace('.',',') + '</p>';
+          ? '<p class="font-numeric text-sm font-semibold text-gold">' + fmtBRL(valor) + '</p>' + (ag.valor_produtos > 0 ? '<p class="text-[10px] text-purple-400">📦 ' + fmtBRL(ag.valor_produtos) + '</p>' : '')
+          : '<p class="font-numeric text-sm font-semibold text-gold">' + fmtBRL(valor) + '</p>';
         var statusLabel = status === 'concluido' ? 'Concluído' : status === 'cancelado' ? 'Cancelado' : status === 'em_atendimento' ? 'Em Atendimento' : status === 'pendente' ? 'Pendente' : 'Confirmado';
         var statusColor = status === 'concluido' ? 'text-green-400' : status === 'cancelado' ? 'text-red-400' : status === 'em_atendimento' ? 'text-blue-400' : status === 'pendente' ? 'text-amber-400' : 'text-yellow-400';
         var isHoje = ag.data === h;
@@ -2572,7 +2577,7 @@ document.addEventListener('DOMContentLoaded', function () {
           '</div>' +
           '<p class="text-xs text-gray-400 truncate">' + esc(ag.cliente_nome) + (ag.cliente_whatsapp ? ' · ' + ag.cliente_whatsapp : '') + '</p>' +
           '<div class="flex items-center gap-3 mt-1.5">' +
-            (valor > 0 ? '<span class="font-numeric text-xs font-bold text-gold">R$ ' + valor.toFixed(2).replace('.',',') + '</span>' : '') +
+            (valor > 0 ? '<span class="font-numeric text-xs font-bold text-gold">' + fmtBRL(valor) + '</span>' : '') +
             (ag.forma_pagamento ? '<span class="text-[10px] text-gray-500">' + esc(ag.forma_pagamento) + '</span>' : '') +
           '</div>' +
         '</div>' +
@@ -3413,7 +3418,7 @@ document.addEventListener('DOMContentLoaded', function () {
       '</div>' +
       '<div class="rounded-xl bg-dark-600/60 border border-dark-300/30 p-4 text-center">' +
         '<p class="text-[10px] uppercase tracking-wider text-gray-500 mb-1">Valor Total Estoque</p>' +
-        '<p class="text-2xl font-bold font-numeric text-green-400">R$ ' + valorTotal.toFixed(2).replace('.', ',') + '</p>' +
+        '<p class="text-2xl font-bold font-numeric text-green-400">' + fmtBRL(valorTotal) + '</p>' +
       '</div>';
 
     /* Filtros */
@@ -3440,7 +3445,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var statusBadge = isBaixo
         ? '<span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold text-red-400 bg-red-500/15">Estoque Baixo</span>'
         : '<span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold text-green-400 bg-green-500/15">Em Dia</span>';
-      var precoVendaFmt = p.precoVenda ? 'R$ ' + parseFloat(p.precoVenda).toFixed(2).replace('.', ',') : '—';
+      var precoVendaFmt = p.precoVenda ? fmtBRL(parseFloat(p.precoVenda)) : '—';
       tr.className = 'border-b border-dark-300/20 hover:bg-dark-600/30 transition';
       tr.innerHTML =
         '<td class="px-4 py-3 font-medium text-white">' + esc(p.nome) + '</td>' +
@@ -3616,7 +3621,7 @@ document.addEventListener('DOMContentLoaded', function () {
         '<td class="px-4 py-3 font-medium text-white">' + esc(c.nome) + '</td>' +
         '<td class="px-4 py-3 text-gray-400">' + esc(c.whatsapp) + '</td>' +
         '<td class="px-4 py-3 text-center font-numeric font-bold text-gold">' + c.total_atendimentos + '</td>' +
-        '<td class="px-4 py-3 text-right font-numeric font-semibold text-green-400">' + (valorGasto > 0 ? 'R$ ' + valorGasto.toFixed(2).replace('.',',') : '—') + '</td>' +
+        '<td class="px-4 py-3 text-right font-numeric font-semibold text-green-400">' + (valorGasto > 0 ? fmtBRL(valorGasto) : '—') + '</td>' +
         '<td class="px-4 py-3 text-xs text-gray-400">' + ultimoAg + '</td>' +
         '<td class="px-4 py-3"><span class="badge ' + tagClass + '">' + (c.tag||'Nova') + '</span></td>' +
         '<td class="px-4 py-3 text-center"><div class="flex items-center justify-center gap-1.5"><a href="' + telLink + '" target="_blank" class="inline-flex items-center gap-1 rounded-lg bg-green-500/15 px-3 py-1.5 text-xs font-semibold text-green-400 hover:bg-green-500/25"><svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492l4.638-1.218A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.82c-2.168 0-4.18-.584-5.913-1.597l-.422-.253-2.752.722.736-2.682-.276-.44A9.79 9.79 0 012.18 12c0-5.422 4.398-9.82 9.82-9.82S21.82 6.578 21.82 12s-4.398 9.82-9.82 9.82z"/></svg> WhatsApp</a><button class="cli-history-btn inline-flex items-center gap-1 rounded-lg bg-purple-500/15 px-3 py-1.5 text-xs font-semibold text-purple-400 hover:bg-purple-500/25" data-cli-whatsapp="' + (c.whatsapp||'').replace(/"/g,'&quot;') + '" data-cli-nome="' + (c.nome||'').replace(/"/g,'&quot;') + '">Hist</button><button class="cli-edit-btn inline-flex items-center gap-1 rounded-lg bg-blue-500/15 px-3 py-1.5 text-xs font-semibold text-blue-400 hover:bg-blue-500/25" data-cli-id="' + c.id + '" data-cli-nome="' + (c.nome||'').replace(/"/g,'&quot;') + '" data-cli-whatsapp="' + (c.whatsapp||'').replace(/"/g,'&quot;') + '" data-cli-email="' + (c.email||'').replace(/"/g,'&quot;') + '" data-cli-tag="' + (c.tag||'Nova').replace(/"/g,'&quot;') + '"><svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg> Editar</button></div></td>';
@@ -3726,11 +3731,11 @@ document.addEventListener('DOMContentLoaded', function () {
       '</div>' +
       '<div class="rounded-xl bg-dark-600/60 border border-dark-300/30 p-3 text-center">' +
         '<p class="text-[10px] uppercase tracking-wider text-gray-500 mb-1">Faturamento</p>' +
-        '<p class="text-xl font-bold font-numeric text-gold">' + (faturamento > 0 ? 'R$ ' + faturamento.toFixed(2).replace('.', ',') : '—') + '</p>' +
+        '<p class="text-xl font-bold font-numeric text-gold">' + (faturamento > 0 ? fmtBRL(faturamento) : '—') + '</p>' +
       '</div>' +
       '<div class="rounded-xl bg-dark-600/60 border border-dark-300/30 p-3 text-center">' +
         '<p class="text-[10px] uppercase tracking-wider text-gray-500 mb-1">Ticket Médio</p>' +
-        '<p class="text-xl font-bold font-numeric text-white">' + (ticketMedio > 0 ? 'R$ ' + ticketMedio.toFixed(2).replace('.', ',') : '—') + '</p>' +
+        '<p class="text-xl font-bold font-numeric text-white">' + (ticketMedio > 0 ? fmtBRL(ticketMedio) : '—') + '</p>' +
       '</div>' +
       '<div class="rounded-xl bg-dark-600/60 border border-dark-300/30 p-3 text-center">' +
         '<p class="text-[10px] uppercase tracking-wider text-gray-500 mb-1">Serviço Top</p>' +
@@ -3787,7 +3792,7 @@ document.addEventListener('DOMContentLoaded', function () {
       mesHeader.innerHTML =
         '<span class="text-xs font-bold text-gold uppercase tracking-wider">' + labelMes + '</span>' +
         '<span class="text-[10px] text-gray-500">' + agsMes.length + ' registro(s) · ' + agsMes.filter(function(a){return a.status==='concluido'}).length + ' concluídos</span>' +
-        (receitaMes > 0 ? '<span class="text-[10px] font-semibold text-green-400 ml-auto">R$ ' + receitaMes.toFixed(2).replace('.',',') + '</span>' : '') +
+        (receitaMes > 0 ? '<span class="text-[10px] font-semibold text-green-400 ml-auto">' + fmtBRL(receitaMes) + '</span>' : '') +
         '<div class="flex-1 h-px bg-dark-300/30"></div>';
       container.appendChild(mesHeader);
 
@@ -3826,7 +3831,7 @@ document.addEventListener('DOMContentLoaded', function () {
               '</div>' +
             '</div>' +
             '<div class="flex items-center gap-2 shrink-0">' +
-              (valor > 0 ? '<span class="text-sm font-bold font-numeric text-green-400">R$ ' + valor.toFixed(2).replace('.',',') + '</span>' : '') +
+              (valor > 0 ? '<span class="text-sm font-bold font-numeric text-green-400">' + fmtBRL(valor) + '</span>' : '') +
               (telLink ? '<a href="' + telLink + '" target="_blank" class="rounded-lg bg-green-500/15 px-2 py-1 text-[10px] font-semibold text-green-400 hover:bg-green-500/25">WhatsApp</a>' : '') +
             '</div>' +
           '</div>';
@@ -4071,7 +4076,7 @@ document.addEventListener('DOMContentLoaded', function () {
     resumoDiv.innerHTML =
       '<div class="rounded-xl bg-dark-600/60 border border-dark-300/30 p-3 text-center">' +
         '<p class="text-[10px] uppercase tracking-wider text-gray-500 mb-1">Total Gasto</p>' +
-        '<p class="text-lg font-bold font-numeric ' + (totalGasto > 0 ? 'text-green-400' : 'text-gray-500') + '">' + (totalGasto > 0 ? 'R$ ' + totalGasto.toFixed(2).replace('.',',') : '—') + '</p>' +
+        '<p class="text-lg font-bold font-numeric ' + (totalGasto > 0 ? 'text-green-400' : 'text-gray-500') + '">' + (totalGasto > 0 ? fmtBRL(totalGasto) : '—') + '</p>' +
       '</div>' +
       '<div class="rounded-xl bg-dark-600/60 border border-dark-300/30 p-3 text-center">' +
         '<p class="text-[10px] uppercase tracking-wider text-gray-500 mb-1">Agendamentos</p>' +
@@ -4126,7 +4131,8 @@ document.addEventListener('DOMContentLoaded', function () {
         var duracao = svc ? svc.duracao : '';
         var funcionaria = ag.funcionaria || '';
         var pagamento = ag.forma_pagamento || '';
-        var valor = servicoPreco(ag.servico, ag.valor_informado, ag.valor_total) > 0 ? 'R$ ' + servicoPreco(ag.servico, ag.valor_informado, ag.valor_total).toFixed(2).replace('.',',') : '';
+        var _svcVal = servicoPreco(ag.servico, ag.valor_informado, ag.valor_total);
+        var valor = _svcVal > 0 ? fmtBRL(_svcVal) : '';
         var nota = ag.nota || '';
 
         var details = [];
@@ -4620,17 +4626,17 @@ document.addEventListener('DOMContentLoaded', function () {
     var fatPrevisto = previstosMes.reduce(function (s, a) { return s + servicoPreco(a.servico, a.valor_informado, a.valor_total); }, 0);
 
     /* Atualizar cards */
-    document.getElementById('fin-entradas-valor').textContent = 'R$ ' + totalEntradas.toFixed(2).replace('.', ',');
+    document.getElementById('fin-entradas-valor').textContent = fmtBRL(totalEntradas);
     document.getElementById('fin-entradas-desc').textContent = concluidosMes.length + ' atendimento' + (concluidosMes.length !== 1 ? 's' : '') + ' concluído' + (concluidosMes.length !== 1 ? 's' : '');
-    document.getElementById('fin-saidas-valor').textContent = 'R$ ' + totalSaidas.toFixed(2).replace('.', ',');
+    document.getElementById('fin-saidas-valor').textContent = fmtBRL(totalSaidas);
     document.getElementById('fin-saidas-desc').textContent = despesasMes.length + ' despesa' + (despesasMes.length !== 1 ? 's' : '') + ' registrada' + (despesasMes.length !== 1 ? 's' : '');
 
     var lucroEl = document.getElementById('fin-lucro-valor');
-    lucroEl.textContent = 'R$ ' + lucroLiquido.toFixed(2).replace('.', ',');
+    lucroEl.textContent = fmtBRL(lucroLiquido);
     lucroEl.className = 'mt-2 font-numeric text-3xl font-bold ' + (lucroLiquido >= 0 ? 'text-green-400' : 'text-red-400');
     document.getElementById('fin-lucro-desc').textContent = lucroLiquido >= 0 ? 'Lucro do mês' : 'Prejuízo do mês';
 
-    document.getElementById('fat-previsto-valor').textContent = 'R$ ' + fatPrevisto.toFixed(2).replace('.', ',');
+    document.getElementById('fat-previsto-valor').textContent = fmtBRL(fatPrevisto);
     document.getElementById('fat-previsto-count').textContent = previstosMes.length + ' agendamento' + (previstosMes.length !== 1 ? 's' : '') + ' pendente' + (previstosMes.length !== 1 ? 's' : '');
 
     /* Faturamento do Dia */
@@ -4642,8 +4648,8 @@ document.addEventListener('DOMContentLoaded', function () {
       hojePrevisto += v;
       if (ag.status === 'concluido') hojeRealizado += v;
     });
-    document.getElementById('fin-hoje-previsto').textContent = 'R$ ' + hojePrevisto.toFixed(2).replace('.', ',');
-    document.getElementById('fin-hoje-realizado').textContent = 'R$ ' + hojeRealizado.toFixed(2).replace('.', ',');
+    document.getElementById('fin-hoje-previsto').textContent = fmtBRL(hojePrevisto);
+    document.getElementById('fin-hoje-realizado').textContent = fmtBRL(hojeRealizado);
     document.getElementById('fin-hoje-count').textContent = agsHoje.length;
 
     /* Gráfico de saídas por categoria */
@@ -4692,7 +4698,7 @@ document.addEventListener('DOMContentLoaded', function () {
       row.innerHTML =
         '<div class="flex justify-between mb-1">' +
           '<span class="text-xs font-medium text-white">' + esc(c.nome) + '</span>' +
-          '<span class="font-numeric text-[10px] text-gray-400">' + c.pct + '% · R$ ' + c.valor.toFixed(2).replace('.', ',') + '</span>' +
+          '<span class="font-numeric text-[10px] text-gray-400">' + c.pct + '% · ' + fmtBRL(c.valor) + '</span>' +
         '</div>' +
         '<div class="h-3 rounded-full bg-dark-600 overflow-hidden">' +
           '<div class="h-full rounded-full ' + barClass + ' transition-all" style="width:' + c.pct + '%"></div>' +
@@ -4729,7 +4735,7 @@ document.addEventListener('DOMContentLoaded', function () {
       tr.innerHTML =
         '<td class="px-3 py-2.5 text-white text-xs font-medium">' + esc(d.descricao) + '</td>' +
         '<td class="px-3 py-2.5"><span class="inline-flex items-center rounded-full ' + catClass + ' px-2 py-0.5 text-[10px] font-semibold">' + esc(d.categoria) + '</span></td>' +
-        '<td class="px-3 py-2.5 text-right font-numeric text-xs font-semibold text-red-400">− R$ ' + (parseFloat(d.valor) || 0).toFixed(2).replace('.', ',') + '</td>' +
+        '<td class="px-3 py-2.5 text-right font-numeric text-xs font-semibold text-red-400">− ' + fmtBRL(parseFloat(d.valor) || 0) + '</td>' +
         '<td class="px-3 py-2.5 text-gray-300 text-xs">' + fmtBR(d.data) + '</td>' +
         '<td class="px-3 py-2.5 text-center">' + statusBadge + '</td>' +
         '<td class="px-3 py-2.5 text-center">' +
@@ -4776,7 +4782,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('desp-modal-title').textContent = desp ? 'Editar Despesa' : 'Lançar Despesa';
     document.getElementById('desp-descricao').value = desp ? desp.descricao : '';
     document.getElementById('desp-categoria').value = desp ? desp.categoria : '';
-    document.getElementById('desp-valor').value = desp ? (parseFloat(desp.valor) || 0).toFixed(2).replace('.', ',') : '';
+    document.getElementById('desp-valor').value = desp ? fmtBRL(parseFloat(desp.valor) || 0).replace('R$ ', '') : '';
     document.getElementById('desp-data').value = desp ? desp.data : hoje();
     document.getElementById('desp-status').value = desp ? desp.status : 'pendente';
     var modal = document.getElementById('modal-despesa');
@@ -4819,7 +4825,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (B) B.setDespesas(lista);
     _fecharModalDespesa();
     renderFaturamento();
-    showToast('Despesa salva', (_despEditId ? 'Atualizada' : 'Registrada') + ': ' + descricao + ' — R$ ' + valor.toFixed(2).replace('.', ','), null);
+    showToast('Despesa salva', (_despEditId ? 'Atualizada' : 'Registrada') + ': ' + descricao + ' — ' + fmtBRL(valor), null);
   });
 
   document.getElementById('fin-desp-categoria-filter').addEventListener('change', function () { renderFaturamento(); });
@@ -4840,10 +4846,10 @@ document.addEventListener('DOMContentLoaded', function () {
       else if (fp === 'dinheiro' || fp === 'cash') dinheiro += valor;
       else { pix += valor; }
     });
-    document.getElementById('fat-pag-pix').textContent = 'R$ ' + pix.toFixed(2).replace('.', ',');
-    document.getElementById('fat-pag-credito').textContent = 'R$ ' + credito.toFixed(2).replace('.', ',');
-    document.getElementById('fat-pag-debito').textContent = 'R$ ' + debito.toFixed(2).replace('.', ',');
-    document.getElementById('fat-pag-dinheiro').textContent = 'R$ ' + dinheiro.toFixed(2).replace('.', ',');
+    document.getElementById('fat-pag-pix').textContent = fmtBRL(pix);
+    document.getElementById('fat-pag-credito').textContent = fmtBRL(credito);
+    document.getElementById('fat-pag-debito').textContent = fmtBRL(debito);
+    document.getElementById('fat-pag-dinheiro').textContent = fmtBRL(dinheiro);
   }
 
   function renderFatTopServicos(concluidos) {
@@ -4908,7 +4914,7 @@ document.addEventListener('DOMContentLoaded', function () {
       row.innerHTML =
         '<span class="font-numeric text-sm font-bold ' + medalha + ' w-6 text-right">#' + (i + 1) + '</span>' +
         '<div class="flex-1">' +
-          '<div class="flex justify-between mb-1"><span class="text-xs font-medium text-white truncate">' + esc(c.nome) + tag + '</span><span class="font-numeric text-[10px] text-green-400 font-semibold">R$ ' + c.total.toFixed(2).replace('.',',') + '</span></div>' +
+          '<div class="flex justify-between mb-1"><span class="text-xs font-medium text-white truncate">' + esc(c.nome) + tag + '</span><span class="font-numeric text-[10px] text-green-400 font-semibold">' + fmtBRL(c.total) + '</span></div>' +
           '<div class="h-2 rounded-full bg-dark-600"><div class="h-full rounded-full bg-gradient-to-r from-green-500/80 to-green-400 transition-all" style="width:' + pct + '%"></div></div>' +
         '</div>';
       container.appendChild(row);
@@ -4931,8 +4937,8 @@ document.addEventListener('DOMContentLoaded', function () {
       var srvVal = a.valor_servico || servicoPreco(a.servico, a.valor_informado, a.valor_total);
       var prodVal = a.valor_produtos || 0;
       var valorDisplay = temProdutos
-        ? '<span class="text-gold">R$ ' + srvVal.toFixed(2).replace('.', ',') + '</span>' + (prodVal > 0 ? '<br><span class="text-purple-400 text-[10px]">+' + ' Prod: R$ ' + prodVal.toFixed(2).replace('.', ',') + '</span>' : '')
-        : 'R$ ' + total.toFixed(2).replace('.', ',');
+        ? '<span class="text-gold">' + fmtBRL(srvVal) + '</span>' + (prodVal > 0 ? '<br><span class="text-purple-400 text-[10px]">+' + ' Prod: ' + fmtBRL(prodVal) + '</span>' : '')
+        : fmtBRL(total);
       var statusMap = {
         concluido: '<span class="inline-flex items-center rounded-full bg-green-500/15 px-2.5 py-0.5 text-[10px] font-semibold text-green-400">Concluído</span>',
         confirmado: '<span class="inline-flex items-center rounded-full bg-yellow-500/15 px-2.5 py-0.5 text-[10px] font-semibold text-yellow-400">Agendado</span>',
@@ -4975,8 +4981,8 @@ document.addEventListener('DOMContentLoaded', function () {
     var totalGeral = _pvValorServico + totalProd;
     var elProd = document.getElementById('pv-total-produtos');
     var elGeral = document.getElementById('pv-total-geral');
-    if (elProd) elProd.textContent = 'R$ ' + totalProd.toFixed(2).replace('.', ',');
-    if (elGeral) elGeral.textContent = 'R$ ' + totalGeral.toFixed(2).replace('.', ',');
+    if (elProd) elProd.textContent = fmtBRL(totalProd);
+    if (elGeral) elGeral.textContent = fmtBRL(totalGeral);
   }
 
   function _pvRenderLista() {
@@ -4993,7 +4999,7 @@ document.addEventListener('DOMContentLoaded', function () {
       row.innerHTML =
         '<div class="flex-1 min-w-0">' +
           '<p class="text-sm font-semibold text-white truncate">' + esc(p.nome) + '</p>' +
-          '<p class="text-[10px] text-gray-500">' + (p.quantidade || 0) + ' em estoque · R$ ' + (p.precoVenda || 0).toFixed(2).replace('.', ',') + '</p>' +
+          '<p class="text-[10px] text-gray-500">' + (p.quantidade || 0) + ' em estoque · ' + fmtBRL(p.precoVenda || 0) + '</p>' +
         '</div>' +
         '<div class="flex items-center gap-2 shrink-0">' +
           '<button class="pv-minus rounded-lg bg-dark-500 px-2.5 py-1 text-sm font-bold text-gray-300 hover:text-white hover:bg-dark-400 transition-colors" data-pid="' + p.id + '">−</button>' +
@@ -5033,7 +5039,7 @@ document.addEventListener('DOMContentLoaded', function () {
     _pvProdutos = {};
     var ag = B ? B.getAgendamentos().find(function (a) { return a.id === agId; }) : null;
     document.getElementById('pv-servico-nome').textContent = ag ? ag.servico : '—';
-    document.getElementById('pv-valor-servico').textContent = 'R$ ' + _pvValorServico.toFixed(2).replace('.', ',');
+    document.getElementById('pv-valor-servico').textContent = fmtBRL(_pvValorServico);
     _pvRenderLista();
     _pvAtualizarTotal();
     var modal = document.getElementById('modal-produtos-venda');
@@ -5099,8 +5105,8 @@ document.addEventListener('DOMContentLoaded', function () {
     renderDashboard();
     renderEstoque();
     var msg = totalProdutos > 0
-      ? 'Serviço: R$ ' + _pvValorServico.toFixed(2).replace('.',',') + ' + Produtos: R$ ' + totalProdutos.toFixed(2).replace('.',',') + ' = R$ ' + totalGeral.toFixed(2).replace('.',',')
-      : 'Valor do serviço: R$ ' + _pvValorServico.toFixed(2).replace('.',',');
+      ? 'Serviço: ' + fmtBRL(_pvValorServico) + ' + Produtos: ' + fmtBRL(totalProdutos) + ' = ' + fmtBRL(totalGeral)
+      : 'Valor do serviço: ' + fmtBRL(_pvValorServico);
     showToast('Venda registrada', msg, null);
   });
 
@@ -5117,7 +5123,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     var valorInformado = agDados.valor_informado || 0;
     var valorBase = valorInformado > 0 ? valorInformado : valorCatalogo;
-    var inputValor = prompt('Informe o valor cobrado pelo serviço "' + agDados.servico + '":\n(Valor do catálogo: R$ ' + valorCatalogo.toFixed(2).replace('.',',') + ')\n\nDeixe vazio para R$ 0,00.', valorBase > 0 ? valorBase.toFixed(2).replace('.',',') : '');
+    var inputValor = prompt('Informe o valor cobrado pelo serviço "' + agDados.servico + '":\n(Valor do catálogo: ' + fmtBRL(valorCatalogo) + ')\n\nDeixe vazio para R$ 0,00.', valorBase > 0 ? valorBase.toFixed(2).replace('.',',') : '');
     if (inputValor === null) return;
     var vi = parseFloat(inputValor.replace(',','.')) || 0;
     if (vi > 0 && B) { B.setValorInformado(agId, vi); }
@@ -5135,7 +5141,7 @@ document.addEventListener('DOMContentLoaded', function () {
       total += item.preco * item.qtd;
     });
     var el = document.getElementById('va-total');
-    if (el) el.textContent = 'R$ ' + total.toFixed(2).replace('.', ',');
+    if (el) el.textContent = fmtBRL(total);
   }
 
   function _vaRenderLista() {
@@ -5152,7 +5158,7 @@ document.addEventListener('DOMContentLoaded', function () {
       row.innerHTML =
         '<div class="flex-1 min-w-0">' +
           '<p class="text-sm font-semibold text-white truncate">' + esc(p.nome) + '</p>' +
-          '<p class="text-[10px] text-gray-500">' + (p.quantidade || 0) + ' em estoque · R$ ' + (p.precoVenda || 0).toFixed(2).replace('.', ',') + '</p>' +
+          '<p class="text-[10px] text-gray-500">' + (p.quantidade || 0) + ' em estoque · ' + fmtBRL(p.precoVenda || 0) + '</p>' +
         '</div>' +
         '<div class="flex items-center gap-2 shrink-0">' +
           '<button class="va-minus rounded-lg bg-dark-500 px-2.5 py-1 text-sm font-bold text-gray-300 hover:text-white hover:bg-dark-400 transition-colors" data-pid="' + p.id + '">−</button>' +
@@ -5267,7 +5273,7 @@ document.addEventListener('DOMContentLoaded', function () {
     renderDashboard();
     renderEstoque();
     try { renderHistorico(); } catch (e) {}
-    showToast('Venda registrada', 'Venda balcão de R$ ' + totalProdutos.toFixed(2).replace('.',',') + ' confirmada.', null);
+    showToast('Venda registrada', 'Venda balcão de ' + fmtBRL(totalProdutos) + ' confirmada.', null);
   });
 
   /* --- Modificar handlers de concluir para usar iniciarConclusao --- */
