@@ -559,7 +559,8 @@
             + Lançar Despesa
           </button>
           <div class="flex items-center gap-0.5 rounded-lg bg-dark-600 p-0.5">
-            <button class="fat-period-btn rounded-md px-2.5 py-1 text-[10px] font-semibold text-gold bg-gold/15" data-period="mes">Mês</button>
+            <button class="fat-period-btn rounded-md px-2.5 py-1 text-[10px] font-semibold text-gold bg-gold/15" data-period="dia">Dia</button>
+            <button class="fat-period-btn rounded-md px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-period="mes">Mês</button>
             <button class="fat-period-btn rounded-md px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-period="trimestre">Trim</button>
             <button class="fat-period-btn rounded-md px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-period="semestre">Sem</button>
             <button class="fat-period-btn rounded-md px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-period="ano">Ano</button>
@@ -622,7 +623,7 @@
           <div class="flex items-center justify-between mb-4">
             <h3 class="font-display text-base font-semibold text-white">Entradas por Pagamento</h3>
             <div class="flex gap-1">
-              <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gold bg-gold/15" data-pag="mes">Mês</button>
+              <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gold bg-gold/15" data-pag="periodo">Período</button>
               <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-pag="ano">Ano</button>
               <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-pag="total">Total</button>
             </div>
@@ -4625,15 +4626,18 @@ document.addEventListener('DOMContentLoaded', function () {
   /* ============================================================
      FINANCEIRO
      ============================================================ */
-  var fatPagTab = 'mes';
+  var fatPagTab = 'periodo';
   var fatPeriodo = new Date(); fatPeriodo.setHours(12,0,0,0);
   var fatPeriodType = 'mes'; /* mes | trimestre | semestre | ano */
   var _despEditId = null;
 
   function getPeriodRange() {
-    var y = fatPeriodo.getFullYear(), m = fatPeriodo.getMonth();
+    var y = fatPeriodo.getFullYear(), m = fatPeriodo.getMonth(), d = fatPeriodo.getDate();
     var inicio, fim;
-    if (fatPeriodType === 'mes') {
+    if (fatPeriodType === 'dia') {
+      inicio = new Date(y, m, d);
+      fim = new Date(y, m, d);
+    } else if (fatPeriodType === 'mes') {
       inicio = new Date(y, m, 1);
       fim = new Date(y, m + 1, 0);
     } else if (fatPeriodType === 'trimestre') {
@@ -4670,8 +4674,12 @@ document.addEventListener('DOMContentLoaded', function () {
   function fmtFatPeriodoLabel() {
     var meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
     var fullMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-    var y = fatPeriodo.getFullYear(), m = fatPeriodo.getMonth();
-    if (fatPeriodType === 'mes') {
+    var diasSemana = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+    var y = fatPeriodo.getFullYear(), m = fatPeriodo.getMonth(), d = fatPeriodo.getDate();
+    if (fatPeriodType === 'dia') {
+      var dow = new Date(y, m, d).getDay();
+      return diasSemana[dow] + ', ' + (d < 10 ? '0' : '') + d + ' ' + meses[m] + ' ' + y;
+    } else if (fatPeriodType === 'mes') {
       return meses[m] + ' ' + y;
     } else if (fatPeriodType === 'trimestre') {
       var q = Math.floor(m / 3) + 1;
@@ -4691,7 +4699,8 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function fatStep(dir) {
-    if (fatPeriodType === 'mes') fatPeriodo.setMonth(fatPeriodo.getMonth() + dir);
+    if (fatPeriodType === 'dia') fatPeriodo.setDate(fatPeriodo.getDate() + dir);
+    else if (fatPeriodType === 'mes') fatPeriodo.setMonth(fatPeriodo.getMonth() + dir);
     else if (fatPeriodType === 'trimestre') fatPeriodo.setMonth(fatPeriodo.getMonth() + dir * 3);
     else if (fatPeriodType === 'semestre') fatPeriodo.setMonth(fatPeriodo.getMonth() + dir * 6);
     else fatPeriodo.setFullYear(fatPeriodo.getFullYear() + dir);
@@ -4947,9 +4956,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function renderFatPagamento(concluidosPeriodo, servicoPreco) {
     var pool;
-    if (fatPagTab === 'mes') {
-      var selMesStr = fatPeriodo.getFullYear() + '-' + (fatPeriodo.getMonth() < 9 ? '0' : '') + (fatPeriodo.getMonth() + 1);
-      pool = concluidosPeriodo.filter(function (a) { return a.data && a.data.slice(0, 7) === selMesStr; });
+    if (fatPagTab === 'periodo') {
+      pool = concluidosPeriodo;
     } else if (fatPagTab === 'ano') {
       var selAnoStr = String(fatPeriodo.getFullYear());
       pool = concluidosPeriodo.filter(function (a) { return a.data && a.data.slice(0, 4) === selAnoStr; });
