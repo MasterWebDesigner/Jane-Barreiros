@@ -96,6 +96,7 @@
 
     /* Audio unlock btn */
     #audio-unlock-btn { position:fixed; bottom:20px; right:20px; z-index:9999; }
+    #notif-permission-btn { position:fixed; bottom:60px; right:20px; z-index:9999; }
 
     /* Config tabs */
     .cfg-tab { padding:10px 20px; font-size:14px; font-weight:600; color:#6B7280; border-bottom:2px solid transparent; cursor:pointer; transition:all .2s; }
@@ -166,9 +167,12 @@
 <!-- Toast Container -->
 <div id="toast-container" class="fixed top-4 right-4 z-[9998] flex flex-col gap-3 pointer-events-none"></div>
 
-<!-- Audio Unlock Button (hidden by default) -->
+<!-- Audio & Notification Unlock Buttons (hidden by default) -->
 <button id="audio-unlock-btn" class="hidden gold-btn rounded-xl px-4 py-2 text-xs font-semibold shadow-lg" title="Ativar som de notificação">
   🔔 Ativar Som
+</button>
+<button id="notif-permission-btn" class="hidden gold-btn rounded-xl px-4 py-2 text-xs font-semibold shadow-lg" title="Ativar notificações do navegador">
+  🔔 Ativar Notificações
 </button>
 
 <!-- ============================================================
@@ -1694,6 +1698,45 @@ document.addEventListener('DOMContentLoaded', function () {
     unlockAudio();
   });
 
+  /* --- Browser Notification API --- */
+  var _notifPermission = 'default';
+  function requestNotifPermission() {
+    if (!('Notification' in window)) { showToast('Aviso', 'Seu navegador não suporta notificações.', null); return; }
+    if (Notification.permission === 'granted') { _notifPermission = 'granted'; document.getElementById('notif-permission-btn').classList.add('hidden'); return; }
+    if (Notification.permission === 'denied') { showToast('Aviso', 'Notificações bloqueadas. Permita nas configurações do navegador.', null); return; }
+    Notification.requestPermission().then(function (perm) {
+      _notifPermission = perm;
+      if (perm === 'granted') {
+        showToast('Ativado', 'Notificações do navegador ativadas!', null);
+        document.getElementById('notif-permission-btn').classList.add('hidden');
+      }
+    });
+  }
+  function showBrowserNotif(title, body) {
+    if (_notifPermission !== 'granted') return;
+    try {
+      var n = new Notification(title, { body: body, icon: './Logomarca.png', tag: 'jane-notif', renotify: true });
+      n.onclick = function () { window.focus(); n.close(); };
+      setTimeout(function () { n.close(); }, 8000);
+    } catch (e) {}
+  }
+  function vibrateDevice() {
+    try { if (navigator.vibrate) navigator.vibrate(200); } catch (e) {}
+  }
+
+  /* Show notif permission button on first interaction if not yet granted */
+  document.addEventListener('click', function () {
+    if ('Notification' in window && Notification.permission === 'default') {
+      document.getElementById('notif-permission-btn').classList.remove('hidden');
+    }
+  }, { once: false });
+  document.getElementById('notif-permission-btn').addEventListener('click', function (e) {
+    e.stopPropagation();
+    requestNotifPermission();
+  });
+  /* Check on load */
+  if ('Notification' in window) _notifPermission = Notification.permission;
+
   function playNotifSound() {
     if (!_audioUnlocked) return;
     var ctx = getAudioCtx();
@@ -1797,10 +1840,14 @@ document.addEventListener('DOMContentLoaded', function () {
     /* Notify for new ones */
     if (newOnes.length > 0) {
       playNotifSound();
+      vibrateDevice();
       newOnes.forEach(function (ag) {
+        var nomeCliente = B.nomeFormatado(ag.cliente_nome);
+        var notifBody = nomeCliente + ' — ' + ag.servico + ' • ' + ag.horario;
+        showBrowserNotif('Novo agendamento!', notifBody);
         showToast(
           'Novo agendamento recebido!',
-          esc(B.nomeFormatado(ag.cliente_nome)) + ' — ' + esc(ag.servico) + ' • ' + esc(ag.horario),
+          esc(nomeCliente) + ' — ' + esc(ag.servico) + ' • ' + esc(ag.horario),
           function () {
             showPage('agendamentos');
             var card = document.querySelector('[data-aceitar="' + ag.id + '"], [data-st="' + ag.id + '"]');
