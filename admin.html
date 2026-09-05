@@ -4883,7 +4883,9 @@ document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.fat-pag-tab').forEach(function (b) {
           b.className = 'fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold ' + (b === btn ? 'text-gold bg-gold/15' : 'text-gray-400 hover:text-gray-200');
         });
-        renderFatPagamento(concluidos, servicoPreco);
+        var _ags = B ? B.getAgendamentos() : [];
+        var _concluidos = _ags.filter(function (a) { return a.status === 'concluido'; });
+        renderFatPagamento(_concluidos, servicoPreco);
       };
     });
     document.getElementById('fat-cat-filter').onchange = function () {
