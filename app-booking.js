@@ -629,7 +629,7 @@ var APP_VERSION = '1.3.2';
 
   function agendamentosDoDia(dataStr) {
     return getAgendamentos().filter(function (a) {
-      return a.data === dataStr && (a.status === 'confirmado' || a.status === 'pendente' || a.status === 'em_atendimento');
+      return a.data === dataStr && (a.status === 'confirmado' || a.status === 'pendente' || a.status === 'em_atendimento' || a.status === 'recusado');
     });
   }
 
@@ -643,7 +643,7 @@ var APP_VERSION = '1.3.2';
     var iniStr = fmtData(inicio);
     var fimStr = fmtData(fim);
     return getAgendamentos().filter(function (a) {
-      return a.data >= iniStr && a.data <= fimStr && (a.status === 'confirmado' || a.status === 'pendente' || a.status === 'em_atendimento');
+      return a.data >= iniStr && a.data <= fimStr && (a.status === 'confirmado' || a.status === 'pendente' || a.status === 'em_atendimento' || a.status === 'recusado');
     });
   }
 
