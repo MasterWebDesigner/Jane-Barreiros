@@ -656,6 +656,8 @@
           <h3 class="font-display text-base font-semibold text-white">Entradas por Pagamento</h3>
           <div class="flex gap-1">
             <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gold bg-gold/15" data-pag="periodo">Período</button>
+            <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-pag="dia">Dia</button>
+            <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-pag="mes">Mês</button>
             <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-pag="ano">Ano</button>
             <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-pag="total">Total</button>
           </div>
@@ -5101,7 +5103,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function renderFatPagamento(concluidos, servicoPreco) {
     var pool;
-    if (fatPagTab === 'ano') {
+    if (fatPagTab === 'dia') {
+      var hojeStr = hoje();
+      pool = concluidos.filter(function (a) { return a.data === hojeStr; });
+    } else if (fatPagTab === 'mes') {
+      var selMesStr = fatPeriodo.getFullYear() + '-' + (fatPeriodo.getMonth() < 9 ? '0' : '') + (fatPeriodo.getMonth() + 1);
+      pool = concluidos.filter(function (a) { return a.data && a.data.slice(0, 7) === selMesStr; });
+    } else if (fatPagTab === 'ano') {
       var selAnoStr = String(fatPeriodo.getFullYear());
       pool = concluidos.filter(function (a) { return a.data && a.data.slice(0, 4) === selAnoStr; });
     } else {
