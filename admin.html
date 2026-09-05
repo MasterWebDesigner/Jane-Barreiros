@@ -769,6 +769,65 @@
         </div>
         <p id="fat-vazio" class="hidden text-center text-gray-500 py-8 text-sm">Nenhum atendimento registrado.</p>
       </div>
+
+      <!-- ==================== RELATÓRIO FINANCEIRO ==================== -->
+      <div class="mt-8 border-t border-dark-300/50 pt-8">
+        <h2 class="font-display text-xl font-semibold text-white mb-6">Relatório Financeiro</h2>
+
+        <!-- Filtros -->
+        <div class="card-dark p-4 mb-6">
+          <div class="flex flex-wrap items-center gap-3">
+            <div class="flex items-center gap-0.5 rounded-lg bg-dark-600 p-0.5">
+              <button class="rel-period-btn rounded-md px-3 py-1.5 text-[11px] font-semibold text-gold bg-gold/15" data-rperiod="mes">Mês</button>
+              <button class="rel-period-btn rounded-md px-3 py-1.5 text-[11px] font-semibold text-gray-400 hover:text-gray-200" data-rperiod="trimestre">Trim</button>
+              <button class="rel-period-btn rounded-md px-3 py-1.5 text-[11px] font-semibold text-gray-400 hover:text-gray-200" data-rperiod="semestre">Sem</button>
+              <button class="rel-period-btn rounded-md px-3 py-1.5 text-[11px] font-semibold text-gray-400 hover:text-gray-200" data-rperiod="ano">Ano</button>
+              <button class="rel-period-btn rounded-md px-3 py-1.5 text-[11px] font-semibold text-gray-400 hover:text-gray-200" data-rperiod="personalizado">Personalizado</button>
+            </div>
+            <input id="rel-data-inicio" type="date" class="rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-1.5 text-xs text-gray-300 focus:border-gold outline-none hidden">
+            <input id="rel-data-fim" type="date" class="rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-1.5 text-xs text-gray-300 focus:border-gold outline-none hidden">
+            <span id="rel-periodo-label" class="text-xs text-gray-400 font-medium"></span>
+            <button id="rel-gerar-btn" class="ml-auto rounded-lg bg-gold/15 px-4 py-1.5 text-xs font-semibold text-gold hover:bg-gold/25 transition-colors">Gerar Relatório</button>
+            <button id="rel-export-btn" class="rounded-lg bg-dark-600 px-4 py-1.5 text-xs font-semibold text-gray-400 hover:text-white transition-colors">⬇ Exportar CSV</button>
+          </div>
+        </div>
+
+        <!-- Cards Resumo -->
+        <div class="grid grid-cols-2 gap-4 lg:grid-cols-5 mb-6">
+          <div class="card-dark p-4 text-center">
+            <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Receita Total</p>
+            <p id="rel-receita" class="mt-2 font-numeric text-2xl font-bold text-green-400">R$ 0</p>
+          </div>
+          <div class="card-dark p-4 text-center">
+            <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Despesas</p>
+            <p id="rel-despesas" class="mt-2 font-numeric text-2xl font-bold text-red-400">R$ 0</p>
+          </div>
+          <div class="card-dark p-4 text-center">
+            <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Lucro Líquido</p>
+            <p id="rel-lucro" class="mt-2 font-numeric text-2xl font-bold">R$ 0</p>
+          </div>
+          <div class="card-dark p-4 text-center">
+            <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Ticket Médio</p>
+            <p id="rel-ticket" class="mt-2 font-numeric text-2xl font-bold text-gold">R$ 0</p>
+          </div>
+          <div class="card-dark p-4 text-center">
+            <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Atendimentos</p>
+            <p id="rel-atendimentos" class="mt-2 font-numeric text-2xl font-bold text-blue-400">0</p>
+          </div>
+        </div>
+
+        <!-- Abas do Relatório -->
+        <div class="card-dark p-5">
+          <div class="flex gap-1 mb-4 border-b border-dark-300/50 pb-3">
+            <button class="rel-tab rounded-lg px-4 py-2 text-xs font-semibold text-gold bg-gold/15" data-tab="visao">Visão Geral</button>
+            <button class="rel-tab rounded-lg px-4 py-2 text-xs font-semibold text-gray-400 hover:text-gray-200" data-tab="profissional">Profissional</button>
+            <button class="rel-tab rounded-lg px-4 py-2 text-xs font-semibold text-gray-400 hover:text-gray-200" data-tab="servico">Serviço</button>
+            <button class="rel-tab rounded-lg px-4 py-2 text-xs font-semibold text-gray-400 hover:text-gray-200" data-tab="cliente">Cliente</button>
+          </div>
+          <div id="rel-conteudo" class="min-h-[200px]"></div>
+        </div>
+      </div>
+
     </section>
 
     <!-- ==================== CLIENTES ==================== -->
@@ -5591,6 +5650,276 @@ document.addEventListener('DOMContentLoaded', function () {
   /* Sobrescreve os listeners originais de status-btn usando event delegation no document */
   /* Nota: os listeners originais em agAttachStatusListeners e dash-lista usam data-st/data-stv.
      Para não conflitar, adicionamos um override que intercepta 'concluido' */
+
+  /* ============================================================
+     RELATÓRIO FINANCEIRO
+     ============================================================ */
+  var relPeriodType = 'mes';
+  var relTab = 'visao';
+
+  function getRelRange() {
+    var y = new Date().getFullYear(), m = new Date().getMonth();
+    var inicio, fim;
+    if (relPeriodType === 'personalizado') {
+      var di = document.getElementById('rel-data-inicio').value;
+      var df = document.getElementById('rel-data-fim').value;
+      if (di && df) { inicio = new Date(di + 'T00:00:00'); fim = new Date(df + 'T23:59:59'); }
+      else { inicio = new Date(y, m, 1); fim = new Date(y, m + 1, 0); }
+    } else if (relPeriodType === 'mes') {
+      inicio = new Date(y, m, 1); fim = new Date(y, m + 1, 0);
+    } else if (relPeriodType === 'trimestre') {
+      var qS = Math.floor(m / 3) * 3;
+      inicio = new Date(y, qS, 1); fim = new Date(y, qS + 3, 0);
+    } else if (relPeriodType === 'semestre') {
+      var sS = m < 6 ? 0 : 6;
+      inicio = new Date(y, sS, 1); fim = new Date(y, sS + 6, 0);
+    } else {
+      inicio = new Date(y, 0, 1); fim = new Date(y, 11, 31);
+    }
+    return { inicio: inicio, fim: fim };
+  }
+
+  function relFmtDate(d) {
+    return d.getFullYear() + '-' + (d.getMonth()+1 < 10 ? '0' : '') + (d.getMonth()+1) + '-' + (d.getDate() < 10 ? '0' : '') + d.getDate();
+  }
+
+  function relLabel() {
+    var meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    var r = getRelRange();
+    if (relPeriodType === 'personalizado') return fmtBR(relFmtDate(r.inicio)) + ' — ' + fmtBR(relFmtDate(r.fim));
+    if (relPeriodType === 'mes') return meses[r.inicio.getMonth()] + ' ' + r.inicio.getFullYear();
+    if (relPeriodType === 'trimestre') { var q = Math.floor(r.inicio.getMonth()/3)+1; return 'T'+q+' '+r.inicio.getFullYear(); }
+    if (relPeriodType === 'semestre') { var s = r.inicio.getMonth()<6?1:2; return 'S'+s+' '+r.inicio.getFullYear(); }
+    return 'Ano ' + r.inicio.getFullYear();
+  }
+
+  function isInRelRange(dateStr) {
+    if (!dateStr) return false;
+    var r = getRelRange();
+    return dateStr >= relFmtDate(r.inicio) && dateStr <= relFmtDate(r.fim);
+  }
+
+  /* Period buttons */
+  document.querySelectorAll('.rel-period-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      relPeriodType = btn.getAttribute('data-rperiod');
+      document.querySelectorAll('.rel-period-btn').forEach(function (b) {
+        b.className = 'rel-period-btn rounded-md px-3 py-1.5 text-[11px] font-semibold ' + (b === btn ? 'text-gold bg-gold/15' : 'text-gray-400 hover:text-gray-200');
+      });
+      var showCustom = relPeriodType === 'personalizado';
+      document.getElementById('rel-data-inicio').classList.toggle('hidden', !showCustom);
+      document.getElementById('rel-data-fim').classList.toggle('hidden', !showCustom);
+      gerarRelatorio();
+    });
+  });
+
+  /* Tab buttons */
+  document.querySelectorAll('.rel-tab').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      relTab = btn.getAttribute('data-tab');
+      document.querySelectorAll('.rel-tab').forEach(function (b) {
+        b.className = 'rel-tab rounded-lg px-4 py-2 text-xs font-semibold ' + (b === btn ? 'text-gold bg-gold/15' : 'text-gray-400 hover:text-gray-200');
+      });
+      renderRelTab();
+    });
+  });
+
+  document.getElementById('rel-gerar-btn').addEventListener('click', gerarRelatorio);
+  document.getElementById('rel-data-inicio').addEventListener('change', gerarRelatorio);
+  document.getElementById('rel-data-fim').addEventListener('change', gerarRelatorio);
+
+  var _relData = { ags: [], despesas: [], curso: { historico: [] } };
+
+  function gerarRelatorio() {
+    document.getElementById('rel-periodo-label').textContent = relLabel();
+    var ags = B ? B.getAgendamentos() : [];
+    var despesas = B ? B.getDespesas() : [];
+    var curso = B ? B.getCursoVendas() : { historico: [] };
+
+    var agsPeriodo = ags.filter(function (a) { return a.status !== 'cancelado' && isInRelRange(a.data); });
+    var concluidos = agsPeriodo.filter(function (a) { return a.status === 'concluido'; });
+    var despesasPeriodo = despesas.filter(function (d) { return isInRelRange(d.data); });
+    var despesasPagas = despesasPeriodo.filter(function (d) { return d.status === 'pago'; });
+
+    var receita = concluidos.reduce(function (s, a) { return s + servicoPreco(a.servico, a.valor_informado, a.valor_total); }, 0);
+    var cursoReceita = (curso.historico || []).filter(function (v) { return v.data && isInRelRange(v.data.slice(0, 10)); }).reduce(function (s, v) { return s + (v.valor || 0); }, 0);
+    receita += cursoReceita;
+    var totalDespesas = despesasPagas.reduce(function (s, d) { return s + (parseFloat(d.valor) || 0); }, 0);
+    var lucro = receita - totalDespesas;
+    var ticket = concluidos.length > 0 ? receita / concluidos.length : 0;
+
+    document.getElementById('rel-receita').textContent = fmtBRL(receita);
+    document.getElementById('rel-despesas').textContent = fmtBRL(totalDespesas);
+    var lucroEl = document.getElementById('rel-lucro');
+    lucroEl.textContent = fmtBRL(lucro);
+    lucroEl.className = 'mt-2 font-numeric text-2xl font-bold ' + (lucro >= 0 ? 'text-green-400' : 'text-red-400');
+    document.getElementById('rel-ticket').textContent = fmtBRL(ticket);
+    document.getElementById('rel-atendimentos').textContent = concluidos.length;
+
+    _relData = { ags: agsPeriodo, concluidos: concluidos, despesas: despesasPeriodo, despesasPagas: despesasPagas, curso: curso, receita: receita, cursoReceita: cursoReceita, totalDespesas: totalDespesas };
+    renderRelTab();
+  }
+
+  function renderRelTab() {
+    var c = document.getElementById('rel-conteudo');
+    if (relTab === 'visao') renderRelVisao(c);
+    else if (relTab === 'profissional') renderRelProfissional(c);
+    else if (relTab === 'servico') renderRelServico(c);
+    else if (relTab === 'cliente') renderRelCliente(c);
+  }
+
+  function renderRelVisao(container) {
+    var d = _relData;
+    if (!d.concluidos || !d.concluidos.length) { container.innerHTML = '<p class="text-sm text-gray-500 text-center py-8">Nenhum dado no período.</p>'; return; }
+
+    /* Receita por mês */
+    var receitaMes = {};
+    d.concluidos.forEach(function (a) {
+      var m = a.data ? a.data.slice(0, 7) : 's/ data';
+      receitaMes[m] = (receitaMes[m] || 0) + servicoPreco(a.servico, a.valor_informado, a.valor_total);
+    });
+    if (d.cursoReceita > 0) {
+      var hojeMes = new Date().getFullYear() + '-' + (new Date().getMonth() < 9 ? '0' : '') + (new Date().getMonth() + 1);
+      receitaMes[hojeMes] = (receitaMes[hojeMes] || 0) + d.cursoReceita;
+    }
+    var despesasMes = {};
+    d.despesasPagas.forEach(function (dp) {
+      var m = dp.data ? dp.data.slice(0, 7) : 's/ data';
+      despesasMes[m] = (despesasMes[m] || 0) + (parseFloat(dp.valor) || 0);
+    });
+    var todosMeses = Object.keys(Object.assign({}, receitaMes, despesasMes)).sort();
+    var maxVal = 0;
+    todosMeses.forEach(function (m) { maxVal = Math.max(maxVal, receitaMes[m] || 0, despesasMes[m] || 0); });
+
+    var meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    var html = '<div class="mb-4"><h4 class="text-sm font-semibold text-white mb-3">Receita vs Despesa por Mês</h4>';
+    html += '<div class="space-y-3">';
+    todosMeses.forEach(function (m) {
+      var rec = receitaMes[m] || 0;
+      var desp = despesasMes[m] || 0;
+      var parts = m.split('-');
+      var label = meses[parseInt(parts[1], 10) - 1] + ' ' + parts[0];
+      var recPct = maxVal > 0 ? (rec / maxVal * 100) : 0;
+      var despPct = maxVal > 0 ? (desp / maxVal * 100) : 0;
+      html += '<div class="rounded-lg bg-dark-700 p-3">' +
+        '<div class="flex justify-between mb-1"><span class="text-xs font-medium text-white">' + label + '</span><span class="font-numeric text-[10px] text-green-400">' + fmtBRL(rec) + ' / <span class="text-red-400">' + fmtBRL(desp) + '</span></span></div>' +
+        '<div class="h-2 rounded-full bg-dark-600 overflow-hidden flex gap-0.5">' +
+          '<div class="h-full rounded-full bg-green-500 transition-all" style="width:' + recPct + '%"></div>' +
+          '<div class="h-full rounded-full bg-red-500 transition-all" style="width:' + despPct + '%"></div>' +
+        '</div></div>';
+    });
+    html += '</div></div>';
+
+    /* Resumo por profissional */
+    var profs = {};
+    d.concluidos.forEach(function (a) {
+      var p = a.profissional || 'Não informado';
+      if (!profs[p]) profs[p] = { qtd: 0, total: 0 };
+      profs[p].qtd++;
+      profs[p].total += servicoPreco(a.servico, a.valor_informado, a.valor_total);
+    });
+    html += '<div><h4 class="text-sm font-semibold text-white mb-3">Resumo por Profissional</h4>';
+    html += '<div class="overflow-x-auto"><table class="w-full text-left text-xs"><thead><tr class="border-b border-dark-300/50 text-[10px] font-semibold uppercase tracking-wider text-gray-400"><th class="px-3 py-2">Profissional</th><th class="px-3 py-2 text-center">Atendimentos</th><th class="px-3 py-2 text-right">Faturamento</th><th class="px-3 py-2 text-right">Ticket Médio</th></tr></thead><tbody>';
+    Object.keys(profs).sort(function (a, b) { return profs[b].total - profs[a].total; }).forEach(function (p) {
+      var ticket = profs[p].qtd > 0 ? profs[p].total / profs[p].qtd : 0;
+      html += '<tr class="border-b border-dark-300/20 hover:bg-white/[.02]"><td class="px-3 py-2 text-white font-medium">' + esc(p) + '</td><td class="px-3 py-2 text-center text-gray-300">' + profs[p].qtd + '</td><td class="px-3 py-2 text-right font-numeric text-green-400 font-semibold">' + fmtBRL(profs[p].total) + '</td><td class="px-3 py-2 text-right font-numeric text-gray-300">' + fmtBRL(ticket) + '</td></tr>';
+    });
+    html += '</tbody></table></div></div>';
+    container.innerHTML = html;
+  }
+
+  function renderRelProfissional(container) {
+    var d = _relData;
+    if (!d.concluidos || !d.concluidos.length) { container.innerHTML = '<p class="text-sm text-gray-500 text-center py-8">Nenhum dado.</p>'; return; }
+    var profs = {};
+    d.concluidos.forEach(function (a) {
+      var p = a.profissional || 'Não informado';
+      if (!profs[p]) profs[p] = { qtd: 0, total: 0, servicos: {} };
+      profs[p].qtd++;
+      profs[p].total += servicoPreco(a.servico, a.valor_informado, a.valor_total);
+      profs[p].servicos[a.servico] = (profs[p].servicos[a.servico] || 0) + 1;
+    });
+    var arr = Object.keys(profs).map(function (k) {
+      var topServ = Object.keys(profs[k].servicos).sort(function (a, b) { return profs[k].servicos[b] - profs[k].servicos[a]; })[0] || '—';
+      return { nome: k, qtd: profs[k].qtd, total: profs[k].total, ticket: profs[k].qtd > 0 ? profs[k].total / profs[k].qtd : 0, topServ: topServ };
+    }).sort(function (a, b) { return b.total - a.total; });
+
+    var html = '<div class="overflow-x-auto"><table class="w-full text-left text-xs"><thead><tr class="border-b border-dark-300/50 text-[10px] font-semibold uppercase tracking-wider text-gray-400"><th class="px-3 py-2">Profissional</th><th class="px-3 py-2 text-center">Atendimentos</th><th class="px-3 py-2 text-right">Faturamento</th><th class="px-3 py-2 text-right">Ticket Médio</th><th class="px-3 py-2">Serviço Top</th></tr></thead><tbody>';
+    arr.forEach(function (p) {
+      html += '<tr class="border-b border-dark-300/20 hover:bg-white/[.02]"><td class="px-3 py-2 text-white font-medium">' + esc(p.nome) + '</td><td class="px-3 py-2 text-center text-gray-300">' + p.qtd + '</td><td class="px-3 py-2 text-right font-numeric text-green-400 font-semibold">' + fmtBRL(p.total) + '</td><td class="px-3 py-2 text-right font-numeric text-gray-300">' + fmtBRL(p.ticket) + '</td><td class="px-3 py-2 text-gold text-[10px]">' + esc(p.topServ) + '</td></tr>';
+    });
+    html += '</tbody></table></div>';
+    container.innerHTML = html;
+  }
+
+  function renderRelServico(container) {
+    var d = _relData;
+    if (!d.concluidos || !d.concluidos.length) { container.innerHTML = '<p class="text-sm text-gray-500 text-center py-8">Nenhum dado.</p>'; return; }
+    var servs = {};
+    d.concluidos.forEach(function (a) {
+      var s = a.servico || 'Não informado';
+      if (!servs[s]) servs[s] = { qtd: 0, total: 0 };
+      servs[s].qtd++;
+      servs[s].total += servicoPreco(a.servico, a.valor_informado, a.valor_total);
+    });
+    var totalReceita = d.receita || 1;
+    var arr = Object.keys(servs).map(function (k) {
+      return { nome: k, qtd: servs[k].qtd, total: servs[k].total, pct: Math.round(servs[k].total / totalReceita * 100) };
+    }).sort(function (a, b) { return b.total - a.total; });
+
+    var html = '<div class="space-y-3">';
+    arr.forEach(function (s) {
+      var cores = ['bg-green-500', 'bg-gold', 'bg-cyan-500', 'bg-blue-500', 'bg-purple-500'];
+      var cor = cores[arr.indexOf(s) % cores.length] || 'bg-gray-500';
+      html += '<div class="rounded-lg bg-dark-700 p-3">' +
+        '<div class="flex justify-between mb-1"><span class="text-xs font-medium text-white">' + esc(s.nome) + '</span><span class="font-numeric text-[10px] text-gray-400">' + s.qtd + 'x · ' + s.pct + '% · ' + fmtBRL(s.total) + '</span></div>' +
+        '<div class="h-2.5 rounded-full bg-dark-600 overflow-hidden"><div class="h-full rounded-full ' + cor + ' transition-all" style="width:' + s.pct + '%"></div></div>' +
+      '</div>';
+    });
+    html += '</div>';
+    container.innerHTML = html;
+  }
+
+  function renderRelCliente(container) {
+    var d = _relData;
+    if (!d.concluidos || !d.concluidos.length) { container.innerHTML = '<p class="text-sm text-gray-500 text-center py-8">Nenhum dado.</p>'; return; }
+    var cls = {};
+    d.concluidos.forEach(function (a) {
+      var nome = a.cliente_nome || 'Cliente';
+      var tel = (a.cliente_whatsapp || '').replace(/\D/g, '');
+      var key = tel || nome;
+      if (!cls[key]) cls[key] = { nome: nome, qtd: 0, total: 0, ultima: a.data || '' };
+      cls[key].qtd++;
+      cls[key].total += servicoPreco(a.servico, a.valor_informado, a.valor_total);
+      if (a.data > cls[key].ultima) cls[key].ultima = a.data;
+    });
+    var arr = Object.keys(cls).map(function (k) { return cls[k]; }).sort(function (a, b) { return b.total - a.total; });
+
+    var html = '<div class="overflow-x-auto"><table class="w-full text-left text-xs"><thead><tr class="border-b border-dark-300/50 text-[10px] font-semibold uppercase tracking-wider text-gray-400"><th class="px-3 py-2">Cliente</th><th class="px-3 py-2 text-center">Visitas</th><th class="px-3 py-2 text-right">Total Gasto</th><th class="px-3 py-2 text-right">Ticket Médio</th><th class="px-3 py-2">Último Atendimento</th></tr></thead><tbody>';
+    arr.forEach(function (c) {
+      var ticket = c.qtd > 0 ? c.total / c.qtd : 0;
+      var tag = c.qtd >= 5 ? '<span class="ml-1 rounded-full bg-purple-500/15 px-1.5 py-0.5 text-[8px] font-bold text-purple-400">VIP</span>' : c.qtd >= 3 ? '<span class="ml-1 rounded-full bg-blue-500/15 px-1.5 py-0.5 text-[8px] font-bold text-blue-400">Fiel</span>' : '';
+      html += '<tr class="border-b border-dark-300/20 hover:bg-white/[.02]"><td class="px-3 py-2 text-white font-medium">' + esc(c.nome) + tag + '</td><td class="px-3 py-2 text-center text-gray-300">' + c.qtd + '</td><td class="px-3 py-2 text-right font-numeric text-green-400 font-semibold">' + fmtBRL(c.total) + '</td><td class="px-3 py-2 text-right font-numeric text-gray-300">' + fmtBRL(ticket) + '</td><td class="px-3 py-2 text-gray-400">' + (c.ultima ? fmtBR(c.ultima) : '—') + '</td></tr>';
+    });
+    html += '</tbody></table></div>';
+    container.innerHTML = html;
+  }
+
+  /* Export CSV */
+  document.getElementById('rel-export-btn').addEventListener('click', function () {
+    var d = _relData;
+    if (!d.concluidos || !d.concluidos.length) { showToast('Aviso', 'Gere o relatório primeiro.', null); return; }
+    var csv = 'Data,Cliente,Profissional,Servico,Valor,Forma Pagamento,Status\n';
+    d.ags.forEach(function (a) {
+      csv += (a.data || '') + ',' + '"' + (a.cliente_nome || '').replace(/"/g, '""') + '"' + ',' + '"' + (a.profissional || '').replace(/"/g, '""') + '"' + ',' + '"' + (a.servico || '').replace(/"/g, '""') + '"' + ',' + (servicoPreco(a.servico, a.valor_informado, a.valor_total) || 0).toFixed(2) + ',' + '"' + (a.forma_pagamento || '') + '"' + ',' + (a.status || '') + '\n';
+    });
+    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    var link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'relatorio_financeiro_' + relFmtDate(new Date()) + '.csv';
+    link.click();
+    showToast('Exportado', 'CSV gerado com sucesso.', null);
+  });
 
 }); /* DOMContentLoaded */
 </script>
