@@ -1800,7 +1800,7 @@ document.addEventListener('DOMContentLoaded', function () {
       newOnes.forEach(function (ag) {
         showToast(
           'Novo agendamento recebido!',
-          esc(ag.cliente_nome) + ' — ' + esc(ag.servico) + ' • ' + esc(ag.horario),
+          esc(B.nomeFormatado(ag.cliente_nome)) + ' — ' + esc(ag.servico) + ' • ' + esc(ag.horario),
           function () {
             showPage('agendamentos');
             var card = document.querySelector('[data-aceitar="' + ag.id + '"], [data-st="' + ag.id + '"]');
@@ -2043,7 +2043,7 @@ document.addEventListener('DOMContentLoaded', function () {
               '</div>' +
               '<div class="min-w-0">' +
                 '<div class="flex items-center gap-2 flex-wrap">' +
-                  '<p class="font-semibold text-white text-sm truncate">' + esc(ag.cliente_nome) + '</p>' +
+                '<p class="font-semibold text-white text-sm truncate">' + esc(B.nomeFormatado(ag.cliente_nome)) + '</p>' +
                   tagBadge(tag) +
                   (ag.origem === 'online' ? '<span class="inline-flex items-center rounded-full bg-blue-500/15 px-2 py-0.5 text-[10px] font-semibold text-blue-400">Online</span>' :
                    ag.origem === 'recepcao' ? '<span class="inline-flex items-center rounded-full bg-dark-500 border border-dark-300/50 px-2 py-0.5 text-[10px] font-semibold text-gold">Recepção</span>' : '') +
@@ -2575,7 +2575,7 @@ document.addEventListener('DOMContentLoaded', function () {
             (isOnline ? '<span class="inline-flex items-center rounded-full bg-blue-500/15 px-2 py-0.5 text-[10px] font-semibold text-blue-400 shrink-0">Online</span>' :
              ag.origem === 'recepcao' ? '<span class="inline-flex items-center rounded-full bg-dark-500 border border-dark-300/50 px-2 py-0.5 text-[10px] font-semibold text-gold shrink-0">Recepção</span>' : '') +
           '</div>' +
-          '<p class="text-xs text-gray-400 truncate">' + esc(ag.cliente_nome) + (ag.cliente_whatsapp ? ' · ' + ag.cliente_whatsapp : '') + '</p>' +
+          '<p class="text-xs text-gray-400 truncate">' + esc(B.nomeFormatado(ag.cliente_nome)) + (ag.cliente_whatsapp ? ' · ' + ag.cliente_whatsapp : '') + '</p>' +
           '<div class="flex items-center gap-3 mt-1.5">' +
             (valor > 0 ? '<span class="font-numeric text-xs font-bold text-gold">' + fmtBRL(valor) + '</span>' : '') +
             (ag.forma_pagamento ? '<span class="text-[10px] text-gray-500">' + esc(ag.forma_pagamento) + '</span>' : '') +
@@ -2818,7 +2818,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var diaSemana = (function(ds){ var d=new Date(ds+'T12:00:00'); return ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'][d.getDay()]; })(ag.data);
         var dataBR = (function(ds){ var p=ds.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; })(ag.data);
         var prof = ag.profissional || 'Jane Barreiros';
-        var msg = 'Olá ' + esc(ag.cliente_nome) + '! ✅\n\nSeu agendamento no *Studio Jane Barreiros* foi confirmado!\n\n' +
+        var msg = 'Olá ' + esc(B.nomeFormatado(ag.cliente_nome)) + '! ✅\n\nSeu agendamento no *Studio Jane Barreiros* foi confirmado!\n\n' +
           '💇 *Serviço:* ' + esc(ag.servico) + '\n' +
           '📅 *Data:* ' + diaSemana + ', ' + dataBR + '\n' +
           '⏰ *Horário:* ' + ag.horario + '\n' +
@@ -2844,7 +2844,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (B) B.setAgendamentoStatus(agId, 'cancelado');
         var tel = (ag.cliente_whatsapp || '').replace(/\D/g, '');
         var dataBR = (function(ds){ var p=ds.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; })(ag.data);
-        var msg = 'Olá ' + esc(ag.cliente_nome) + '!\n\nInfelizmente o horário solicitado para *' + esc(ag.servico) + '* no dia *' + dataBR + ' às ' + ag.horario + '* não está disponível no momento.\n\n' +
+        var msg = 'Olá ' + esc(B.nomeFormatado(ag.cliente_nome)) + '!\n\nInfelizmente o horário solicitado para *' + esc(ag.servico) + '* no dia *' + dataBR + ' às ' + ag.horario + '* não está disponível no momento.\n\n' +
           'Por favor, acesse nosso agendamento online e escolha outro horário:\nhttps://agendamento.janebarreiros.com.br\n\n' +
           'Pedimos desculpas pelo inconveniente. 🙏\n*Studio Jane Barreiros*';
         renderAgendamentos();
@@ -3618,7 +3618,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var telLimpo = c.whatsapp.replace(/\D/g, '');
       var telLink = telLimpo.length >= 10 ? 'https://wa.me/55' + telLimpo : '#';
       tr.innerHTML =
-        '<td class="px-4 py-3 font-medium text-white">' + esc(c.nome) + '</td>' +
+        '<td class="px-4 py-3 font-medium text-white">' + esc(B.nomeFormatado(c.nome)) + '</td>' +
         '<td class="px-4 py-3 text-gray-400">' + esc(c.whatsapp) + '</td>' +
         '<td class="px-4 py-3 text-center font-numeric font-bold text-gold">' + c.total_atendimentos + '</td>' +
         '<td class="px-4 py-3 text-right font-numeric font-semibold text-green-400">' + (valorGasto > 0 ? fmtBRL(valorGasto) : '—') + '</td>' +
@@ -3743,7 +3743,7 @@ document.addEventListener('DOMContentLoaded', function () {
       '</div>' +
       '<div class="rounded-xl bg-dark-600/60 border border-dark-300/30 p-3 text-center">' +
         '<p class="text-[10px] uppercase tracking-wider text-gray-500 mb-1">Cliente Top</p>' +
-        '<p class="text-sm font-semibold text-blue-400 truncate" title="' + esc(cliMaisFrequente) + '">' + esc(cliMaisFrequente) + '</p>' +
+        '<p class="text-sm font-semibold text-blue-400 truncate" title="' + esc(B.nomeFormatado(cliMaisFrequente)) + '">' + esc(B.nomeFormatado(cliMaisFrequente)) + '</p>' +
       '</div>';
 
     /* --- Contador --- */
@@ -3823,7 +3823,7 @@ document.addEventListener('DOMContentLoaded', function () {
               '<span class="text-2xl mt-0.5 shrink-0">' + icon + '</span>' +
               '<div class="min-w-0">' +
                 '<div class="flex items-center gap-2 flex-wrap">' +
-                  '<span class="font-semibold text-white text-sm">' + esc(ag.cliente_nome) + '</span>' +
+                  '<span class="font-semibold text-white text-sm">' + esc(B.nomeFormatado(ag.cliente_nome)) + '</span>' +
                   '<span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold ' + statusColor + '">' + statusLabel + '</span>' +
                 '</div>' +
                 '<p class="text-xs text-gray-400 mt-0.5">' + esc(ag.servico) + ' · ' + fmtBR(ag.data) + ' às ' + ag.horario + '</p>' +
@@ -4010,7 +4010,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var msgLink = telLink + '?text=' + msg;
 
       tr.innerHTML =
-        '<td class="px-4 py-3 font-medium text-white">' + esc(c.nome) + '</td>' +
+        '<td class="px-4 py-3 font-medium text-white">' + esc(B.nomeFormatado(c.nome)) + '</td>' +
         '<td class="px-4 py-3 text-gray-400">' + esc(c.whatsapp) + '</td>' +
         '<td class="px-4 py-3"><span class="text-gold font-semibold">' + esc(c.servico) + '</span></td>' +
         '<td class="px-4 py-3 text-center text-gray-400">' + dataFormatada + '</td>' +
@@ -4557,7 +4557,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var card = document.createElement('div');
       card.className = 'flex items-center justify-between rounded-xl bg-dark-600 border border-dark-300/50 p-4';
       card.innerHTML =
-        '<div><p class="font-semibold text-white">' + esc(item.cliente_nome) + '</p><p class="text-xs text-gray-400">' + esc(item.servico) + ' · ' + fmtBR(item.data_preferida) + '</p></div>' +
+        '<div><p class="font-semibold text-white">' + esc(B.nomeFormatado(item.cliente_nome)) + '</p><p class="text-xs text-gray-400">' + esc(item.servico) + ' · ' + fmtBR(item.data_preferida) + '</p></div>' +
         '<div class="flex gap-2">' +
           '<a href="https://wa.me/55' + item.cliente_whatsapp.replace(/\D/g,'') + '" target="_blank" class="rounded-lg bg-green-500/15 px-3 py-1.5 text-xs font-semibold text-green-400 hover:bg-green-500/25">WhatsApp</a>' +
           '<button data-rm-espera="' + item.id + '" class="rounded-lg bg-red-500/15 px-3 py-1.5 text-xs font-semibold text-red-400 hover:bg-red-500/25">Remover</button></div>';
@@ -4697,7 +4697,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var row = document.createElement('div');
       row.innerHTML =
         '<div class="flex justify-between mb-1">' +
-          '<span class="text-xs font-medium text-white">' + esc(c.nome) + '</span>' +
+          '<span class="text-xs font-medium text-white">' + esc(B.nomeFormatado(c.nome)) + '</span>' +
           '<span class="font-numeric text-[10px] text-gray-400">' + c.pct + '% · ' + fmtBRL(c.valor) + '</span>' +
         '</div>' +
         '<div class="h-3 rounded-full bg-dark-600 overflow-hidden">' +
@@ -4914,7 +4914,7 @@ document.addEventListener('DOMContentLoaded', function () {
       row.innerHTML =
         '<span class="font-numeric text-sm font-bold ' + medalha + ' w-6 text-right">#' + (i + 1) + '</span>' +
         '<div class="flex-1">' +
-          '<div class="flex justify-between mb-1"><span class="text-xs font-medium text-white truncate">' + esc(c.nome) + tag + '</span><span class="font-numeric text-[10px] text-green-400 font-semibold">' + fmtBRL(c.total) + '</span></div>' +
+          '<div class="flex justify-between mb-1"><span class="text-xs font-medium text-white truncate">' + esc(B.nomeFormatado(c.nome)) + tag + '</span><span class="font-numeric text-[10px] text-green-400 font-semibold">' + fmtBRL(c.total) + '</span></div>' +
           '<div class="h-2 rounded-full bg-dark-600"><div class="h-full rounded-full bg-gradient-to-r from-green-500/80 to-green-400 transition-all" style="width:' + pct + '%"></div></div>' +
         '</div>';
       container.appendChild(row);
@@ -4950,7 +4950,7 @@ document.addEventListener('DOMContentLoaded', function () {
       tr.innerHTML =
         '<td class="px-3 py-2.5 text-gray-400 font-mono text-xs">' + (a.id || '—').slice(0, 12) + '</td>' +
         '<td class="px-3 py-2.5 text-gray-300 text-xs">' + fmtBR(a.data) + ' ' + (a.horario || '—') + '</td>' +
-        '<td class="px-3 py-2.5 text-white text-xs font-medium">' + esc(a.cliente_nome || '—') + '</td>' +
+        '<td class="px-3 py-2.5 text-white text-xs font-medium">' + esc(B.nomeFormatado(a.cliente_nome || '—')) + '</td>' +
         '<td class="px-3 py-2.5 text-gray-300 text-xs">' + (a.servico || '—') + (temProdutos ? ' <span class="text-purple-400 text-[9px]">📦</span>' : '') + '</td>' +
         '<td class="px-3 py-2.5 text-right font-numeric text-xs font-semibold">' + valorDisplay + '</td>' +
         '<td class="px-3 py-2.5 text-center">' + (statusMap[a.status] || a.status) + '</td>';

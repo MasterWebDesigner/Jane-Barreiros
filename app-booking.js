@@ -495,6 +495,15 @@ var APP_VERSION = '1.3';
     setStore('agendamentos', lista);
   }
 
+  function capitalizarNome(nome) {
+    if (!nome || typeof nome !== 'string') return nome;
+    return nome.replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+  }
+
+  function nomeFormatado(nome) {
+    return capitalizarNome(nome);
+  }
+
   function gerarId() {
     return 'ag-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5);
   }
@@ -508,7 +517,7 @@ var APP_VERSION = '1.3';
       data: dados.data,           // "YYYY-MM-DD"
       horario: dados.horario,     // "09:00"
       profissional: dados.profissional || '',
-      cliente_nome: dados.cliente_nome,
+      cliente_nome: capitalizarNome(dados.cliente_nome),
       cliente_whatsapp: dados.cliente_whatsapp,
       cliente_email: dados.cliente_email || '',
       forma_pagamento: dados.forma_pagamento || '',
@@ -740,7 +749,7 @@ var APP_VERSION = '1.3';
       id: 'le-' + Date.now(),
       servico: dados.servico,
       data_preferida: dados.data_preferida,
-      cliente_nome: dados.cliente_nome,
+      cliente_nome: capitalizarNome(dados.cliente_nome),
       cliente_whatsapp: dados.cliente_whatsapp,
       cliente_email: dados.cliente_email || '',
       criado_em: new Date().toISOString(),
@@ -789,7 +798,7 @@ var APP_VERSION = '1.3';
     var agora = new Date().toISOString();
 
     if (existente) {
-      existente.nome = nome;
+      existente.nome = capitalizarNome(nome);
       if (email) existente.email = email;
       existente.total_atendimentos++;
       existente.ultimo_atendimento = agora;
@@ -804,7 +813,7 @@ var APP_VERSION = '1.3';
 
     var novo = {
       id: 'cli-' + Date.now(),
-      nome: nome,
+      nome: capitalizarNome(nome),
       whatsapp: whatsapp,
       email: email || '',
       tag: 'Nova',
@@ -839,7 +848,7 @@ var APP_VERSION = '1.3';
     clientes.forEach(function (c) {
       if (c.id === id) {
         if (dados.tag !== undefined) c.tag = dados.tag;
-        if (dados.nome !== undefined) c.nome = dados.nome;
+        if (dados.nome !== undefined) c.nome = capitalizarNome(dados.nome);
         if (dados.email !== undefined) c.email = dados.email;
         if (dados.whatsapp !== undefined) c.whatsapp = dados.whatsapp;
       }
@@ -965,6 +974,8 @@ var APP_VERSION = '1.3';
      ================================================================ */
   window.Booking = {
     version: APP_VERSION,
+    capitalizarNome: capitalizarNome,
+    nomeFormatado: nomeFormatado,
     initFirebase: initFirebase,
     loadAllData: loadAllData,
     listenFirebase: listenFirebase,
