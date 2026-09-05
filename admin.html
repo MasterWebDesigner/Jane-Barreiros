@@ -768,6 +768,14 @@
           </table>
         </div>
         <p id="fat-vazio" class="hidden text-center text-gray-500 py-8 text-sm">Nenhum atendimento registrado.</p>
+        <div id="fat-paginacao" class="hidden items-center justify-between mt-4 pt-4 border-t border-dark-300/30">
+          <span id="fat-pag-info" class="text-[11px] text-gray-500"></span>
+          <div class="flex items-center gap-1">
+            <button id="fat-pag-prev" class="rounded-lg bg-dark-600 px-3 py-1.5 text-[11px] font-semibold text-gray-400 hover:text-white disabled:opacity-40" disabled>Anterior</button>
+            <span id="fat-pag-nums"></span>
+            <button id="fat-pag-next" class="rounded-lg bg-dark-600 px-3 py-1.5 text-[11px] font-semibold text-gray-400 hover:text-white disabled:opacity-40" disabled>Próxima</button>
+          </div>
+        </div>
       </div>
 
       <!-- ==================== RELATÓRIO FINANCEIRO ==================== -->
@@ -5285,17 +5293,32 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  var _fatPagina = 1;
+  var _fatPorPagina = 20;
+  var _fatTodos = [];
+
   function renderFatTabela(agsPeriodo) {
-    var tbody = document.getElementById('fat-tbody');
-    var vazio = document.getElementById('fat-vazio');
-    var recentes = agsPeriodo.slice().sort(function (a, b) {
+    _fatTodos = agsPeriodo.slice().sort(function (a, b) {
       if (b.data === a.data) return (b.horario || '').localeCompare(a.horario || '');
       return (b.data || '').localeCompare(a.data || '');
-    }).slice(0, 20);
+    });
+    _fatPagina = 1;
+    _renderFatPage();
+  }
+
+  function _renderFatPage() {
+    var tbody = document.getElementById('fat-tbody');
+    var vazio = document.getElementById('fat-vazio');
+    var pag = document.getElementById('fat-paginacao');
     tbody.innerHTML = '';
-    if (!recentes.length) { vazio.classList.remove('hidden'); return; }
+    if (!_fatTodos.length) { vazio.classList.remove('hidden'); pag.classList.add('hidden'); return; }
     vazio.classList.add('hidden');
-    recentes.forEach(function (a) {
+    var totalPaginas = Math.ceil(_fatTodos.length / _fatPorPagina);
+    if (_fatPagina > totalPaginas) _fatPagina = totalPaginas;
+    var inicio = (_fatPagina - 1) * _fatPorPagina;
+    var slice = _fatTodos.slice(inicio, inicio + _fatPorPagina);
+
+    slice.forEach(function (a) {
       var total = a.valor_total || servicoPreco(a.servico, a.valor_informado, a.valor_total);
       var temProdutos = a.produtos_vendidos && a.produtos_vendidos.length > 0;
       var srvVal = a.valor_servico || servicoPreco(a.servico, a.valor_informado, a.valor_total);
@@ -5320,7 +5343,34 @@ document.addEventListener('DOMContentLoaded', function () {
         '<td class="px-3 py-2.5 text-center">' + (statusMap[a.status] || a.status) + '</td>';
       tbody.appendChild(tr);
     });
+
+    if (totalPaginas > 1) {
+      pag.classList.remove('hidden');
+      pag.classList.add('flex');
+      document.getElementById('fat-pag-info').textContent = 'Mostrando ' + (inicio + 1) + '–' + Math.min(inicio + _fatPorPagina, _fatTodos.length) + ' de ' + _fatTodos.length;
+      document.getElementById('fat-pag-prev').disabled = _fatPagina <= 1;
+      document.getElementById('fat-pag-next').disabled = _fatPagina >= totalPaginas;
+      var nums = '';
+      for (var i = 1; i <= totalPaginas; i++) {
+        if (totalPaginas > 7 && i > 2 && i < totalPaginas - 1 && Math.abs(i - _fatPagina) > 1) {
+          if (i === 3 || i === totalPaginas - 2) nums += '<span class="px-1 text-gray-600">…</span>';
+          continue;
+        }
+        nums += '<button class="fat-pag-num rounded-lg px-2.5 py-1 text-[11px] font-semibold ' + (i === _fatPagina ? 'bg-gold/15 text-gold' : 'text-gray-400 hover:text-white') + '" data-page="' + i + '">' + i + '</button>';
+      }
+      document.getElementById('fat-pag-nums').innerHTML = nums;
+    } else {
+      pag.classList.add('hidden');
+      pag.classList.remove('flex');
+    }
   }
+
+  document.getElementById('fat-pag-prev').addEventListener('click', function () { if (_fatPagina > 1) { _fatPagina--; _renderFatPage(); } });
+  document.getElementById('fat-pag-next').addEventListener('click', function () { var max = Math.ceil(_fatTodos.length / _fatPorPagina); if (_fatPagina < max) { _fatPagina++; _renderFatPage(); } });
+  document.getElementById('fat-pag-nums').addEventListener('click', function (e) {
+    var btn = e.target.closest('.fat-pag-num');
+    if (btn) { _fatPagina = parseInt(btn.getAttribute('data-page')); _renderFatPage(); }
+  });
 
   /* ============================================================
      PRODUTOS — Venda ao Concluir + Venda Balcão
