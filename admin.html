@@ -842,7 +842,13 @@
     <section id="page-clientes" class="admin-page p-6 lg:p-8 hidden">
       <div class="flex items-center justify-between mb-6">
         <h1 class="font-display text-2xl font-semibold text-white">Clientes</h1>
-        <input id="cli-busca" type="text" class="w-72" placeholder="Buscar por nome ou WhatsApp...">
+        <div class="flex items-center gap-3">
+          <input id="cli-busca" type="text" class="w-72" placeholder="Buscar por nome ou WhatsApp...">
+          <button id="cli-novo-btn" class="rounded-xl border border-gold/40 bg-dark-600 px-4 py-2.5 text-sm font-semibold text-gold hover:bg-gold/10 transition-colors flex items-center gap-2">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            + Novo Cliente
+          </button>
+        </div>
       </div>
       <div class="overflow-x-auto">
         <table class="w-full text-left text-sm">
@@ -4372,15 +4378,30 @@ document.addEventListener('DOMContentLoaded', function () {
     abrirHistoricoCliente(whatsapp, nome);
   });
 
+  /* --- Novo Cliente --- */
+  var _cliNovoMode = false;
+  document.getElementById('cli-novo-btn').addEventListener('click', function () {
+    _cliNovoMode = true;
+    document.getElementById('cli-edit-id').value = '';
+    document.getElementById('cli-edit-nome').value = '';
+    document.getElementById('cli-edit-whatsapp').value = '';
+    document.getElementById('cli-edit-email').value = '';
+    document.getElementById('cli-edit-tag').value = 'Nova';
+    document.querySelector('#cli-edit-modal h3').textContent = 'Novo Cliente';
+    document.getElementById('cli-edit-modal').classList.remove('hidden');
+  });
+
   /* --- Editar Cliente --- */
   document.addEventListener('click', function (e) {
     var btn = e.target.closest('.cli-edit-btn');
     if (!btn) return;
+    _cliNovoMode = false;
     document.getElementById('cli-edit-id').value = btn.getAttribute('data-cli-id');
     document.getElementById('cli-edit-nome').value = btn.getAttribute('data-cli-nome');
     document.getElementById('cli-edit-whatsapp').value = btn.getAttribute('data-cli-whatsapp');
     document.getElementById('cli-edit-email').value = btn.getAttribute('data-cli-email');
     document.getElementById('cli-edit-tag').value = btn.getAttribute('data-cli-tag') || 'Nova';
+    document.querySelector('#cli-edit-modal h3').textContent = 'Editar Cliente';
     document.getElementById('cli-edit-modal').classList.remove('hidden');
   });
   document.getElementById('cli-edit-cancel').addEventListener('click', function () {
@@ -4393,10 +4414,17 @@ document.addEventListener('DOMContentLoaded', function () {
     var email = document.getElementById('cli-edit-email').value.trim();
     var tag = document.getElementById('cli-edit-tag').value;
     if (!nome) { alert('Informe o nome.'); return; }
+    if (!whatsapp) { alert('Informe o WhatsApp.'); return; }
     if (!/^[A-ZÀ-Ú]/.test(nome)) { alert('O nome deve começar com letra maiúscula.'); return; }
     if (/\s/.test(nome) && !/^[A-ZÀ-Ú][a-zà-ú]+\s+[A-ZÀ-Ú]/.test(nome)) { alert('Informe nome e sobrenome, ambos com letra maiúscula.'); return; }
-    if (B && B.atualizarCliente) {
-      B.atualizarCliente(id, { nome: nome, whatsapp: whatsapp, email: email, tag: tag });
+    if (_cliNovoMode) {
+      if (B && B.registrarCliente) {
+        B.registrarCliente(nome, whatsapp, email, null);
+      }
+    } else {
+      if (B && B.atualizarCliente) {
+        B.atualizarCliente(id, { nome: nome, whatsapp: whatsapp, email: email, tag: tag });
+      }
     }
     document.getElementById('cli-edit-modal').classList.add('hidden');
     renderClientes(document.getElementById('cli-busca').value);
