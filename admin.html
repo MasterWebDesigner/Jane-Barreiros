@@ -4782,7 +4782,7 @@ document.addEventListener('DOMContentLoaded', function () {
     _renderDespesasTabela(despesasPeriodo);
 
     /* Pagamento */
-    renderFatPagamento(concluidosPeriodo, servicoPreco);
+    renderFatPagamento(concluidos, servicoPreco);
     renderFatTopServicos(concluidosPeriodo);
     renderFatTopClientes(concluidosPeriodo);
     renderFatTabela(agsPeriodo);
@@ -4793,7 +4793,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.fat-pag-tab').forEach(function (b) {
           b.className = 'fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold ' + (b === btn ? 'text-gold bg-gold/15' : 'text-gray-400 hover:text-gray-200');
         });
-        renderFatPagamento(concluidosPeriodo, servicoPreco);
+        renderFatPagamento(concluidos, servicoPreco);
       };
     });
     document.getElementById('fat-cat-filter').onchange = function () {
@@ -4954,15 +4954,13 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('fin-desp-categoria-filter').addEventListener('change', function () { renderFaturamento(); });
   document.getElementById('fin-desp-status-filter').addEventListener('change', function () { renderFaturamento(); });
 
-  function renderFatPagamento(concluidosPeriodo, servicoPreco) {
+  function renderFatPagamento(concluidos, servicoPreco) {
     var pool;
-    if (fatPagTab === 'periodo') {
-      pool = concluidosPeriodo;
-    } else if (fatPagTab === 'ano') {
+    if (fatPagTab === 'ano') {
       var selAnoStr = String(fatPeriodo.getFullYear());
-      pool = concluidosPeriodo.filter(function (a) { return a.data && a.data.slice(0, 4) === selAnoStr; });
+      pool = concluidos.filter(function (a) { return a.data && a.data.slice(0, 4) === selAnoStr; });
     } else {
-      pool = concluidosPeriodo;
+      pool = concluidos;
     }
     var pix = 0, credito = 0, debito = 0, dinheiro = 0;
     pool.forEach(function (a) {
