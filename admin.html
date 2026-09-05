@@ -655,8 +655,7 @@
         <div class="flex items-center justify-between mb-4">
           <h3 class="font-display text-base font-semibold text-white">Entradas por Pagamento</h3>
           <div class="flex gap-1">
-            <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gold bg-gold/15" data-pag="periodo">Período</button>
-            <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-pag="dia">Dia</button>
+            <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gold bg-gold/15" data-pag="dia">Dia</button>
             <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-pag="mes">Mês</button>
             <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-pag="ano">Ano</button>
             <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-pag="total">Total</button>
@@ -4692,7 +4691,7 @@ document.addEventListener('DOMContentLoaded', function () {
   /* ============================================================
      FINANCEIRO
      ============================================================ */
-  var fatPagTab = 'periodo';
+  var fatPagTab = 'dia';
   var fatPeriodo = new Date(); fatPeriodo.setHours(12,0,0,0);
   var fatPeriodType = 'mes'; /* mes | trimestre | semestre | ano */
   var _despEditId = null;
