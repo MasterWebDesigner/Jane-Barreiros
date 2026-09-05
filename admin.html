@@ -4877,17 +4877,6 @@ document.addEventListener('DOMContentLoaded', function () {
     renderFatTopClientes(concluidosPeriodo);
     renderFatTabela(agsPeriodo);
 
-    document.querySelectorAll('.fat-pag-tab').forEach(function (btn) {
-      btn.onclick = function () {
-        fatPagTab = btn.getAttribute('data-pag');
-        document.querySelectorAll('.fat-pag-tab').forEach(function (b) {
-          b.className = 'fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold ' + (b === btn ? 'text-gold bg-gold/15' : 'text-gray-400 hover:text-gray-200');
-        });
-        var _ags = B ? B.getAgendamentos() : [];
-        var _concluidos = _ags.filter(function (a) { return a.status === 'concluido'; });
-        renderFatPagamento(_concluidos, servicoPreco);
-      };
-    });
     document.getElementById('fat-cat-filter').onchange = function () {
       renderFatTopServicos(concluidosPeriodo);
     };
@@ -5103,7 +5092,21 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('fin-desp-categoria-filter').addEventListener('change', function () { renderFaturamento(); });
   document.getElementById('fin-desp-status-filter').addEventListener('change', function () { renderFaturamento(); });
 
-  function renderFatPagamento(concluidos, servicoPreco) {
+  /* Event delegation para abas de Pagamento (funciona mesmo após re-render) */
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.fat-pag-tab');
+    if (!btn) return;
+    fatPagTab = btn.getAttribute('data-pag');
+    document.querySelectorAll('.fat-pag-tab').forEach(function (b) {
+      b.className = 'fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold ' + (b === btn ? 'text-gold bg-gold/15' : 'text-gray-400 hover:text-gray-200');
+    });
+    var _ags = B ? B.getAgendamentos() : [];
+    var _concluidos = _ags.filter(function (a) { return a.status === 'concluido'; });
+    renderFatPagamento(_concluidos, servicoPreco);
+  });
+
+  function renderFatPagamento(concluidos, _servicoPreco) {
+    var _sp = _servicoPreco || servicoPreco;
     var pool;
     if (fatPagTab === 'dia') {
       var hojeStr = hoje();
@@ -5119,7 +5122,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     var pix = 0, credito = 0, debito = 0, dinheiro = 0;
     pool.forEach(function (a) {
-      var valor = servicoPreco(a.servico, a.valor_informado, a.valor_total);
+      var valor = a.valor_total || _sp(a.servico, a.valor_informado, a.valor_total) || 0;
       var fp = (a.forma_pagamento || '').toLowerCase().trim();
       if (fp === 'pix') pix += valor;
       else if (fp === 'cartão de crédito' || fp === 'cartao de credito' || fp === 'cartão de credito' || fp === 'credito' || fp === 'crédito') credito += valor;
