@@ -306,6 +306,9 @@
             <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/></svg>
             + Venda Balcão
           </button>
+          <button id="dash-venda-curso-btn" class="rounded-xl border border-cyan-500/40 bg-dark-600 px-4 py-2.5 text-sm font-semibold text-cyan-400 hover:bg-cyan-500/10 transition-colors flex items-center gap-2">
+            📚 + Venda Curso
+          </button>
           <button id="dash-encaixe-btn" class="gold-btn rounded-xl px-5 py-2.5 text-sm font-semibold flex items-center gap-2">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             + Agendamento Encaixe
@@ -314,7 +317,7 @@
       </div>
 
       <!-- Cards de Métricas -->
-      <div class="grid grid-cols-2 gap-4 lg:grid-cols-4 mb-6">
+      <div class="grid grid-cols-2 gap-4 lg:grid-cols-5 mb-6">
         <div class="card-dark p-5 relative overflow-hidden">
           <div class="absolute top-0 right-0 w-16 h-16 bg-green-500/5 rounded-bl-full"></div>
           <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Atendimentos do Dia</p>
@@ -339,6 +342,12 @@
           <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Lista de Espera</p>
           <p id="dash-espera" class="mt-2 font-numeric text-3xl font-bold text-amber-400">0</p>
           <p class="text-[10px] text-gray-500 mt-1">aguardando vaga</p>
+        </div>
+        <div class="card-dark p-5 relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-16 h-16 bg-cyan-500/5 rounded-bl-full"></div>
+          <p class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">📚 Vendas Curso</p>
+          <p id="dash-curso-vendas" class="mt-2 font-numeric text-3xl font-bold text-cyan-400">0</p>
+          <p id="dash-curso-lucro" class="mt-1 font-numeric text-sm font-semibold text-green-400">R$ 0 lucro</p>
         </div>
       </div>
 
@@ -581,7 +590,7 @@
           <div class="absolute top-0 right-0 w-20 h-20 bg-green-500/5 rounded-bl-full"></div>
           <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Total Entradas</p>
           <p id="fin-entradas-valor" class="mt-2 font-numeric text-3xl font-bold text-green-400">R$ 0</p>
-          <p id="fin-entradas-desc" class="mt-1 text-xs text-gray-500">Serviços + Vendas Balcão</p>
+          <p id="fin-entradas-desc" class="mt-1 text-xs text-gray-500">Serviços + Balcão + Curso</p>
         </div>
         <div class="card-dark p-5 relative overflow-hidden">
           <div class="absolute top-0 right-0 w-20 h-20 bg-red-500/5 rounded-bl-full"></div>
@@ -1974,6 +1983,11 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('dash-total-dia').textContent = (todosAgs.length - canceladosHoje);
     document.getElementById('dash-clientes-pedidos').textContent = stats.clientes_com_pedidos;
     document.getElementById('dash-espera').textContent = espera.length;
+
+    /* Vendas Curso */
+    var cursoData = B ? B.getCursoVendas() : { vendas: 0, totalLucro: 0 };
+    document.getElementById('dash-curso-vendas').textContent = cursoData.vendas || 0;
+    document.getElementById('dash-curso-lucro').textContent = fmtBRL(cursoData.totalLucro || 0) + ' lucro';
 
     /* Badge de pendentes */
     updatePendenteBadge(stats.pendentes || 0);
@@ -4740,6 +4754,17 @@ document.addEventListener('DOMContentLoaded', function () {
     /* --- Entradas do período --- */
     var totalEntradas = concluidosPeriodo.reduce(function (s, a) { return s + servicoPreco(a.servico, a.valor_informado, a.valor_total); }, 0);
 
+    /* + Lucro do curso no período */
+    var cursoVendas = B ? B.getCursoVendas() : { historico: [] };
+    var cursoPeriodo = (cursoVendas.historico || []).filter(function (v) {
+      if (!v.data) return false;
+      var vData = v.data.slice(0, 10);
+      var r = getPeriodRange();
+      return vData >= fmtDateISO(r.inicio) && vData <= fmtDateISO(r.fim);
+    });
+    var totalCursoPeriodo = cursoPeriodo.reduce(function (s, v) { return s + (v.valor || 0); }, 0);
+    totalEntradas += totalCursoPeriodo;
+
     /* --- Saídas do período --- */
     var despesas = B ? B.getDespesas() : [];
     var despesasPeriodo = despesas.filter(isInPeriodDesp);
@@ -5378,6 +5403,13 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   document.getElementById('dash-venda-balcao-btn').addEventListener('click', abrirModalVendaAvulsa);
+  document.getElementById('dash-venda-curso-btn').addEventListener('click', function () {
+    if (!confirm('Registrar venda do curso (R$ 37,90 lucro)?')) return;
+    var data = B.registrarVendaCurso();
+    document.getElementById('dash-curso-vendas').textContent = data.vendas;
+    document.getElementById('dash-curso-lucro').textContent = fmtBRL(data.totalLucro) + ' lucro';
+    showToast('Venda Curso', 'Registrada! Total: ' + data.vendas + ' vendas — ' + fmtBRL(data.totalLucro) + ' lucro', null);
+  });
   document.getElementById('ag-venda-balcao-btn').addEventListener('click', abrirModalVendaAvulsa);
   document.getElementById('va-close').addEventListener('click', fecharModalVendaAvulsa);
   document.getElementById('va-cancelar').addEventListener('click', fecharModalVendaAvulsa);

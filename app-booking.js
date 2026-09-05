@@ -1,7 +1,7 @@
 /**
  * app-booking.js — Sistema de Agendamento e Gestão do Studio Jane Barreiros
  * Armazenamento via Firebase Realtime Database (sync entre dispositivos).
- * Versão: 1.6.1
+ * Versão: 1.7.0
  */
 
 var APP_VERSION = '1.3.2';
@@ -507,6 +507,29 @@ var APP_VERSION = '1.3.2';
 
   function setDespesas(lista) {
     return setStore('despesas', lista);
+  }
+
+  /* ================================================================
+     CURSO — Vendas do Curso (lucro por venda)
+     ================================================================ */
+  var CURSO_LUCRO_POR_VENDA = 37.90;
+
+  function getCursoVendas() {
+    return getStore('curso_vendas') || { vendas: 0, totalLucro: 0, historico: [] };
+  }
+
+  function setCursoVendas(data) {
+    return setStore('curso_vendas', data);
+  }
+
+  function registrarVendaCurso() {
+    var data = getCursoVendas();
+    data.vendas = (data.vendas || 0) + 1;
+    data.totalLucro = (data.totalLucro || 0) + CURSO_LUCRO_POR_VENDA;
+    data.historico = data.historico || [];
+    data.historico.push({ data: new Date().toISOString(), valor: CURSO_LUCRO_POR_VENDA });
+    setCursoVendas(data);
+    return data;
   }
 
   /* ================================================================
@@ -1028,6 +1051,10 @@ var APP_VERSION = '1.3.2';
     setEstoque: setEstoque,
     getDespesas: getDespesas,
     setDespesas: setDespesas,
+    getCursoVendas: getCursoVendas,
+    setCursoVendas: setCursoVendas,
+    registrarVendaCurso: registrarVendaCurso,
+    CURSO_LUCRO_POR_VENDA: CURSO_LUCRO_POR_VENDA,
     getAgendamentosPorProfissional: getAgendamentosPorProfissional,
     horariosDisponiveis: horariosDisponiveis,
     getBloqueios: getBloqueios,
