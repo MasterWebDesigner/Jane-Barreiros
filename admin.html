@@ -351,6 +351,15 @@
         </div>
       </div>
 
+      <!-- Histórico Vendas Curso -->
+      <div id="dash-curso-historico-wrap" class="card-dark p-5 mb-6 hidden">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-display text-base font-semibold text-white">📚 Histórico Vendas Curso</h3>
+          <span id="dash-curso-hist-count" class="text-xs text-gray-500"></span>
+        </div>
+        <div id="dash-curso-historico" class="space-y-2 max-h-48 overflow-y-auto"></div>
+      </div>
+
       <!-- Lista Operacional do Dia -->
       <div class="card-dark p-5 mb-6">
         <div class="flex items-center justify-between mb-4">
@@ -1985,9 +1994,37 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('dash-espera').textContent = espera.length;
 
     /* Vendas Curso */
-    var cursoData = B ? B.getCursoVendas() : { vendas: 0, totalLucro: 0 };
+    var cursoData = B ? B.getCursoVendas() : { vendas: 0, totalLucro: 0, historico: [] };
     document.getElementById('dash-curso-vendas').textContent = cursoData.vendas || 0;
     document.getElementById('dash-curso-lucro').textContent = fmtBRL(cursoData.totalLucro || 0) + ' lucro';
+
+    /* Histórico de vendas do curso */
+    var histWrap = document.getElementById('dash-curso-historico-wrap');
+    var histContainer = document.getElementById('dash-curso-historico');
+    var histCount = document.getElementById('dash-curso-hist-count');
+    var hist = (cursoData.historico || []).slice().reverse();
+    if (hist.length > 0) {
+      histWrap.classList.remove('hidden');
+      histCount.textContent = hist.length + ' venda' + (hist.length !== 1 ? 's' : '');
+      histContainer.innerHTML = '';
+      hist.forEach(function (v) {
+        var d = new Date(v.data);
+        var dia = (d.getDate() < 10 ? '0' : '') + d.getDate();
+        var mes = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'][d.getMonth()];
+        var hora = (d.getHours() < 10 ? '0' : '') + d.getHours() + ':' + (d.getMinutes() < 10 ? '0' : '') + d.getMinutes();
+        var linha = document.createElement('div');
+        linha.className = 'flex items-center justify-between rounded-lg bg-dark-700 px-3 py-2 text-xs';
+        linha.innerHTML =
+          '<div class="flex items-center gap-2">' +
+            '<span class="h-2 w-2 rounded-full bg-cyan-400 flex-shrink-0"></span>' +
+            '<span class="text-gray-300">' + dia + ' ' + mes + ' ' + d.getFullYear() + ' às ' + hora + '</span>' +
+          '</div>' +
+          '<span class="font-numeric font-semibold text-green-400">+ ' + fmtBRL(v.valor || 37.90) + '</span>';
+        histContainer.appendChild(linha);
+      });
+    } else {
+      histWrap.classList.add('hidden');
+    }
 
     /* Badge de pendentes */
     updatePendenteBadge(stats.pendentes || 0);
@@ -5406,8 +5443,7 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('dash-venda-curso-btn').addEventListener('click', function () {
     if (!confirm('Registrar venda do curso (R$ 37,90 lucro)?')) return;
     var data = B.registrarVendaCurso();
-    document.getElementById('dash-curso-vendas').textContent = data.vendas;
-    document.getElementById('dash-curso-lucro').textContent = fmtBRL(data.totalLucro) + ' lucro';
+    renderDashboard();
     showToast('Venda Curso', 'Registrada! Total: ' + data.vendas + ' vendas — ' + fmtBRL(data.totalLucro) + ' lucro', null);
   });
   document.getElementById('ag-venda-balcao-btn').addEventListener('click', abrirModalVendaAvulsa);
