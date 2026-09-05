@@ -1,10 +1,10 @@
 /**
  * app-booking.js — Sistema de Agendamento e Gestão do Studio Jane Barreiros
  * Armazenamento via Firebase Realtime Database (sync entre dispositivos).
- * Versão: 1.3
+ * Versão: 1.3.2
  */
 
-var APP_VERSION = '1.3';
+var APP_VERSION = '1.3.2';
 
 (function () {
   'use strict';
@@ -225,10 +225,35 @@ var APP_VERSION = '1.3';
   }
 
   /* Carrega todos os dados do Firebase para a memória + migra localStorage antigo */
+  function _sincronizarNomesClientes() {
+    var clientes = _cache['clientes'] || [];
+    var agendamentos = _cache['agendamentos'] || [];
+    if (!clientes.length || !agendamentos.length) return;
+    var mapaClientes = {};
+    clientes.forEach(function (c) {
+      var tel = (c.whatsapp || '').replace(/\D/g, '');
+      if (tel) mapaClientes[tel] = c.nome;
+    });
+    var alterado = false;
+    agendamentos.forEach(function (a) {
+      var tel = (a.cliente_whatsapp || '').replace(/\D/g, '');
+      var nomeCorreto = mapaClientes[tel];
+      if (nomeCorreto && a.cliente_nome !== nomeCorreto) {
+        console.log('[Sync] Corrigindo nome:', a.cliente_nome, '->', nomeCorreto, '| tel:', tel);
+        a.cliente_nome = nomeCorreto;
+        alterado = true;
+      }
+    });
+    if (alterado) {
+      setAgendamentos(agendamentos);
+      console.log('[Sync] Nomes de clientes sincronizados nos agendamentos.');
+    }
+  }
+
   function loadAllData(cb) {
     var keys = ['agendamentos', 'clientes', 'servicos', 'bloqueios', 'lista_espera', 'profissionais', 'secoes', 'estoque', 'despesas'];
     var pending = keys.length;
-    var done = function () { pending--; if (pending <= 0) { _loadingComplete = true; console.log('[Booking] loadAllData COMPLETO. Cache atualizado.'); if (cb) cb(); } };
+    var done = function () { pending--; if (pending <= 0) { _loadingComplete = true; console.log('[Booking] loadAllData COMPLETO. Cache atualizado.'); _sincronizarNomesClientes(); if (cb) cb(); } };
 
     function _processVal(key, val, fonte) {
       console.log('[Booking] _processVal:', key, '| fonte:', fonte, '| dados:', val === null ? 'NULL' : (Array.isArray(val) ? val.length + ' itens' : typeof val));
