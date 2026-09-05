@@ -661,7 +661,7 @@
             <button class="fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-pag="total">Total</button>
           </div>
         </div>
-        <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <div class="grid grid-cols-2 gap-3 lg:grid-cols-5">
           <div class="rounded-xl bg-dark-600 border border-dark-300/30 p-4 text-center">
             <p class="text-xs text-gray-400 mb-1">Pix</p>
             <p id="fat-pag-pix" class="font-numeric text-xl font-bold text-green-400">R$ 0</p>
@@ -677,6 +677,10 @@
           <div class="rounded-xl bg-dark-600 border border-dark-300/30 p-4 text-center">
             <p class="text-xs text-gray-400 mb-1">Dinheiro</p>
             <p id="fat-pag-dinheiro" class="font-numeric text-xl font-bold text-amber-400">R$ 0</p>
+          </div>
+          <div class="rounded-xl bg-dark-600 border border-dark-300/30 p-4 text-center">
+            <p class="text-xs text-gray-400 mb-1">📚 Curso</p>
+            <p id="fat-pag-curso" class="font-numeric text-xl font-bold text-cyan-400">R$ 0</p>
           </div>
         </div>
       </div>
@@ -5129,10 +5133,29 @@ document.addEventListener('DOMContentLoaded', function () {
       else if (fp === 'dinheiro' || fp === 'cash') dinheiro += valor;
       else { pix += valor; }
     });
+    /* Curso — lucro por vendas no período */
+    var cursoTotal = 0;
+    if (B && B.getCursoVendas) {
+      var cv = B.getCursoVendas();
+      var hist = (cv.historico || []);
+      if (fatPagTab === 'dia') {
+        var hojeISO = hoje();
+        cursoTotal = hist.filter(function (v) { return v.data && v.data.slice(0, 10) === hojeISO; }).reduce(function (s, v) { return s + (v.valor || 0); }, 0);
+      } else if (fatPagTab === 'mes') {
+        var mesISO = fatPeriodo.getFullYear() + '-' + (fatPeriodo.getMonth() < 9 ? '0' : '') + (fatPeriodo.getMonth() + 1);
+        cursoTotal = hist.filter(function (v) { return v.data && v.data.slice(0, 7) === mesISO; }).reduce(function (s, v) { return s + (v.valor || 0); }, 0);
+      } else if (fatPagTab === 'ano') {
+        var anoStr = String(fatPeriodo.getFullYear());
+        cursoTotal = hist.filter(function (v) { return v.data && v.data.slice(0, 4) === anoStr; }).reduce(function (s, v) { return s + (v.valor || 0); }, 0);
+      } else {
+        cursoTotal = cv.totalLucro || 0;
+      }
+    }
     document.getElementById('fat-pag-pix').textContent = fmtBRL(pix);
     document.getElementById('fat-pag-credito').textContent = fmtBRL(credito);
     document.getElementById('fat-pag-debito').textContent = fmtBRL(debito);
     document.getElementById('fat-pag-dinheiro').textContent = fmtBRL(dinheiro);
+    document.getElementById('fat-pag-curso').textContent = fmtBRL(cursoTotal);
   }
 
   function renderFatTopServicos(concluidos) {
