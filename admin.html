@@ -583,7 +583,8 @@
           <div class="absolute top-0 right-0 w-20 h-20 bg-red-500/5 rounded-bl-full"></div>
           <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Total Saídas</p>
           <p id="fin-saidas-valor" class="mt-2 font-numeric text-3xl font-bold text-red-400">R$ 0</p>
-          <p id="fin-saidas-desc" class="mt-1 text-xs text-gray-500">Despesas do mês</p>
+          <p id="fin-saidas-previsto" class="hidden mt-1 font-numeric text-sm text-amber-400"></p>
+          <p id="fin-saidas-desc" class="mt-1 text-xs text-gray-500">Despesas pagas</p>
         </div>
         <div class="card-dark p-5 relative overflow-hidden">
           <div class="absolute top-0 right-0 w-20 h-20 bg-gold/5 rounded-bl-full"></div>
@@ -4738,9 +4739,12 @@ document.addEventListener('DOMContentLoaded', function () {
     /* --- Saídas do período --- */
     var despesas = B ? B.getDespesas() : [];
     var despesasPeriodo = despesas.filter(isInPeriodDesp);
-    var totalSaidas = despesasPeriodo.reduce(function (s, d) { return s + (parseFloat(d.valor) || 0); }, 0);
+    var despesasPagas = despesasPeriodo.filter(function (d) { return d.status === 'pago'; });
+    var despesasPendentes = despesasPeriodo.filter(function (d) { return d.status !== 'pago'; });
+    var totalSaidas = despesasPagas.reduce(function (s, d) { return s + (parseFloat(d.valor) || 0); }, 0);
+    var totalSaidasPrevisto = despesasPendentes.reduce(function (s, d) { return s + (parseFloat(d.valor) || 0); }, 0);
 
-    /* --- Lucro Líquido --- */
+    /* --- Lucro Líquido (apenas pagos) --- */
     var lucroLiquido = totalEntradas - totalSaidas;
 
     /* --- Faturamento Previsto --- */
@@ -4751,7 +4755,14 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('fin-entradas-valor').textContent = fmtBRL(totalEntradas);
     document.getElementById('fin-entradas-desc').textContent = concluidosPeriodo.length + ' atendimento' + (concluidosPeriodo.length !== 1 ? 's' : '') + ' concluído' + (concluidosPeriodo.length !== 1 ? 's' : '');
     document.getElementById('fin-saidas-valor').textContent = fmtBRL(totalSaidas);
-    document.getElementById('fin-saidas-desc').textContent = despesasPeriodo.length + ' despesa' + (despesasPeriodo.length !== 1 ? 's' : '') + ' registrada' + (despesasPeriodo.length !== 1 ? 's' : '');
+    var elPrevisto = document.getElementById('fin-saidas-previsto');
+    if (totalSaidasPrevisto > 0) {
+      elPrevisto.textContent = '+ ' + fmtBRL(totalSaidasPrevisto) + ' previsto';
+      elPrevisto.classList.remove('hidden');
+    } else {
+      elPrevisto.classList.add('hidden');
+    }
+    document.getElementById('fin-saidas-desc').textContent = despesasPagas.length + ' despesa' + (despesasPagas.length !== 1 ? 's' : '') + ' paga' + (despesasPagas.length !== 1 ? 's' : '');
 
     var lucroEl = document.getElementById('fin-lucro-valor');
     lucroEl.textContent = fmtBRL(lucroLiquido);
