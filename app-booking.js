@@ -515,17 +515,25 @@ var APP_VERSION = '1.3.2';
   var CURSO_LUCRO_POR_VENDA = 37.90;
 
   function getCursoVendas() {
-    return getStore('curso_vendas') || { vendas: 0, totalLucro: 0, historico: [] };
+    try {
+      var raw = localStorage.getItem('jane-booking-curso_vendas');
+      if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    return { vendas: 0, totalLucro: 0, historico: [] };
   }
 
   function setCursoVendas(data) {
-    return setStore('curso_vendas', data);
+    try { localStorage.setItem('jane-booking-curso_vendas', JSON.stringify(data)); } catch (e) {}
+    if (_db) {
+      try { _db.ref('jane-booking/curso_vendas').set(data); } catch (e) {}
+    }
+    return data;
   }
 
   function registrarVendaCurso() {
     var data = getCursoVendas();
     data.vendas = (data.vendas || 0) + 1;
-    data.totalLucro = (data.totalLucro || 0) + CURSO_LUCRO_POR_VENDA;
+    data.totalLucro = parseFloat(((data.totalLucro || 0) + CURSO_LUCRO_POR_VENDA).toFixed(2));
     data.historico = data.historico || [];
     data.historico.push({ data: new Date().toISOString(), valor: CURSO_LUCRO_POR_VENDA });
     setCursoVendas(data);
