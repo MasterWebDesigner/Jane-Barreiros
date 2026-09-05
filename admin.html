@@ -42,6 +42,7 @@
       main { padding-bottom:2rem; }
       .admin-page { padding:1rem !important; }
       .fat-pag-tab { padding:4px 8px !important; font-size:10px !important; }
+    .fat-period-btn { transition: all 0.15s; }
       #ag-calendar-dropdown { left:auto !important; right:0 !important; transform:none !important; }
     }
     @media (min-width: 769px) {
@@ -557,8 +558,14 @@
             <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             + Lançar Despesa
           </button>
+          <div class="flex items-center gap-0.5 rounded-lg bg-dark-600 p-0.5">
+            <button class="fat-period-btn rounded-md px-2.5 py-1 text-[10px] font-semibold text-gold bg-gold/15" data-period="mes">Mês</button>
+            <button class="fat-period-btn rounded-md px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-period="trimestre">Trim</button>
+            <button class="fat-period-btn rounded-md px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-period="semestre">Sem</button>
+            <button class="fat-period-btn rounded-md px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-period="ano">Ano</button>
+          </div>
           <button id="fat-filter-prev" class="rounded-lg bg-dark-600 px-3 py-1.5 text-sm text-gray-300 hover:bg-dark-500">&larr;</button>
-          <span id="fat-periodo-label" class="font-display text-sm font-semibold text-white min-w-[140px] text-center"></span>
+          <span id="fat-periodo-label" class="font-display text-sm font-semibold text-white min-w-[160px] text-center"></span>
           <button id="fat-filter-next" class="rounded-lg bg-dark-600 px-3 py-1.5 text-sm text-gray-300 hover:bg-dark-500">&rarr;</button>
         </div>
       </div>
@@ -4620,71 +4627,131 @@ document.addEventListener('DOMContentLoaded', function () {
      ============================================================ */
   var fatPagTab = 'mes';
   var fatPeriodo = new Date(); fatPeriodo.setHours(12,0,0,0);
+  var fatPeriodType = 'mes'; /* mes | trimestre | semestre | ano */
   var _despEditId = null;
 
-  function fmtFatPeriodoLabel(d) {
+  function getPeriodRange() {
+    var y = fatPeriodo.getFullYear(), m = fatPeriodo.getMonth();
+    var inicio, fim;
+    if (fatPeriodType === 'mes') {
+      inicio = new Date(y, m, 1);
+      fim = new Date(y, m + 1, 0);
+    } else if (fatPeriodType === 'trimestre') {
+      var qStart = Math.floor(m / 3) * 3;
+      inicio = new Date(y, qStart, 1);
+      fim = new Date(y, qStart + 3, 0);
+    } else if (fatPeriodType === 'semestre') {
+      var sStart = m < 6 ? 0 : 6;
+      inicio = new Date(y, sStart, 1);
+      fim = new Date(y, sStart + 6, 0);
+    } else {
+      inicio = new Date(y, 0, 1);
+      fim = new Date(y, 11, 31);
+    }
+    return { inicio: inicio, fim: fim };
+  }
+
+  function fmtDateISO(d) {
+    return d.getFullYear() + '-' + (d.getMonth()+1 < 10 ? '0' : '') + (d.getMonth()+1) + '-' + (d.getDate() < 10 ? '0' : '') + d.getDate();
+  }
+
+  function isInPeriod(a) {
+    if (!a.data) return false;
+    var r = getPeriodRange();
+    return a.data >= fmtDateISO(r.inicio) && a.data <= fmtDateISO(r.fim);
+  }
+
+  function isInPeriodDesp(d) {
+    if (!d.data) return false;
+    var r = getPeriodRange();
+    return d.data >= fmtDateISO(r.inicio) && d.data <= fmtDateISO(r.fim);
+  }
+
+  function fmtFatPeriodoLabel() {
     var meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-    return meses[d.getMonth()] + ' ' + d.getFullYear();
+    var fullMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    var y = fatPeriodo.getFullYear(), m = fatPeriodo.getMonth();
+    if (fatPeriodType === 'mes') {
+      return meses[m] + ' ' + y;
+    } else if (fatPeriodType === 'trimestre') {
+      var q = Math.floor(m / 3) + 1;
+      var qStart = Math.floor(m / 3) * 3;
+      return 'T' + q + ' ' + y + ' (' + meses[qStart] + '–' + meses[Math.min(qStart + 2, 11)] + ')';
+    } else if (fatPeriodType === 'semestre') {
+      var s = m < 6 ? 1 : 2;
+      var sStart = m < 6 ? 0 : 6;
+      return 'S' + s + ' ' + y + ' (' + meses[sStart] + '–' + meses[Math.min(sStart + 5, 11)] + ')';
+    } else {
+      return 'Ano ' + y;
+    }
   }
 
   function renderFatPeriodoLabel() {
-    document.getElementById('fat-periodo-label').textContent = fmtFatPeriodoLabel(fatPeriodo);
+    document.getElementById('fat-periodo-label').textContent = fmtFatPeriodoLabel();
   }
 
-  document.getElementById('fat-filter-prev').addEventListener('click', function () {
-    fatPeriodo.setMonth(fatPeriodo.getMonth() - 1);
+  function fatStep(dir) {
+    if (fatPeriodType === 'mes') fatPeriodo.setMonth(fatPeriodo.getMonth() + dir);
+    else if (fatPeriodType === 'trimestre') fatPeriodo.setMonth(fatPeriodo.getMonth() + dir * 3);
+    else if (fatPeriodType === 'semestre') fatPeriodo.setMonth(fatPeriodo.getMonth() + dir * 6);
+    else fatPeriodo.setFullYear(fatPeriodo.getFullYear() + dir);
     renderFatPeriodoLabel();
     renderFaturamento();
-  });
-  document.getElementById('fat-filter-next').addEventListener('click', function () {
-    fatPeriodo.setMonth(fatPeriodo.getMonth() + 1);
-    renderFatPeriodoLabel();
-    renderFaturamento();
+  }
+
+  document.getElementById('fat-filter-prev').addEventListener('click', function () { fatStep(-1); });
+  document.getElementById('fat-filter-next').addEventListener('click', function () { fatStep(1); });
+
+  /* Period type buttons */
+  document.querySelectorAll('.fat-period-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      fatPeriodType = btn.getAttribute('data-period');
+      document.querySelectorAll('.fat-period-btn').forEach(function (b) {
+        b.className = 'fat-period-btn rounded-md px-2.5 py-1 text-[10px] font-semibold ' + (b === btn ? 'text-gold bg-gold/15' : 'text-gray-400 hover:text-gray-200');
+      });
+      renderFatPeriodoLabel();
+      renderFaturamento();
+    });
   });
 
   function renderFaturamento() {
     renderFatPeriodoLabel();
     var ags = B ? B.getAgendamentos() : [];
-    var selAno = fatPeriodo.getFullYear();
-    var selMes = fatPeriodo.getMonth();
-    var selMesStr = selAno + '-' + (selMes < 9 ? '0' : '') + (selMes + 1);
-    var selAnoStr = String(selAno);
-
-    function isMesSel(a) { return a.data && a.data.slice(0, 7) === selMesStr; }
-    function isAnoSel(a) { return a.data && a.data.slice(0, 4) === selAnoStr; }
 
     var concluidos = ags.filter(function (a) { return a.status === 'concluido'; });
     var agendados = ags.filter(function (a) { return a.status === 'confirmado' || a.status === 'pendente'; });
-    var concluidosMes = concluidos.filter(isMesSel);
+    var concluidosPeriodo = concluidos.filter(isInPeriod);
+    var agsPeriodo = ags.filter(function (a) { return a.status !== 'cancelado' && isInPeriod(a); });
 
-    /* --- Entradas do mês --- */
-    var totalEntradas = concluidosMes.reduce(function (s, a) { return s + servicoPreco(a.servico, a.valor_informado, a.valor_total); }, 0);
+    /* --- Entradas do período --- */
+    var totalEntradas = concluidosPeriodo.reduce(function (s, a) { return s + servicoPreco(a.servico, a.valor_informado, a.valor_total); }, 0);
 
-    /* --- Saídas do mês --- */
+    /* --- Saídas do período --- */
     var despesas = B ? B.getDespesas() : [];
-    var despesasMes = despesas.filter(function (d) { return d.data && d.data.slice(0, 7) === selMesStr; });
-    var totalSaidas = despesasMes.reduce(function (s, d) { return s + (parseFloat(d.valor) || 0); }, 0);
+    var despesasPeriodo = despesas.filter(isInPeriodDesp);
+    var totalSaidas = despesasPeriodo.reduce(function (s, d) { return s + (parseFloat(d.valor) || 0); }, 0);
 
     /* --- Lucro Líquido --- */
     var lucroLiquido = totalEntradas - totalSaidas;
 
     /* --- Faturamento Previsto --- */
-    var previstosMes = agendados.filter(isMesSel);
-    var fatPrevisto = previstosMes.reduce(function (s, a) { return s + servicoPreco(a.servico, a.valor_informado, a.valor_total); }, 0);
+    var previstosPeriodo = agendados.filter(isInPeriod);
+    var fatPrevisto = previstosPeriodo.reduce(function (s, a) { return s + servicoPreco(a.servico, a.valor_informado, a.valor_total); }, 0);
 
     /* Atualizar cards */
     document.getElementById('fin-entradas-valor').textContent = fmtBRL(totalEntradas);
-    document.getElementById('fin-entradas-desc').textContent = concluidosMes.length + ' atendimento' + (concluidosMes.length !== 1 ? 's' : '') + ' concluído' + (concluidosMes.length !== 1 ? 's' : '');
+    document.getElementById('fin-entradas-desc').textContent = concluidosPeriodo.length + ' atendimento' + (concluidosPeriodo.length !== 1 ? 's' : '') + ' concluído' + (concluidosPeriodo.length !== 1 ? 's' : '');
     document.getElementById('fin-saidas-valor').textContent = fmtBRL(totalSaidas);
-    document.getElementById('fin-saidas-desc').textContent = despesasMes.length + ' despesa' + (despesasMes.length !== 1 ? 's' : '') + ' registrada' + (despesasMes.length !== 1 ? 's' : '');
+    document.getElementById('fin-saidas-desc').textContent = despesasPeriodo.length + ' despesa' + (despesasPeriodo.length !== 1 ? 's' : '') + ' registrada' + (despesasPeriodo.length !== 1 ? 's' : '');
 
     var lucroEl = document.getElementById('fin-lucro-valor');
     lucroEl.textContent = fmtBRL(lucroLiquido);
     lucroEl.className = 'mt-2 font-numeric text-3xl font-bold ' + (lucroLiquido >= 0 ? 'text-green-400' : 'text-red-400');
-    document.getElementById('fin-lucro-desc').textContent = lucroLiquido >= 0 ? 'Lucro do mês' : 'Prejuízo do mês';
+    var periodoLabel = fatPeriodType === 'mes' ? 'do mês' : fatPeriodType === 'trimestre' ? 'do trimestre' : fatPeriodType === 'semestre' ? 'do semestre' : 'do ano';
+    document.getElementById('fin-lucro-desc').textContent = lucroLiquido >= 0 ? 'Lucro ' + periodoLabel : 'Prejuízo ' + periodoLabel;
 
     document.getElementById('fat-previsto-valor').textContent = fmtBRL(fatPrevisto);
-    document.getElementById('fat-previsto-count').textContent = previstosMes.length + ' agendamento' + (previstosMes.length !== 1 ? 's' : '') + ' pendente' + (previstosMes.length !== 1 ? 's' : '');
+    document.getElementById('fat-previsto-count').textContent = previstosPeriodo.length + ' agendamento' + (previstosPeriodo.length !== 1 ? 's' : '') + ' pendente' + (previstosPeriodo.length !== 1 ? 's' : '');
 
     /* Faturamento do Dia */
     var hojeStr = hoje();
@@ -4700,16 +4767,16 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('fin-hoje-count').textContent = agsHoje.length;
 
     /* Gráfico de saídas por categoria */
-    _renderDespesasChart(despesasMes);
+    _renderDespesasChart(despesasPeriodo);
 
     /* Tabela de despesas */
-    _renderDespesasTabela(despesasMes);
+    _renderDespesasTabela(despesasPeriodo);
 
     /* Pagamento */
-    renderFatPagamento(concluidos, servicoPreco, selMesStr, selAnoStr);
-    renderFatTopServicos(concluidos);
-    renderFatTopClientes(ags, servicoPreco, selMesStr);
-    renderFatTabela(ags, servicoPreco, selMesStr);
+    renderFatPagamento(concluidosPeriodo, servicoPreco);
+    renderFatTopServicos(concluidosPeriodo);
+    renderFatTopClientes(concluidosPeriodo);
+    renderFatTabela(agsPeriodo);
 
     document.querySelectorAll('.fat-pag-tab').forEach(function (btn) {
       btn.onclick = function () {
@@ -4717,11 +4784,11 @@ document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.fat-pag-tab').forEach(function (b) {
           b.className = 'fat-pag-tab rounded px-2.5 py-1 text-[10px] font-semibold ' + (b === btn ? 'text-gold bg-gold/15' : 'text-gray-400 hover:text-gray-200');
         });
-        renderFatPagamento(concluidos, servicoPreco, selMesStr, selAnoStr);
+        renderFatPagamento(concluidosPeriodo, servicoPreco);
       };
     });
     document.getElementById('fat-cat-filter').onchange = function () {
-      renderFatTopServicos(concluidos);
+      renderFatTopServicos(concluidosPeriodo);
     };
   }
 
@@ -4729,7 +4796,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function _renderDespesasChart(despesasMes) {
     var container = document.getElementById('fin-saidas-chart');
     container.innerHTML = '';
-    if (!despesasMes.length) { container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">Nenhuma despesa registrada neste mês.</p>'; return; }
+    if (!despesasMes.length) { var plabel = fatPeriodType === 'mes' ? 'neste mês' : fatPeriodType === 'trimestre' ? 'neste trimestre' : fatPeriodType === 'semestre' ? 'neste semestre' : 'neste ano'; container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">Nenhuma despesa registrada ' + plabel + '.</p>'; return; }
     var catCores = { 'Salários/Pró-Labore': 'bg-blue-500', 'Comissões da Equipe': 'bg-rose-500', 'Custos Fixos': 'bg-amber-500', 'Estoque/Insumos': 'bg-purple-500', 'Ativos/Equipamentos': 'bg-cyan-500', 'Outros': 'bg-gray-500' };
     var catCount = {};
     despesasMes.forEach(function (d) {
@@ -4768,7 +4835,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var tbody = document.getElementById('fin-desp-tbody');
     var vazio = document.getElementById('fin-desp-vazio');
     tbody.innerHTML = '';
-    if (!filtradas.length) { vazio.classList.remove('hidden'); tbody.parentElement.classList.add('hidden'); return; }
+    if (!filtradas.length) { vazio.classList.remove('hidden'); var plbl = fatPeriodType === 'mes' ? 'neste mês' : fatPeriodType === 'trimestre' ? 'neste trimestre' : fatPeriodType === 'semestre' ? 'neste semestre' : 'neste ano'; vazio.textContent = 'Nenhuma despesa registrada ' + plbl + '.'; tbody.parentElement.classList.add('hidden'); return; }
     vazio.classList.add('hidden'); tbody.parentElement.classList.remove('hidden');
 
     var catCores = { 'Salários/Pró-Labore': 'text-blue-400 bg-blue-500/15', 'Comissões da Equipe': 'text-rose-400 bg-rose-500/15', 'Custos Fixos': 'text-amber-400 bg-amber-500/15', 'Estoque/Insumos': 'text-purple-400 bg-purple-500/15', 'Ativos/Equipamentos': 'text-cyan-400 bg-cyan-500/15', 'Outros': 'text-gray-400 bg-gray-500/15' };
@@ -4878,11 +4945,17 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('fin-desp-categoria-filter').addEventListener('change', function () { renderFaturamento(); });
   document.getElementById('fin-desp-status-filter').addEventListener('change', function () { renderFaturamento(); });
 
-  function renderFatPagamento(concluidos, servicoPreco, selMesStr, selAnoStr) {
+  function renderFatPagamento(concluidosPeriodo, servicoPreco) {
     var pool;
-    if (fatPagTab === 'mes') pool = concluidos.filter(function (a) { return a.data && a.data.slice(0, 7) === selMesStr; });
-    else if (fatPagTab === 'ano') pool = concluidos.filter(function (a) { return a.data && a.data.slice(0, 4) === selAnoStr; });
-    else pool = concluidos;
+    if (fatPagTab === 'mes') {
+      var selMesStr = fatPeriodo.getFullYear() + '-' + (fatPeriodo.getMonth() < 9 ? '0' : '') + (fatPeriodo.getMonth() + 1);
+      pool = concluidosPeriodo.filter(function (a) { return a.data && a.data.slice(0, 7) === selMesStr; });
+    } else if (fatPagTab === 'ano') {
+      var selAnoStr = String(fatPeriodo.getFullYear());
+      pool = concluidosPeriodo.filter(function (a) { return a.data && a.data.slice(0, 4) === selAnoStr; });
+    } else {
+      pool = concluidosPeriodo;
+    }
     var pix = 0, credito = 0, debito = 0, dinheiro = 0;
     pool.forEach(function (a) {
       var valor = servicoPreco(a.servico, a.valor_informado, a.valor_total);
@@ -4934,10 +5007,9 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  function renderFatTopClientes(ags, servicoPreco, selMesStr) {
-    var concluidosMes = ags.filter(function (a) { return a.status === 'concluido' && a.data && a.data.slice(0, 7) === selMesStr; });
+  function renderFatTopClientes(concluidosPeriodo) {
     var clientes = {};
-    concluidosMes.forEach(function (a) {
+    concluidosPeriodo.forEach(function (a) {
       var nome = a.cliente_nome || 'Cliente';
       var tel = (a.cliente_whatsapp || '').replace(/\D/g, '');
       var key = tel || nome;
@@ -4968,10 +5040,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  function renderFatTabela(ags, servicoPreco, selMesStr) {
+  function renderFatTabela(agsPeriodo) {
     var tbody = document.getElementById('fat-tbody');
     var vazio = document.getElementById('fat-vazio');
-    var recentes = ags.filter(function (a) { return a.status !== 'cancelado' && a.data && a.data.slice(0, 7) === selMesStr; }).slice().sort(function (a, b) {
+    var recentes = agsPeriodo.slice().sort(function (a, b) {
       if (b.data === a.data) return (b.horario || '').localeCompare(a.horario || '');
       return (b.data || '').localeCompare(a.data || '');
     }).slice(0, 20);
