@@ -250,10 +250,28 @@ var APP_VERSION = '1.3.2';
     }
   }
 
+  function _criarAdminPadrao() {
+    var usuarios = getUsuarios();
+    if (usuarios.length > 0) return;
+    console.log('[Booking] Nenhum usuário encontrado. Criando admin padrão...');
+    sha256('jane2026').then(function (hash) {
+      var admin = {
+        id: 'usr-admin-default',
+        nome: 'Jane Barreiros',
+        email: 'jane@studiojane.com.br',
+        senha_hash: hash,
+        nivel: 'admin',
+        criado_em: new Date().toISOString()
+      };
+      setUsuarios([admin]);
+      console.log('[Booking] Admin padrão criado: jane@studiojane.com.br / jane2026');
+    });
+  }
+
   function loadAllData(cb) {
-    var keys = ['agendamentos', 'clientes', 'servicos', 'bloqueios', 'lista_espera', 'profissionais', 'secoes', 'estoque', 'despesas', 'curso_vendas'];
+    var keys = ['agendamentos', 'clientes', 'servicos', 'bloqueios', 'lista_espera', 'profissionais', 'secoes', 'estoque', 'despesas', 'curso_vendas', 'usuarios'];
     var pending = keys.length;
-    var done = function () { pending--; if (pending <= 0) { _loadingComplete = true; console.log('[Booking] loadAllData COMPLETO. Cache atualizado.'); _sincronizarNomesClientes(); if (cb) cb(); } };
+    var done = function () { pending--; if (pending <= 0) { _loadingComplete = true; console.log('[Booking] loadAllData COMPLETO. Cache atualizado.'); _sincronizarNomesClientes(); _criarAdminPadrao(); if (cb) cb(); } };
 
     function _processVal(key, val, fonte) {
       console.log('[Booking] _processVal:', key, '| fonte:', fonte, '| dados:', val === null ? 'NULL' : (Array.isArray(val) ? val.length + ' itens' : typeof val));
@@ -507,6 +525,73 @@ var APP_VERSION = '1.3.2';
 
   function setDespesas(lista) {
     return setStore('despesas', lista);
+  }
+
+  /* ================================================================
+     USUÁRIOS — Login com SHA-256
+     ================================================================ */
+  function sha256(str) {
+    if (typeof crypto !== 'undefined' && crypto.subtle) {
+      return crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)).then(function (buf) {
+        return Array.from(new Uint8Array(buf)).map(function (b) { return b.toString(16).padStart(2, '0'); }).join('');
+      });
+    }
+    var hash = 0;
+    for (var i = 0; i < str.length; i++) {
+      var chr = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + chr;
+      hash |= 0;
+    }
+    return Promise.resolve('_fallback_' + Math.abs(hash).toString(16));
+  }
+
+  function getUsuarios() {
+    var raw = getStore('usuarios');
+    if (!raw) return [];
+    return Array.isArray(raw) ? raw : Object.values(raw);
+  }
+
+  function setUsuarios(lista) {
+    return setStore('usuarios', lista);
+  }
+
+  function criarUsuario(nome, email, senha, nivel) {
+    var lista = getUsuarios();
+    var emailLimpo = email.toLowerCase().trim();
+    var existente = lista.find(function (u) { return u.email === emailLimpo; });
+    if (existente) return { erro: 'E-mail já cadastrado.' };
+    return sha256(senha).then(function (hash) {
+      var usuario = {
+        id: 'usr-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
+        nome: nome,
+        email: emailLimpo,
+        senha_hash: hash,
+        nivel: nivel || 'admin',
+        criado_em: new Date().toISOString()
+      };
+      lista.push(usuario);
+      setUsuarios(lista);
+      return { ok: true, usuario: usuario };
+    });
+  }
+
+  function excluirUsuario(id) {
+    var lista = getUsuarios().filter(function (u) { return u.id !== id; });
+    setUsuarios(lista);
+  }
+
+  function verificarLogin(email, senha) {
+    var lista = getUsuarios();
+    var emailLimpo = email.toLowerCase().trim();
+    return sha256(senha).then(function (hash) {
+      var user = lista.find(function (u) { return u.email === emailLimpo && u.senha_hash === hash; });
+      if (user) return { ok: true, usuario: user };
+      return { ok: false };
+    });
+  }
+
+  function adminLogin(senha) {
+    return senha === 'jane2026';
   }
 
   /* ================================================================
@@ -1059,6 +1144,11 @@ var APP_VERSION = '1.3.2';
     setEstoque: setEstoque,
     getDespesas: getDespesas,
     setDespesas: setDespesas,
+    getUsuarios: getUsuarios,
+    setUsuarios: setUsuarios,
+    criarUsuario: criarUsuario,
+    excluirUsuario: excluirUsuario,
+    verificarLogin: verificarLogin,
     getCursoVendas: getCursoVendas,
     setCursoVendas: setCursoVendas,
     registrarVendaCurso: registrarVendaCurso,

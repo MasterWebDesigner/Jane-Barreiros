@@ -1052,6 +1052,7 @@
       <div class="flex gap-0 border-b border-dark-300/30 mb-6">
         <button class="cfg-tab active" data-cfg-tab="guia">📋 Guia Rápido</button>
         <button class="cfg-tab" data-cfg-tab="config">⚙️ Configurações</button>
+        <button class="cfg-tab" data-cfg-tab="usuarios">👤 Usuários</button>
         <button class="cfg-tab" data-cfg-tab="sobre">ℹ️ Sobre</button>
       </div>
 
@@ -1092,6 +1093,29 @@
           <h3 class="font-display text-lg font-semibold text-white mb-4">Lista de Espera</h3>
           <div id="cfg-espera" class="space-y-3"></div>
           <p id="cfg-espera-vazio" class="text-sm text-gray-500">Nenhuma pessoa na lista de espera.</p>
+        </div>
+      </div>
+
+      <!-- TAB: Usuários -->
+      <div id="cfg-tab-usuarios" class="cfg-tab-panel hidden">
+        <div class="card-dark p-6 mb-6">
+          <h3 class="font-display text-lg font-semibold text-white mb-4">Novo Usuário</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+            <input id="usr-nome" type="text" placeholder="Nome" class="rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+            <input id="usr-email" type="email" placeholder="E-mail" class="rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+            <input id="usr-senha" type="password" placeholder="Senha" class="rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+            <select id="usr-nivel" class="rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+              <option value="admin">Admin</option>
+              <option value="operador">Operador</option>
+              <option value="visualizador">Visualizador</option>
+            </select>
+          </div>
+          <button id="usr-criar-btn" class="rounded-xl bg-gold/20 px-5 py-2.5 text-sm font-semibold text-gold hover:bg-gold/30 transition-colors">Cadastrar Usuário</button>
+        </div>
+        <div class="card-dark p-6">
+          <h3 class="font-display text-lg font-semibold text-white mb-4">Usuários Cadastrados</h3>
+          <div id="usr-lista" class="space-y-3"></div>
+          <p id="usr-vazio" class="text-sm text-gray-500 hidden">Nenhum usuário cadastrado.</p>
         </div>
       </div>
 
@@ -4493,7 +4517,64 @@ document.addEventListener('DOMContentLoaded', function () {
     renderGuideCards();
     renderGuideAccordions();
     renderSobreStatus();
+    renderUsuarios();
   }
+
+  /* --- Usuários --- */
+  function renderUsuarios() {
+    var lista = B ? B.getUsuarios() : [];
+    var container = document.getElementById('usr-lista');
+    var vazio = document.getElementById('usr-vazio');
+    container.innerHTML = '';
+    if (!lista.length) { vazio.classList.remove('hidden'); return; }
+    vazio.classList.add('hidden');
+    var userLogado = null;
+    try { userLogado = JSON.parse(sessionStorage.getItem('jane-admin-user') || 'null'); } catch (e) {}
+    lista.forEach(function (u) {
+      var tr = document.createElement('div');
+      tr.className = 'flex items-center justify-between rounded-lg bg-dark-600/50 p-3';
+      var nivelBadge = u.nivel === 'admin' ? 'bg-gold/15 text-gold' : u.nivel === 'operador' ? 'bg-blue-500/15 text-blue-400' : 'bg-gray-500/15 text-gray-400';
+      var isLogado = userLogado && u.email === userLogado.email;
+      tr.innerHTML =
+        '<div class="flex items-center gap-3">' +
+          '<div class="w-9 h-9 rounded-full bg-dark-700 flex items-center justify-center text-sm font-bold text-gold">' + (u.nome || '?')[0].toUpperCase() + '</div>' +
+          '<div><p class="text-sm font-semibold text-white">' + esc(u.nome) + (isLogado ? ' <span class="text-[9px] text-green-400 font-semibold">(você)</span>' : '') + '</p>' +
+          '<p class="text-xs text-gray-400">' + esc(u.email) + '</p></div>' +
+        '</div>' +
+        '<div class="flex items-center gap-2">' +
+          '<span class="inline-flex items-center rounded-full ' + nivelBadge + ' px-2.5 py-0.5 text-[10px] font-semibold">' + esc(u.nivel || 'admin') + '</span>' +
+          (!isLogado ? '<button data-usr-del="' + u.id + '" class="rounded-lg bg-red-500/15 px-2 py-1 text-[10px] font-semibold text-red-400 hover:bg-red-500/25">Excluir</button>' : '') +
+        '</div>';
+      container.appendChild(tr);
+    });
+    container.querySelectorAll('[data-usr-del]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (!confirm('Excluir este usuário?')) return;
+        B.excluirUsuario(btn.getAttribute('data-usr-del'));
+        renderUsuarios();
+        showToast('Excluído', 'Usuário removido.', null);
+      });
+    });
+  }
+
+  document.getElementById('usr-criar-btn').addEventListener('click', function () {
+    var nome = document.getElementById('usr-nome').value.trim();
+    var email = document.getElementById('usr-email').value.trim();
+    var senha = document.getElementById('usr-senha').value;
+    var nivel = document.getElementById('usr-nivel').value;
+    if (!nome) { alert('Informe o nome.'); return; }
+    if (!email) { alert('Informe o e-mail.'); return; }
+    if (!senha || senha.length < 6) { alert('A senha deve ter pelo menos 6 caracteres.'); return; }
+    if (!B) { alert('Sistema não carregado.'); return; }
+    B.criarUsuario(nome, email, senha, nivel).then(function (result) {
+      if (result.erro) { alert(result.erro); return; }
+      document.getElementById('usr-nome').value = '';
+      document.getElementById('usr-email').value = '';
+      document.getElementById('usr-senha').value = '';
+      renderUsuarios();
+      showToast('Usuário criado', nome + ' cadastrado com sucesso.', null);
+    });
+  });
 
   /* ---- Guide Data ---- */
   var GUIDE_DATA = [

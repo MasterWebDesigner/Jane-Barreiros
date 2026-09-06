@@ -205,9 +205,11 @@
     </div>
   </div>
 
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="app-booking.js?v=1.7"></script>
   <script>
     (function () {
-      /* Se já autenticado, redireciona */
       var token = sessionStorage.getItem('jane-admin-auth');
       if (token) {
         window.location.href = './admin.html';
@@ -229,32 +231,37 @@
           return;
         }
 
-        /* Mostrar loader */
         loader.classList.add('active');
 
-        setTimeout(function () {
-          /* Usa o Booking module se disponível */
+        function _tryLogin() {
           var B = window.Booking;
-          var ok = false;
-          if (B && B.adminLogin) {
-            ok = B.adminLogin(senha);
+          if (B && B.verificarLogin) {
+            B.verificarLogin(email, senha).then(function (result) {
+              if (result.ok) {
+                sessionStorage.setItem('jane-admin-auth', '1');
+                sessionStorage.setItem('jane-admin-user', JSON.stringify({ nome: result.usuario.nome, email: result.usuario.email, nivel: result.usuario.nivel }));
+                window.location.href = './admin.html';
+              } else {
+                _showError();
+              }
+            }).catch(function () {
+              _showError();
+            });
           } else {
-            ok = (senha === 'jane2026');
+            setTimeout(_tryLogin, 200);
           }
+        }
 
-          if (ok) {
-            try {
-              sessionStorage.setItem('jane-admin-auth', '1');
-            } catch (e) {}
-            window.location.href = './admin.html';
-          } else {
-            loader.classList.remove('active');
-            erro.style.display = 'block';
-            erro.style.animation = 'none';
-            void erro.offsetWidth;
-            erro.style.animation = 'shake .4s ease-out';
-          }
-        }, 600);
+        function _showError() {
+          loader.classList.remove('active');
+          erro.textContent = 'E-mail ou senha incorretos.';
+          erro.style.display = 'block';
+          erro.style.animation = 'none';
+          void erro.offsetWidth;
+          erro.style.animation = 'shake .4s ease-out';
+        }
+
+        setTimeout(_tryLogin, 600);
       });
 
       erro.addEventListener('click', function () {
