@@ -235,17 +235,19 @@
 
         function _tryLogin() {
           var B = window.Booking;
-          if (B && B.verificarLogin) {
-            B.verificarLogin(email, senha).then(function (result) {
-              if (result.ok) {
-                sessionStorage.setItem('jane-admin-auth', '1');
-                sessionStorage.setItem('jane-admin-user', JSON.stringify({ nome: result.usuario.nome, email: result.usuario.email, nivel: result.usuario.nivel }));
-                window.location.href = './admin.html';
-              } else {
+          if (B && B.verificarLogin && B.loadAllData) {
+            B.loadAllData(function () {
+              B.verificarLogin(email, senha).then(function (result) {
+                if (result.ok) {
+                  sessionStorage.setItem('jane-admin-auth', '1');
+                  sessionStorage.setItem('jane-admin-user', JSON.stringify({ nome: result.usuario.nome, email: result.usuario.email, nivel: result.usuario.nivel }));
+                  window.location.href = './admin.html';
+                } else {
+                  _showError();
+                }
+              }).catch(function () {
                 _showError();
-              }
-            }).catch(function () {
-              _showError();
+              });
             });
           } else {
             setTimeout(_tryLogin, 200);
