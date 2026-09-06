@@ -1931,6 +1931,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* --- Polling + Storage Event --- */
   var _lastKnownIds = {};
+  var _notifInitialized = false;
 
   function getPendingIds() {
     var ags = B ? B.getAgendamentos() : [];
@@ -1947,9 +1948,10 @@ document.addEventListener('DOMContentLoaded', function () {
     var newOnes = [];
     pendentes.forEach(function (a) {
       currentIds[a.id] = true;
-      if (!_lastKnownIds[a.id]) newOnes.push(a);
+      if (_notifInitialized && !_lastKnownIds[a.id]) newOnes.push(a);
     });
     _lastKnownIds = currentIds;
+    _notifInitialized = true;
 
     /* Update badge always */
     updatePendenteBadge(pendentes.length);
