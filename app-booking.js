@@ -638,7 +638,11 @@ var APP_VERSION = '1.3.2';
 
   function capitalizarNome(nome) {
     if (!nome || typeof nome !== 'string') return nome;
-    return nome.replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+    var minusculas = ['da', 'de', 'do', 'dos', 'das', 'e'];
+    return nome.toLowerCase().split(' ').map(function (palavra, i, arr) {
+      if (i > 0 && i < arr.length - 1 && minusculas.indexOf(palavra) !== -1) return palavra;
+      return palavra.charAt(0).toUpperCase() + palavra.slice(1);
+    }).join(' ');
   }
 
   function nomeFormatado(nome) {
