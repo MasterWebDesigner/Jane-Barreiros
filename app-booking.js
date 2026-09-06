@@ -968,19 +968,42 @@ var APP_VERSION = '1.3.2';
     return novo;
   }
 
+  function parsePreco(precoStr) {
+    if (!precoStr || precoStr === 'Consulte') return 0;
+    var m = precoStr.replace(/\./g, '').match(/([\d,]+)/);
+    if (!m) return 0;
+    return parseFloat(m[1].replace(',', '.')) || 0;
+  }
+
+  function _servicoPreco(ag) {
+    if (ag.valor_informado && ag.valor_informado > 0) return parseFloat(ag.valor_informado) || 0;
+    if (ag.valor_total && ag.valor_total > 0) return parseFloat(ag.valor_total) || 0;
+    var servicos = getServicos();
+    var s = servicos.find(function (x) { return x.nome === ag.servico; });
+    if (!s || !s.preco) return 0;
+    return parsePreco(s.preco);
+  }
+
   function calcularValorGasto(cliente) {
     var total = 0;
-    if (!cliente.historico || !cliente.historico.length) return total;
-    var servicos = getServicos();
-    cliente.historico.forEach(function (h) {
-      for (var i = 0; i < servicos.length; i++) {
-        if (servicos[i].nome === h.servico && servicos[i].preco && servicos[i].preco !== 'Consulte') {
-          var m = servicos[i].preco.match(/R\$\s*([\d.,]+)/);
-          if (m) total += parseFloat(m[1].replace('.', '').replace(',', '.'));
-          break;
-        }
-      }
+    var tel = (cliente.whatsapp || '').replace(/\D/g, '');
+    if (!tel) return total;
+    var ags = getAgendamentos().filter(function (a) {
+      return a.status === 'concluido' && (a.cliente_whatsapp || '').replace(/\D/g, '') === tel;
     });
+    ags.forEach(function (a) { total += _servicoPreco(a); });
+    return total;
+  }
+
+  function calcularValorEstimadoCliente(cliente) {
+    var total = 0;
+    var tel = (cliente.whatsapp || '').replace(/\D/g, '');
+    if (!tel) return total;
+    var ags = getAgendamentos().filter(function (a) {
+      var t = (a.cliente_whatsapp || '').replace(/\D/g, '');
+      return t === tel && (a.status === 'concluido' || a.status === 'confirmado');
+    });
+    ags.forEach(function (a) { total += _servicoPreco(a); });
     return total;
   }
 
@@ -1166,6 +1189,7 @@ var APP_VERSION = '1.3.2';
     removerListaEspera: removerListaEspera,
     getClientePorTelefone: getClientePorTelefone,
     calcularValorGasto: calcularValorGasto,
+    calcularValorEstimadoCliente: calcularValorEstimadoCliente,
     getClientes: getClientes,
     registrarCliente: registrarCliente,
     atualizarCliente: atualizarCliente,
