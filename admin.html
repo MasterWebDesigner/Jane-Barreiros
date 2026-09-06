@@ -1648,9 +1648,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
   document.getElementById('logout-btn').addEventListener('click', function () {
     try { sessionStorage.removeItem(KEY_AUTH); } catch (e) {}
-    adminApp.classList.add('hidden');
-    loginScreen.classList.remove('hidden');
-    document.getElementById('login-senha').value = '';
+    try { sessionStorage.removeItem('jane-admin-auth'); } catch (e) {}
+    try { sessionStorage.removeItem('jane-admin-user'); } catch (e) {}
+    window.location.href = './admin-login.html';
   });
 
   function showApp() {
