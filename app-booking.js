@@ -1137,6 +1137,14 @@ var APP_VERSION = '1.3.2';
     window.open(url, '_blank');
   }
 
+  function formatarTel(v) {
+    if (!v) return '';
+    var d = v.replace(/\D/g, '').substring(0, 11);
+    if (d.length > 6) return '(' + d.substring(0,2) + ') ' + d.substring(2,7) + '-' + d.substring(7);
+    if (d.length > 2) return '(' + d.substring(0,2) + ') ' + d.substring(2);
+    return d;
+  }
+
   /* ================================================================
      EXPORTAÇÃO PÚBLICA (window.Booking)
      ================================================================ */
@@ -1144,6 +1152,7 @@ var APP_VERSION = '1.3.2';
     version: APP_VERSION,
     capitalizarNome: capitalizarNome,
     nomeFormatado: nomeFormatado,
+    formatarTel: formatarTel,
     initFirebase: initFirebase,
     loadAllData: loadAllData,
     listenFirebase: listenFirebase,

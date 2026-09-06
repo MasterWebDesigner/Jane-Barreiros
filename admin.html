@@ -2798,7 +2798,7 @@ document.addEventListener('DOMContentLoaded', function () {
             (isOnline ? '<span class="inline-flex items-center rounded-full bg-blue-500/15 px-2 py-0.5 text-[10px] font-semibold text-blue-400 shrink-0">Online</span>' :
              ag.origem === 'recepcao' ? '<span class="inline-flex items-center rounded-full bg-dark-500 border border-dark-300/50 px-2 py-0.5 text-[10px] font-semibold text-gold shrink-0">Recepção</span>' : '') +
           '</div>' +
-          '<p class="text-xs text-gray-400 truncate">' + esc(B.nomeFormatado(ag.cliente_nome)) + (ag.cliente_whatsapp ? ' · ' + ag.cliente_whatsapp : '') + '</p>' +
+          '<p class="text-xs text-gray-400 truncate">' + esc(B.nomeFormatado(ag.cliente_nome)) + (ag.cliente_whatsapp ? ' · ' + B.formatarTel(ag.cliente_whatsapp) : '') + '</p>' +
           '<div class="flex items-center gap-3 mt-1.5">' +
             (valor > 0 ? '<span class="font-numeric text-xs font-bold text-gold">' + fmtBRL(valor) + '</span>' : '') +
             (ag.forma_pagamento ? '<span class="text-[10px] text-gray-500">' + esc(ag.forma_pagamento) + '</span>' : '') +
@@ -3830,7 +3830,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var telLink = telLimpo.length >= 10 ? 'https://wa.me/55' + telLimpo : '#';
       tr.innerHTML =
         '<td class="px-4 py-3 font-medium text-white">' + esc(B.nomeFormatado(c.nome)) + '</td>' +
-        '<td class="px-4 py-3 text-gray-400">' + esc(c.whatsapp) + '</td>' +
+        '<td class="px-4 py-3 text-gray-400">' + esc(B.formatarTel(c.whatsapp)) + '</td>' +
         '<td class="px-4 py-3 text-center font-numeric font-bold text-gold">' + c.total_atendimentos + '</td>' +
         '<td class="px-4 py-3 text-right font-numeric font-semibold text-green-400">' + (valorEstimado > 0 ? fmtBRL(valorEstimado) : '—') + '</td>' +
         '<td class="px-4 py-3 text-xs text-gray-400">' + ultimoAg + '</td>' +
@@ -4222,7 +4222,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       tr.innerHTML =
         '<td class="px-4 py-3 font-medium text-white">' + esc(B.nomeFormatado(c.nome)) + '</td>' +
-        '<td class="px-4 py-3 text-gray-400">' + esc(c.whatsapp) + '</td>' +
+        '<td class="px-4 py-3 text-gray-400">' + esc(B.formatarTel(c.whatsapp)) + '</td>' +
         '<td class="px-4 py-3"><span class="text-gold font-semibold">' + esc(c.servico) + '</span></td>' +
         '<td class="px-4 py-3 text-center text-gray-400">' + dataFormatada + '</td>' +
         '<td class="px-4 py-3 text-center font-numeric font-bold ' + (c.diasSemVoltar > (c.diasRetornoSugerido || 999) ? 'text-red-400' : c.diasSemVoltar > ((c.diasRetornoSugerido || 999) - 5) ? 'text-amber-400' : 'text-green-400') + '">' + c.diasSemVoltar + ' dia' + (c.diasSemVoltar !== 1 ? 's' : '') + '</td>' +
