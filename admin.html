@@ -1052,6 +1052,7 @@
       <div class="flex gap-0 border-b border-dark-300/30 mb-6">
         <button class="cfg-tab active" data-cfg-tab="guia">📋 Guia Rápido</button>
         <button class="cfg-tab" data-cfg-tab="config">⚙️ Configurações</button>
+        <button class="cfg-tab" data-cfg-tab="landing">🌐 Landing Page</button>
         <button class="cfg-tab" data-cfg-tab="usuarios">👤 Usuários</button>
         <button class="cfg-tab" data-cfg-tab="sobre">ℹ️ Sobre</button>
       </div>
@@ -1093,6 +1094,55 @@
           <h3 class="font-display text-lg font-semibold text-white mb-4">Lista de Espera</h3>
           <div id="cfg-espera" class="space-y-3"></div>
           <p id="cfg-espera-vazio" class="text-sm text-gray-500">Nenhuma pessoa na lista de espera.</p>
+        </div>
+      </div>
+
+      <!-- TAB: Landing Page -->
+      <div id="cfg-tab-landing" class="cfg-tab-panel hidden">
+        <div class="card-dark p-6 mb-6">
+          <h3 class="font-display text-lg font-semibold text-white mb-4">Exibição da Landing Page</h3>
+          <p class="text-sm text-gray-400 mb-4">Controle quais blocos e posts aparecem na página principal do site.</p>
+
+          <!-- Posts do Instagram -->
+          <div class="mb-6">
+            <h4 class="text-sm font-semibold text-gold mb-3">Posts do Instagram</h4>
+            <div id="landing-posts-list" class="space-y-2">
+              <p class="text-sm text-gray-500">Carregando posts...</p>
+            </div>
+          </div>
+
+          <!-- Switches gerais -->
+          <div>
+            <h4 class="text-sm font-semibold text-gold mb-3">Blocos do Site</h4>
+            <div class="space-y-3" id="landing-blocos">
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input type="checkbox" id="cfg-show-hero" class="w-4 h-4 rounded border-dark-300/40 bg-dark-700 text-gold focus:ring-gold/50" checked>
+                <span class="text-sm text-gray-300">Hero / Banners</span>
+              </label>
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input type="checkbox" id="cfg-show-sobre" class="w-4 h-4 rounded border-dark-300/40 bg-dark-700 text-gold focus:ring-gold/50" checked>
+                <span class="text-sm text-gray-300">Seção Sobre</span>
+              </label>
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input type="checkbox" id="cfg-show-instagram" class="w-4 h-4 rounded border-dark-300/40 bg-dark-700 text-gold focus:ring-gold/50" checked>
+                <span class="text-sm text-gray-300">Feed do Instagram</span>
+              </label>
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input type="checkbox" id="cfg-show-servicos" class="w-4 h-4 rounded border-dark-300/40 bg-dark-700 text-gold focus:ring-gold/50" checked>
+                <span class="text-sm text-gray-300">Serviços / Preços</span>
+              </label>
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input type="checkbox" id="cfg-show-curso" class="w-4 h-4 rounded border-dark-300/40 bg-dark-700 text-gold focus:ring-gold/50" checked>
+                <span class="text-sm text-gray-300">Curso / Mechas</span>
+              </label>
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input type="checkbox" id="cfg-show-contato" class="w-4 h-4 rounded border-dark-300/40 bg-dark-700 text-gold focus:ring-gold/50" checked>
+                <span class="text-sm text-gray-300">Contato / Localização</span>
+              </label>
+            </div>
+          </div>
+
+          <button id="cfg-landing-save" class="mt-6 rounded-xl bg-gold/20 px-5 py-2.5 text-sm font-semibold text-gold hover:bg-gold/30 transition-colors">Salvar Alterações</button>
         </div>
       </div>
 
@@ -4813,6 +4863,58 @@ document.addEventListener('DOMContentLoaded', function () {
       showToast('Salvo', 'Número do WhatsApp atualizado!', null);
     });
   }
+
+  /* --- Landing Page Config --- */
+  function renderLandingConfig() {
+    if (!B || !B.getConfigSite) return;
+    B.getConfigSite(function (config) {
+      var posts = config.posts_ocultos || {};
+      var blocos = config.blocos || {};
+      document.getElementById('cfg-show-hero').checked = blocos.hero !== false;
+      document.getElementById('cfg-show-sobre').checked = blocos.sobre !== false;
+      document.getElementById('cfg-show-instagram').checked = blocos.instagram !== false;
+      document.getElementById('cfg-show-servicos').checked = blocos.servicos !== false;
+      document.getElementById('cfg-show-curso').checked = blocos.curso !== false;
+      document.getElementById('cfg-show-contato').checked = blocos.contato !== false;
+      var listEl = document.getElementById('landing-posts-list');
+      if (listEl) {
+        fetch('content/site.json?v=' + Date.now()).then(function (r) { return r.json(); }).then(function (data) {
+          var instaPosts = (data.instagram || {}).posts || [];
+          if (!instaPosts.length) { listEl.innerHTML = '<p class="text-sm text-gray-500">Nenhum post encontrado.</p>'; return; }
+          listEl.innerHTML = instaPosts.map(function (p) {
+            var isHidden = posts['post_' + p.ordem] === true;
+            return '<label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-dark-700/50 transition-colors">' +
+              '<input type="checkbox" data-post-ordem="' + p.ordem + '" ' + (isHidden ? '' : 'checked') + ' class="w-4 h-4 rounded border-dark-300/40 bg-dark-700 text-gold focus:ring-gold/50">' +
+              '<span class="text-sm text-gray-300">' + esc(p.titulo || 'Post ' + p.ordem) + '</span>' +
+              '</label>';
+          }).join('');
+        }).catch(function () { listEl.innerHTML = '<p class="text-sm text-red-400">Erro ao carregar posts.</p>'; });
+      }
+    });
+  }
+
+  document.getElementById('cfg-landing-save').addEventListener('click', function () {
+    if (!B || !B.setConfigSite) return;
+    B.getConfigSite(function (config) {
+      config.blocos = {
+        hero: document.getElementById('cfg-show-hero').checked,
+        sobre: document.getElementById('cfg-show-sobre').checked,
+        instagram: document.getElementById('cfg-show-instagram').checked,
+        servicos: document.getElementById('cfg-show-servicos').checked,
+        curso: document.getElementById('cfg-show-curso').checked,
+        contato: document.getElementById('cfg-show-contato').checked
+      };
+      var postsOcultos = {};
+      document.querySelectorAll('#landing-posts-list input[data-post-ordem]').forEach(function (cb) {
+        if (!cb.checked) postsOcultos['post_' + cb.getAttribute('data-post-ordem')] = true;
+      });
+      config.posts_ocultos = postsOcultos;
+      B.setConfigSite(config);
+      showToast('Salvo', 'Configurações da Landing Page atualizadas!', null);
+    });
+  });
+
+  renderLandingConfig();
 
   function renderDiasBloq() {
     var container = document.getElementById('cfg-dias-bloq');

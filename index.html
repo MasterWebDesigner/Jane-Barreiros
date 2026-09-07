@@ -1413,6 +1413,9 @@
     })();
   </script>
 
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
   <!-- ==============================================================
        CARREGAMENTO DINÂMICO DO CONTEÚDO (content/site.json)
        Se o JSON não puder ser lido, o conteúdo estático da página
@@ -1422,10 +1425,49 @@
     (function () {
       'use strict';
 
-      /* ---------- Modo editor (apenas o dono) ---------- */
-      var EDITOR_PIN = 'jane-2026'; // TROQUE A SENHA AQUI
-      var EDITOR_MODE = false;
-      try { EDITOR_MODE = localStorage.getItem('jane_editor') === '1'; } catch (e) {}
+      // Configurações do site vindas do Firebase
+      var siteConfig = {};
+      try {
+        if (!firebase.apps.length) {
+          firebase.initializeApp({
+            apiKey: "AIzaSyA35ij-3cbUKNId5yirK5A3BMKzVGvip0o",
+            authDomain: "jane-barreiros.firebaseapp.com",
+            databaseURL: "https://jane-barreiros-default-rtdb.firebaseio.com",
+            projectId: "jane-barreiros",
+            storageBucket: "jane-barreiros.firebasestorage.app",
+            messagingSenderId: "452042245105",
+            appId: "1:452042245105:web:35ec5e47c7790fca2513eb"
+          });
+        }
+        var db = firebase.database();
+        db.ref('jane-booking/configuracoes/site').once('value').then(function (snap) {
+          siteConfig = snap.val() || {};
+          applyBlockVisibility();
+          if (typeof renderInsta === 'function') renderInsta();
+        });
+      } catch (e) {}
+
+      function applyBlockVisibility() {
+        var blocos = siteConfig.blocos || {};
+        var heroEl = document.querySelector('section.hero, section#hero, .hero-section');
+        var sobreEl = document.getElementById('sobre');
+        var instaEl = document.getElementById('instagram');
+        var servEl = document.getElementById('servicos');
+        var cursoEl = document.getElementById('curso');
+        var contEl = document.getElementById('contato');
+        if (heroEl && blocos.hero === false) heroEl.style.display = 'none';
+        else if (heroEl) heroEl.style.display = '';
+        if (sobreEl && blocos.sobre === false) sobreEl.style.display = 'none';
+        else if (sobreEl) sobreEl.style.display = '';
+        if (instaEl && blocos.instagram === false) instaEl.style.display = 'none';
+        else if (instaEl) instaEl.style.display = '';
+        if (servEl && blocos.servicos === false) servEl.style.display = 'none';
+        else if (servEl) servEl.style.display = '';
+        if (cursoEl && blocos.curso === false) cursoEl.style.display = 'none';
+        else if (cursoEl) cursoEl.style.display = '';
+        if (contEl && blocos.contato === false) contEl.style.display = 'none';
+        else if (contEl) contEl.style.display = '';
+      }
 
       // Conteúdo vindo do CMS é considerado de confiança, mas escapamos
       // mesmo assim antes de injetar via innerHTML (segurança básica).
@@ -1538,7 +1580,10 @@
           };
 
           function renderInsta(posts) {
-            posts = (posts || instaAll).filter(function (p) { return !p.ocultar; });
+            var postsOcultos = (siteConfig.posts_ocultos || {});
+            posts = (posts || instaAll).filter(function (p) {
+              return !postsOcultos['post_' + p.ordem];
+            });
             if (!grid) return;
             grid.innerHTML = posts.map(function (p, i) {
               var fallback = encodeURIComponent(p.titulo || ('Post ' + (i + 1)));
@@ -1546,12 +1591,6 @@
               var pAlt = p.titulo ? esc(p.titulo) : 'Foto do Instagram';
               var pTitle = p.titulo
                 ? '<p class="absolute bottom-16 left-4 right-4 font-serif text-lg font-medium leading-snug text-white">' + esc(p.titulo) + '</p>'
-                : '';
-              var ocultarBtn = EDITOR_MODE
-                ? '<button type="button" class="insta-hide absolute left-3 top-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-black/80 px-3 py-1.5 text-[11px] font-bold text-[#F3D9A4] shadow-md transition hover:bg-red-600 hover:text-white" data-ordem="' + p.ordem + '" title="Ocultar esta publicação do site">' +
-                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5"><path d="m2 2 20 20"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 10 8 10 8a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.5 13.5 0 0 0 2 12s3 8 10 8a9.74 9.74 0 0 0 5.39-1.61"/><path d="M9.9 14.1A9 9 0 0 0 14.9 9.9"/></svg>' +
-                  'Ocultar' +
-                  '</button>'
                 : '';
               var media;
               if (p.video) {
@@ -1567,7 +1606,6 @@
                 '<article class="group relative overflow-hidden rounded-2xl border border-gold/20 shadow-sm transition-all duration-300 hover:shadow-lg">' +
                   '<div class="relative aspect-[4/5] overflow-hidden">' +
                     media +
-                    ocultarBtn +
                     '<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>' +
                     pTitle +
                     '<a href="' + esc(plink) + '" target="_blank" rel="noopener" class="insta-card-btn absolute bottom-4 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold">Ver no Instagram <span aria-hidden="true">→</span></a>' +
@@ -1611,60 +1649,7 @@
           }
 
           renderInsta();
-
-          /* ---------- Modo editor (dono): alternar e ocultar posts ---------- */
-          var ownerBtn = document.getElementById('owner-lock');
-          if (ownerBtn) {
-            function syncOwnerBtn() {
-              ownerBtn.title = EDITOR_MODE ? 'Modo editor ativo (clique para sair)' : 'Entrar no modo editor';
-              ownerBtn.innerHTML = EDITOR_MODE
-                ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 text-[#F3D9A4]"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/><path d="m9 15 2 2 4-4"/></svg>'
-                : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
-            }
-            syncOwnerBtn();
-            ownerBtn.addEventListener('click', function () {
-              if (EDITOR_MODE) {
-                EDITOR_MODE = false;
-                try { localStorage.setItem('jane_editor', '0'); } catch (e) {}
-                syncOwnerBtn();
-                renderInsta();
-                return;
-              }
-              var pin = prompt('Digite a senha do modo editor:');
-              if (pin === null) return;
-              if (pin !== EDITOR_PIN) {
-                alert('Senha incorreta.');
-                return;
-              }
-              EDITOR_MODE = true;
-              try { localStorage.setItem('jane_editor', '1'); } catch (e) {}
-              syncOwnerBtn();
-              renderInsta();
-            });
-            grid.addEventListener('click', function (ev) {
-              var alvo = ev.target && ev.target.closest ? ev.target.closest('.insta-hide') : null;
-              if (!alvo) return;
-              var ordem = Number(alvo.getAttribute('data-ordem'));
-              alvo.disabled = true;
-              alvo.textContent = '...';
-              fetch('/api/hide-instagram', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ordem: ordem, ocultar: true })
-              })
-                .then(function (r) { return r.json(); })
-                .then(function (res) {
-                  if (!res || !res.ok) throw new Error((res && res.error) || 'Falha ao ocultar');
-                  instaAll.forEach(function (p) { if (p.ordem === ordem) p.ocultar = true; });
-                  renderInsta();
-                })
-                .catch(function (err) {
-                  alvo.disabled = false;
-                  alvo.innerHTML = 'Erro';
-                  alert('Não foi possível ocultar: ' + err.message);
-                });
-            });
-          }
+          applyBlockVisibility();
 
           /* ---------- Localização & Contato ---------- */
           setHTML('endereco-logradouro', esc(contato.endereco_logradouro) + '<br/>' + esc(contato.endereco_cidade));
@@ -2031,13 +2016,6 @@
       <div id="modal-legal-corpo" class="mt-5 space-y-4 text-sm font-light leading-relaxed text-muted"></div>
     </div>
   </div>
-
-  <!-- ==============================================================
-       MODO EDITOR (dono): ocultar/reativar publicações direto no site
-  =============================================================== -->
-  <button type="button" id="owner-lock" aria-label="Modo editor (dono)" title="Modo editor" class="fixed bottom-4 left-4 z-50 flex h-10 w-10 items-center justify-center rounded-full border border-gold/30 bg-[#121212]/90 text-gold-light shadow-lg backdrop-blur-md transition-all duration-300 hover:border-gold hover:bg-black sm:bottom-6 sm:left-6">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-  </button>
 
   <!-- ==============================================================
        BANNER DE COOKIES (LGPD)

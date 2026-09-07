@@ -1146,6 +1146,34 @@ var APP_VERSION = '1.3.2';
   }
 
   /* ================================================================
+     CONFIGURAÇÕES DO SITE (Landing Page)
+     ================================================================ */
+  function getConfigSite(cb) {
+    if (_db) {
+      _db.ref('jane-booking/configuracoes/site').once('value').then(function (snap) {
+        var val = snap.val();
+        cb(val || {});
+      }).catch(function () { cb({}); });
+    } else {
+      cb({});
+    }
+  }
+
+  function setConfigSite(config) {
+    if (_db) {
+      _db.ref('jane-booking/configuracoes/site').set(config);
+    }
+  }
+
+  function togglePostInstagram(ordem, ocultar) {
+    getConfigSite(function (config) {
+      if (!config.posts_ocultos) config.posts_ocultos = {};
+      config.posts_ocultos['post_' + ordem] = ocultar;
+      setConfigSite(config);
+    });
+  }
+
+  /* ================================================================
      EXPORTAÇÃO PÚBLICA (window.Booking)
      ================================================================ */
   window.Booking = {
@@ -1153,6 +1181,9 @@ var APP_VERSION = '1.3.2';
     capitalizarNome: capitalizarNome,
     nomeFormatado: nomeFormatado,
     formatarTel: formatarTel,
+    getConfigSite: getConfigSite,
+    setConfigSite: setConfigSite,
+    togglePostInstagram: togglePostInstagram,
     initFirebase: initFirebase,
     loadAllData: loadAllData,
     listenFirebase: listenFirebase,
