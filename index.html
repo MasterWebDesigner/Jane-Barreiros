@@ -1189,10 +1189,16 @@
             <h2 class="mt-5 font-serif text-3xl font-semibold sm:text-4xl">Onde estamos</h2>
             <p id="endereco-logradouro" class="mt-6 text-lg font-light leading-relaxed text-ink">Rua Rio Grande Do Sul, 348<br/>Santo André &mdash; SP</p>
             <p id="horarios" class="mt-3 text-sm font-light leading-relaxed text-muted">Terça a Sábado: 09:00 &ndash; 19:00<br/>Domingo e Segunda: Fechado</p>
-            <a href="https://www.google.com/maps/dir/?api=1&destination=Rua+Rio+Grande+Do+Sul,+348+Santo+Andre,+SP" target="_blank" rel="noopener" class="btn-gold mt-8 inline-flex items-center justify-center gap-2.5 rounded-xl px-6 py-3.5 text-sm font-semibold">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-              Traçar Rota no Google Maps
-            </a>
+            <div class="mt-8 flex flex-wrap items-center gap-3">
+              <a href="https://www.google.com/maps/dir/?api=1&destination=Rua+Rio+Grande+Do+Sul,+348+Santo+Andre,+SP" target="_blank" rel="noopener" class="btn-gold inline-flex items-center justify-center gap-2.5 rounded-xl px-6 py-3.5 text-sm font-semibold">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+                Google Maps
+              </a>
+              <a href="https://www.waze.com/ul?q=Rua+Rio+Grande+Do+Sul,+348+Santo+Andre,+SP" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2.5 rounded-xl border border-gold/40 px-6 py-3.5 text-sm font-semibold text-gold transition-colors hover:bg-gold/10">
+                <svg viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2.182a9.818 9.818 0 110 19.636 9.818 9.818 0 010-19.636zm-1.091 4.364v3.273l2.727 1.636a.545.545 0 01.2.746l-1.637 2.727a.545.545 0 01-.745.2l-2.728-1.637a.545.545 0 01-.2-.745l1.637-2.727a.545.545 0 01.745-.2l.001.001v-2.513a.545.545 0 01.546-.545h2.182a.545.545 0 010 1.09h-1.636z"/></svg>
+                Waze
+              </a>
+            </div>
           </div>
           <div class="min-h-[340px] overflow-hidden rounded-2xl border border-gold/20 shadow-md">
             <iframe
