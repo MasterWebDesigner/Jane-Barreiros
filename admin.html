@@ -214,6 +214,7 @@
     <div class="flex items-center gap-2">
       <img src="Logomarca.png" alt="" class="h-6 w-auto">
       <span class="font-display text-xs font-semibold text-white">JANE BARREIROS</span>
+      <span id="mobile-user-badge" class="hidden rounded-full bg-gold/15 px-2 py-0.5 text-[10px] font-medium text-gold"></span>
     </div>
     <button id="mobile-logout-btn" class="rounded-lg bg-dark-600 p-2 text-gray-300 hover:text-red-400">
       <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
@@ -231,6 +232,17 @@
       <div>
         <p class="font-display text-sm font-semibold text-white leading-tight">JANE BARREIROS</p>
         <p class="text-[10px] font-medium uppercase tracking-wider text-gold">Painel Administrativo</p>
+      </div>
+    </div>
+
+    <!-- Usuário Logado -->
+    <div id="sidebar-user" class="hidden border-b border-dark-300/50 px-5 py-3">
+      <div class="flex items-center gap-3">
+        <div id="sidebar-user-avatar" class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gold/15 text-sm font-bold text-gold"></div>
+        <div class="min-w-0">
+          <p id="sidebar-user-nome" class="text-sm font-medium text-white truncate"></p>
+          <p id="sidebar-user-nivel" class="text-[10px] font-medium uppercase tracking-wider text-gray-400"></p>
+        </div>
       </div>
     </div>
 
@@ -1840,6 +1852,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var senha = document.getElementById('login-senha').value;
     if (B && B.adminLogin(senha)) {
       try { sessionStorage.setItem(KEY_AUTH, '1'); } catch (e) {}
+      try { sessionStorage.setItem('jane-admin-user', JSON.stringify({ nome: 'Jane Barreiros', email: 'jane@studiojane.com.br', nivel: 'admin' })); } catch (e) {}
       showApp();
     } else {
       var erro = document.getElementById('login-erro');
@@ -1861,6 +1874,24 @@ document.addEventListener('DOMContentLoaded', function () {
     unlockAudio();
     init();
     showPage('dashboard');
+    renderSidebarUser();
+  }
+
+  function renderSidebarUser() {
+    var u = null;
+    try { u = JSON.parse(sessionStorage.getItem('jane-admin-user') || 'null'); } catch (e) {}
+    if (!u) return;
+    var initials = (u.nome || u.email || '?').split(' ').map(function (w) { return w.charAt(0); }).join('').substring(0, 2).toUpperCase();
+    var avatar = document.getElementById('sidebar-user-avatar');
+    var nome = document.getElementById('sidebar-user-nome');
+    var nivel = document.getElementById('sidebar-user-nivel');
+    var sidebarBox = document.getElementById('sidebar-user');
+    var mobileBadge = document.getElementById('mobile-user-badge');
+    if (avatar) avatar.textContent = initials;
+    if (nome) nome.textContent = u.nome || u.email;
+    if (nivel) nivel.textContent = u.nivel === 'admin' ? 'Administrador' : u.nivel === 'operador' ? 'Operador' : u.nivel || 'Operador';
+    if (sidebarBox) sidebarBox.classList.remove('hidden');
+    if (mobileBadge) { mobileBadge.textContent = initials; mobileBadge.classList.remove('hidden'); }
   }
 
   if (isLoggedIn()) showApp();
