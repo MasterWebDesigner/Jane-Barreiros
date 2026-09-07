@@ -4541,14 +4541,18 @@ document.addEventListener('DOMContentLoaded', function () {
   retMotivoSalvar.addEventListener('click', function () {
     var motivo = retMotivoSelect.value;
     if (!motivo) { alert('Selecione um motivo.'); return; }
+    console.log('[RET] Inativar: motivo=' + motivo + ', retMotivoWpp=' + retMotivoWpp);
     var clientes = B.getClientes();
+    console.log('[RET] Clientes encontrados:', clientes.length);
     var cli = clientes.find(function (c) { return c.whatsapp.replace(/\D/g,'') === retMotivoWpp.replace(/\D/g,''); });
+    console.log('[RET] Cliente encontrado:', !!cli, cli ? cli.nome : 'N/A');
     if (!cli) {
       cli = { nome: retMotivoNome.textContent, whatsapp: retMotivoWpp, tag: 'Ativa', total_atendimentos: 0, notificacao_inativa: true };
       clientes.push(cli);
     } else {
       cli.notificacao_inativa = true;
     }
+    console.log('[RET] Salvando', clientes.length, 'clientes. notificacao_inativa=', cli.notificacao_inativa);
     B.setClientes(clientes);
     retMotivoModal.classList.add('hidden');
     retMotivoModal.classList.remove('flex');
