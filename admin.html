@@ -5105,7 +5105,7 @@ document.addEventListener('DOMContentLoaded', function () {
   /* --- CMS: Conteúdo do Site --- */
   var cmsData = {};
   function loadCms() {
-    fetch('content/site.json?v=' + Date.now()).then(function (r) { return r.json(); }).then(function (data) {
+    function applyData(data) {
       cmsData = data;
       var s = data.site || {};
       var sobre = data.sobre || {};
@@ -5145,7 +5145,18 @@ document.addEventListener('DOMContentLoaded', function () {
       set('cms-redes-threads_url', redes.threads_url);
       set('cms-redes-telegram_url', redes.telegram_url);
       renderCmsInstaPosts();
-    });
+    }
+    try {
+      var db = firebase.database();
+      db.ref('jane-booking/jane-conteudo-site').once('value').then(function (snap) {
+        var val = snap.val();
+        if (val && val.site) { applyData(val); return; }
+        fetchFallback();
+      }).catch(function () { fetchFallback(); });
+    } catch (e) { fetchFallback(); }
+    function fetchFallback() {
+      fetch('content/site.json?v=' + Date.now()).then(function (r) { return r.json(); }).then(applyData).catch(function () { applyData({}); });
+    }
   }
 
   function renderCmsInstaPosts() {
@@ -5216,14 +5227,17 @@ document.addEventListener('DOMContentLoaded', function () {
         cmsData.instagram.posts[idx][field] = el.value;
       }
     });
-    if (B && B.setStore) {
-      B.setStore('jane-conteudo-site', cmsData).then(function () {
+    try {
+      var db = firebase.database();
+      db.ref('jane-booking/jane-conteudo-site').set(cmsData).then(function () {
         showToast('Salvo', 'Conteúdo do site atualizado com sucesso!', null);
-      }).catch(function () {
-        showToast('Erro', 'Não foi possível salvar. Tente novamente.', null);
+      }).catch(function (err) {
+        console.error('[CMS] Firebase ERRO:', err);
+        showToast('Erro', 'Falha ao salvar: ' + (err.message || err), null);
       });
-    } else {
-      showToast('Erro', 'Sistema indisponível.', null);
+    } catch (e) {
+      console.error('[CMS] Exception:', e);
+      showToast('Erro', 'Sistema indisponível: ' + e.message, null);
     }
   });
 
