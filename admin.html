@@ -1053,6 +1053,7 @@
         <button class="cfg-tab active" data-cfg-tab="guia">📋 Guia Rápido</button>
         <button class="cfg-tab" data-cfg-tab="config">⚙️ Configurações</button>
         <button class="cfg-tab" data-cfg-tab="landing">🌐 Landing Page</button>
+        <button class="cfg-tab" data-cfg-tab="cms">📝 Conteúdo</button>
         <button class="cfg-tab" data-cfg-tab="usuarios">👤 Usuários</button>
         <button class="cfg-tab" data-cfg-tab="sobre">ℹ️ Sobre</button>
       </div>
@@ -1143,6 +1144,191 @@
           </div>
 
           <button id="cfg-landing-save" class="mt-6 rounded-xl bg-gold/20 px-5 py-2.5 text-sm font-semibold text-gold hover:bg-gold/30 transition-colors">Salvar Alterações</button>
+        </div>
+      </div>
+
+      <!-- TAB: Conteúdo do Site (CMS) -->
+      <div id="cfg-tab-cms" class="cfg-tab-panel hidden">
+        <div class="card-dark p-6 mb-6">
+          <h3 class="font-display text-lg font-semibold text-white mb-4">Dados do Site</h3>
+          <p class="text-sm text-gray-400 mb-4">Edite as informações que aparecem na landing page. Clique em Salvar para atualizar.</p>
+
+          <!-- Seção: Geral -->
+          <div class="mb-6">
+            <h4 class="text-sm font-semibold text-gold mb-3 border-b border-dark-300/30 pb-2">🏠 Geral</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Nome do Estúdio</label>
+                <input id="cms-site-nome" type="text" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Etiqueta do Logo</label>
+                <input id="cms-site-logo_etiqueta" type="text" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block text-xs text-gray-500 mb-1">Slogan</label>
+                <input id="cms-site-slogan" type="text" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+              </div>
+            </div>
+          </div>
+
+          <!-- Seção: Links -->
+          <div class="mb-6">
+            <h4 class="text-sm font-semibold text-gold mb-3 border-b border-dark-300/30 pb-2">🔗 Links</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">WhatsApp (número com código país)</label>
+                <input id="cms-site-whatsapp_numero" type="text" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">WhatsApp (exibição)</label>
+                <input id="cms-site-whatsapp_exibir" type="text" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Link do Curso (Hotmart)</label>
+                <input id="cms-site-hotmart_checkout" type="url" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Link de Agendamento</label>
+                <input id="cms-site-link_agenda" type="url" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+              </div>
+            </div>
+          </div>
+
+          <!-- Seção: Sobre -->
+          <div class="mb-6">
+            <h4 class="text-sm font-semibold text-gold mb-3 border-b border-dark-300/30 pb-2">👩‍🦰 Sobre</h4>
+            <div class="grid grid-cols-1 gap-3">
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Título Hero</label>
+                <input id="cms-sobre-hero_titulo" type="text" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Eyebrow (topo)</label>
+                <input id="cms-sobre-hero_eyebrow" type="text" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Subtítulo Hero</label>
+                <input id="cms-sobre-hero_subtitulo" type="text" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Badge Hero</label>
+                <input id="cms-sobre-hero_badge" type="text" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Imagem Hero (URL)</label>
+                <input id="cms-sobre-hero_imagem" type="url" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Apresentação</label>
+                <textarea id="cms-sobre-apresentacao" rows="3" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none resize-y"></textarea>
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Educadora</label>
+                <textarea id="cms-sobre-educadora" rows="2" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none resize-y"></textarea>
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Trajetória</label>
+                <textarea id="cms-sobre-trajetoria" rows="2" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none resize-y"></textarea>
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Citação</label>
+                <textarea id="cms-sobre-citacao" rows="2" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none resize-y"></textarea>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs text-gray-500 mb-1">Anos de Experiência</label>
+                  <input id="cms-sobre-stat_anos" type="number" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+                </div>
+                <div>
+                  <label class="block text-xs text-gray-500 mb-1">Total de Clientes</label>
+                  <input id="cms-sobre-stat_clientes" type="number" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Seção: Contato -->
+          <div class="mb-6">
+            <h4 class="text-sm font-semibold text-gold mb-3 border-b border-dark-300/30 pb-2">📍 Contato</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Endereço</label>
+                <input id="cms-contato-endereco_logradouro" type="text" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Cidade</label>
+                <input id="cms-contato-endereco_cidade" type="text" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Horário (semana)</label>
+                <input id="cms-contato-horario_semana" type="text" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Horário (fim de semana)</label>
+                <input id="cms-contato-horario_fim_de_semana" type="text" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block text-xs text-gray-500 mb-1">Link do Google Maps (embed)</label>
+                <input id="cms-contato-mapa_embed" type="url" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+              </div>
+            </div>
+          </div>
+
+          <!-- Seção: Redes Sociais -->
+          <div class="mb-6">
+            <h4 class="text-sm font-semibold text-gold mb-3 border-b border-dark-300/30 pb-2">📱 Redes Sociais</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Instagram URL</label>
+                <input id="cms-redes-instagram_url" type="url" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Instagram Usuário</label>
+                <input id="cms-redes-instagram_usuario" type="text" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">WhatsApp URL</label>
+                <input id="cms-redes-whatsapp_url" type="url" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">TikTok URL</label>
+                <input id="cms-redes-tiktok_url" type="url" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Facebook URL</label>
+                <input id="cms-redes-facebook_url" type="url" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">YouTube URL</label>
+                <input id="cms-redes-youtube_url" type="url" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">LinkedIn URL</label>
+                <input id="cms-redes-linkedin_url" type="url" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Threads URL</label>
+                <input id="cms-redes-threads_url" type="url" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Telegram URL</label>
+                <input id="cms-redes-telegram_url" type="url" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
+              </div>
+            </div>
+          </div>
+
+          <!-- Seção: Instagram Posts -->
+          <div class="mb-6">
+            <h4 class="text-sm font-semibold text-gold mb-3 border-b border-dark-300/30 pb-2">📸 Posts do Instagram</h4>
+            <div class="flex items-center gap-3 mb-3">
+              <button id="cms-insta-add" class="rounded-lg bg-gold/20 px-4 py-2 text-xs font-semibold text-gold hover:bg-gold/30 transition-colors">+ Adicionar Post</button>
+              <span class="text-xs text-gray-500">Exiba textos sobre os posts na landing page.</span>
+            </div>
+            <div id="cms-insta-posts" class="space-y-3"></div>
+          </div>
+
+          <button id="cms-save" class="rounded-xl bg-gold/20 px-5 py-2.5 text-sm font-semibold text-gold hover:bg-gold/30 transition-colors">Salvar Alterações</button>
         </div>
       </div>
 
@@ -4915,6 +5101,133 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   renderLandingConfig();
+
+  /* --- CMS: Conteúdo do Site --- */
+  var cmsData = {};
+  function loadCms() {
+    fetch('content/site.json?v=' + Date.now()).then(function (r) { return r.json(); }).then(function (data) {
+      cmsData = data;
+      var s = data.site || {};
+      var sobre = data.sobre || {};
+      var cont = data.contato || {};
+      var redes = data.redes || {};
+      var set = function (id, v) { var el = document.getElementById(id); if (el) el.value = v || ''; };
+      set('cms-site-nome', s.nome);
+      set('cms-site-logo_etiqueta', s.logo_etiqueta);
+      set('cms-site-slogan', s.slogan);
+      set('cms-site-whatsapp_numero', s.whatsapp_numero);
+      set('cms-site-whatsapp_exibir', s.whatsapp_exibir);
+      set('cms-site-hotmart_checkout', s.hotmart_checkout);
+      set('cms-site-link_agenda', s.link_agenda);
+      set('cms-sobre-hero_titulo', sobre.hero_titulo);
+      set('cms-sobre-hero_eyebrow', sobre.hero_eyebrow);
+      set('cms-sobre-hero_subtitulo', sobre.hero_subtitulo);
+      set('cms-sobre-hero_badge', sobre.hero_badge);
+      set('cms-sobre-hero_imagem', sobre.hero_imagem);
+      set('cms-sobre-apresentacao', sobre.apresentacao);
+      set('cms-sobre-educadora', sobre.educadora);
+      set('cms-sobre-trajetoria', sobre.trajetoria);
+      set('cms-sobre-citacao', sobre.citacao);
+      set('cms-sobre-stat_anos', sobre.stat_anos);
+      set('cms-sobre-stat_clientes', sobre.stat_clientes);
+      set('cms-contato-endereco_logradouro', cont.endereco_logradouro);
+      set('cms-contato-endereco_cidade', cont.endereco_cidade);
+      set('cms-contato-horario_semana', cont.horario_semana);
+      set('cms-contato-horario_fim_de_semana', cont.horario_fim_de_semana);
+      set('cms-contato-mapa_embed', cont.mapa_embed);
+      set('cms-redes-instagram_url', redes.instagram_url);
+      set('cms-redes-instagram_usuario', redes.instagram_usuario);
+      set('cms-redes-whatsapp_url', redes.whatsapp_url);
+      set('cms-redes-tiktok_url', redes.tiktok_url);
+      set('cms-redes-facebook_url', redes.facebook_url);
+      set('cms-redes-youtube_url', redes.youtube_url);
+      set('cms-redes-linkedin_url', redes.linkedin_url);
+      set('cms-redes-threads_url', redes.threads_url);
+      set('cms-redes-telegram_url', redes.telegram_url);
+      renderCmsInstaPosts();
+    });
+  }
+
+  function renderCmsInstaPosts() {
+    var container = document.getElementById('cms-insta-posts');
+    var posts = (cmsData.instagram || {}).posts || [];
+    if (!posts.length) { container.innerHTML = '<p class="text-sm text-gray-500">Nenhum post.</p>'; return; }
+    container.innerHTML = posts.map(function (p, i) {
+      return '<div class="flex items-center gap-3 p-3 rounded-lg bg-dark-700/50 border border-dark-300/20">' +
+        '<span class="text-xs text-gray-500 w-6 text-center">#' + p.ordem + '</span>' +
+        '<input type="text" data-cms-post="' + i + '" data-field="titulo" value="' + esc(p.titulo || '') + '" placeholder="Título (opcional)" class="flex-1 rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-1.5 text-sm text-gray-300 focus:border-gold outline-none">' +
+        '<input type="url" data-cms-post="' + i + '" data-field="link" value="' + esc(p.link || '') + '" placeholder="Link Instagram" class="w-64 rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-1.5 text-sm text-gray-300 focus:border-gold outline-none">' +
+        '</div>';
+    }).join('');
+  }
+
+  document.getElementById('cms-insta-add').addEventListener('click', function () {
+    var posts = (cmsData.instagram = cmsData.instagram || {}).posts = cmsData.instagram.posts || [];
+    var nextOrd = posts.length ? Math.max.apply(null, posts.map(function (p) { return p.ordem; })) + 1 : 1;
+    posts.push({ ordem: nextOrd, imagem: 'Instagram/Instagram.png', titulo: '', link: '', video: '', ocultar: false });
+    renderCmsInstaPosts();
+  });
+
+  document.getElementById('cms-save').addEventListener('click', function () {
+    var g = function (id) { var el = document.getElementById(id); return el ? el.value : ''; };
+    cmsData.site = {
+      nome: g('cms-site-nome'),
+      slogan: g('cms-site-slogan'),
+      logo_etiqueta: g('cms-site-logo_etiqueta'),
+      whatsapp_numero: g('cms-site-whatsapp_numero'),
+      whatsapp_exibir: g('cms-site-whatsapp_exibir'),
+      hotmart_checkout: g('cms-site-hotmart_checkout'),
+      link_agenda: g('cms-site-link_agenda')
+    };
+    cmsData.sobre = cmsData.sobre || {};
+    cmsData.sobre.hero_titulo = g('cms-sobre-hero_titulo');
+    cmsData.sobre.hero_eyebrow = g('cms-sobre-hero_eyebrow');
+    cmsData.sobre.hero_subtitulo = g('cms-sobre-hero_subtitulo');
+    cmsData.sobre.hero_badge = g('cms-sobre-hero_badge');
+    cmsData.sobre.hero_imagem = g('cms-sobre-hero_imagem');
+    cmsData.sobre.apresentacao = g('cms-sobre-apresentacao');
+    cmsData.sobre.educadora = g('cms-sobre-educadora');
+    cmsData.sobre.trajetoria = g('cms-sobre-trajetoria');
+    cmsData.sobre.citacao = g('cms-sobre-citacao');
+    cmsData.sobre.stat_anos = parseInt(g('cms-sobre-stat_anos')) || 0;
+    cmsData.sobre.stat_clientes = parseInt(g('cms-sobre-stat_clientes')) || 0;
+    cmsData.contato = {
+      endereco_logradouro: g('cms-contato-endereco_logradouro'),
+      endereco_cidade: g('cms-contato-endereco_cidade'),
+      horario_semana: g('cms-contato-horario_semana'),
+      horario_fim_de_semana: g('cms-contato-horario_fim_de_semana'),
+      mapa_embed: g('cms-contato-mapa_embed')
+    };
+    cmsData.redes = {
+      instagram_url: g('cms-redes-instagram_url'),
+      instagram_usuario: g('cms-redes-instagram_usuario'),
+      whatsapp_url: g('cms-redes-whatsapp_url'),
+      tiktok_url: g('cms-redes-tiktok_url'),
+      facebook_url: g('cms-redes-facebook_url'),
+      youtube_url: g('cms-redes-youtube_url'),
+      linkedin_url: g('cms-redes-linkedin_url'),
+      threads_url: g('cms-redes-threads_url'),
+      telegram_url: g('cms-redes-telegram_url')
+    };
+    document.querySelectorAll('#cms-insta-posts [data-cms-post]').forEach(function (el) {
+      var idx = parseInt(el.getAttribute('data-cms-post'));
+      var field = el.getAttribute('data-field');
+      if (cmsData.instagram && cmsData.instagram.posts && cmsData.instagram.posts[idx]) {
+        cmsData.instagram.posts[idx][field] = el.value;
+      }
+    });
+    if (B && B.setStore) {
+      B.setStore('jane-conteudo-site', cmsData).then(function () {
+        showToast('Salvo', 'Conteúdo do site atualizado com sucesso!', null);
+      }).catch(function () {
+        showToast('Erro', 'Não foi possível salvar. Tente novamente.', null);
+      });
+    } else {
+      showToast('Erro', 'Sistema indisponível.', null);
+    }
+  });
+
+  loadCms();
 
   function renderDiasBloq() {
     var container = document.getElementById('cfg-dias-bloq');

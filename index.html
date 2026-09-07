@@ -1515,12 +1515,29 @@
         if (el && val) el.setAttribute(attr, val);
       }
 
-      fetch('content/site.json?v=' + Date.now())
-        .then(function (res) {
-          if (!res.ok) throw new Error('HTTP ' + res.status);
-          return res.json();
-        })
-        .then(function (data) {
+      /* Tenta carregar do Firebase, fallback para site.json */
+      function loadSiteContent(callback) {
+        try {
+          if (typeof firebase !== 'undefined' && firebase.database) {
+            var _fb = firebase.database();
+            _fb.ref('jane-booking/jane-conteudo-site').once('value').then(function (snap) {
+              var val = snap.val();
+              if (val && val.site) { callback(val); return; }
+              fetchFallback(callback);
+            }).catch(function () { fetchFallback(callback); });
+          } else {
+            fetchFallback(callback);
+          }
+        } catch (e) { fetchFallback(callback); }
+      }
+      function fetchFallback(callback) {
+        fetch('content/site.json?v=' + Date.now())
+          .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+          .then(function (data) { callback(data); })
+          .catch(function () { callback({}); });
+      }
+
+      loadSiteContent(function (data) {
           var site    = data.site    || {};
           var sobre   = data.sobre   || {};
           var curso   = data.curso   || {};
@@ -1667,11 +1684,7 @@
           if (redes.telegram_url)       setAttr('social-telegram-footer', 'href', redes.telegram_url);
           setAttr('mapa-iframe', 'src', contato.mapa_embed);
           setAttr('modal-mechas-cta', 'href', contato.whatsapp_link);
-        })
-        .catch(function () {
-          // Fallback: mantém o conteúdo estático (digitação direta no HTML).
-          // Sem replicação: os cards exibidos são apenas os estáticos definidos.
-        });
+      }); // fim loadSiteContent
     })();
   </script>
   <script>
