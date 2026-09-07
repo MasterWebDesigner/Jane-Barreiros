@@ -579,8 +579,6 @@
           <div class="flex items-center gap-0.5 rounded-lg bg-dark-600 p-0.5">
             <button class="fat-period-btn rounded-md px-2.5 py-1 text-[10px] font-semibold text-gold bg-gold/15" data-period="dia">Dia</button>
             <button class="fat-period-btn rounded-md px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-period="mes">Mês</button>
-            <button class="fat-period-btn rounded-md px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-period="trimestre">Trim</button>
-            <button class="fat-period-btn rounded-md px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-period="semestre">Sem</button>
             <button class="fat-period-btn rounded-md px-2.5 py-1 text-[10px] font-semibold text-gray-400 hover:text-gray-200" data-period="ano">Ano</button>
           </div>
           <button id="fat-filter-prev" class="rounded-lg bg-dark-600 px-3 py-1.5 text-sm text-gray-300 hover:bg-dark-500">&larr;</button>
@@ -784,8 +782,6 @@
           <div class="flex flex-wrap items-center gap-3">
             <div class="flex items-center gap-0.5 rounded-lg bg-dark-600 p-0.5">
               <button class="rel-period-btn rounded-md px-3 py-1.5 text-[11px] font-semibold text-gold bg-gold/15" data-rperiod="mes">Mês</button>
-              <button class="rel-period-btn rounded-md px-3 py-1.5 text-[11px] font-semibold text-gray-400 hover:text-gray-200" data-rperiod="trimestre">Trim</button>
-              <button class="rel-period-btn rounded-md px-3 py-1.5 text-[11px] font-semibold text-gray-400 hover:text-gray-200" data-rperiod="semestre">Sem</button>
               <button class="rel-period-btn rounded-md px-3 py-1.5 text-[11px] font-semibold text-gray-400 hover:text-gray-200" data-rperiod="ano">Ano</button>
               <button class="rel-period-btn rounded-md px-3 py-1.5 text-[11px] font-semibold text-gray-400 hover:text-gray-200" data-rperiod="personalizado">Personalizado</button>
             </div>
@@ -5229,7 +5225,7 @@ document.addEventListener('DOMContentLoaded', function () {
      ============================================================ */
   var fatPagTab = 'dia';
   var fatPeriodo = new Date(); fatPeriodo.setHours(12,0,0,0);
-  var fatPeriodType = 'mes'; /* mes | trimestre | semestre | ano */
+  var fatPeriodType = 'mes'; /* mes | dia | ano */
   var _despEditId = null;
 
   function getPeriodRange() {
@@ -5241,14 +5237,6 @@ document.addEventListener('DOMContentLoaded', function () {
     } else if (fatPeriodType === 'mes') {
       inicio = new Date(y, m, 1);
       fim = new Date(y, m + 1, 0);
-    } else if (fatPeriodType === 'trimestre') {
-      var qStart = Math.floor(m / 3) * 3;
-      inicio = new Date(y, qStart, 1);
-      fim = new Date(y, qStart + 3, 0);
-    } else if (fatPeriodType === 'semestre') {
-      var sStart = m < 6 ? 0 : 6;
-      inicio = new Date(y, sStart, 1);
-      fim = new Date(y, sStart + 6, 0);
     } else {
       inicio = new Date(y, 0, 1);
       fim = new Date(y, 11, 31);
@@ -5277,14 +5265,6 @@ document.addEventListener('DOMContentLoaded', function () {
       return diasSemana[dow] + ', ' + (d < 10 ? '0' : '') + d + ' ' + meses[m] + ' ' + y;
     } else if (fatPeriodType === 'mes') {
       return meses[m] + ' ' + y;
-    } else if (fatPeriodType === 'trimestre') {
-      var q = Math.floor(m / 3) + 1;
-      var qStart = Math.floor(m / 3) * 3;
-      return 'T' + q + ' ' + y + ' (' + meses[qStart] + '–' + meses[Math.min(qStart + 2, 11)] + ')';
-    } else if (fatPeriodType === 'semestre') {
-      var s = m < 6 ? 1 : 2;
-      var sStart = m < 6 ? 0 : 6;
-      return 'S' + s + ' ' + y + ' (' + meses[sStart] + '–' + meses[Math.min(sStart + 5, 11)] + ')';
     } else {
       return 'Ano ' + y;
     }
@@ -5297,8 +5277,6 @@ document.addEventListener('DOMContentLoaded', function () {
   function fatStep(dir) {
     if (fatPeriodType === 'dia') fatPeriodo.setDate(fatPeriodo.getDate() + dir);
     else if (fatPeriodType === 'mes') fatPeriodo.setMonth(fatPeriodo.getMonth() + dir);
-    else if (fatPeriodType === 'trimestre') fatPeriodo.setMonth(fatPeriodo.getMonth() + dir * 3);
-    else if (fatPeriodType === 'semestre') fatPeriodo.setMonth(fatPeriodo.getMonth() + dir * 6);
     else fatPeriodo.setFullYear(fatPeriodo.getFullYear() + dir);
     renderFatPeriodoLabel();
     renderFaturamento();
@@ -5373,7 +5351,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var lucroEl = document.getElementById('fin-lucro-valor');
     lucroEl.textContent = fmtBRL(lucroLiquido);
     lucroEl.className = 'mt-2 font-numeric text-3xl font-bold ' + (lucroLiquido >= 0 ? 'text-green-400' : 'text-red-400');
-    var periodoLabel = fatPeriodType === 'mes' ? 'do mês' : fatPeriodType === 'trimestre' ? 'do trimestre' : fatPeriodType === 'semestre' ? 'do semestre' : 'do ano';
+    var periodoLabel = fatPeriodType === 'mes' ? 'do mês' : 'do ano';
     document.getElementById('fin-lucro-desc').textContent = lucroLiquido >= 0 ? 'Lucro ' + periodoLabel : 'Prejuízo ' + periodoLabel;
 
     document.getElementById('fat-previsto-valor').textContent = fmtBRL(fatPrevisto);
@@ -5416,7 +5394,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function _renderDespesasChart(despesasMes) {
     var container = document.getElementById('fin-saidas-chart');
     container.innerHTML = '';
-    if (!despesasMes.length) { var plabel = fatPeriodType === 'mes' ? 'neste mês' : fatPeriodType === 'trimestre' ? 'neste trimestre' : fatPeriodType === 'semestre' ? 'neste semestre' : 'neste ano'; container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">Nenhuma despesa registrada ' + plabel + '.</p>'; return; }
+    if (!despesasMes.length) { var plabel = fatPeriodType === 'mes' ? 'neste mês' : 'neste ano'; container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">Nenhuma despesa registrada ' + plabel + '.</p>'; return; }
     var catCores = { 'Salários/Pró-Labore': 'bg-blue-500', 'Comissões da Equipe': 'bg-rose-500', 'Custos Fixos': 'bg-amber-500', 'Estoque/Insumos': 'bg-purple-500', 'Ativos/Equipamentos': 'bg-cyan-500', 'Outros': 'bg-gray-500' };
     var catCount = {};
     despesasMes.forEach(function (d) {
@@ -5495,7 +5473,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var tbody = document.getElementById('fin-desp-tbody');
     var vazio = document.getElementById('fin-desp-vazio');
     tbody.innerHTML = '';
-    if (!filtradas.length) { vazio.classList.remove('hidden'); var plbl = fatPeriodType === 'mes' ? 'neste mês' : fatPeriodType === 'trimestre' ? 'neste trimestre' : fatPeriodType === 'semestre' ? 'neste semestre' : 'neste ano'; vazio.textContent = 'Nenhuma despesa registrada ' + plbl + '.'; tbody.parentElement.classList.add('hidden'); return; }
+    if (!filtradas.length) { vazio.classList.remove('hidden'); var plbl = fatPeriodType === 'mes' ? 'neste mês' : 'neste ano'; vazio.textContent = 'Nenhuma despesa registrada ' + plbl + '.'; tbody.parentElement.classList.add('hidden'); return; }
     vazio.classList.add('hidden'); tbody.parentElement.classList.remove('hidden');
 
     var catCores = { 'Salários/Pró-Labore': 'text-blue-400 bg-blue-500/15', 'Comissões da Equipe': 'text-rose-400 bg-rose-500/15', 'Custos Fixos': 'text-amber-400 bg-amber-500/15', 'Estoque/Insumos': 'text-purple-400 bg-purple-500/15', 'Ativos/Equipamentos': 'text-cyan-400 bg-cyan-500/15', 'Outros': 'text-gray-400 bg-gray-500/15' };
@@ -6191,12 +6169,6 @@ document.addEventListener('DOMContentLoaded', function () {
       else { inicio = new Date(y, m, 1); fim = new Date(y, m + 1, 0); }
     } else if (relPeriodType === 'mes') {
       inicio = new Date(y, m, 1); fim = new Date(y, m + 1, 0);
-    } else if (relPeriodType === 'trimestre') {
-      var qS = Math.floor(m / 3) * 3;
-      inicio = new Date(y, qS, 1); fim = new Date(y, qS + 3, 0);
-    } else if (relPeriodType === 'semestre') {
-      var sS = m < 6 ? 0 : 6;
-      inicio = new Date(y, sS, 1); fim = new Date(y, sS + 6, 0);
     } else {
       inicio = new Date(y, 0, 1); fim = new Date(y, 11, 31);
     }
@@ -6212,8 +6184,6 @@ document.addEventListener('DOMContentLoaded', function () {
     var r = getRelRange();
     if (relPeriodType === 'personalizado') return fmtBR(agDateStr(r.inicio)) + ' — ' + fmtBR(agDateStr(r.fim));
     if (relPeriodType === 'mes') return meses[r.inicio.getMonth()] + ' ' + r.inicio.getFullYear();
-    if (relPeriodType === 'trimestre') { var q = Math.floor(r.inicio.getMonth()/3)+1; return 'T'+q+' '+r.inicio.getFullYear(); }
-    if (relPeriodType === 'semestre') { var s = r.inicio.getMonth()<6?1:2; return 'S'+s+' '+r.inicio.getFullYear(); }
     return 'Ano ' + r.inicio.getFullYear();
   }
 
