@@ -1017,18 +1017,9 @@
     <section id="page-retencao" class="admin-page p-6 lg:p-8 hidden">
       <div class="flex items-center justify-between mb-6">
         <h1 class="font-display text-2xl font-semibold text-white">Retenção & Clientes</h1>
-        <div class="flex items-center gap-2">
-          <select id="ret-filtro" class="rounded-lg border border-dark-300 bg-dark-700 px-3 py-2 text-sm text-gray-300">
-            <option value="todos">Todos</option>
-            <option value="atrasado">Atrasados</option>
-            <option value="proximo">Próximos de vencer</option>
-            <option value="em_dia">Em dia</option>
-            <option value="perdido">Inativos</option>
-          </select>
-        </div>
       </div>
       <!-- KPIs -->
-      <div id="ret-kpis" class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6"></div>
+      <div id="ret-kpis" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6"></div>
       <!-- Tabela -->
       <div class="overflow-x-auto rounded-xl border border-dark-300/30 bg-dark-700/40">
         <table class="w-full text-left text-sm">
@@ -1389,28 +1380,6 @@
         </div>
       </div>
     </section>
-
-    <!-- Modal Motivo Perda -->
-    <div id="ret-motivo-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div class="bg-dark-700 border border-dark-300/50 rounded-2xl shadow-2xl p-6 w-full max-w-sm mx-4">
-        <h3 class="font-display text-lg font-semibold text-white mb-1">Inativar Notificação</h3>
-        <p class="text-sm text-gray-400 mb-4">Silenciar alerta para: <span id="ret-motivo-nome" class="text-gold font-semibold"></span></p>
-        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Motivo</label>
-        <select id="ret-motivo-select" class="w-full rounded-xl border border-dark-300 bg-dark-600 px-4 py-3 text-sm text-white focus:border-gold focus:outline-none mb-4">
-          <option value="">Selecione...</option>
-          <option value="preco">Preço alto</option>
-          <option value="localizacao">Mudou de cidade/bairro</option>
-          <option value="concorrencia">Foi para concorrência</option>
-          <option value="horario">Não encaixa no horário</option>
-          <option value="servico">Insatisfação com serviço</option>
-          <option value="outro">Outro motivo</option>
-        </select>
-        <div class="flex gap-3">
-          <button id="ret-motivo-salvar" class="gold-btn flex-1 rounded-xl py-2.5 text-sm">Confirmar</button>
-          <button id="ret-motivo-cancelar" class="flex-1 rounded-xl border border-dark-300 bg-dark-600 py-2.5 text-sm font-semibold text-gray-300 hover:border-gray-400">Cancelar</button>
-        </div>
-      </div>
-    </div>
 
     <!-- Modal Histórico do Cliente (fixo, funciona em qualquer aba) -->
     <div id="cli-history-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm">
@@ -4339,7 +4308,7 @@ document.addEventListener('DOMContentLoaded', function () {
   /* ============================================================
      RETENÇÃO & CLIENTES
      ============================================================ */
-  function renderRetencao(filtroStatus) {
+  function renderRetencao() {
     var tbody = document.getElementById('ret-tbody');
     var vazio = document.getElementById('ret-vazio');
     var kpisDiv = document.getElementById('ret-kpis');
@@ -4348,17 +4317,14 @@ document.addEventListener('DOMContentLoaded', function () {
     var ags = B.getAgendamentos();
     var svcs = B.getServicos();
 
-    /* Mapa de retorno por serviço */
     var retornoMap = {};
     svcs.forEach(function (s) { if (s.diasRetorno) retornoMap[s.nome] = s.diasRetorno; });
 
-    /* Para cada cliente, pegar o ÚLTIMO agendamento concluído */
     var clientesMap = {};
     ags.forEach(function (a) {
       if (a.status !== 'concluido' || !a.cliente_whatsapp) return;
       var key = a.cliente_whatsapp.replace(/\D/g, '');
-      if (!clientesMap[key]) { clientesMap[key] = a; return }
-      /* Mais recente */
+      if (!clientesMap[key]) { clientesMap[key] = a; return; }
       var atual = clientesMap[key];
       if ((a.data + a.horario) > (atual.data + atual.horario)) clientesMap[key] = a;
     });
@@ -4379,7 +4345,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
       var status, statusLabel, statusColor, borderClass;
 
-      /* Verificar se notificação foi silenciada */
       var clienteDb = B.getClientePorTelefone(ag.cliente_whatsapp);
       var notifInativa = clienteDb && clienteDb.notificacao_inativa;
 
@@ -4405,17 +4370,10 @@ document.addEventListener('DOMContentLoaded', function () {
         borderClass = 'border-l-red-500';
       }
 
-      /* Silenciar notificação: manter label mas mudar cores para cinza */
-      if (notifInativa && (status === 'atrasado' || status === 'proximo')) {
+      if (notifInativa) {
         statusLabel += ' (inativo)';
         statusColor = 'text-gray-400 bg-gray-500/15';
         borderClass = 'border-l-gray-500';
-      }
-
-      /* Filtro */
-      if (filtroStatus && filtroStatus !== 'todos') {
-        if (filtroStatus === 'perdido') { if (!notifInativa) return; }
-        else if (status !== filtroStatus) return;
       }
 
       var whatsappClean = ag.cliente_whatsapp.replace(/\D/g, '');
@@ -4439,16 +4397,13 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     });
 
-    /* Ordenar: atrasados primeiro, depois próximos, depois em dia */
     var ordemStatus = { atrasado: 0, proximo: 1, em_dia: 2, sem_info: 3 };
     lista.sort(function (a, b) { return (ordemStatus[a.status] || 9) - (ordemStatus[b.status] || 9); });
 
-    /* KPIs */
     var total = lista.length;
     var atrasados = lista.filter(function (c) { return c.status === 'atrasado' && !c.notifInativa; }).length;
     var proximos = lista.filter(function (c) { return c.status === 'proximo' && !c.notifInativa; }).length;
     var emDia = lista.filter(function (c) { return c.status === 'em_dia'; }).length;
-    var inativos = lista.filter(function (c) { return c.notifInativa; }).length;
 
     kpisDiv.innerHTML =
       '<div class="rounded-xl bg-dark-600/60 border border-dark-300/30 p-4 text-center">' +
@@ -4466,13 +4421,8 @@ document.addEventListener('DOMContentLoaded', function () {
       '<div class="rounded-xl bg-green-500/10 border border-green-500/20 p-4 text-center">' +
         '<p class="text-[10px] uppercase tracking-wider text-green-400 mb-1">Em Dia</p>' +
         '<p class="text-2xl font-bold font-numeric text-green-400">' + emDia + '</p>' +
-      '</div>' +
-      '<div class="rounded-xl bg-dark-600/60 border border-dark-300/30 p-4 text-center">' +
-        '<p class="text-[10px] uppercase tracking-wider text-gray-500 mb-1">Inativos</p>' +
-        '<p class="text-2xl font-bold font-numeric text-gray-400">' + inativos + '</p>' +
       '</div>';
 
-    /* Tabela */
     if (!lista.length) { vazio.classList.remove('hidden'); return; }
     vazio.classList.add('hidden');
 
@@ -4495,74 +4445,30 @@ document.addEventListener('DOMContentLoaded', function () {
         '<td class="px-4 py-3 text-center"><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold ' + c.statusColor + '">' + c.statusLabel + '</span></td>' +
         '<td class="px-4 py-3 text-center">' +
           (c.notifInativa
-            ? '<button class="ret-restaurar-btn inline-flex items-center gap-1 rounded-lg bg-blue-500/15 px-3 py-1.5 text-xs font-semibold text-blue-400 hover:bg-blue-500/25" data-whatsapp="' + esc(c.whatsapp) + '" data-nome="' + esc(c.nome) + '">&#x21a9; Restaurar</button>'
+            ? '<button class="ret-toggle-btn inline-flex items-center gap-1 rounded-lg bg-blue-500/15 px-3 py-1.5 text-xs font-semibold text-blue-400 hover:bg-blue-500/25" data-whatsapp="' + esc(c.whatsapp) + '" data-nome="' + esc(c.nome) + '">&#x21a9; Restaurar</button>'
             : '<a href="' + msgLink + '" target="_blank" class="inline-flex items-center gap-1 rounded-lg bg-green-500/15 px-3 py-1.5 text-xs font-semibold text-green-400 hover:bg-green-500/25">' +
                 '<svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492l4.638-1.218A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.82c-2.168 0-4.18-.584-5.913-1.597l-.422-.253-2.752.722.736-2.682-.276-.44A9.79 9.79 0 012.18 12c0-5.422 4.398-9.82 9.82-9.82S21.82 6.578 21.82 12s-4.398 9.82-9.82 9.82z"/></svg>' +
                 ' Lembrete' +
               '</a>' +
-            ' <button class="ret-perdido-btn inline-flex items-center gap-1 rounded-lg bg-gray-500/15 px-3 py-1.5 text-xs font-semibold text-gray-400 hover:bg-gray-500/25" data-whatsapp="' + esc(c.whatsapp) + '" data-nome="' + esc(c.nome) + '">&#x2716; Inativar</button>') +
+            ' <button class="ret-toggle-btn inline-flex items-center gap-1 rounded-lg bg-gray-500/15 px-3 py-1.5 text-xs font-semibold text-gray-400 hover:bg-gray-500/25" data-whatsapp="' + esc(c.whatsapp) + '" data-nome="' + esc(c.nome) + '">&#x2716; Inativar</button>') +
         '</td>';
       tr.classList.add(c.borderClass);
       tbody.appendChild(tr);
     });
   }
 
-  document.getElementById('ret-filtro').addEventListener('change', function () { renderRetencao(this.value); });
-
-  /* --- Marcar cliente como Perdido --- */
-  var retMotivoModal = document.getElementById('ret-motivo-modal');
-  var retMotivoSelect = document.getElementById('ret-motivo-select');
-  var retMotivoSalvar = document.getElementById('ret-motivo-salvar');
-  var retMotivoCancelar = document.getElementById('ret-motivo-cancelar');
-  var retMotivoNome = document.getElementById('ret-motivo-nome');
-  var retMotivoWpp = null;
-
   document.getElementById('ret-tbody').addEventListener('click', function (e) {
-    var restaurarBtn = e.target.closest('.ret-restaurar-btn');
-    var perdidoBtn = e.target.closest('.ret-perdido-btn');
-    if (restaurarBtn) {
-      var wpp = restaurarBtn.getAttribute('data-whatsapp');
-      var clientes = B.getClientes();
-      var cli = clientes.find(function (c) { return c.whatsapp.replace(/\D/g,'') === wpp.replace(/\D/g,''); });
-      if (cli) { delete cli.notificacao_inativa; B.setClientes(clientes); }
-      renderRetencao(document.getElementById('ret-filtro').value);
-      showToast('Notificação restaurada', restaurarBtn.getAttribute('data-nome'), null);
-      return;
-    }
-    if (perdidoBtn) {
-      retMotivoWpp = perdidoBtn.getAttribute('data-whatsapp');
-      retMotivoNome.textContent = perdidoBtn.getAttribute('data-nome');
-      retMotivoSelect.value = '';
-      retMotivoModal.classList.remove('hidden');
-      retMotivoModal.classList.add('flex');
-    }
-  });
-
-  retMotivoSalvar.addEventListener('click', function () {
-    var motivo = retMotivoSelect.value;
-    if (!motivo) { alert('Selecione um motivo.'); return; }
-    console.log('[RET] Inativar: motivo=' + motivo + ', retMotivoWpp=' + retMotivoWpp);
+    var btn = e.target.closest('.ret-toggle-btn');
+    if (!btn) return;
+    var wpp = btn.getAttribute('data-whatsapp');
     var clientes = B.getClientes();
-    console.log('[RET] Clientes encontrados:', clientes.length);
-    var cli = clientes.find(function (c) { return c.whatsapp.replace(/\D/g,'') === retMotivoWpp.replace(/\D/g,''); });
-    console.log('[RET] Cliente encontrado:', !!cli, cli ? cli.nome : 'N/A');
-    if (!cli) {
-      cli = { nome: retMotivoNome.textContent, whatsapp: retMotivoWpp, tag: 'Ativa', total_atendimentos: 0, notificacao_inativa: true };
-      clientes.push(cli);
-    } else {
-      cli.notificacao_inativa = true;
+    var cli = clientes.find(function (c) { return c.whatsapp.replace(/\D/g,'') === wpp.replace(/\D/g,''); });
+    if (cli) {
+      if (cli.notificacao_inativa) { delete cli.notificacao_inativa; } else { cli.notificacao_inativa = true; }
+      B.setClientes(clientes);
     }
-    console.log('[RET] Salvando', clientes.length, 'clientes. notificacao_inativa=', cli.notificacao_inativa);
-    B.setClientes(clientes);
-    retMotivoModal.classList.add('hidden');
-    retMotivoModal.classList.remove('flex');
-    renderRetencao(document.getElementById('ret-filtro').value);
-    showToast('Notificação silenciada', retMotivoNome.textContent, null);
-  });
-
-  retMotivoCancelar.addEventListener('click', function () {
-    retMotivoModal.classList.add('hidden');
-    retMotivoModal.classList.remove('flex');
+    renderRetencao();
+    showToast(btn.getAttribute('data-nome'), cli && cli.notificacao_inativa ? 'Inativado' : 'Restaurado', null);
   });
 
   /* --- Histórico do Cliente (por WhatsApp) --- */
