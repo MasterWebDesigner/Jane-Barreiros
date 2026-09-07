@@ -543,7 +543,7 @@
         <button id="est-novo-btn" class="gold-btn rounded-xl px-4 py-2 text-sm">+ Novo Produto</button>
       </div>
       <!-- KPIs -->
-      <div id="est-kpis" class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6"></div>
+      <div id="est-kpis" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6"></div>
       <!-- Filtros -->
       <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4">
         <input id="est-busca" type="text" placeholder="Buscar produto..." class="w-full sm:w-64 rounded-lg border border-dark-300 bg-dark-700 px-3 py-2 text-sm text-gray-300 placeholder-gray-500 focus:border-gold focus:outline-none">
@@ -3835,7 +3835,12 @@ document.addEventListener('DOMContentLoaded', function () {
     var totalProdutos = lista.length;
     var estoqueBaixo = lista.filter(function (p) { return p.quantidade <= (p.estoqueMinimo || 0); }).length;
     var valorTotal = 0;
-    lista.forEach(function (p) { valorTotal += (p.quantidade || 0) * (p.precoVenda || 0); });
+    var somaVenda = 0, countVenda = 0;
+    lista.forEach(function (p) {
+      valorTotal += (p.quantidade || 0) * (p.precoVenda || 0);
+      if (p.precoVenda > 0) { somaVenda += p.precoVenda; countVenda++; }
+    });
+    var precoMedio = countVenda > 0 ? somaVenda / countVenda : 0;
 
     kpisDiv.innerHTML =
       '<div class="rounded-xl bg-dark-600/60 border border-dark-300/30 p-4 text-center">' +
@@ -3845,6 +3850,10 @@ document.addEventListener('DOMContentLoaded', function () {
       '<div class="rounded-xl ' + (estoqueBaixo > 0 ? 'bg-red-500/10 border border-red-500/20' : 'bg-dark-600/60 border border-dark-300/30') + ' p-4 text-center">' +
         '<p class="text-[10px] uppercase tracking-wider ' + (estoqueBaixo > 0 ? 'text-red-400' : 'text-gray-500') + ' mb-1">Estoque Baixo</p>' +
         '<p class="text-2xl font-bold font-numeric ' + (estoqueBaixo > 0 ? 'text-red-400' : 'text-white') + '">' + estoqueBaixo + '</p>' +
+      '</div>' +
+      '<div class="rounded-xl bg-dark-600/60 border border-dark-300/30 p-4 text-center">' +
+        '<p class="text-[10px] uppercase tracking-wider text-gray-500 mb-1">Preço Médio</p>' +
+        '<p class="text-2xl font-bold font-numeric text-gold">' + fmtBRL(precoMedio) + '</p>' +
       '</div>' +
       '<div class="rounded-xl bg-dark-600/60 border border-dark-300/30 p-4 text-center">' +
         '<p class="text-[10px] uppercase tracking-wider text-gray-500 mb-1">Valor Total Estoque</p>' +
