@@ -1145,9 +1145,9 @@
           <h3 class="font-display text-lg font-semibold text-white mb-4">Dados do Site</h3>
           <p class="text-sm text-gray-400 mb-4">Edite as informações que aparecem na landing page. Clique em Salvar para atualizar.</p>
 
-          <!-- Seção: Geral -->
+          <!-- Seção: Identidade -->
           <div class="mb-6">
-            <h4 class="text-sm font-semibold text-gold mb-3 border-b border-dark-300/30 pb-2">🏠 Geral</h4>
+            <h4 class="text-sm font-semibold text-gold mb-3 border-b border-dark-300/30 pb-2">🏠 Identidade</h4>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label class="block text-xs text-gray-500 mb-1">Nome do Estúdio</label>
@@ -1156,10 +1156,6 @@
               <div>
                 <label class="block text-xs text-gray-500 mb-1">Etiqueta do Logo</label>
                 <input id="cms-site-logo_etiqueta" type="text" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
-              </div>
-              <div class="sm:col-span-2">
-                <label class="block text-xs text-gray-500 mb-1">Slogan</label>
-                <input id="cms-site-slogan" type="text" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
               </div>
             </div>
           </div>
@@ -1200,7 +1196,7 @@
                 <input id="cms-sobre-hero_eyebrow" type="text" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
               </div>
               <div>
-                <label class="block text-xs text-gray-500 mb-1">Subtítulo Hero</label>
+                <label class="block text-xs text-gray-500 mb-1">Subtítulo / Slogan</label>
                 <input id="cms-sobre-hero_subtitulo" type="text" class="w-full rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
               </div>
               <div>
@@ -5086,7 +5082,6 @@ document.addEventListener('DOMContentLoaded', function () {
       var set = function (id, v) { var el = document.getElementById(id); if (el) el.value = v || ''; };
       set('cms-site-nome', s.nome);
       set('cms-site-logo_etiqueta', s.logo_etiqueta);
-      set('cms-site-slogan', s.slogan);
       set('cms-site-whatsapp_numero', s.whatsapp_numero);
       set('cms-site-whatsapp_exibir', s.whatsapp_exibir);
       set('cms-site-hotmart_checkout', s.hotmart_checkout);
@@ -5166,7 +5161,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var g = function (id) { var el = document.getElementById(id); return el ? el.value : ''; };
     cmsData.site = {
       nome: g('cms-site-nome'),
-      slogan: g('cms-site-slogan'),
+      slogan: g('cms-sobre-hero_subtitulo'),
       logo_etiqueta: g('cms-site-logo_etiqueta'),
       whatsapp_numero: g('cms-site-whatsapp_numero'),
       whatsapp_exibir: g('cms-site-whatsapp_exibir'),
