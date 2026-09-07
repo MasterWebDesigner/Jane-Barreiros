@@ -235,17 +235,6 @@
       </div>
     </div>
 
-    <!-- Usuário Logado -->
-    <div id="sidebar-user" class="hidden border-b border-dark-300/50 px-5 py-3">
-      <div class="flex items-center gap-3">
-        <div id="sidebar-user-avatar" class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gold/15 text-sm font-bold text-gold"></div>
-        <div class="min-w-0">
-          <p id="sidebar-user-nome" class="text-sm font-medium text-white truncate"></p>
-          <p id="sidebar-user-nivel" class="text-[10px] font-medium uppercase tracking-wider text-gray-400"></p>
-        </div>
-      </div>
-    </div>
-
     <!-- Menu -->
     <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-1">
       <button data-page="dashboard" class="sidebar-link active flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-300">
@@ -287,6 +276,17 @@
         Configurações
       </button>
     </nav>
+
+    <!-- Usuário Logado -->
+    <div id="sidebar-user" class="hidden border-t border-dark-300/50 px-5 py-3">
+      <div class="flex items-center gap-3">
+        <div id="sidebar-user-avatar" class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gold/15 text-sm font-bold text-gold"></div>
+        <div class="min-w-0">
+          <p id="sidebar-user-nome" class="text-sm font-medium text-white truncate"></p>
+          <p id="sidebar-user-nivel" class="text-[10px] font-medium uppercase tracking-wider text-gray-400"></p>
+        </div>
+      </div>
+    </div>
 
     <!-- Sair -->
     <div class="border-t border-dark-300/50 px-3 py-4">
