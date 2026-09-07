@@ -1023,7 +1023,7 @@
             <option value="atrasado">Atrasados</option>
             <option value="proximo">Próximos de vencer</option>
             <option value="em_dia">Em dia</option>
-            <option value="perdido">Perdidos</option>
+            <option value="perdido">Inativos</option>
           </select>
         </div>
       </div>
@@ -1393,7 +1393,7 @@
     <!-- Modal Motivo Perda -->
     <div id="ret-motivo-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm">
       <div class="bg-dark-700 border border-dark-300/50 rounded-2xl shadow-2xl p-6 w-full max-w-sm mx-4">
-        <h3 class="font-display text-lg font-semibold text-white mb-1">Marcar como Perdido</h3>
+        <h3 class="font-display text-lg font-semibold text-white mb-1">Marcar como Inativo</h3>
         <p class="text-sm text-gray-400 mb-4">Cliente: <span id="ret-motivo-nome" class="text-gold font-semibold"></span></p>
         <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Motivo</label>
         <select id="ret-motivo-select" class="w-full rounded-xl border border-dark-300 bg-dark-600 px-4 py-3 text-sm text-white focus:border-gold focus:outline-none mb-4">
@@ -4065,7 +4065,7 @@ document.addEventListener('DOMContentLoaded', function () {
         'VIP':'bg-yellow-500/15 text-yellow-400',
         'Aniversariante':'bg-pink-500/15 text-pink-400',
         'Promocao':'bg-purple-500/15 text-purple-400',
-        'Perdida':'bg-gray-500/15 text-gray-400'
+        'Inativa':'bg-gray-500/15 text-gray-400'
       };
       var tagClass = tagColors[c.tag] || 'bg-gray-500/15 text-gray-400';
       var valorEstimado = 0;
@@ -4384,7 +4384,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var clienteDb = B.getClientePorTelefone(ag.cliente_whatsapp);
       if (clienteDb && clienteDb.motivo_perda) {
         status = 'perdido';
-        statusLabel = 'Perdido';
+        statusLabel = 'Inativo';
         statusColor = 'text-gray-400 bg-gray-500/15';
         borderClass = 'border-l-gray-500';
       } else if (!diasRetornoSugerido) {
@@ -4461,7 +4461,7 @@ document.addEventListener('DOMContentLoaded', function () {
         '<p class="text-2xl font-bold font-numeric text-green-400">' + emDia + '</p>' +
       '</div>' +
       '<div class="rounded-xl bg-dark-600/60 border border-dark-300/30 p-4 text-center">' +
-        '<p class="text-[10px] uppercase tracking-wider text-gray-500 mb-1">Perdidos</p>' +
+        '<p class="text-[10px] uppercase tracking-wider text-gray-500 mb-1">Inativos</p>' +
         '<p class="text-2xl font-bold font-numeric text-gray-400">' + perdidos + '</p>' +
       '</div>';
 
@@ -4492,10 +4492,8 @@ document.addEventListener('DOMContentLoaded', function () {
             : '<a href="' + msgLink + '" target="_blank" class="inline-flex items-center gap-1 rounded-lg bg-green-500/15 px-3 py-1.5 text-xs font-semibold text-green-400 hover:bg-green-500/25">' +
                 '<svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492l4.638-1.218A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.82c-2.168 0-4.18-.584-5.913-1.597l-.422-.253-2.752.722.736-2.682-.276-.44A9.79 9.79 0 012.18 12c0-5.422 4.398-9.82 9.82-9.82S21.82 6.578 21.82 12s-4.398 9.82-9.82 9.82z"/></svg>' +
                 ' Lembrete' +
-              '</a>') +
-          ' <button class="ret-perdido-btn inline-flex items-center gap-1 rounded-lg bg-gray-500/15 px-3 py-1.5 text-xs font-semibold text-gray-400 hover:bg-gray-500/25" data-whatsapp="' + esc(c.whatsapp) + '" data-nome="' + esc(c.nome) + '">' +
-            (c.status === 'perdido' ? '' : '&#x2716; Perder') +
-          '</button>' +
+              '</a>' +
+            ' <button class="ret-perdido-btn inline-flex items-center gap-1 rounded-lg bg-gray-500/15 px-3 py-1.5 text-xs font-semibold text-gray-400 hover:bg-gray-500/25" data-whatsapp="' + esc(c.whatsapp) + '" data-nome="' + esc(c.nome) + '">&#x2716; Inativar</button>') +
         '</td>';
       tr.classList.add(c.borderClass);
       tbody.appendChild(tr);
@@ -4513,23 +4511,23 @@ document.addEventListener('DOMContentLoaded', function () {
   var retMotivoWpp = null;
 
   document.getElementById('ret-tbody').addEventListener('click', function (e) {
-    var perdidoBtn = e.target.closest('.ret-perdido-btn');
     var restaurarBtn = e.target.closest('.ret-restaurar-btn');
-    if (perdidoBtn && !perdidoBtn.closest('.ret-restaurar-btn')) {
+    var perdidoBtn = e.target.closest('.ret-perdido-btn');
+    if (restaurarBtn) {
+      var wpp = restaurarBtn.getAttribute('data-whatsapp');
+      var clientes = B.getClientes();
+      var cli = clientes.find(function (c) { return c.whatsapp.replace(/\D/g,'') === wpp.replace(/\D/g,''); });
+      if (cli) { delete cli.motivo_perda; cli.tag = (cli.total_atendimentos || 0) <= 1 ? 'Nova' : 'Ativa'; B.setClientes(clientes); }
+      renderRetencao(document.getElementById('ret-filtro').value);
+      showToast('Cliente restaurado', restaurarBtn.getAttribute('data-nome'), null);
+      return;
+    }
+    if (perdidoBtn) {
       retMotivoWpp = perdidoBtn.getAttribute('data-whatsapp');
       retMotivoNome.textContent = perdidoBtn.getAttribute('data-nome');
       retMotivoSelect.value = '';
       retMotivoModal.classList.remove('hidden');
       retMotivoModal.classList.add('flex');
-      return;
-    }
-    if (restaurarBtn) {
-      var wpp = restaurarBtn.getAttribute('data-whatsapp');
-      var clientes = B.getClientes();
-      var cli = clientes.find(function (c) { return c.whatsapp.replace(/\D/g,'') === wpp.replace(/\D/g,''); });
-      if (cli) { delete cli.motivo_perda; B.setClientes(clientes); }
-      renderRetencao(document.getElementById('ret-filtro').value);
-      showToast('Cliente restaurado', restaurarBtn.getAttribute('data-nome'), null);
     }
   });
 
@@ -4543,13 +4541,13 @@ document.addEventListener('DOMContentLoaded', function () {
       clientes.push(cli);
     } else {
       cli.motivo_perda = motivo;
-      cli.tag = 'Perdida';
+      cli.tag = 'Inativa';
     }
     B.setClientes(clientes);
     retMotivoModal.classList.add('hidden');
     retMotivoModal.classList.remove('flex');
     renderRetencao(document.getElementById('ret-filtro').value);
-    showToast('Cliente marcado como perdido', retMotivoNome.textContent, null);
+    showToast('Cliente inativado', retMotivoNome.textContent, null);
   });
 
   retMotivoCancelar.addEventListener('click', function () {
