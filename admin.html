@@ -543,7 +543,7 @@
         <button id="est-novo-btn" class="gold-btn rounded-xl px-4 py-2 text-sm">+ Novo Produto</button>
       </div>
       <!-- KPIs -->
-      <div id="est-kpis" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6"></div>
+      <div id="est-kpis" class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6"></div>
       <!-- Filtros -->
       <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4">
         <input id="est-busca" type="text" placeholder="Buscar produto..." class="w-full sm:w-64 rounded-lg border border-dark-300 bg-dark-700 px-3 py-2 text-sm text-gray-300 placeholder-gray-500 focus:border-gold focus:outline-none">
@@ -3834,13 +3834,14 @@ document.addEventListener('DOMContentLoaded', function () {
     /* KPIs */
     var totalProdutos = lista.length;
     var estoqueBaixo = lista.filter(function (p) { return p.quantidade <= (p.estoqueMinimo || 0); }).length;
-    var valorTotal = 0;
-    var somaVenda = 0, countVenda = 0;
+    var valorTotal = 0, valorRevenda = 0;
+    var somaCusto = 0;
     lista.forEach(function (p) {
-      valorTotal += (p.quantidade || 0) * (p.precoVenda || 0);
-      if (p.precoVenda > 0) { somaVenda += p.precoVenda; countVenda++; }
+      valorTotal += (p.quantidade || 0) * (p.precoCusto || 0);
+      if (p.categoria === 'Revenda') valorRevenda += (p.quantidade || 0) * (p.precoVenda || 0);
+      somaCusto += (p.precoCusto || 0);
     });
-    var precoMedio = countVenda > 0 ? somaVenda / countVenda : 0;
+    var precoMedio = totalProdutos > 0 ? somaCusto / totalProdutos : 0;
 
     kpisDiv.innerHTML =
       '<div class="rounded-xl bg-dark-600/60 border border-dark-300/30 p-4 text-center">' +
@@ -3852,12 +3853,16 @@ document.addEventListener('DOMContentLoaded', function () {
         '<p class="text-2xl font-bold font-numeric ' + (estoqueBaixo > 0 ? 'text-red-400' : 'text-white') + '">' + estoqueBaixo + '</p>' +
       '</div>' +
       '<div class="rounded-xl bg-dark-600/60 border border-dark-300/30 p-4 text-center">' +
-        '<p class="text-[10px] uppercase tracking-wider text-gray-500 mb-1">Preço Médio</p>' +
+        '<p class="text-[10px] uppercase tracking-wider text-gray-500 mb-1">Preço Médio (Custo)</p>' +
         '<p class="text-2xl font-bold font-numeric text-gold">' + fmtBRL(precoMedio) + '</p>' +
       '</div>' +
       '<div class="rounded-xl bg-dark-600/60 border border-dark-300/30 p-4 text-center">' +
         '<p class="text-[10px] uppercase tracking-wider text-gray-500 mb-1">Valor Total Estoque</p>' +
         '<p class="text-2xl font-bold font-numeric text-green-400">' + fmtBRL(valorTotal) + '</p>' +
+      '</div>' +
+      '<div class="rounded-xl bg-dark-600/60 border border-dark-300/30 p-4 text-center">' +
+        '<p class="text-[10px] uppercase tracking-wider text-gray-500 mb-1">Valor Revenda</p>' +
+        '<p class="text-2xl font-bold font-numeric text-blue-400">' + fmtBRL(valorRevenda) + '</p>' +
       '</div>';
 
     /* Filtros */
