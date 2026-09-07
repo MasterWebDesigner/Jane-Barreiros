@@ -4345,8 +4345,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       var status, statusLabel, statusColor, borderClass;
 
-      var clienteDb = B.getClientePorTelefone(ag.cliente_whatsapp);
-      var notifInativa = clienteDb && clienteDb.notificacao_inativa;
+      var notifInativa = localStorage.getItem('jane-inativo-' + key) === '1';
 
       if (!diasRetornoSugerido) {
         status = 'sem_info';
@@ -4460,15 +4459,11 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('ret-tbody').addEventListener('click', function (e) {
     var btn = e.target.closest('.ret-toggle-btn');
     if (!btn) return;
-    var wpp = btn.getAttribute('data-whatsapp');
-    var clientes = B.getClientes();
-    var cli = clientes.find(function (c) { return c.whatsapp.replace(/\D/g,'') === wpp.replace(/\D/g,''); });
-    if (cli) {
-      if (cli.notificacao_inativa) { delete cli.notificacao_inativa; } else { cli.notificacao_inativa = true; }
-      B.setClientes(clientes);
-    }
+    var wpp = btn.getAttribute('data-whatsapp').replace(/\D/g, '');
+    var k = 'jane-inativo-' + wpp;
+    if (localStorage.getItem(k) === '1') { localStorage.removeItem(k); } else { localStorage.setItem(k, '1'); }
     renderRetencao();
-    showToast(btn.getAttribute('data-nome'), cli && cli.notificacao_inativa ? 'Inativado' : 'Restaurado', null);
+    showToast(btn.getAttribute('data-nome'), localStorage.getItem(k) === '1' ? 'Inativado' : 'Restaurado', null);
   });
 
   /* --- Histórico do Cliente (por WhatsApp) --- */
