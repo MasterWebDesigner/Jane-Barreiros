@@ -699,6 +699,7 @@
               <option value="todos">Todos os Status</option>
               <option value="pago">Pago</option>
               <option value="pendente">Pendente</option>
+              <option value="atraso">Em Atraso</option>
             </select>
           </div>
         </div>
@@ -5476,7 +5477,17 @@ document.addEventListener('DOMContentLoaded', function () {
     var statusFiltro = ((document.getElementById('fin-desp-status-filter') || {}).value || 'todos');
     var filtradas = despesasMes.filter(function (d) {
       if (catFiltro !== 'todas' && d.categoria !== catFiltro) return false;
-      if (statusFiltro !== 'todos' && d.status !== statusFiltro) return false;
+      if (statusFiltro !== 'todos') {
+        if (statusFiltro === 'atraso') {
+          if (d.status === 'pago') return false;
+          if (!d.data) return false;
+          var hojeMs = new Date(); hojeMs.setHours(0,0,0,0);
+          var dataMs = new Date(d.data + 'T12:00:00'); dataMs.setHours(0,0,0,0);
+          if (dataMs >= hojeMs) return false;
+        } else if (d.status !== statusFiltro) {
+          return false;
+        }
+      }
       return true;
     });
     filtradas.sort(function (a, b) { return (b.data || '').localeCompare(a.data || ''); });
@@ -5503,9 +5514,14 @@ document.addEventListener('DOMContentLoaded', function () {
         alertaCls = 'desp-alert-ok';
       }
       tr.className = 'hover:bg-white/[.02] ' + alertaCls;
-      var statusBadge = d.status === 'pago'
-        ? '<span class="inline-flex items-center rounded-full bg-green-500/15 px-2.5 py-0.5 text-[10px] font-semibold text-green-400">Pago</span>'
-        : '<span class="inline-flex items-center rounded-full bg-amber-500/15 px-2.5 py-0.5 text-[10px] font-semibold text-amber-400">Pendente</span>';
+      var statusBadge;
+      if (d.status === 'pago') {
+        statusBadge = '<span class="inline-flex items-center rounded-full bg-green-500/15 px-2.5 py-0.5 text-[10px] font-semibold text-green-400">Pago</span>';
+      } else if (alertaCls === 'desp-alert-piscar-atraso') {
+        statusBadge = '<span class="inline-flex items-center rounded-full bg-red-500/15 px-2.5 py-0.5 text-[10px] font-semibold text-red-400">Em Atraso</span>';
+      } else {
+        statusBadge = '<span class="inline-flex items-center rounded-full bg-amber-500/15 px-2.5 py-0.5 text-[10px] font-semibold text-amber-400">Pendente</span>';
+      }
       var catClass = catCores[d.categoria] || 'text-gray-400 bg-gray-500/15';
       var dotCls = '';
       if (d.status === 'pago') dotCls = 'bg-green-400';
