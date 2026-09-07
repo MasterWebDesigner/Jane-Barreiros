@@ -1173,6 +1173,22 @@ var APP_VERSION = '1.3.2';
     });
   }
 
+  function fmtDuracao(min) {
+    if (!min || min <= 0) return '—';
+    var h = Math.floor(min / 60);
+    var m = min % 60;
+    if (h > 0 && m > 0) return h + 'h ' + m + 'min';
+    if (h > 0) return h + 'h';
+    return m + 'min';
+  }
+
+  function fmtPreco(valor) {
+    if (valor === null || valor === undefined || valor === '') return 'Consulte';
+    var n = typeof valor === 'number' ? valor : parseFloat(String(valor).replace(/\./g, '').replace(',', '.'));
+    if (isNaN(n)) return String(valor);
+    return 'R$ ' + n.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+
   /* ================================================================
      EXPORTAÇÃO PÚBLICA (window.Booking)
      ================================================================ */
@@ -1191,6 +1207,8 @@ var APP_VERSION = '1.3.2';
     setServicos: setServicos,
     getServicoPorNome: getServicoPorNome,
     getDuracaoServico: getDuracaoServico,
+    fmtDuracao: fmtDuracao,
+    fmtPreco: fmtPreco,
     getAgendamentos: getAgendamentos,
     setAgendamentos: setAgendamentos,
     criarAgendamento: criarAgendamento,

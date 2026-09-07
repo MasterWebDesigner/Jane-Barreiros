@@ -1504,32 +1504,40 @@
       </div>
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Duração</label>
-          <input id="svc-duracao" type="text" placeholder="Ex.: 1h 30min">
-        </div>
-        <div>
           <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Duração (minutos)</label>
           <input id="svc-duracao-min" type="number" placeholder="Ex.: 90" min="5" step="5">
+          <p class="mt-1 text-[10px] text-gray-500">Exibição automática: 120 = "2h", 175 = "2h 55min"</p>
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Dias para Retorno Sugerido</label>
+          <input id="svc-dias-retorno" type="number" placeholder="Ex.: 30" min="1">
         </div>
       </div>
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Dias para Retorno Sugerido</label>
-          <input id="svc-dias-retorno" type="number" placeholder="Ex.: 30" min="1">
-          <p class="mt-1 text-[10px] text-gray-500">Dias sugeridos para a cliente retornar após este serviço.</p>
+          <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Preço (R$)</label>
+          <input id="svc-preco" type="number" step="0.01" min="0" placeholder="Ex.: 150.00">
         </div>
-        <div>
-          <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Preço</label>
-          <input id="svc-preco" type="text" placeholder="Ex.: A partir de R$ 150,00">
+        <div class="flex items-end pb-1">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input id="svc-a-partir-de" type="checkbox" class="h-4 w-4 rounded border-dark-300 bg-dark-600 text-gold focus:ring-gold">
+            <span class="text-xs text-gray-400">Exibir "A partir de" no site</span>
+          </label>
         </div>
       </div>
       <div>
-        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Preço Mínimo</label>
-        <input id="svc-preco-min" type="text" placeholder="Ex.: R$ 100,00 (opcional)">
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Descrição Pública do Serviço</label>
+        <textarea id="svc-nota" rows="2" placeholder="Texto exibido no card do site abaixo do preço..."></textarea>
       </div>
       <div>
-        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Observação / Nota</label>
-        <textarea id="svc-nota" rows="2" placeholder="Informação adicional sobre o serviço..."></textarea>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">URL Foto do Serviço (opcional)</label>
+        <input id="svc-foto-url" type="url" placeholder="https://...">
+      </div>
+      <div class="flex items-center gap-4">
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input id="svc-destaque" type="checkbox" class="h-4 w-4 rounded border-dark-300 bg-dark-600 text-gold focus:ring-gold">
+          <span class="text-xs text-gray-400">Destacar serviço no catálogo</span>
+        </label>
       </div>
       <div class="flex gap-3 pt-2">
         <button type="submit" class="gold-btn flex-1 rounded-xl py-3 text-sm">Salvar Serviço</button>
@@ -3442,17 +3450,20 @@ document.addEventListener('DOMContentLoaded', function () {
         ? '<span class="badge badge-inactive">Inativo</span>'
         : '<span class="badge badge-active">Ativo</span>';
       var tipoBadge = svc.tipo === 'revenda' ? '<span class="inline-flex items-center rounded-full bg-purple-500/15 px-2 py-0.5 text-[10px] font-bold text-purple-400">Revenda</span>' : svc.tipo === 'curso' ? '<span class="inline-flex items-center rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-bold text-amber-400">Curso</span>' : '';
-      var precoFmt = svc.preco || 'Consulte';
+      var precoFmt = svc.preco_num != null ? (B ? B.fmtPreco(svc.preco_num) : 'R$ ' + svc.preco_num) : (svc.preco || 'Consulte');
+      var durFmt = svc.duracao_min ? (B ? B.fmtDuracao(svc.duracao_min) : svc.duracao || '—') : (svc.duracao || '—');
+      var destaqueBadge = svc.destaque ? '<span class="inline-flex items-center rounded-full bg-gold/15 px-2 py-0.5 text-[10px] font-bold text-gold">Destaque</span>' : '';
       card.innerHTML =
         '<div class="flex-1 min-w-0 mr-4">' +
           '<div class="flex items-center gap-3 mb-1">' +
             '<h4 class="font-display font-semibold text-white truncate">' + esc(svc.nome) + '</h4>' +
+            destaqueBadge +
             tipoBadge +
             statusBadge +
           '</div>' +
           '<div class="flex items-center gap-4 text-xs text-gray-400">' +
             '<span>' + (svc.categoria || 'Geral') + '</span>' +
-            '<span>' + (svc.duracao || '—') + '</span>' +
+            '<span>' + durFmt + '</span>' +
             (svc.diasRetorno ? '<span class="text-purple-400">🔄 ' + svc.diasRetorno + ' dias</span>' : '') +
             '<span class="text-gold font-semibold">' + precoFmt + '</span>' +
           '</div>' +
@@ -3533,12 +3544,13 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('svc-tipo').value = svc ? (svc.tipo || 'servico') : 'servico';
     document.getElementById('svc-categoria').value = svc ? (svc.categoria || 'Cabelo') : 'Cabelo';
     document.getElementById('svc-status').value = svc ? (svc.status || 'ativo') : 'ativo';
-    document.getElementById('svc-duracao').value = svc ? svc.duracao : '';
     document.getElementById('svc-duracao-min').value = svc ? (svc.duracao_min || '') : '';
     document.getElementById('svc-dias-retorno').value = svc ? (svc.diasRetorno || '') : '';
-    document.getElementById('svc-preco').value = svc ? svc.preco : '';
-    document.getElementById('svc-preco-min').value = svc ? (svc.preco_min || '') : '';
+    document.getElementById('svc-preco').value = svc ? (svc.preco_num || svc.preco || '') : '';
+    document.getElementById('svc-a-partir-de').checked = svc ? !!svc.a_partir_de : false;
     document.getElementById('svc-nota').value = svc ? (svc.nota || '') : '';
+    document.getElementById('svc-foto-url').value = svc ? (svc.foto_url || '') : '';
+    document.getElementById('svc-destaque').checked = svc ? !!svc.destaque : false;
     modal.classList.remove('hidden');
     modal.classList.add('flex');
   }
@@ -3559,17 +3571,31 @@ document.addEventListener('DOMContentLoaded', function () {
     var nome = document.getElementById('svc-nome').value.trim();
     if (!nome) { alert('Informe o nome do serviço.'); return; }
 
+    var duracaoMin = parseInt(document.getElementById('svc-duracao-min').value) || 0;
+    var precoVal = document.getElementById('svc-preco').value;
+    var precoNum = precoVal !== '' ? parseFloat(precoVal) : null;
+
     var data = {
       nome: nome,
       tipo: document.getElementById('svc-tipo').value,
       categoria: document.getElementById('svc-categoria').value,
       status: document.getElementById('svc-status').value,
-      duracao: document.getElementById('svc-duracao').value.trim(),
-      duracao_min: parseInt(document.getElementById('svc-duracao-min').value) || 60,
+      duracao_min: duracaoMin,
+      duracao: B ? B.fmtDuracao(duracaoMin) : (function () {
+        var h = Math.floor(duracaoMin / 60), m = duracaoMin % 60;
+        return h > 0 && m > 0 ? h + 'h ' + m + 'min' : h > 0 ? h + 'h' : duracaoMin + 'min';
+      })(),
       diasRetorno: parseInt(document.getElementById('svc-dias-retorno').value) || 0,
-      preco: document.getElementById('svc-preco').value.trim(),
-      preco_min: document.getElementById('svc-preco-min').value.trim(),
-      nota: document.getElementById('svc-nota').value.trim()
+      preco_num: precoNum,
+      preco: (function () {
+        if (precoNum === null) return 'Consulte';
+        var fmt = 'R$ ' + precoNum.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        return document.getElementById('svc-a-partir-de').checked ? 'A partir de ' + fmt : fmt;
+      })(),
+      a_partir_de: document.getElementById('svc-a-partir-de').checked,
+      nota: document.getElementById('svc-nota').value.trim(),
+      foto_url: document.getElementById('svc-foto-url').value.trim(),
+      destaque: document.getElementById('svc-destaque').checked
     };
 
     var l = getServicos();
@@ -3578,11 +3604,9 @@ document.addEventListener('DOMContentLoaded', function () {
     if (editIdx !== '') {
       var idx = parseInt(editIdx);
       data.ordem = l[idx].ordem;
-      data.destaque = l[idx].destaque || false;
       l[idx] = data;
     } else {
       data.ordem = l.length + 1;
-      data.destaque = false;
       l.push(data);
     }
 
@@ -4564,7 +4588,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         var icon = getIcon(ag.servico);
         var svc = B ? B.getServicoPorNome(ag.servico) : null;
-        var duracao = svc ? svc.duracao : '';
+        var duracao = svc ? (svc.duracao_min ? (B && B.fmtDuracao ? B.fmtDuracao(svc.duracao_min) : svc.duracao || (svc.duracao_min + 'min')) : (svc.duracao || '')) : '';
         var funcionaria = ag.funcionaria || '';
         var pagamento = ag.forma_pagamento || '';
         var _svcVal = servicoPreco(ag.servico, ag.valor_informado, ag.valor_total);
