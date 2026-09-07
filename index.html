@@ -1316,18 +1316,18 @@
 
   <!-- Modal Traçar Rota -->
   <div id="modal-rota" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 px-5">
-    <div class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl border border-gray-200">
-      <p class="text-center font-serif text-lg font-semibold text-gray-900 mb-1">Como chegar?</p>
-      <p class="text-center text-sm text-gray-500 mb-5">Rua Rio Grande Do Sul, 348 — Santo André</p>
-      <a id="rota-google" href="https://www.google.com/maps/dir/?api=1&destination=Rua+Rio+Grande+Do+Sul,+348+Santo+Andre,+SP" target="_blank" rel="noopener" class="flex items-center gap-3 rounded-xl bg-gray-100 px-4 py-3 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-200 mb-2">
+    <div class="w-full max-w-sm rounded-2xl p-6 shadow-2xl border" style="background:rgb(var(--t-cream-soft));border-color:rgb(var(--t-gold) / .25);">
+      <p class="text-center font-serif text-lg font-semibold mb-1" style="color:rgb(var(--t-ink));">Como chegar?</p>
+      <p class="text-center text-sm mb-5" style="color:rgb(var(--t-muted));">Rua Rio Grande Do Sul, 348 — Santo André</p>
+      <a id="rota-google" href="https://www.google.com/maps/dir/?api=1&destination=Rua+Rio+Grande+Do+Sul,+348+Santo+Andre,+SP" target="_blank" rel="noopener" class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors mb-2" style="background:rgb(var(--t-cream));color:rgb(var(--t-ink));">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 shrink-0"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
         Google Maps
       </a>
-      <a id="rota-waze" href="https://www.waze.com/ul?q=Rua+Rio+Grande+Do+Sul,+348+Santo+Andre,+SP" target="_blank" rel="noopener" class="flex items-center gap-3 rounded-xl bg-gray-100 px-4 py-3 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-200 mb-4">
+      <a id="rota-waze" href="https://www.waze.com/ul?q=Rua+Rio+Grande+Do+Sul,+348+Santo+Andre,+SP" target="_blank" rel="noopener" class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors mb-4" style="background:rgb(var(--t-cream));color:rgb(var(--t-ink));">
         <svg viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5 shrink-0"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2.182a9.818 9.818 0 110 19.636 9.818 9.818 0 010-19.636zm-1.091 4.364v3.273l2.727 1.636a.545.545 0 01.2.746l-1.637 2.727a.545.545 0 01-.745.2l-2.728-1.637a.545.545 0 01-.2-.745l1.637-2.727a.545.545 0 01.745-.2l.001.001v-2.513a.545.545 0 01.546-.545h2.182a.545.545 0 010 1.09h-1.636z"/></svg>
         Waze
       </a>
-      <button id="modal-rota-close" class="w-full rounded-xl border border-gray-300 py-2.5 text-sm font-medium text-gray-500 transition-colors hover:text-gray-900">Cancelar</button>
+      <button id="modal-rota-close" class="w-full rounded-xl py-2.5 text-sm font-medium transition-colors border" style="border-color:rgb(var(--t-gold) / .25);color:rgb(var(--t-muted));">Cancelar</button>
     </div>
   </div>
 
