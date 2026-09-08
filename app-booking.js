@@ -1120,22 +1120,20 @@ var APP_VERSION = '1.3.2';
      ================================================================ */
   function montarMsgWhatsApp(ag) {
     var linha = '━━━━━━━━━━━━━━━━━━━━';
-    var msg = '📍 *Studio Jane Barreiros*\n' + linha + '\n';
-    msg += '✅ *Agendamento Confirmado!*\n\n';
-    msg += '💇 Serviço: *' + ag.servico + '*\n';
-    msg += '📅 Data: *' + fmtDataBR(ag.data) + '*\n';
-    msg += '🕐 Horário: *' + ag.horario + '*\n';
-    msg += '👤 Cliente: *' + ag.cliente_nome + '* (' + (ag.cliente_whatsapp || '') + ')\n';
-    if (ag.forma_pagamento) msg += '💳 Pagamento: *' + ag.forma_pagamento + '*\n';
+    var msg = '✨ *Studio Jane Barreiros*\n' + linha + '\n\n';
+    msg += '📌 *Solicitação de Agendamento*\n\n';
+    msg += '💇‍♀️ *Serviço:* ' + ag.servico + '\n';
+    msg += '📅 *Data:* ' + fmtDataBR(ag.data) + '\n';
+    msg += '⏰ *Horário:* ' + ag.horario + '\n';
+    msg += '👤 *Cliente:* ' + ag.cliente_nome + '* (' + (ag.cliente_whatsapp || '') + ')\n';
+    if (ag.forma_pagamento) msg += '💳 *Pagamento:* ' + ag.forma_pagamento + '\n';
     var svc = getServicoPorNome(ag.servico);
     if (svc && svc.preco && svc.preco !== 'Consulte') {
-      msg += '💰 Valor: *' + svc.preco + '*\n';
+      msg += '💰 *Valor:* ' + svc.preco + '\n';
     }
     if (ag.observacoes) msg += '📝 Obs: ' + ag.observacoes + '\n';
     msg += '\n' + linha + '\n';
-    msg += 'Para cancelar ou reagendar, responda esta mensagem.\n';
-    msg += 'Terça a Sábado: 09:00 às 19:00\n';
-    msg += 'Rua Rio Grande Do Sul, 348 — Santo André, SP';
+    msg += 'Olá, Jane! Fiz a solicitação do agendamento pelo site e aguardo sua confirmação.';
     return msg;
   }
 

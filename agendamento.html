@@ -878,8 +878,14 @@
         calcularValorGasto: function () { return 0; },
         montarMsgWhatsApp: function (ag) {
           var svc = servicos.find(function (s) { return s.nome === ag.servico; });
-          var valor = (svc && svc.preco && svc.preco !== 'Consulte') ? '\n💰 Valor: *' + svc.preco + '*' : '';
-          return '📍 *Studio Jane Barreiros*\n━━━━━━━━━━━━━━━━━━━━\n✅ *Agendamento Confirmado!*\n\n💇 Serviço: *' + esc(ag.servico) + '*\n📅 Data: *' + ag.data + '*\n🕐 Horário: *' + ag.horario + '*\n👤 Cliente: *' + esc(ag.cliente_nome) + '* (' + (ag.cliente_whatsapp || '') + ')' + (ag.forma_pagamento ? '\n💳 Pagamento: *' + ag.forma_pagamento + '*' : '') + valor + '\n\n━━━━━━━━━━━━━━━━━━━━\nTerça a Sábado: 09:00 às 19:00\nRua Rio Grande Do Sul, 348 — Santo André, SP';
+          var valor = (svc && svc.preco && svc.preco !== 'Consulte') ? '\n💰 *Valor:* ' + svc.preco : '';
+          return '✨ *Studio Jane Barreiros*\n━━━━━━━━━━━━━━━━━━━━\n\n📌 *Solicitação de Agendamento*\n\n' +
+            '💇‍♀️ *Serviço:* ' + esc(ag.servico) + '\n' +
+            '📅 *Data:* ' + ag.data + '\n' +
+            '⏰ *Horário:* ' + ag.horario + '\n' +
+            '👤 *Cliente:* ' + esc(ag.cliente_nome) + ' (' + (ag.cliente_whatsapp || '') + ')' +
+            (ag.forma_pagamento ? '\n💳 *Pagamento:* ' + ag.forma_pagamento : '') + valor +
+            '\n\n━━━━━━━━━━━━━━━━━━━━\nOlá, Jane! Fiz a solicitação do agendamento pelo site e aguardo sua confirmação.';
         }
       };
 
@@ -1522,7 +1528,14 @@
         X().registrarCliente(nome, whatsapp, email, selected.servico);
 
         var msg = X().montarMsgWhatsApp(ag);
-        var msgCliente = 'Olá! Gostaria de confirmar meu agendamento no Studio Jane Barreiros:\n\n👤 *Cliente:* ' + nome + ' (' + whatsapp + ')\n💇 *Serviço:* ' + esc(selected.servico) + '\n📅 *Data/Hora:* ' + X().fmtDataBR(selected.data) + ' às ' + selected.horario + '\n💳 *Pagamento:* ' + selected.forma_pagamento + (svc && svc.preco && svc.preco !== 'Consulte' ? '\n💰 *Valor:* ' + svc.preco : '');
+        var msgCliente = '✨ *Studio Jane Barreiros*\n━━━━━━━━━━━━━━━━━━━━\n\n📌 *Solicitação de Agendamento*\n\n' +
+          '💇‍♀️ *Serviço:* ' + esc(selected.servico) + '\n' +
+          '📅 *Data:* ' + X().fmtDataBR(selected.data) + '\n' +
+          '⏰ *Horário:* ' + selected.horario + '\n' +
+          '👤 *Cliente:* ' + esc(nome) + ' (' + whatsapp + ')' +
+          (selected.forma_pagamento ? '\n💳 *Pagamento:* ' + selected.forma_pagamento : '') +
+          (svc && svc.preco && svc.preco !== 'Consulte' ? '\n💰 *Valor:* ' + svc.preco : '') +
+          '\n\n━━━━━━━━━━━━━━━━━━━━\nOlá, Jane! Fiz a solicitação do agendamento pelo site e aguardo sua confirmação.';
         document.getElementById('booking-confirm-msg').textContent =
           nome + ', sua solicitação foi enviada com sucesso! Aguarde a confirmação do salão via WhatsApp.';
         document.getElementById('booking-whatsapp-link').href =
@@ -1960,7 +1973,7 @@
         <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-green-600">
           <svg class="h-8 w-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
         </div>
-        <h4 class="font-serif text-xl font-semibold">Agendamento Confirmado!</h4>
+        <h4 class="font-serif text-xl font-semibold">Solicitação de Agendamento</h4>
         <p id="booking-confirm-msg" class="mt-2 text-sm text-muted"></p>
         <button id="booking-new-service" type="button" class="mt-5 rounded-xl border border-gold/30 bg-gold/10 px-5 py-2.5 text-sm font-semibold text-gold-dark hover:bg-gold/20 transition-colors">
           + Agendar outro serviço
