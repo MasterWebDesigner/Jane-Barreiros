@@ -270,6 +270,7 @@ var APP_VERSION = '1.3.2';
         email: 'jane@studiojane.com.br',
         senha_hash: hash,
         nivel: 'admin',
+        permissoes: { financeiro: true, agendamentos: true, clientes: true, servicos: true, estoque: true, configuracoes: true },
         criado_em: new Date().toISOString()
       };
       setUsuarios([admin]);
@@ -280,7 +281,7 @@ var APP_VERSION = '1.3.2';
   function loadAllData(cb) {
     var keys = ['agendamentos', 'clientes', 'servicos', 'bloqueios', 'lista_espera', 'profissionais', 'secoes', 'estoque', 'despesas', 'curso_vendas', 'usuarios'];
     var pending = keys.length;
-    var done = function () { pending--; if (pending <= 0) { _loadingComplete = true; console.log('[Booking] loadAllData COMPLETO. Cache atualizado.'); _sincronizarNomesClientes(); _criarAdminPadrao(); if (cb) cb(); } };
+    var done = function () { pending--; if (pending <= 0) { _loadingComplete = true; console.log('[Booking] loadAllData COMPLETO. Cache atualizado.'); _sincronizarNomesClientes(); _criarAdminPadrao(); _migrarPermissoes(); if (cb) cb(); } };
 
     function _processVal(key, val, fonte) {
       console.log('[Booking] _processVal:', key, '| fonte:', fonte, '| dados:', val === null ? 'NULL' : (Array.isArray(val) ? val.length + ' itens' : typeof val));
@@ -570,12 +571,22 @@ var APP_VERSION = '1.3.2';
     var existente = lista.find(function (u) { return u.email === emailLimpo; });
     if (existente) return { erro: 'E-mail já cadastrado.' };
     return sha256(senha).then(function (hash) {
+      var isOperador = nivel === 'operador';
+      var isVisualizador = nivel === 'visualizador';
       var usuario = {
         id: 'usr-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
         nome: nome,
         email: emailLimpo,
         senha_hash: hash,
         nivel: nivel || 'admin',
+        permissoes: {
+          financeiro: !isVisualizador,
+          agendamentos: true,
+          clientes: !isVisualizador,
+          servicos: !isVisualizador,
+          estoque: !isVisualizador,
+          configuracoes: nivel === 'admin'
+        },
         criado_em: new Date().toISOString()
       };
       lista.push(usuario);
@@ -587,6 +598,41 @@ var APP_VERSION = '1.3.2';
   function excluirUsuario(id) {
     var lista = getUsuarios().filter(function (u) { return u.id !== id; });
     setUsuarios(lista);
+  }
+
+  function atualizarPermissoes(userId, permissoes) {
+    var lista = getUsuarios();
+    var user = lista.find(function (u) { return u.id === userId; });
+    if (!user) return false;
+    user.permissoes = permissoes;
+    setUsuarios(lista);
+    return true;
+  }
+
+  function getPermissoes(userId) {
+    var user = getUsuarios().find(function (u) { return u.id === userId; });
+    if (!user) return null;
+    if (user.nivel === 'admin') return { financeiro: true, agendamentos: true, clientes: true, servicos: true, estoque: true, configuracoes: true };
+    return user.permissoes || { financeiro: true, agendamentos: true, clientes: true, servicos: true, estoque: true, configuracoes: true };
+  }
+
+  function _migrarPermissoes() {
+    var lista = getUsuarios();
+    var changed = false;
+    lista.forEach(function (u) {
+      if (!u.permissoes) {
+        u.permissoes = {
+          financeiro: u.nivel !== 'visualizador',
+          agendamentos: true,
+          clientes: u.nivel !== 'visualizador',
+          servicos: u.nivel !== 'visualizador',
+          estoque: u.nivel !== 'visualizador',
+          configuracoes: u.nivel === 'admin'
+        };
+        changed = true;
+      }
+    });
+    if (changed) setUsuarios(lista);
   }
 
   function verificarLogin(email, senha) {
@@ -1287,6 +1333,8 @@ var APP_VERSION = '1.3.2';
     setUsuarios: setUsuarios,
     criarUsuario: criarUsuario,
     excluirUsuario: excluirUsuario,
+    atualizarPermissoes: atualizarPermissoes,
+    getPermissoes: getPermissoes,
     verificarLogin: verificarLogin,
     getCursoVendas: getCursoVendas,
     setCursoVendas: setCursoVendas,
