@@ -894,16 +894,44 @@
 
       var catalogo = document.getElementById('catalogo-servicos');
 
+      /* ---------- Helper compartilhado: dados formatados do serviço ---------- */
+      function svcData(svc) {
+        var durFmt = svc.duracao_min ? (typeof B !== 'undefined' && B.fmtDuracao ? B.fmtDuracao(svc.duracao_min) : svc.duracao || (svc.duracao_min + 'min')) : (svc.duracao || '—');
+        var precoFmt;
+        if (svc.preco_num != null) {
+          precoFmt = typeof B !== 'undefined' && B.fmtPreco ? B.fmtPreco(svc.preco_num) : 'R$ ' + svc.preco_num;
+        } else if (svc.preco) {
+          precoFmt = svc.preco;
+        } else {
+          precoFmt = 'Consulte';
+        }
+        var isConsulte = precoFmt === 'Consulte';
+        var isAPartirDe = !!svc.a_partir_de && !isConsulte;
+        return {
+          nome: svc.nome || '',
+          duracao: durFmt,
+          categoria: svc.categoria || 'Geral',
+          preco: isConsulte ? 'Consulte' : (isAPartirDe ? precoFmt.replace(/^A partir de\s*/i, '') : precoFmt),
+          precoBruto: precoFmt,
+          aPartirDe: isAPartirDe,
+          consulte: isConsulte,
+          destaque: !!svc.destaque,
+          nota: svc.nota || '',
+          status: svc.status || 'ativo',
+          tipo: svc.tipo || 'servico'
+        };
+      }
+
       function renderCatalogo(lista) {
         catalogo.innerHTML = '';
         lista.forEach(function (svc) {
-          var destacado = !!svc.destaque;
+          var d = svcData(svc);
           var card = document.createElement('article');
           card.className = 'svc-card group relative flex h-full flex-col rounded-xl border ' +
-            (destacado ? 'border-2 border-gold p-5 shadow-md' : 'border-gold/12 p-5 shadow-sm') +
+            (d.destaque ? 'border-2 border-gold p-5 shadow-md' : 'border-gold/12 p-5 shadow-sm') +
             ' transition-all duration-300 hover:-translate-y-1.5 hover:border-gold/30 hover:shadow-md';
 
-          if (destacado) {
+          if (d.destaque) {
             var selo = document.createElement('span');
             selo.className = 'absolute right-4 top-4 rounded-full bg-gold px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-black';
             selo.textContent = 'Destaque';
@@ -916,13 +944,13 @@
           var nome = document.createElement('h4');
           nome.className = 'svc-nome font-semibold truncate';
           nome.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-size:15px;color:rgb(var(--t-ink));';
-          nome.textContent = svc.nome;
+          nome.textContent = d.nome;
           cabecalho.appendChild(nome);
 
           var duracaoBadge = document.createElement('span');
           duracaoBadge.className = 'svc-duracao shrink-0 inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold';
           duracaoBadge.style.cssText = 'background:rgba(var(--t-gold),.12);color:rgb(var(--t-gold));';
-          duracaoBadge.textContent = svc.duracao_min ? (typeof B !== 'undefined' && B.fmtDuracao ? B.fmtDuracao(svc.duracao_min) : svc.duracao || (svc.duracao_min + 'min')) : (svc.duracao || '—');
+          duracaoBadge.textContent = d.duracao;
           cabecalho.appendChild(duracaoBadge);
           card.appendChild(cabecalho);
 
@@ -930,46 +958,31 @@
           metaLinha.className = 'svc-meta flex items-center gap-4 text-xs';
           metaLinha.style.cssText = 'color:rgb(var(--t-muted));';
           var catSpan = document.createElement('span');
-          catSpan.textContent = svc.categoria || 'Geral';
+          catSpan.textContent = d.categoria;
           metaLinha.appendChild(catSpan);
           card.appendChild(metaLinha);
 
           var precoBox = document.createElement('div');
           precoBox.className = 'mt-4';
-          if (svc.preco_num != null || svc.preco) {
-            var precoTexto = svc.preco_num != null ? (typeof B !== 'undefined' && B.fmtPreco ? B.fmtPreco(svc.preco_num) : 'R$ ' + svc.preco_num) : svc.preco;
-            if (svc.a_partir_de || (typeof precoTexto === 'string' && precoTexto.indexOf('A partir de') === 0)) {
-              var rl = document.createElement('p');
-              rl.className = 'svc-preco-label text-[10px] font-semibold uppercase tracking-wider';
-              rl.style.cssText = 'color:rgb(var(--t-muted));';
-              rl.textContent = 'A partir de';
-              precoBox.appendChild(rl);
-              var vl = document.createElement('p');
-              vl.className = 'svc-preco font-semibold';
-              vl.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-size:15px;color:rgb(var(--t-gold));';
-              vl.textContent = precoTexto.replace('A partir de ', '');
-              precoBox.appendChild(vl);
-            } else {
-              var pd = document.createElement('p');
-              pd.className = 'svc-preco font-semibold';
-              pd.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-size:15px;color:rgb(var(--t-gold));';
-              pd.textContent = precoTexto;
-              precoBox.appendChild(pd);
-            }
-          } else {
-            var pv = document.createElement('p');
-            pv.className = 'svc-preco font-semibold';
-            pv.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-size:15px;color:rgb(var(--t-gold));';
-            pv.textContent = 'Consulte';
-            precoBox.appendChild(pv);
+          if (d.aPartirDe) {
+            var rl = document.createElement('p');
+            rl.className = 'svc-preco-label text-[10px] font-semibold uppercase tracking-wider';
+            rl.style.cssText = 'color:rgb(var(--t-muted));';
+            rl.textContent = 'A partir de';
+            precoBox.appendChild(rl);
           }
+          var vl = document.createElement('p');
+          vl.className = 'svc-preco font-semibold';
+          vl.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-size:15px;color:rgb(var(--t-gold));';
+          vl.textContent = d.preco;
+          precoBox.appendChild(vl);
           card.appendChild(precoBox);
 
-          if (svc.nota) {
+          if (d.nota) {
             var nota = document.createElement('p');
             nota.className = 'svc-nota mt-2 text-xs truncate';
             nota.style.cssText = 'color:rgb(var(--t-muted));';
-            nota.textContent = svc.nota;
+            nota.textContent = d.nota;
             card.appendChild(nota);
           }
 
@@ -994,24 +1007,33 @@
       function renderCatalogoLista(lista) {
         catalogoLista.innerHTML = '';
         lista.forEach(function (svc) {
+          var d = svcData(svc);
           var row = document.createElement('div');
           row.className = 'svc-list-row';
-          row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px;border:1px solid;border-radius:12px;transition:all 0.2s;';
+          var rowBorder = d.destaque ? 'rgba(var(--t-gold),0.45)' : 'rgba(var(--t-gold),0.12)';
+          row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px;border:1px solid ' + rowBorder + ';border-radius:12px;transition:all 0.2s;';
 
           var info = document.createElement('div');
           info.style.cssText = 'flex:1;min-width:0;';
 
           var topo = document.createElement('div');
-          topo.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:4px;';
+          topo.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:4px;flex-wrap:wrap;';
 
           var nomeEl = document.createElement('h4');
           nomeEl.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;color:rgb(var(--t-ink));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0;';
-          nomeEl.textContent = svc.nome;
+          nomeEl.textContent = d.nome;
           topo.appendChild(nomeEl);
+
+          if (d.destaque) {
+            var destaqueSelo = document.createElement('span');
+            destaqueSelo.style.cssText = 'display:inline-flex;align-items:center;border-radius:9999px;padding:2px 8px;font-size:10px;font-weight:700;letter-spacing:0.05em;background:rgba(var(--t-gold),0.18);color:rgb(var(--t-gold));white-space:nowrap;text-transform:uppercase;';
+            destaqueSelo.textContent = 'Destaque';
+            topo.appendChild(destaqueSelo);
+          }
 
           var durEl = document.createElement('span');
           durEl.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-size:11px;font-weight:600;padding:2px 8px;border-radius:9999px;background:rgba(var(--t-gold),.12);color:rgb(var(--t-gold));white-space:nowrap;';
-          durEl.textContent = svc.duracao_min ? (typeof B !== 'undefined' && B.fmtDuracao ? B.fmtDuracao(svc.duracao_min) : svc.duracao || (svc.duracao_min + 'min')) : (svc.duracao || '—');
+          durEl.textContent = d.duracao;
           topo.appendChild(durEl);
           info.appendChild(topo);
 
@@ -1019,36 +1041,37 @@
           meta.className = 'svc-list-meta';
           meta.style.cssText = 'display:flex;align-items:center;gap:16px;font-family:Inter,system-ui,sans-serif;font-size:12px;color:rgb(var(--t-muted));';
           var catSpan = document.createElement('span');
-          catSpan.textContent = svc.categoria || 'Geral';
+          catSpan.textContent = d.categoria;
           meta.appendChild(catSpan);
-          if (svc.nota) {
+          if (d.nota) {
             var notaSpan = document.createElement('span');
             notaSpan.className = 'svc-list-nota';
             notaSpan.style.cssText = 'color:rgb(var(--t-muted));opacity:.7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
-            notaSpan.textContent = svc.nota;
+            notaSpan.textContent = d.nota;
             meta.appendChild(notaSpan);
           }
           info.appendChild(meta);
           row.appendChild(info);
 
+          var precoWrap = document.createElement('div');
+          precoWrap.style.cssText = 'flex-shrink:0;text-align:right;';
+          if (d.aPartirDe) {
+            var precoLabel = document.createElement('span');
+            precoLabel.style.cssText = 'display:block;font-family:Inter,system-ui,sans-serif;font-size:10px;font-weight:600;letter-spacing:0.05em;color:rgb(var(--t-muted));text-transform:uppercase;';
+            precoLabel.textContent = 'A partir de';
+            precoWrap.appendChild(precoLabel);
+          }
           var precoEl = document.createElement('span');
           precoEl.className = 'svc-list-preco';
-          precoEl.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;color:rgb(var(--t-gold));white-space:nowrap;flex-shrink:0;';
-          var precoFmt = (function () {
-            if (svc.preco_num != null) {
-              var fmt = typeof B !== 'undefined' && B.fmtPreco ? B.fmtPreco(svc.preco_num) : 'R$ ' + svc.preco_num;
-              return svc.a_partir_de ? fmt : fmt;
-            }
-            if (!svc.preco) return 'Consulte';
-            return svc.preco.replace('A partir de ', '');
-          })();
-          precoEl.textContent = precoFmt;
-          row.appendChild(precoEl);
+          precoEl.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;color:rgb(var(--t-gold));white-space:nowrap;';
+          precoEl.textContent = d.preco;
+          precoWrap.appendChild(precoEl);
+          row.appendChild(precoWrap);
 
           var agendarBtn = document.createElement('button');
           agendarBtn.type = 'button';
           agendarBtn.style.cssText = 'flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 18px;border-radius:9999px;font-family:Inter,system-ui,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.05em;border:1px solid rgba(122,85,20,0.55);background:linear-gradient(135deg,#BF953F 0%,#FCF6BA 25%,#B38728 50%,#FBF5B7 75%,#AA771C 100%);color:#241805;cursor:pointer;transition:all 0.2s;white-space:nowrap;';
-          agendarBtn.textContent = 'Agendar';
+          agendarBtn.textContent = 'Agendar este serviço';
           agendarBtn.onmouseover = function(){ this.style.transform='scale(1.05)'; this.style.boxShadow='0 0 14px 2px rgba(212,175,55,0.5)'; };
           agendarBtn.onmouseout = function(){ this.style.transform=''; this.style.boxShadow=''; };
           agendarBtn.addEventListener('click', function () { abrirModal(svc.nome); });
