@@ -2988,8 +2988,9 @@ document.addEventListener('DOMContentLoaded', function () {
     var isOnline = ag.origem === 'online';
     var tel = (ag.cliente_whatsapp || '').replace(/\D/g, '');
 
+    var isPendente = ag.status === 'pendente';
     var card = document.createElement('div');
-    card.className = 'rounded-xl bg-dark-700 border border-dark-300/40 border-l-4 ' + sc.border + ' p-4 hover:border-gold/20 transition-all cursor-pointer';
+    card.className = 'rounded-xl bg-dark-700 border border-dark-300/40 border-l-[5px] ' + sc.border + ' p-4 transition-all cursor-pointer' + (isPendente ? ' border-l-amber-400 bg-amber-500/[0.04] shadow-[inset_0_0_30px_rgba(234,179,8,0.03)]' : ' hover:border-gold/20');
     card.innerHTML =
       '<div class="flex gap-4">' +
         /* Left: Time */
@@ -3020,8 +3021,8 @@ document.addEventListener('DOMContentLoaded', function () {
       /* Footer: Status buttons */
       '<div class="flex items-center gap-2 mt-3 pt-3 border-t border-dark-300/30">' +
         (ag.status === 'pendente'
-          ? '<button data-aceitar="' + ag.id + '" class="aceitar-btn rounded-lg px-3 py-1.5 text-[11px] font-bold transition-all duration-200 bg-green-500/20 text-green-400 border border-green-500/30 hover:bg-green-500/30 hover:scale-105 hover:shadow-lg hover:shadow-green-500/20">✅ Aceitar Agendamento</button>' +
-            '<button data-recusar="' + ag.id + '" class="recusar-btn rounded-lg px-3 py-1.5 text-[11px] font-bold transition-colors bg-dark-500 text-gray-500 hover:text-red-400 border border-transparent hover:border-red-500/30">❌ Recusar</button>'
+          ? '<button data-aceitar="' + ag.id + '" class="aceitar-btn rounded-lg px-4 py-1.5 text-[11px] font-bold transition-all duration-200 text-white border hover:scale-105" style="background:#10b981;border-color:#10b981;box-shadow:0 0 12px rgba(16,185,129,0.35);">✅ Aceitar Agendamento</button>' +
+            '<button data-recusar="' + ag.id + '" class="recusar-btn rounded-lg px-3 py-1.5 text-[11px] font-semibold transition-colors bg-dark-600 text-red-400/70 border border-dark-300/30 hover:text-red-400 hover:border-red-500/30">❌ Recusar</button>'
           : '<button data-st="' + ag.id + '" data-stv="confirmado" class="status-btn rounded-lg px-2.5 py-1 text-[10px] font-semibold transition-colors ' + (ag.status==='confirmado'?'bg-yellow-500/25 text-yellow-300 border border-yellow-500/40':'bg-dark-500 text-gray-500 hover:text-yellow-400') + '" title="Aguardando">🟡 Aguardando</button>' +
             '<button data-st="' + ag.id + '" data-stv="em_atendimento" class="status-btn rounded-lg px-2.5 py-1 text-[10px] font-semibold transition-colors ' + (ag.status==='em_atendimento'?'bg-blue-500/25 text-blue-300 border border-blue-500/40':'bg-dark-500 text-gray-500 hover:text-blue-400') + '" title="Em Atendimento">🔵 Atender</button>' +
             '<button data-st="' + ag.id + '" data-stv="concluido" class="status-btn rounded-lg px-2.5 py-1 text-[10px] font-semibold transition-colors ' + (ag.status==='concluido'?'bg-green-500/25 text-green-300 border border-green-500/40':'bg-dark-500 text-gray-500 hover:text-green-400') + '" title="Concluído">🟢 Concluir</button>' +
