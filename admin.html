@@ -5843,11 +5843,14 @@ document.addEventListener('DOMContentLoaded', function () {
         var userId = tog.getAttribute('data-perm-user');
         var modKey = tog.getAttribute('data-perm-mod');
         var subKey = tog.getAttribute('data-perm-sub');
-        var user = lista.find(function (u) { return u.id === userId; });
+        /* Always read from LIVE data, not stale closure */
+        var liveLista = B ? B.getUsuarios() : [];
+        var user = liveLista.find(function (u) { return u.id === userId; });
         if (!user) return;
-        var perm = user.permissoes || {};
+        /* Deep-clone permissions to avoid mutating cache directly */
+        var perm = JSON.parse(JSON.stringify(user.permissoes || {}));
         if (!perm[modKey] || typeof perm[modKey] === 'boolean') {
-          perm[modKey] = {};
+          perm[modKey] = { visualizar: true };
         }
         perm[modKey][subKey] = tog.checked;
         B.atualizarPermissoes(userId, perm);
