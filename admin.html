@@ -1330,9 +1330,133 @@
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- TAB: Landing Page -->
+        <!-- Accordion: Confirmar Agendamento -->
+        <div class="txs-accordion mb-4">
+          <button class="txs-accordion-header" data-txs-toggle="confirmar">
+            <span>✅ Mensagem de Confirmação de Agendamento</span>
+            <svg class="txs-chevron h-5 w-5 text-gray-400 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="txs-accordion-body" id="txs-section-confirmar">
+            <div class="txs-editor-preview">
+              <div class="txs-fields space-y-4">
+                <div>
+                  <label class="txs-label">Mensagem de Confirmação</label>
+                  <textarea id="txs-confirmar-texto" rows="10" class="txs-input font-mono text-xs leading-relaxed"></textarea>
+                  <p class="mt-1 text-[10px] text-gray-500">Variáveis: {'{nome}'}, {'{servico}'}, {'{data}'}, {'{horario}'}, {'{profissional}'}, {'{endereco}'}</p>
+                </div>
+              </div>
+              <div class="txs-preview-col">
+                <p class="txs-preview-title">Pré-visualização</p>
+                <div class="txs-whatsapp-frame">
+                  <div class="txs-whatsapp-header">
+                    <svg class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    <div class="flex flex-col">
+                      <span class="text-xs font-semibold text-white">Studio Jane</span>
+                      <span class="text-[10px] text-green-300">online</span>
+                    </div>
+                  </div>
+                  <div class="txs-whatsapp-body">
+                    <div class="txs-whatsapp-bubble">
+                      <div class="txs-whatsapp-text" id="txs-confirmar-preview"></div>
+                      <div class="txs-whatsapp-time">09:41</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 flex items-center gap-3">
+              <button id="txs-confirmar-save" class="rounded-xl bg-green-500/20 px-5 py-2.5 text-sm font-semibold text-green-400 hover:bg-green-500/30 transition-colors">Salvar Confirmação</button>
+              <button id="txs-confirmar-reset" class="rounded-xl bg-dark-600 px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white transition-colors">Restaurar Padrão</button>
+              <span id="txs-confirmar-status" class="text-xs text-gray-500"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accordion: Recusar Agendamento -->
+        <div class="txs-accordion mb-4">
+          <button class="txs-accordion-header" data-txs-toggle="recusar">
+            <span>❌ Mensagem de Recusa de Agendamento</span>
+            <svg class="txs-chevron h-5 w-5 text-gray-400 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="txs-accordion-body" id="txs-section-recusar">
+            <div class="txs-editor-preview">
+              <div class="txs-fields space-y-4">
+                <div>
+                  <label class="txs-label">Mensagem de Recusa</label>
+                  <textarea id="txs-recusar-texto" rows="10" class="txs-input font-mono text-xs leading-relaxed"></textarea>
+                  <p class="mt-1 text-[10px] text-gray-500">Variáveis: {'{nome}'}, {'{servico}'}, {'{data}'}, {'{horario}'}, {'{link_agendamento}'}</p>
+                </div>
+              </div>
+              <div class="txs-preview-col">
+                <p class="txs-preview-title">Pré-visualização</p>
+                <div class="txs-whatsapp-frame">
+                  <div class="txs-whatsapp-header">
+                    <svg class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    <div class="flex flex-col">
+                      <span class="text-xs font-semibold text-white">Studio Jane</span>
+                      <span class="text-[10px] text-green-300">online</span>
+                    </div>
+                  </div>
+                  <div class="txs-whatsapp-body">
+                    <div class="txs-whatsapp-bubble">
+                      <div class="txs-whatsapp-text" id="txs-recusar-preview"></div>
+                      <div class="txs-whatsapp-time">09:41</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 flex items-center gap-3">
+              <button id="txs-recusar-save" class="rounded-xl bg-green-500/20 px-5 py-2.5 text-sm font-semibold text-green-400 hover:bg-green-500/30 transition-colors">Salvar Recusa</button>
+              <button id="txs-recusar-reset" class="rounded-xl bg-dark-600 px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white transition-colors">Restaurar Padrão</button>
+              <span id="txs-recusar-status" class="text-xs text-gray-500"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accordion: Lembrete de Retenção -->
+        <div class="txs-accordion">
+          <button class="txs-accordion-header" data-txs-toggle="lembrete">
+            <span>📞 Lembrete de Retenção de Clientes</span>
+            <svg class="txs-chevron h-5 w-5 text-gray-400 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="txs-accordion-body" id="txs-section-lembrete">
+            <div class="txs-editor-preview">
+              <div class="txs-fields space-y-4">
+                <div>
+                  <label class="txs-label">Mensagem de Lembrete</label>
+                  <textarea id="txs-lembrete-texto" rows="8" class="txs-input font-mono text-xs leading-relaxed"></textarea>
+                  <p class="mt-1 text-[10px] text-gray-500">Variáveis: {'{nome}'}, {'{servico}'}, {'{dias}'}, {'{link_agendamento}'}</p>
+                </div>
+              </div>
+              <div class="txs-preview-col">
+                <p class="txs-preview-title">Pré-visualização</p>
+                <div class="txs-whatsapp-frame">
+                  <div class="txs-whatsapp-header">
+                    <svg class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    <div class="flex flex-col">
+                      <span class="text-xs font-semibold text-white">Studio Jane</span>
+                      <span class="text-[10px] text-green-300">online</span>
+                    </div>
+                  </div>
+                  <div class="txs-whatsapp-body">
+                    <div class="txs-whatsapp-bubble">
+                      <div class="txs-whatsapp-text" id="txs-lembrete-preview"></div>
+                      <div class="txs-whatsapp-time">09:41</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 flex items-center gap-3">
+              <button id="txs-lembrete-save" class="rounded-xl bg-green-500/20 px-5 py-2.5 text-sm font-semibold text-green-400 hover:bg-green-500/30 transition-colors">Salvar Lembrete</button>
+              <button id="txs-lembrete-reset" class="rounded-xl bg-dark-600 px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white transition-colors">Restaurar Padrão</button>
+              <span id="txs-lembrete-status" class="text-xs text-gray-500"></span>
+            </div>
+          </div>
+        </div>
+      </div>
       <div id="cfg-tab-landing" class="cfg-tab-panel hidden">
         <div class="card-dark p-6 mb-6">
           <h3 class="font-display text-lg font-semibold text-white mb-4">Exibição da Landing Page</h3>
@@ -3543,13 +3667,13 @@ document.addEventListener('DOMContentLoaded', function () {
         var diaSemana = (function(ds){ var d=new Date(ds+'T12:00:00'); return ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'][d.getDay()]; })(ag.data);
         var dataBR = (function(ds){ var p=ds.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; })(ag.data);
         var prof = ag.profissional || 'Jane Barreiros';
-        var msg = 'Olá ' + esc(B.nomeFormatado(ag.cliente_nome)) + '! ✅\n\nSeu agendamento no *Studio Jane Barreiros* foi confirmado!\n\n' +
-          '💇 *Serviço:* ' + esc(ag.servico) + '\n' +
-          '📅 *Data:* ' + diaSemana + ', ' + dataBR + '\n' +
-          '⏰ *Horário:* ' + ag.horario + '\n' +
-          '👩‍💼 *Profissional:* ' + prof + '\n' +
-          '📍 *Endereço:* Rua Rio Grande do Sul, 348 — Santo André/SP\n\n' +
-          'Aguardamos você! 💛';
+        var tpl = (_txsData.confirmar && _txsData.confirmar.texto) || _txsDefaultConfirmar;
+        var msg = tpl.split('{nome}').join(esc(B.nomeFormatado(ag.cliente_nome)))
+          .split('{servico}').join(esc(ag.servico))
+          .split('{data}').join(diaSemana + ', ' + dataBR)
+          .split('{horario}').join(ag.horario)
+          .split('{profissional}').join(prof)
+          .split('{endereco}').join('Rua Rio Grande do Sul, 348 — Santo André/SP');
         renderAgendamentos();
         renderDashboard();
         if (tel) {
@@ -3569,9 +3693,12 @@ document.addEventListener('DOMContentLoaded', function () {
         if (B) B.setAgendamentoStatus(agId, 'cancelado');
         var tel = (ag.cliente_whatsapp || '').replace(/\D/g, '');
         var dataBR = (function(ds){ var p=ds.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; })(ag.data);
-        var msg = 'Olá ' + esc(B.nomeFormatado(ag.cliente_nome)) + '!\n\nInfelizmente o horário solicitado para *' + esc(ag.servico) + '* no dia *' + dataBR + ' às ' + ag.horario + '* não está disponível no momento.\n\n' +
-          'Por favor, acesse nosso agendamento online e escolha outro horário:\nhttps://agendamento.janebarreiros.com.br\n\n' +
-          'Pedimos desculpas pelo inconveniente. 🙏\n*Studio Jane Barreiros*';
+        var tpl = (_txsData.recusar && _txsData.recusar.texto) || _txsDefaultRecusar;
+        var msg = tpl.split('{nome}').join(esc(B.nomeFormatado(ag.cliente_nome)))
+          .split('{servico}').join(esc(ag.servico))
+          .split('{data}').join(dataBR)
+          .split('{horario}').join(ag.horario)
+          .split('{link_agendamento}').join('https://agendamento.janebarreiros.com.br');
         renderAgendamentos();
         renderDashboard();
         if (tel) {
@@ -4749,7 +4876,8 @@ document.addEventListener('DOMContentLoaded', function () {
       var telLink = 'https://wa.me/55' + c.whatsappClean;
       var dataFormatada = c.dataStr.split('-').reverse().join('/');
       var dataPrevFormatada = c.diasRetornoSugerido ? c.dataPrevista.getDate().toString().padStart(2,'0') + '/' + (c.dataPrevista.getMonth()+1).toString().padStart(2,'0') + '/' + c.dataPrevista.getFullYear() : '—';
-      var msg = encodeURIComponent('Olá, ' + c.nome + '! Tudo bem? Passando para lembrar que já faz ' + c.diasSemVoltar + ' dias desde o seu último ' + c.servico + ' no Studio Jane Barreiros. Vamos garantir o seu horário para esta semana? Agende por aqui: https://jane-barreiros.vercel.app/agendamento.html');
+      var tpl = (_txsData.lembrete && _txsData.lembrete.texto) || _txsDefaultLembrete;
+      var msg = encodeURIComponent(tpl.split('{nome}').join(c.nome).split('{servico}').join(c.servico).split('{dias}').join(c.diasSemVoltar).split('{link_agendamento}').join('https://jane-barreiros.vercel.app/agendamento.html'));
       var msgLink = telLink + '?text=' + msg;
 
       tr.innerHTML =
@@ -5086,7 +5214,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   /* --- Textos e Mensagens do Sistema --- */
-  var _txsData = { msg: { linhas: [] }, banner: {}, politica: {} };
+  var _txsData = { msg: { linhas: [] }, banner: {}, politica: {}, confirmar: {}, recusar: {}, lembrete: {} };
   var _txsDefaultMsg = {
     saudacao: '✨ *Studio Jane Barreiros*',
     titulo: '📌 *Solicitação de Agendamento*',
@@ -5103,6 +5231,24 @@ document.addEventListener('DOMContentLoaded', function () {
     separador: '━━━━━━━━━━━━━━━━━━━━',
     final: 'Olá, Jane! Fiz a solicitação do agendamento pelo site e aguardo sua confirmação.'
   };
+  var _txsDefaultConfirmar = 'Olá {nome}! ✅\n\nSeu agendamento no *Studio Jane Barreiros* foi confirmado!\n\n💇 *Serviço:* {servico}\n📅 *Data:* {data}\n⏰ *Horário:* {horario}\n👩‍💼 *Profissional:* {profissional}\n📍 *Endereço:* {endereco}\n\nAguardamos você! 💛';
+  var _txsDefaultRecusar = 'Olá {nome}!\n\nInfelizmente o horário solicitado para *{servico}* no dia *{data} às {horario}* não está disponível no momento.\n\nPor favor, acesse nosso agendamento online e escolha outro horário:\n{link_agendamento}\n\nPedimos desculpas pelo inconveniente. 🙏\n*Studio Jane Barreiros*';
+  var _txsDefaultLembrete = 'Olá, {nome}! Tudo bem? Passando para lembrar que já faz {dias} dias desde o seu último {servico} no Studio Jane Barreiros. Vamos garantir o seu horário para esta semana? Agende por aqui: {link_agendamento}';
+
+  /* Load textos at startup so confirmar/recusar/lembrete templates are available */
+  try {
+    firebase.database().ref('jane-booking/configuracoes/textos').once('value').then(function (snap) {
+      var val = snap.val();
+      if (val) {
+        _txsData.msg = val.msg || _txsDefaultMsg;
+        _txsData.banner = val.banner || {};
+        _txsData.politica = val.politica || {};
+        _txsData.confirmar = val.confirmar || {};
+        _txsData.recusar = val.recusar || {};
+        _txsData.lembrete = val.lembrete || {};
+      }
+    });
+  } catch (e) {}
 
   function renderTextos() {
     /* Accordion toggle */
@@ -5124,6 +5270,9 @@ document.addEventListener('DOMContentLoaded', function () {
           _txsData.msg = val.msg || _txsDefaultMsg;
           _txsData.banner = val.banner || {};
           _txsData.politica = val.politica || {};
+          _txsData.confirmar = val.confirmar || {};
+          _txsData.recusar = val.recusar || {};
+          _txsData.lembrete = val.lembrete || {};
         }
         _txsPopulateFields();
       }).catch(function () {
@@ -5178,8 +5327,11 @@ document.addEventListener('DOMContentLoaded', function () {
     _txsBindSave('txs-msg-save', 'msg');
     _txsBindSave('txs-banner-save', 'banner');
     _txsBindSave('txs-politica-save', 'politica');
+    _txsBindSave('txs-confirmar-save', 'confirmar');
+    _txsBindSave('txs-recusar-save', 'recusar');
+    _txsBindSave('txs-lembrete-save', 'lembrete');
 
-    /* Reset button */
+    /* Reset buttons */
     var resetBtn = document.getElementById('txs-msg-reset');
     if (resetBtn && !resetBtn._bound) {
       resetBtn._bound = true;
@@ -5189,6 +5341,39 @@ document.addEventListener('DOMContentLoaded', function () {
         _txsPopulateFields();
         _txsUpdatePreviews();
         _txsSaveFirebase('msg');
+      });
+    }
+
+    var resetConf = document.getElementById('txs-confirmar-reset');
+    if (resetConf && !resetConf._bound) {
+      resetConf._bound = true;
+      resetConf.addEventListener('click', function () {
+        if (!confirm('Restaurar o template padrão de confirmação?')) return;
+        document.getElementById('txs-confirmar-texto').value = _txsDefaultConfirmar;
+        _txsUpdatePreviews();
+        _txsSaveFirebase('confirmar');
+      });
+    }
+
+    var resetRec = document.getElementById('txs-recusar-reset');
+    if (resetRec && !resetRec._bound) {
+      resetRec._bound = true;
+      resetRec.addEventListener('click', function () {
+        if (!confirm('Restaurar o template padrão de recusa?')) return;
+        document.getElementById('txs-recusar-texto').value = _txsDefaultRecusar;
+        _txsUpdatePreviews();
+        _txsSaveFirebase('recusar');
+      });
+    }
+
+    var resetLemb = document.getElementById('txs-lembrete-reset');
+    if (resetLemb && !resetLemb._bound) {
+      resetLemb._bound = true;
+      resetLemb.addEventListener('click', function () {
+        if (!confirm('Restaurar o template padrão de lembrete?')) return;
+        document.getElementById('txs-lembrete-texto').value = _txsDefaultLembrete;
+        _txsUpdatePreviews();
+        _txsSaveFirebase('lembrete');
       });
     }
 
@@ -5230,6 +5415,18 @@ document.addEventListener('DOMContentLoaded', function () {
     /* Política */
     var p = _txsData.politica || {};
     document.getElementById('txs-politica-texto').value = p.texto || '';
+
+    /* Confirmar */
+    var c = _txsData.confirmar || {};
+    document.getElementById('txs-confirmar-texto').value = c.texto || _txsDefaultConfirmar;
+
+    /* Recusar */
+    var r = _txsData.recusar || {};
+    document.getElementById('txs-recusar-texto').value = r.texto || _txsDefaultRecusar;
+
+    /* Lembrete */
+    var l = _txsData.lembrete || {};
+    document.getElementById('txs-lembrete-texto').value = l.texto || _txsDefaultLembrete;
   }
 
   function _txsReindexLinhas() {
@@ -5300,6 +5497,30 @@ document.addEventListener('DOMContentLoaded', function () {
     var politicaTexto = document.getElementById('txs-politica-texto').value || 'Texto da política aparecerá aqui...';
     var politicaEl = document.getElementById('txs-politica-preview');
     if (politicaEl) politicaEl.textContent = politicaTexto;
+
+    /* Confirmar preview */
+    var confirmarSample = { nome:'Maria Silva', servico:'Coloração', data:'15/09/2026 (terça-feira)', horario:'14:00', profissional:'Ana', endereco:'Rua Rio Grande do Sul, 348 — Santo André/SP' };
+    var confirmarTexto = document.getElementById('txs-confirmar-texto').value || _txsDefaultConfirmar;
+    var confirmarRendered = confirmarTexto;
+    Object.keys(confirmarSample).forEach(function (k) { confirmarRendered = confirmarRendered.split('{' + k + '}').join(confirmarSample[k]); });
+    var confirmarEl = document.getElementById('txs-confirmar-preview');
+    if (confirmarEl) confirmarEl.innerHTML = esc(confirmarRendered).replace(/\*([^*]+)\*/g, '<b>$1</b>');
+
+    /* Recusar preview */
+    var recusarSample = { nome:'Maria Silva', servico:'Coloração', data:'15/09/2026', horario:'14:00', link_agendamento:'https://agendamento.janebarreiros.com.br' };
+    var recusarTexto = document.getElementById('txs-recusar-texto').value || _txsDefaultRecusar;
+    var recusarRendered = recusarTexto;
+    Object.keys(recusarSample).forEach(function (k) { recusarRendered = recusarRendered.split('{' + k + '}').join(recusarSample[k]); });
+    var recusarEl = document.getElementById('txs-recusar-preview');
+    if (recusarEl) recusarEl.innerHTML = esc(recusarRendered).replace(/\*([^*]+)\*/g, '<b>$1</b>');
+
+    /* Lembrete preview */
+    var lembreteSample = { nome:'Maria Silva', servico:'Coloração', dias:'45', link_agendamento:'https://jane-barreiros.vercel.app/agendamento.html' };
+    var lembreteTexto = document.getElementById('txs-lembrete-texto').value || _txsDefaultLembrete;
+    var lembreteRendered = lembreteTexto;
+    Object.keys(lembreteSample).forEach(function (k) { lembreteRendered = lembreteRendered.split('{' + k + '}').join(lembreteSample[k]); });
+    var lembreteEl = document.getElementById('txs-lembrete-preview');
+    if (lembreteEl) lembreteEl.innerHTML = esc(lembreteRendered).replace(/\*([^*]+)\*/g, '<b>$1</b>');
   }
 
   function _txsGatherData() {
@@ -5320,6 +5541,15 @@ document.addEventListener('DOMContentLoaded', function () {
       },
       politica: {
         texto: document.getElementById('txs-politica-texto').value.trim()
+      },
+      confirmar: {
+        texto: document.getElementById('txs-confirmar-texto').value.trim()
+      },
+      recusar: {
+        texto: document.getElementById('txs-recusar-texto').value.trim()
+      },
+      lembrete: {
+        texto: document.getElementById('txs-lembrete-texto').value.trim()
       }
     };
   }
