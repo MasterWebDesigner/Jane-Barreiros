@@ -1072,9 +1072,9 @@
         <div class="card-dark p-6 mb-6">
           <h3 class="font-display text-lg font-semibold text-white mb-4">Bloquear Dias</h3>
           <p class="text-sm text-gray-400 mb-4">Selecione um dia para impedir agendamentos.</p>
-          <div class="flex flex-wrap gap-3">
-            <input id="cfg-bloq-dia" type="date">
-            <button id="cfg-bloq-btn" class="rounded-xl bg-red-500/20 px-5 py-2.5 text-sm font-semibold text-red-400 hover:bg-red-500/30">Bloquear Dia</button>
+          <div class="flex flex-wrap gap-3 items-center">
+            <input id="cfg-bloq-dia" type="date" class="rounded-lg border border-dark-300 bg-dark-700 px-4 py-2.5 text-sm text-white focus:border-gold outline-none" style="color-scheme:dark;">
+            <button id="cfg-bloq-btn" class="rounded-xl bg-red-500/20 px-5 py-2.5 text-sm font-semibold text-red-400 hover:bg-red-500/30 transition-colors">Bloquear Dia</button>
           </div>
           <div id="cfg-dias-bloq" class="mt-4 flex flex-wrap gap-2"></div>
         </div>
@@ -4749,6 +4749,28 @@ document.addEventListener('DOMContentLoaded', function () {
   function renderConfig() {
     renderDiasBloq();
     renderEspera();
+
+    var cfgBloqBtn = document.getElementById('cfg-bloq-btn');
+    if (cfgBloqBtn && !cfgBloqBtn._bound) {
+      cfgBloqBtn._bound = true;
+      cfgBloqBtn.addEventListener('click', function () {
+        var input = document.getElementById('cfg-bloq-dia');
+        console.log('[Bloq] Botão clicado, input.value:', input.value, '| B:', !!B);
+        if (!input || !input.value) { alert('Selecione um dia.'); return; }
+        if (!B) { alert('Sistema indisponível. Recarregue a página.'); return; }
+        try {
+          B.bloquearDia(input.value);
+          console.log('[Bloq] Dia bloqueado:', input.value, '| Bloqueios:', B.getBloqueios());
+          input.value = '';
+          renderDiasBloq();
+          showToast('Bloqueado', 'Dia bloqueado com sucesso.', null);
+        } catch (e) {
+          console.error('[Bloq] Erro:', e);
+          alert('Erro ao bloquear: ' + e.message);
+        }
+      });
+    }
+
     var cfgWhats = document.getElementById('cfg-whatsapp');
     if (cfgWhats) cfgWhats.value = localStorage.getItem('jane-whatsapp-salao') || '11930657871';
     renderGuideCards();
@@ -5265,11 +5287,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  document.getElementById('cfg-bloq-btn').addEventListener('click', function () {
-    var input = document.getElementById('cfg-bloq-dia');
-    if (!input.value) { alert('Selecione um dia.'); return; }
-    B.bloquearDia(input.value); input.value = ''; renderDiasBloq();
-  });
+  /* Handler do botão Bloquear Dia movido para renderConfig() */
 
   function renderEspera() {
     var container = document.getElementById('cfg-espera');

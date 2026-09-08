@@ -139,7 +139,16 @@ var APP_VERSION = '1.3.2';
   }
 
   function getStore(key) {
-    if (_cache[key] !== undefined) return toArray(JSON.parse(JSON.stringify(_cache[key])));
+    if (_cache[key] !== undefined) {
+      var val = JSON.parse(JSON.stringify(_cache[key]));
+      if (Array.isArray(val)) return val;
+      if (typeof val === 'object' && val !== null && !Array.isArray(val)) {
+        var keys = Object.keys(val);
+        var isNumericKeys = keys.length > 0 && keys.every(function (k) { return /^\d+$/.test(k); });
+        if (isNumericKeys) return toArray(val);
+      }
+      return val;
+    }
     return null;
   }
 
