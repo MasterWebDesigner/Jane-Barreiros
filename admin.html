@@ -247,20 +247,11 @@
      LOGIN
 ============================================================ -->
 <div id="login-screen" class="flex h-screen items-center justify-center" style="background:radial-gradient(ellipse at center,#1A1A1A 0%,#0A0A0A 70%);">
-  <div class="w-full max-w-sm rounded-2xl border border-gold/20 bg-dark-700 p-8 shadow-2xl fade-in">
-    <div class="text-center">
-      <img src="Logomarca.png" alt="Studio Jane Barreiros" class="mx-auto mb-4 h-16 w-auto">
-      <h1 class="font-display text-2xl font-semibold text-white">Painel Admin</h1>
-      <p class="mt-2 text-sm text-gray-400">Acesso restrito ao Studio</p>
-    </div>
-    <form id="login-form" class="mt-6 space-y-4">
-      <div>
-        <label class="mb-1 block text-xs font-semibold uppercase tracking-wider text-gray-400">Senha</label>
-        <input id="login-senha" type="password" placeholder="Digite a senha" autocomplete="current-password">
-      </div>
-      <p id="login-erro" class="hidden text-center text-xs font-medium text-red-400">Senha incorreta.</p>
-      <button type="submit" class="gold-btn w-full rounded-xl py-3 text-sm">Entrar</button>
-    </form>
+  <div class="w-full max-w-sm rounded-2xl border border-gold/20 bg-dark-700 p-8 shadow-2xl fade-in text-center">
+    <img src="Logomarca.png" alt="Studio Jane Barreiros" class="mx-auto mb-4 h-16 w-auto">
+    <h1 class="font-display text-2xl font-semibold text-white">Painel Admin</h1>
+    <p class="mt-2 text-sm text-gray-400">Redirecionando para o login...</p>
+    <div class="mt-6"><div class="spinner mx-auto" style="width:28px;height:28px;border:3px solid #333;border-top-color:#D4AF37;border-radius:50%;animation:spin .7s linear infinite"></div></div>
   </div>
 </div>
 
@@ -2249,6 +2240,19 @@ document.addEventListener('DOMContentLoaded', function () {
   function hasPermission(permPath) {
     var u = getLoggedUser();
     if (!u) return false;
+    /* Always check Firebase live data for admin status */
+    if (B && B.getUsuarios) {
+      var liveUser = B.getUsuarios().find(function (lu) { return lu.id === u.id || lu.email === u.email; });
+      if (liveUser) {
+        if (liveUser.isAdmin || liveUser.nivel === 'admin') return true;
+        var lp = liveUser.permissoes;
+        if (lp) {
+          var parts = permPath.split('.');
+          var mod = lp[parts[0]];
+          if (mod && typeof mod === 'object' && mod[parts[1]]) return true;
+        }
+      }
+    }
     if (u.isAdmin || u.nivel === 'admin') return true;
     var p = u.permissoes;
     if (!p) return false;
@@ -2282,19 +2286,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  document.getElementById('login-form').addEventListener('submit', function (e) {
-    e.preventDefault();
-    var senha = document.getElementById('login-senha').value;
-    if (B && B.adminLogin(senha)) {
-      try { sessionStorage.setItem(KEY_AUTH, '1'); } catch (e) {}
-      try { sessionStorage.setItem('jane-admin-user', JSON.stringify({ nome: 'Jane Barreiros', email: 'jane@studiojane.com.br', nivel: 'admin', id: 'usr-admin-default', isAdmin: true, permissoes: { financeiro:{visualizar:true,lancarDespesa:true,verLucro:true}, agendamentos:{visualizar:true,criarEditar:true,aprovarRecusar:true}, estoque:{visualizar:true,darBaixaVenda:true,editarPrecos:true}, clientes:{visualizar:true,editar:true}, configuracoes:{editarLandingPage:true,gerenciarUsuarios:true} } })); } catch (e) {}
-      showApp();
-    } else {
-      var erro = document.getElementById('login-erro');
-      erro.classList.remove('hidden');
-      setTimeout(function () { erro.classList.add('hidden'); }, 3000);
-    }
-  });
+  /* Redirect to proper login if no session */
+  if (!isLoggedIn()) {
+    window.location.href = './admin-login.html';
+  }
 
   document.getElementById('logout-btn').addEventListener('click', function () {
     try { sessionStorage.removeItem(KEY_AUTH); } catch (e) {}
@@ -2460,6 +2455,16 @@ document.addEventListener('DOMContentLoaded', function () {
     if (B && B.loadAllData) {
       B.loadAllData(function () {
         console.log('[Admin] Dados carregados do Firebase.');
+        /* Sync session with live data (migration may have fixed isAdmin) */
+        var loggedUser = getLoggedUser();
+        if (loggedUser && B.getUsuarios) {
+          var liveUser = B.getUsuarios().find(function (u) { return u.id === loggedUser.id || u.email === loggedUser.email; });
+          if (liveUser) {
+            var updated = { nome: liveUser.nome, email: liveUser.email, nivel: liveUser.nivel, id: liveUser.id, isAdmin: !!liveUser.isAdmin, permissoes: liveUser.permissoes || null };
+            sessionStorage.setItem('jane-admin-user', JSON.stringify(updated));
+            filterSidebar();
+          }
+        }
         startNotifPolling();
         initEncaixe();
         try { renderDashboard(); } catch (e) { console.error('[Admin] renderDashboard error:', e); }

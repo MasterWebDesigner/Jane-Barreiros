@@ -239,9 +239,9 @@
             B.loadAllData(function () {
             B.verificarLogin(email, senha).then(function (result) {
                 if (result.ok) {
+                  var u = result.usuario;
                   sessionStorage.setItem('jane-admin-auth', '1');
-                  var permissoes = result.usuario.permissoes || null;
-                  sessionStorage.setItem('jane-admin-user', JSON.stringify({ nome: result.usuario.nome, email: result.usuario.email, nivel: result.usuario.nivel, id: result.usuario.id, isAdmin: !!result.usuario.isAdmin, permissoes: permissoes }));
+                  sessionStorage.setItem('jane-admin-user', JSON.stringify({ nome: u.nome, email: u.email, nivel: u.nivel, id: u.id, isAdmin: !!u.isAdmin, permissoes: u.permissoes || null }));
                   window.location.href = './admin.html';
                 } else {
                   _showError();

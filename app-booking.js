@@ -603,14 +603,15 @@ var APP_VERSION = '1.3.2';
     var existente = lista.find(function (u) { return u.email === emailLimpo; });
     if (existente) return { erro: 'E-mail já cadastrado.' };
     return sha256(senha).then(function (hash) {
+      var isNivelAdmin = (nivel || 'operador') === 'admin';
       var usuario = {
         id: 'usr-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
         nome: nome,
         email: emailLimpo,
         senha_hash: hash,
         nivel: nivel || 'operador',
-        isAdmin: false,
-        permissoes: _permisDefault(),
+        isAdmin: isNivelAdmin,
+        permissoes: isNivelAdmin ? _permisAdmin() : _permisDefault(),
         criado_em: new Date().toISOString()
       };
       lista.push(usuario);
@@ -647,11 +648,17 @@ var APP_VERSION = '1.3.2';
       senha_hash: old.senha_hash,
       criado_em: old.criado_em,
       isAdmin: !!isAdmin,
-      nivel: isAdmin ? 'admin' : (old.nivel || 'operador'),
+      nivel: isAdmin ? 'admin' : (old.nivel === 'admin' ? 'operador' : (old.nivel || 'operador')),
       permissoes: isAdmin ? _permisAdmin() : (old.permissoes || _permisDefault())
     };
     lista[idx] = updated;
     setUsuarios(lista);
+    /* Verify cache is correct */
+    var verify = getUsuarios();
+    var ok = verify.find(function (u) { return u.id === userId; });
+    if (ok && ok.isAdmin !== updated.isAdmin) {
+      console.error('[Booking] setAdminStatus VERIFICACAO FALHOU:', userId, 'esperado:', updated.isAdmin, 'encontrado:', ok.isAdmin);
+    }
     return true;
   }
 
@@ -681,6 +688,11 @@ var APP_VERSION = '1.3.2';
     var lista = getUsuarios();
     var changed = false;
     lista.forEach(function (u) {
+      /* CORREÇÃO CRÍTICA: isAdmin deve derivar de nivel='admin' */
+      if (u.nivel === 'admin' && !u.isAdmin) {
+        u.isAdmin = true;
+        changed = true;
+      }
       /* Add isAdmin based on nivel for any user missing it */
       if (u.isAdmin === undefined || u.isAdmin === null) {
         u.isAdmin = (u.nivel === 'admin');
@@ -724,19 +736,30 @@ var APP_VERSION = '1.3.2';
     return sha256(senha).then(function (hash) {
       var user = lista.find(function (u) { return u.email === emailLimpo && u.senha_hash === hash; });
       if (user) {
+        var needsFix = false;
         /* Safety: always derive isAdmin from nivel if not set */
-        if (!user.isAdmin && user.nivel === 'admin') {
+        if (user.nivel === 'admin' && !user.isAdmin) {
           user.isAdmin = true;
           user.permissoes = _permisAdmin();
+          needsFix = true;
         }
+        if (user.isAdmin && user.permissoes) {
+          var full = _permisAdmin();
+          var needsPermFix = false;
+          Object.keys(full).forEach(function (mod) {
+            if (!user.permissoes[mod] || typeof user.permissoes[mod] !== 'object') { needsPermFix = true; return; }
+            Object.keys(full[mod]).forEach(function (sub) {
+              if (!user.permissoes[mod][sub]) needsPermFix = true;
+            });
+          });
+          if (needsPermFix) { user.permissoes = full; needsFix = true; }
+        }
+        /* Persist corrections to Firebase */
+        if (needsFix) setUsuarios(lista);
         return { ok: true, usuario: user };
       }
       return { ok: false };
     });
-  }
-
-  function adminLogin(senha) {
-    return senha === 'jane2026';
   }
 
   /* ================================================================
@@ -1172,14 +1195,6 @@ var APP_VERSION = '1.3.2';
   /* ================================================================
      ADMIN — AUTENTICAÇÃO
      ================================================================ */
-  function adminLogin(senha) {
-    if (senha === ADMIN_SENHA) {
-      try { sessionStorage.setItem(KEY_AUTH, '1'); } catch (e) {}
-      return true;
-    }
-    return false;
-  }
-
   function adminLogado() {
     try { return sessionStorage.getItem(KEY_AUTH) === '1'; }
     catch (e) { return false; }
@@ -1451,7 +1466,6 @@ var APP_VERSION = '1.3.2';
     atualizarCliente: atualizarCliente,
     statsDoDia: statsDoDia,
     statsGerais: statsGerais,
-    adminLogin: adminLogin,
     adminLogado: adminLogado,
     adminLogout: adminLogout,
     fmtData: fmtData,
