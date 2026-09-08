@@ -879,8 +879,10 @@
         montarMsgWhatsApp: function (ag) {
           var svc = servicos.find(function (s) { return s.nome === ag.servico; });
           var valor = (svc && svc.preco && svc.preco !== 'Consulte') ? '\n💰 *Valor:* ' + svc.preco : '';
+          var profLinha = ag.profissional ? '💇‍♀️ *Profissional:* ' + esc(ag.profissional) + '\n' : '';
           return '✨ *Studio Jane Barreiros*\n━━━━━━━━━━━━━━━━━━━━\n\n📌 *Solicitação de Agendamento*\n\n' +
             '💇‍♀️ *Serviço:* ' + esc(ag.servico) + '\n' +
+            profLinha +
             '📅 *Data:* ' + ag.data + '\n' +
             '⏰ *Horário:* ' + ag.horario + '\n' +
             '👤 *Cliente:* ' + esc(ag.cliente_nome) + ' (' + (ag.cliente_whatsapp || '') + ')' +
@@ -1209,7 +1211,8 @@
       /* ---------- Abrir modal ---------- */
       function abrirModal(servicoNome) {
         console.log('[Booking] abrirModal chamado para:', servicoNome);
-        selected = { servico: servicoNome, data: null, horario: null, forma_pagamento: null };
+        selected = { servico: servicoNome, data: null, horario: null, forma_pagamento: null, profissional: null };
+        renderProfissionaisSelect();
         currentStep = 1;
         try {
           renderStep1();
@@ -1468,14 +1471,40 @@
       /* ---------- PASSO 4: Dados do cliente ---------- */
       function renderStep4() {
         var svc = X().getServicoPorNome(selected.servico);
+        var profs = X().getProfissionais ? X().getProfissionais() : [];
+        var profNome = '';
+        if (selected.profissional) {
+          var profObj = profs.find(function (p) { return (p.id || p.nome) === selected.profissional; });
+          profNome = profObj ? profObj.nome : selected.profissional;
+        }
         var summary = document.getElementById('booking-summary');
         summary.innerHTML =
           '<p><strong>Serviço:</strong> ' + esc(selected.servico) + '</p>' +
           '<p><strong>Data:</strong> ' + X().nomeDiaSemana(selected.data) + ', ' + X().fmtDataBR(selected.data) + '</p>' +
           '<p><strong>Horário:</strong> ' + selected.horario + '</p>' +
+          (profNome ? '<p><strong>Profissional:</strong> ' + esc(profNome) + '</p>' : '<p><strong>Profissional:</strong> <span class="text-muted">Sem preferência</span></p>') +
           (svc ? '<p><strong>Duração:</strong> ' + (svc.duracao_min ? (typeof B !== 'undefined' && B.fmtDuracao ? B.fmtDuracao(svc.duracao_min) : svc.duracao || (svc.duracao_min + 'min')) : (svc.duracao || '—')) + '</p>' : '');
+        renderProfissionaisSelect();
         renderPagBtns();
       }
+
+      function renderProfissionaisSelect() {
+        var select = document.getElementById('booking-profissional');
+        select.innerHTML = '<option value="">Sem preferência (Qualquer profissional)</option>';
+        var profs = X().getProfissionais ? X().getProfissionais() : [];
+        profs.forEach(function (p) {
+          if (p.status === 'inativo') return;
+          var opt = document.createElement('option');
+          opt.value = p.id || p.nome;
+          opt.textContent = p.nome;
+          select.appendChild(opt);
+        });
+        select.value = selected.profissional || '';
+      }
+
+      document.getElementById('booking-profissional').addEventListener('change', function () {
+        selected.profissional = this.value || null;
+      });
 
       function renderPagBtns() {
         document.querySelectorAll('.pag-btn').forEach(function (btn) {
@@ -1511,12 +1540,20 @@
 
         var svc = X().getServicoPorNome(selected.servico);
         var durMin = svc ? (svc.duracao_min || 60) : 60;
+        var profId = selected.profissional || '';
+        var profNome = '';
+        if (profId) {
+          var profs = X().getProfissionais ? X().getProfissionais() : [];
+          var profObj = profs.find(function (p) { return (p.id || p.nome) === profId; });
+          profNome = profObj ? profObj.nome : profId;
+        }
 
         var ag = X().criarAgendamento({
           servico: selected.servico,
           duracao_min: durMin,
           data: selected.data,
           horario: selected.horario,
+          profissional: profNome,
           cliente_nome: nome,
           cliente_whatsapp: whatsapp,
           cliente_email: email,
@@ -1527,9 +1564,11 @@
         /* Cadastro/atualização automática do cliente */
         X().registrarCliente(nome, whatsapp, email, selected.servico);
 
+        var profLinha = profNome ? '💇‍♀️ *Profissional:* ' + esc(profNome) + '\n' : '';
         var msg = X().montarMsgWhatsApp(ag);
         var msgCliente = '✨ *Studio Jane Barreiros*\n━━━━━━━━━━━━━━━━━━━━\n\n📌 *Solicitação de Agendamento*\n\n' +
           '💇‍♀️ *Serviço:* ' + esc(selected.servico) + '\n' +
+          profLinha +
           '📅 *Data:* ' + X().fmtDataBR(selected.data) + '\n' +
           '⏰ *Horário:* ' + selected.horario + '\n' +
           '👤 *Cliente:* ' + esc(nome) + ' (' + whatsapp + ')' +
@@ -1547,12 +1586,12 @@
       }
 
       document.getElementById('booking-new').addEventListener('click', function () {
-        selected = { servico: null, data: null, horario: null, forma_pagamento: null };
+        selected = { servico: null, data: null, horario: null, forma_pagamento: null, profissional: null };
         currentStep = 1; updateStep(); renderStep1();
       });
 
       document.getElementById('booking-new-service').addEventListener('click', function () {
-        selected = { servico: null, data: null, horario: null, forma_pagamento: null };
+        selected = { servico: null, data: null, horario: null, forma_pagamento: null, profissional: null };
         currentStep = 1; updateStep(); renderStep1();
       });
 
@@ -1926,6 +1965,12 @@
       <div id="booking-step-4" class="booking-step hidden">
         <div id="booking-summary" class="mb-5 rounded-xl border border-gold/20 bg-cream-deep p-4 text-sm"></div>
         <div class="space-y-4">
+          <div>
+            <label for="booking-profissional" class="form-label">Profissional</label>
+            <select id="booking-profissional" class="form-input">
+              <option value="">Sem preferência (Qualquer profissional)</option>
+            </select>
+          </div>
           <div>
             <label for="booking-whatsapp" class="form-label">Telefone / WhatsApp <span class="text-red-400">*</span></label>
             <input id="booking-whatsapp" type="tel" class="form-input" placeholder="(11) 98765-4321" autocomplete="tel" inputmode="tel" required />

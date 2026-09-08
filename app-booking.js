@@ -1123,6 +1123,7 @@ var APP_VERSION = '1.3.2';
     var msg = '✨ *Studio Jane Barreiros*\n' + linha + '\n\n';
     msg += '📌 *Solicitação de Agendamento*\n\n';
     msg += '💇‍♀️ *Serviço:* ' + ag.servico + '\n';
+    if (ag.profissional) msg += '💇‍♀️ *Profissional:* ' + ag.profissional + '\n';
     msg += '📅 *Data:* ' + fmtDataBR(ag.data) + '\n';
     msg += '⏰ *Horário:* ' + ag.horario + '\n';
     msg += '👤 *Cliente:* ' + ag.cliente_nome + '* (' + (ag.cliente_whatsapp || '') + ')\n';
