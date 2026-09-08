@@ -2249,7 +2249,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function hasPermission(permPath) {
     var u = getLoggedUser();
     if (!u) return false;
-    if (u.isAdmin) return true;
+    if (u.isAdmin || u.nivel === 'admin') return true;
     var p = u.permissoes;
     if (!p) return false;
     var parts = permPath.split('.');
@@ -5723,14 +5723,14 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!lista.length) { vazio.classList.remove('hidden'); return; }
     vazio.classList.add('hidden');
     var userLogado = getLoggedUser();
-    var loggedIsAdmin = userLogado && userLogado.isAdmin;
+    var loggedIsAdmin = userLogado && (userLogado.isAdmin || userLogado.nivel === 'admin');
 
     /* Hide new user form for non-admins */
     if (novoForm) novoForm.style.display = loggedIsAdmin ? '' : 'none';
 
     lista.forEach(function (u) {
       var isLogado = userLogado && u.email === userLogado.email;
-      var isUserAdmin = !!u.isAdmin;
+      var isUserAdmin = !!(u.isAdmin || u.nivel === 'admin');
       var perm = u.permissoes || {};
       var role = _usrRoleInfo(u);
 

@@ -672,8 +672,8 @@ var APP_VERSION = '1.3.2';
     var lista = getUsuarios();
     var changed = false;
     lista.forEach(function (u) {
-      /* Add isAdmin to existing users */
-      if (u.isAdmin === undefined) {
+      /* Add isAdmin based on nivel for any user missing it */
+      if (u.isAdmin === undefined || u.isAdmin === null) {
         u.isAdmin = (u.nivel === 'admin');
         changed = true;
       }
@@ -693,6 +693,18 @@ var APP_VERSION = '1.3.2';
         u.permissoes = u.isAdmin ? _permisAdmin() : _permisDefault();
         changed = true;
       }
+      /* Ensure admin always has full permissions */
+      if (u.isAdmin && u.permissoes) {
+        var full = _permisAdmin();
+        var needsUpdate = false;
+        Object.keys(full).forEach(function (mod) {
+          if (!u.permissoes[mod] || typeof u.permissoes[mod] !== 'object') { needsUpdate = true; return; }
+          Object.keys(full[mod]).forEach(function (sub) {
+            if (!u.permissoes[mod][sub]) needsUpdate = true;
+          });
+        });
+        if (needsUpdate) { u.permissoes = full; changed = true; }
+      }
     });
     if (changed) setUsuarios(lista);
   }
@@ -702,7 +714,14 @@ var APP_VERSION = '1.3.2';
     var emailLimpo = email.toLowerCase().trim();
     return sha256(senha).then(function (hash) {
       var user = lista.find(function (u) { return u.email === emailLimpo && u.senha_hash === hash; });
-      if (user) return { ok: true, usuario: user };
+      if (user) {
+        /* Safety: always derive isAdmin from nivel if not set */
+        if (!user.isAdmin && user.nivel === 'admin') {
+          user.isAdmin = true;
+          user.permissoes = _permisAdmin();
+        }
+        return { ok: true, usuario: user };
+      }
       return { ok: false };
     });
   }
