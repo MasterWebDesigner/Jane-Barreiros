@@ -5831,9 +5831,19 @@ document.addEventListener('DOMContentLoaded', function () {
       tog.addEventListener('change', function () {
         var userId = tog.getAttribute('data-usr-admin-toggle');
         var newIsAdmin = tog.checked;
-        B.setAdminStatus(userId, newIsAdmin);
+        var result = B.setAdminStatus(userId, newIsAdmin);
+        /* Update session if editing self */
+        var loggedUser = getLoggedUser();
+        var liveUser = B.getUsuarios().find(function (u) { return u.id === userId; });
+        if (loggedUser && liveUser && liveUser.email === loggedUser.email) {
+          loggedUser.isAdmin = liveUser.isAdmin;
+          loggedUser.nivel = liveUser.nivel;
+          loggedUser.permissoes = liveUser.permissoes;
+          sessionStorage.setItem('jane-admin-user', JSON.stringify(loggedUser));
+          filterSidebar();
+        }
         renderUsuarios();
-        showToast('Admin', newIsAdmin ? 'Usuário agora é Admin' : 'Privilégio de Admin removido', null);
+        showToast('Admin', newIsAdmin ? 'Usuário agora é Admin — todas as permissões ativadas' : 'Privilégio de Admin removido', null);
       });
     });
 
@@ -5843,12 +5853,10 @@ document.addEventListener('DOMContentLoaded', function () {
         var userId = tog.getAttribute('data-perm-user');
         var modKey = tog.getAttribute('data-perm-mod');
         var subKey = tog.getAttribute('data-perm-sub');
-        /* Always read from LIVE data, not stale closure */
-        var liveLista = B ? B.getUsuarios() : [];
-        var user = liveLista.find(function (u) { return u.id === userId; });
-        if (!user) return;
-        /* Deep-clone permissions to avoid mutating cache directly */
-        var perm = JSON.parse(JSON.stringify(user.permissoes || {}));
+        /* Read from LIVE data */
+        var liveUser = B.getUsuarios().find(function (u) { return u.id === userId; });
+        if (!liveUser) return;
+        var perm = JSON.parse(JSON.stringify(liveUser.permissoes || {}));
         if (!perm[modKey] || typeof perm[modKey] === 'boolean') {
           perm[modKey] = { visualizar: true };
         }
@@ -5857,7 +5865,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         /* Update session if editing self */
         var loggedUser = getLoggedUser();
-        if (loggedUser && user.email === loggedUser.email) {
+        if (loggedUser && liveUser.email === loggedUser.email) {
           loggedUser.permissoes = perm;
           sessionStorage.setItem('jane-admin-user', JSON.stringify(loggedUser));
           filterSidebar();

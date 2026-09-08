@@ -635,13 +635,22 @@ var APP_VERSION = '1.3.2';
 
   function setAdminStatus(userId, isAdmin) {
     var lista = getUsuarios();
-    var user = lista.find(function (u) { return u.id === userId; });
-    if (!user) return false;
-    user.isAdmin = !!isAdmin;
-    if (user.isAdmin) {
-      user.permissoes = _permisAdmin();
-      user.nivel = 'admin';
-    }
+    var idx = -1;
+    lista.forEach(function (u, i) { if (u.id === userId) idx = i; });
+    if (idx === -1) return false;
+    var old = lista[idx];
+    /* Rebuild user object completely to avoid stale references */
+    var updated = {
+      id: old.id,
+      nome: old.nome,
+      email: old.email,
+      senha_hash: old.senha_hash,
+      criado_em: old.criado_em,
+      isAdmin: !!isAdmin,
+      nivel: isAdmin ? 'admin' : (old.nivel || 'operador'),
+      permissoes: isAdmin ? _permisAdmin() : (old.permissoes || _permisDefault())
+    };
+    lista[idx] = updated;
     setUsuarios(lista);
     return true;
   }
