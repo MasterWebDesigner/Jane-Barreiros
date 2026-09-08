@@ -4681,8 +4681,15 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!/^[A-ZÀ-Ú]/.test(nome)) { alert('O nome deve começar com letra maiúscula.'); return; }
     if (/\s/.test(nome) && !/^[A-ZÀ-Ú][a-zà-ú]+\s+[A-ZÀ-Ú]/.test(nome)) { alert('Informe nome e sobrenome, ambos com letra maiúscula.'); return; }
     if (_cliNovoMode) {
-      if (B && B.registrarCliente) {
-        B.registrarCliente(nome, whatsapp, email, null);
+      var telLimpo = whatsapp.replace(/\D/g, '');
+      var existente = B ? B.getClientePorTelefone(telLimpo) : null;
+      if (existente) {
+        if (!confirm('Já existe um cliente com esse número (' + existente.nome + '). Deseja atualizar o nome para "' + nome + '"?')) return;
+        B.atualizarCliente(existente.id, { nome: nome, whatsapp: whatsapp, email: email || existente.email, tag: existente.tag });
+      } else {
+        if (B && B.registrarCliente) {
+          B.registrarCliente(nome, whatsapp, email, null);
+        }
       }
     } else {
       if (B && B.atualizarCliente) {
