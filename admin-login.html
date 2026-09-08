@@ -237,11 +237,11 @@
           var B = window.Booking;
           if (B && B.verificarLogin && B.loadAllData) {
             B.loadAllData(function () {
-              B.verificarLogin(email, senha).then(function (result) {
+            B.verificarLogin(email, senha).then(function (result) {
                 if (result.ok) {
                   sessionStorage.setItem('jane-admin-auth', '1');
-                  var permissoes = result.usuario.permissoes || { financeiro:true, agendamentos:true, clientes:true, servicos:true, estoque:true, configuracoes:true };
-                  sessionStorage.setItem('jane-admin-user', JSON.stringify({ nome: result.usuario.nome, email: result.usuario.email, nivel: result.usuario.nivel, id: result.usuario.id, permissoes: permissoes }));
+                  var permissoes = result.usuario.permissoes || null;
+                  sessionStorage.setItem('jane-admin-user', JSON.stringify({ nome: result.usuario.nome, email: result.usuario.email, nivel: result.usuario.nivel, id: result.usuario.id, isAdmin: !!result.usuario.isAdmin, permissoes: permissoes }));
                   window.location.href = './admin.html';
                 } else {
                   _showError();

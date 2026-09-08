@@ -270,7 +270,8 @@ var APP_VERSION = '1.3.2';
         email: 'jane@studiojane.com.br',
         senha_hash: hash,
         nivel: 'admin',
-        permissoes: { financeiro: true, agendamentos: true, clientes: true, servicos: true, estoque: true, configuracoes: true },
+        isAdmin: true,
+        permissoes: _permisAdmin(),
         criado_em: new Date().toISOString()
       };
       setUsuarios([admin]);
@@ -565,28 +566,51 @@ var APP_VERSION = '1.3.2';
     return setStore('usuarios', lista);
   }
 
+  /* ================================================================
+     PERMISSÕES — FUNÇÕES AUXILIARES
+     ================================================================ */
+  function _permisAdmin() {
+    return {
+      financeiro: { visualizar: true, lancarDespesa: true, verLucro: true },
+      agendamentos: { visualizar: true, criarEditar: true, aprovarRecusar: true },
+      estoque: { visualizar: true, darBaixaVenda: true, editarPrecos: true },
+      clientes: { visualizar: true, editar: true },
+      configuracoes: { editarLandingPage: true, gerenciarUsuarios: true }
+    };
+  }
+
+  function _permisDefault() {
+    return {
+      financeiro: { visualizar: true, lancarDespesa: false, verLucro: false },
+      agendamentos: { visualizar: true, criarEditar: true, aprovarRecusar: false },
+      estoque: { visualizar: true, darBaixaVenda: false, editarPrecos: false },
+      clientes: { visualizar: true, editar: false },
+      configuracoes: { editarLandingPage: false, gerenciarUsuarios: false }
+    };
+  }
+
+  function _permisChecked(perm) {
+    if (!perm) return false;
+    if (typeof perm === 'object') {
+      return Object.keys(perm).some(function (k) { return !!perm[k]; });
+    }
+    return !!perm;
+  }
+
   function criarUsuario(nome, email, senha, nivel) {
     var lista = getUsuarios();
     var emailLimpo = email.toLowerCase().trim();
     var existente = lista.find(function (u) { return u.email === emailLimpo; });
     if (existente) return { erro: 'E-mail já cadastrado.' };
     return sha256(senha).then(function (hash) {
-      var isOperador = nivel === 'operador';
-      var isVisualizador = nivel === 'visualizador';
       var usuario = {
         id: 'usr-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
         nome: nome,
         email: emailLimpo,
         senha_hash: hash,
-        nivel: nivel || 'admin',
-        permissoes: {
-          financeiro: !isVisualizador,
-          agendamentos: true,
-          clientes: !isVisualizador,
-          servicos: !isVisualizador,
-          estoque: !isVisualizador,
-          configuracoes: nivel === 'admin'
-        },
+        nivel: nivel || 'operador',
+        isAdmin: false,
+        permissoes: _permisDefault(),
         criado_em: new Date().toISOString()
       };
       lista.push(usuario);
@@ -609,26 +633,64 @@ var APP_VERSION = '1.3.2';
     return true;
   }
 
+  function setAdminStatus(userId, isAdmin) {
+    var lista = getUsuarios();
+    var user = lista.find(function (u) { return u.id === userId; });
+    if (!user) return false;
+    user.isAdmin = !!isAdmin;
+    if (user.isAdmin) {
+      user.permissoes = _permisAdmin();
+      user.nivel = 'admin';
+    }
+    setUsuarios(lista);
+    return true;
+  }
+
   function getPermissoes(userId) {
     var user = getUsuarios().find(function (u) { return u.id === userId; });
     if (!user) return null;
-    if (user.nivel === 'admin') return { financeiro: true, agendamentos: true, clientes: true, servicos: true, estoque: true, configuracoes: true };
-    return user.permissoes || { financeiro: true, agendamentos: true, clientes: true, servicos: true, estoque: true, configuracoes: true };
+    if (user.isAdmin) return _permisAdmin();
+    return user.permissoes || _permisAdmin();
+  }
+
+  function hasPermission(permPath) {
+    /* permPath example: 'financeiro.visualizar' or 'agendamentos' */
+    var u = null;
+    try { u = JSON.parse(sessionStorage.getItem('jane-admin-user') || 'null'); } catch (e) {}
+    if (!u) return false;
+    if (u.isAdmin) return true;
+    var p = u.permissoes;
+    if (!p) return false;
+    var parts = permPath.split('.');
+    var mod = p[parts[0]];
+    if (!mod) return false;
+    if (typeof mod === 'boolean') return mod;
+    return !!mod[parts[1]];
   }
 
   function _migrarPermissoes() {
     var lista = getUsuarios();
     var changed = false;
     lista.forEach(function (u) {
-      if (!u.permissoes) {
+      /* Add isAdmin to existing users */
+      if (u.isAdmin === undefined) {
+        u.isAdmin = (u.nivel === 'admin');
+        changed = true;
+      }
+      /* Migrate old flat permissions to new granular structure */
+      if (u.permissoes && typeof u.permissoes === 'object' && u.permissoes.financeiro !== undefined && typeof u.permissoes.financeiro === 'boolean') {
+        var old = u.permissoes;
         u.permissoes = {
-          financeiro: u.nivel !== 'visualizador',
-          agendamentos: true,
-          clientes: u.nivel !== 'visualizador',
-          servicos: u.nivel !== 'visualizador',
-          estoque: u.nivel !== 'visualizador',
-          configuracoes: u.nivel === 'admin'
+          financeiro: { visualizar: old.financeiro, lancarDespesa: old.financeiro && old.configuracoes, verLucro: old.financeiro && old.configuracoes },
+          agendamentos: { visualizar: old.agendamentos, criarEditar: old.agendamentos, aprovarRecusar: old.agendamentos },
+          estoque: { visualizar: old.estoque, darBaixaVenda: old.estoque, editarPrecos: old.estoque && old.configuracoes },
+          clientes: { visualizar: old.clientes, editar: old.clientes },
+          configuracoes: { editarLandingPage: old.configuracoes, gerenciarUsuarios: old.configuracoes }
         };
+        changed = true;
+      }
+      if (!u.permissoes) {
+        u.permissoes = u.isAdmin ? _permisAdmin() : _permisDefault();
         changed = true;
       }
     });
@@ -1334,7 +1396,9 @@ var APP_VERSION = '1.3.2';
     criarUsuario: criarUsuario,
     excluirUsuario: excluirUsuario,
     atualizarPermissoes: atualizarPermissoes,
+    setAdminStatus: setAdminStatus,
     getPermissoes: getPermissoes,
+    hasPermission: hasPermission,
     verificarLogin: verificarLogin,
     getCursoVendas: getCursoVendas,
     setCursoVendas: setCursoVendas,

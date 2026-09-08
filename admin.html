@@ -140,6 +140,37 @@
     .txs-whatsapp-text b, .txs-whatsapp-text strong { font-weight:700; }
     .txs-whatsapp-time { text-align:right; font-size:10px; color:rgba(255,255,255,.45); margin-top:4px; }
 
+    /* Toggle Switch */
+    .usr-toggle { position:relative; width:36px; height:20px; flex-shrink:0; }
+    .usr-toggle input { opacity:0; width:0; height:0; }
+    .usr-toggle-slider { position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background:#374151; border-radius:20px; transition:all .25s; }
+    .usr-toggle-slider::before { content:''; position:absolute; height:16px; width:16px; left:2px; bottom:2px; background:#fff; border-radius:50%; transition:all .25s; }
+    .usr-toggle input:checked + .usr-toggle-slider { background:#D4AF37; }
+    .usr-toggle input:checked + .usr-toggle-slider::before { transform:translateX(16px); }
+    .usr-toggle input:disabled + .usr-toggle-slider { opacity:.4; cursor:not-allowed; }
+
+    /* User Accordion Card */
+    .usr-card { background:#1E1E1E; border:1px solid rgba(255,255,255,.06); border-radius:12px; overflow:hidden; transition:border-color .2s; }
+    .usr-card:hover { border-color:rgba(212,175,55,.2); }
+    .usr-card-header { display:flex; align-items:center; gap:12px; padding:14px 16px; cursor:pointer; user-select:none; transition:background .2s; }
+    .usr-card-header:hover { background:rgba(255,255,255,.02); }
+    .usr-card-chevron { color:#6B7280; font-size:12px; transition:transform .25s; flex-shrink:0; }
+    .usr-card.open .usr-card-chevron { transform:rotate(180deg); }
+    .usr-card-body { display:none; padding:0 16px 16px 16px; border-top:1px solid rgba(255,255,255,.06); }
+    .usr-card.open .usr-card-body { display:block; }
+    .usr-perm-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    @media (max-width:640px) { .usr-perm-grid { grid-template-columns:1fr; } }
+    .usr-perm-mod { background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); border-radius:10px; padding:10px 12px; }
+    .usr-perm-mod-title { font-size:12px; font-weight:600; color:#E5E7EB; margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+    .usr-perm-sub { display:flex; align-items:center; justify-content:space-between; padding:4px 0; }
+    .usr-perm-sub-label { font-size:11px; color:#9CA3AF; }
+    .usr-role-badge { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:9999px; font-size:10px; font-weight:700; letter-spacing:.3px; }
+    .usr-role-admin { background:rgba(212,175,55,.15); color:#D4AF37; }
+    .usr-role-gerente { background:rgba(59,130,246,.15); color:#3B82F6; }
+    .usr-role-recepcao { background:rgba(16,185,129,.15); color:#10B981; }
+    .usr-role-profissional { background:rgba(168,85,247,.15); color:#A855F7; }
+    .usr-role-visualizador { background:rgba(107,114,128,.15); color:#6B7280; }
+
     /* Guide cards */
     .guide-card { background:#1E1E1E; border:1px solid rgba(212,175,55,.12); border-radius:12px; padding:20px; cursor:pointer; transition:all .25s; position:relative; overflow:hidden; }
     .guide-card:hover { border-color:rgba(212,175,55,.4); transform:translateY(-2px); box-shadow:0 8px 24px rgba(212,175,55,.08); }
@@ -1665,24 +1696,26 @@
 
       <!-- TAB: Usuários -->
       <div id="cfg-tab-usuarios" class="cfg-tab-panel hidden">
-        <div class="card-dark p-6 mb-6">
+        <div id="usr-novo-form" class="card-dark p-6 mb-6">
           <h3 class="font-display text-lg font-semibold text-white mb-4">Novo Usuário</h3>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
             <input id="usr-nome" type="text" placeholder="Nome" class="rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
             <input id="usr-email" type="email" placeholder="E-mail" class="rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
             <input id="usr-senha" type="password" placeholder="Senha" class="rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
             <select id="usr-nivel" class="rounded-lg bg-dark-700 border border-dark-300/40 px-3 py-2 text-sm text-gray-300 focus:border-gold outline-none">
-              <option value="admin">Admin</option>
               <option value="operador">Operador</option>
+              <option value="gerente">Gerente</option>
+              <option value="recepcao">Recepção</option>
+              <option value="profissional">Profissional</option>
               <option value="visualizador">Visualizador</option>
             </select>
           </div>
           <button id="usr-criar-btn" class="rounded-xl bg-gold/20 px-5 py-2.5 text-sm font-semibold text-gold hover:bg-gold/30 transition-colors">Cadastrar Usuário</button>
         </div>
         <div class="card-dark p-6">
-          <h3 class="font-display text-lg font-semibold text-white mb-4">Permissões da Equipe</h3>
-          <p class="text-sm text-gray-400 mb-4">Controle quais módulos cada usuário pode acessar. Admins sempre têm acesso total.</p>
-          <div id="usr-lista" class="space-y-3"></div>
+          <h3 class="font-display text-lg font-semibold text-white mb-2">Permissões da Equipe</h3>
+          <p class="text-sm text-gray-400 mb-4">Controle granular: cada módulo tem sub-permissões (visualizar, editar, etc). Apenas admins podem alterar.</p>
+          <div id="usr-lista"></div>
           <p id="usr-vazio" class="text-sm text-gray-500 hidden">Nenhum usuário cadastrado.</p>
         </div>
       </div>
@@ -2213,20 +2246,35 @@ document.addEventListener('DOMContentLoaded', function () {
     try { return JSON.parse(sessionStorage.getItem('jane-admin-user') || 'null'); } catch (e) { return null; }
   }
 
-  function hasPermission(permKey) {
+  function hasPermission(permPath) {
     var u = getLoggedUser();
     if (!u) return false;
-    if (u.nivel === 'admin') return true;
+    if (u.isAdmin) return true;
     var p = u.permissoes;
-    if (!p) return true;
-    return !!p[permKey];
+    if (!p) return false;
+    var parts = permPath.split('.');
+    var mod = p[parts[0]];
+    if (!mod) return false;
+    if (typeof mod === 'boolean') return mod;
+    return !!mod[parts[1]];
   }
 
   function filterSidebar() {
+    var permMap = {
+      dashboard: null,
+      agendamentos: 'agendamentos.visualizar',
+      servicos: 'agendamentos.visualizar',
+      produtos: 'estoque.visualizar',
+      faturamento: 'financeiro.visualizar',
+      clientes: 'clientes.visualizar',
+      historico: 'clientes.visualizar',
+      retencao: 'clientes.visualizar',
+      config: 'configuracoes.editarLandingPage'
+    };
     document.querySelectorAll('.sidebar-link').forEach(function (btn) {
-      var perm = btn.getAttribute('data-perm');
-      if (!perm || perm === 'dashboard') { btn.classList.remove('hidden'); return; }
-      if (hasPermission(perm)) {
+      var page = btn.getAttribute('data-page');
+      var perm = permMap[page];
+      if (!perm || hasPermission(perm)) {
         btn.classList.remove('hidden');
       } else {
         btn.classList.add('hidden');
@@ -2239,7 +2287,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var senha = document.getElementById('login-senha').value;
     if (B && B.adminLogin(senha)) {
       try { sessionStorage.setItem(KEY_AUTH, '1'); } catch (e) {}
-      try { sessionStorage.setItem('jane-admin-user', JSON.stringify({ nome: 'Jane Barreiros', email: 'jane@studiojane.com.br', nivel: 'admin', id: 'usr-admin-default', permissoes: { financeiro:true, agendamentos:true, clientes:true, servicos:true, estoque:true, configuracoes:true } })); } catch (e) {}
+      try { sessionStorage.setItem('jane-admin-user', JSON.stringify({ nome: 'Jane Barreiros', email: 'jane@studiojane.com.br', nivel: 'admin', id: 'usr-admin-default', isAdmin: true, permissoes: { financeiro:{visualizar:true,lancarDespesa:true,verLucro:true}, agendamentos:{visualizar:true,criarEditar:true,aprovarRecusar:true}, estoque:{visualizar:true,darBaixaVenda:true,editarPrecos:true}, clientes:{visualizar:true,editar:true}, configuracoes:{editarLandingPage:true,gerenciarUsuarios:true} } })); } catch (e) {}
       showApp();
     } else {
       var erro = document.getElementById('login-erro');
@@ -2333,7 +2381,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function showPage(pageName) {
     console.log('[Admin] showPage:', pageName);
     /* Permission check: redirect to first allowed page if unauthorized */
-    var permMap = { dashboard:'dashboard', agendamentos:'agendamentos', servicos:'servicos', produtos:'estoque', faturamento:'financeiro', clientes:'clientes', historico:'clientes', retencao:'clientes', config:'configuracoes' };
+    var permMap = { dashboard:null, agendamentos:'agendamentos.visualizar', servicos:'agendamentos.visualizar', produtos:'estoque.visualizar', faturamento:'financeiro.visualizar', clientes:'clientes.visualizar', historico:'clientes.visualizar', retencao:'clientes.visualizar', config:'configuracoes.editarLandingPage' };
     if (pageName !== 'dashboard' && permMap[pageName] && !hasPermission(permMap[pageName])) {
       var firstAllowed = 'dashboard';
       document.querySelectorAll('.sidebar-link:not(.hidden)').forEach(function (b) { if (!firstAllowed || firstAllowed === 'dashboard') firstAllowed = b.getAttribute('data-page'); });
@@ -5615,72 +5663,162 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   /* --- Usuários --- */
-  var _permLabels = {
-    financeiro: { label: 'Financeiro', icon: '💰' },
-    agendamentos: { label: 'Agendamentos', icon: '📅' },
-    clientes: { label: 'Clientes', icon: '👥' },
-    servicos: { label: 'Serviços', icon: '✂️' },
-    estoque: { label: 'Estoque', icon: '📦' },
-    configuracoes: { label: 'Configurações', icon: '⚙️' }
+  var _permModules = {
+    financeiro: {
+      icon: '💰', label: 'Financeiro', color: 'gold',
+      subs: [
+        { key: 'visualizar', label: 'Visualizar dashboard e relatórios' },
+        { key: 'lancarDespesa', label: 'Lançar despesas' },
+        { key: 'verLucro', label: 'Ver lucro e faturamento' }
+      ]
+    },
+    agendamentos: {
+      icon: '📅', label: 'Agendamentos', color: 'blue',
+      subs: [
+        { key: 'visualizar', label: 'Visualizar agenda' },
+        { key: 'criarEditar', label: 'Criar e editar agendamentos' },
+        { key: 'aprovarRecusar', label: 'Aprovar e recusar pedidos' }
+      ]
+    },
+    estoque: {
+      icon: '📦', label: 'Estoque', color: 'purple',
+      subs: [
+        { key: 'visualizar', label: 'Visualizar estoque' },
+        { key: 'darBaixaVenda', label: 'Dar baixa em vendas' },
+        { key: 'editarPrecos', label: 'Editar preços e produtos' }
+      ]
+    },
+    clientes: {
+      icon: '👥', label: 'Clientes', color: 'green',
+      subs: [
+        { key: 'visualizar', label: 'Visualizar lista de clientes' },
+        { key: 'editar', label: 'Editar dados dos clientes' }
+      ]
+    },
+    configuracoes: {
+      icon: '⚙️', label: 'Configurações', color: 'amber',
+      subs: [
+        { key: 'editarLandingPage', label: 'Editar landing page e conteúdo' },
+        { key: 'gerenciarUsuarios', label: 'Gerenciar usuários e permissões' }
+      ]
+    }
   };
+
+  function _usrRoleInfo(u) {
+    if (u.isAdmin) return { label: 'Admin', cls: 'usr-role-admin' };
+    var n = u.nivel || 'operador';
+    if (n === 'gerente') return { label: 'Gerente', cls: 'usr-role-gerente' };
+    if (n === 'recepcao') return { label: 'Recepção', cls: 'usr-role-recepcao' };
+    if (n === 'profissional') return { label: 'Profissional', cls: 'usr-role-profissional' };
+    if (n === 'visualizador') return { label: 'Visualizador', cls: 'usr-role-visualizador' };
+    return { label: 'Operador', cls: 'usr-role-gerente' };
+  }
 
   function renderUsuarios() {
     var lista = B ? B.getUsuarios() : [];
     var container = document.getElementById('usr-lista');
     var vazio = document.getElementById('usr-vazio');
+    var novoForm = document.getElementById('usr-novo-form');
     container.innerHTML = '';
     if (!lista.length) { vazio.classList.remove('hidden'); return; }
     vazio.classList.add('hidden');
-    var userLogado = null;
-    try { userLogado = JSON.parse(sessionStorage.getItem('jane-admin-user') || 'null'); } catch (e) {}
+    var userLogado = getLoggedUser();
+    var loggedIsAdmin = userLogado && userLogado.isAdmin;
+
+    /* Hide new user form for non-admins */
+    if (novoForm) novoForm.style.display = loggedIsAdmin ? '' : 'none';
+
     lista.forEach(function (u) {
       var isLogado = userLogado && u.email === userLogado.email;
-      var isAdmin = u.nivel === 'admin';
-      var nivelBadge = isAdmin ? 'bg-gold/15 text-gold' : u.nivel === 'operador' ? 'bg-blue-500/15 text-blue-400' : 'bg-gray-500/15 text-gray-400';
+      var isUserAdmin = !!u.isAdmin;
       var perm = u.permissoes || {};
+      var role = _usrRoleInfo(u);
 
       var card = document.createElement('div');
-      card.className = 'rounded-xl bg-dark-600/50 border border-dark-300/20 p-4';
+      card.className = 'usr-card mb-3';
 
+      /* Header */
       var headerHtml =
-        '<div class="flex items-center justify-between mb-3">' +
-          '<div class="flex items-center gap-3">' +
-            '<div class="w-10 h-10 rounded-full bg-dark-700 flex items-center justify-center text-sm font-bold text-gold">' + (u.nome || '?')[0].toUpperCase() + '</div>' +
-            '<div>' +
-              '<p class="text-sm font-semibold text-white">' + esc(u.nome) + (isLogado ? ' <span class="text-[9px] text-green-400 font-semibold">(você)</span>' : '') + '</p>' +
-              '<p class="text-xs text-gray-400">' + esc(u.email) + '</p>' +
+        '<div class="usr-card-header" data-usr-toggle="' + u.id + '">' +
+          '<div class="w-10 h-10 rounded-full bg-dark-700 flex items-center justify-center text-sm font-bold text-gold shrink-0">' + (u.nome || '?')[0].toUpperCase() + '</div>' +
+          '<div class="flex-1 min-w-0">' +
+            '<div class="flex items-center gap-2 flex-wrap">' +
+              '<p class="text-sm font-semibold text-white truncate">' + esc(u.nome) + '</p>' +
+              (isLogado ? '<span class="text-[9px] text-green-400 font-semibold">(você)</span>' : '') +
+              '<span class="usr-role-badge ' + role.cls + '">' + role.label + '</span>' +
             '</div>' +
+            '<p class="text-xs text-gray-400 truncate">' + esc(u.email) + '</p>' +
           '</div>' +
-          '<div class="flex items-center gap-2">' +
-            '<span class="inline-flex items-center rounded-full ' + nivelBadge + ' px-2.5 py-0.5 text-[10px] font-semibold">' + esc(u.nivel || 'admin') + '</span>' +
-            (!isLogado ? '<button data-usr-del="' + u.id + '" class="rounded-lg bg-red-500/15 px-2 py-1 text-[10px] font-semibold text-red-400 hover:bg-red-500/25">Excluir</button>' : '') +
+          '<div class="flex items-center gap-2 shrink-0">' +
+            (loggedIsAdmin && !isLogado ? '<button data-usr-del="' + u.id + '" class="rounded-lg bg-red-500/15 px-2 py-1 text-[10px] font-semibold text-red-400 hover:bg-red-500/25" onclick="event.stopPropagation()">Excluir</button>' : '') +
+            '<svg class="usr-card-chevron h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>' +
           '</div>' +
         '</div>';
 
-      var permHtml = '';
-      if (isAdmin) {
-        permHtml = '<p class="text-xs text-gold/70 italic">Acesso total (Admin)</p>';
-      } else {
-        permHtml = '<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">';
-        Object.keys(_permLabels).forEach(function (key) {
-          var checked = perm[key] ? 'checked' : '';
-          var disabled = isLogado ? 'disabled' : '';
-          permHtml +=
-            '<label class="flex items-center gap-1.5 cursor-pointer rounded-lg bg-dark-700/50 px-2.5 py-1.5 transition-colors hover:bg-dark-700">' +
-              '<input type="checkbox" data-perm-user="' + u.id + '" data-perm-key="' + key + '" ' + checked + ' ' + disabled + ' class="usr-perm-cb rounded border-dark-300 bg-dark-700 text-gold focus:ring-gold/30">' +
-              '<span class="text-[11px] text-gray-300">' + _permLabels[key].icon + ' ' + _permLabels[key].label + '</span>' +
-            '</label>';
-        });
-        permHtml += '</div>';
+      /* Body */
+      var bodyHtml = '<div class="usr-card-body pt-3">';
+
+      /* Admin Toggle (only for admins editing others) */
+      if (loggedIsAdmin && !isLogado) {
+        bodyHtml +=
+          '<div class="flex items-center justify-between mb-4 rounded-lg bg-gold/5 border border-gold/20 px-4 py-3">' +
+            '<div class="flex items-center gap-2">' +
+              '<span class="text-lg">👑</span>' +
+              '<div><p class="text-sm font-semibold text-gold">Acesso Total de Administrador</p><p class="text-[10px] text-gray-400">Ativa todas as permissões automaticamente</p></div>' +
+            '</div>' +
+            '<label class="usr-toggle">' +
+              '<input type="checkbox" data-usr-admin-toggle="' + u.id + '" ' + (isUserAdmin ? 'checked' : '') + '>' +
+              '<span class="usr-toggle-slider"></span>' +
+            '</label>' +
+          '</div>';
       }
 
-      card.innerHTML = headerHtml + permHtml;
+      /* Permission Grid */
+      bodyHtml += '<div class="usr-perm-grid">';
+      Object.keys(_permModules).forEach(function (modKey) {
+        var mod = _permModules[modKey];
+        var modPerm = perm[modKey] || {};
+        bodyHtml +=
+          '<div class="usr-perm-mod">' +
+            '<div class="usr-perm-mod-title">' + mod.icon + ' ' + mod.label + '</div>';
+        mod.subs.forEach(function (sub) {
+          var checked = (typeof modPerm === 'boolean' ? modPerm : !!modPerm[sub.key]);
+          var disabled = !loggedIsAdmin || isLogado || isUserAdmin;
+          bodyHtml +=
+            '<div class="usr-perm-sub">' +
+              '<span class="usr-perm-sub-label">' + sub.label + '</span>' +
+              '<label class="usr-toggle">' +
+                '<input type="checkbox" ' + (checked ? 'checked' : '') + ' ' + (disabled ? 'disabled' : '') + ' data-perm-user="' + u.id + '" data-perm-mod="' + modKey + '" data-perm-sub="' + sub.key + '">' +
+                '<span class="usr-toggle-slider"></span>' +
+              '</label>' +
+            '</div>';
+        });
+        bodyHtml += '</div>';
+      });
+      bodyHtml += '</div>';
+
+      /* Info for non-admin viewing own profile */
+      if (!loggedIsAdmin && isLogado) {
+        bodyHtml += '<p class="mt-3 text-[10px] text-gray-500 italic">Somente leitura — fale com o administrador para alterar permissões.</p>';
+      }
+
+      bodyHtml += '</div>';
+      card.innerHTML = headerHtml + bodyHtml;
       container.appendChild(card);
+    });
+
+    /* Accordion toggle */
+    container.querySelectorAll('[data-usr-toggle]').forEach(function (hdr) {
+      hdr.addEventListener('click', function () {
+        var card = hdr.closest('.usr-card');
+        card.classList.toggle('open');
+      });
     });
 
     /* Delete handlers */
     container.querySelectorAll('[data-usr-del]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
         if (!confirm('Excluir este usuário?')) return;
         B.excluirUsuario(btn.getAttribute('data-usr-del'));
         renderUsuarios();
@@ -5688,25 +5826,41 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     });
 
-    /* Permission checkbox handlers */
-    container.querySelectorAll('.usr-perm-cb').forEach(function (cb) {
-      cb.addEventListener('change', function () {
-        var userId = cb.getAttribute('data-perm-user');
+    /* Admin toggle handlers */
+    container.querySelectorAll('[data-usr-admin-toggle]').forEach(function (tog) {
+      tog.addEventListener('change', function () {
+        var userId = tog.getAttribute('data-usr-admin-toggle');
+        var newIsAdmin = tog.checked;
+        B.setAdminStatus(userId, newIsAdmin);
+        renderUsuarios();
+        showToast('Admin', newIsAdmin ? 'Usuário agora é Admin' : 'Privilégio de Admin removido', null);
+      });
+    });
+
+    /* Permission toggle handlers */
+    container.querySelectorAll('[data-perm-mod]').forEach(function (tog) {
+      tog.addEventListener('change', function () {
+        var userId = tog.getAttribute('data-perm-user');
+        var modKey = tog.getAttribute('data-perm-mod');
+        var subKey = tog.getAttribute('data-perm-sub');
         var user = lista.find(function (u) { return u.id === userId; });
         if (!user) return;
-        var newPerm = user.permissoes || { financeiro:true, agendamentos:true, clientes:true, servicos:true, estoque:true, configuracoes:true };
-        newPerm[cb.getAttribute('data-perm-key')] = cb.checked;
-        B.atualizarPermissoes(userId, newPerm);
+        var perm = user.permissoes || {};
+        if (!perm[modKey] || typeof perm[modKey] === 'boolean') {
+          perm[modKey] = {};
+        }
+        perm[modKey][subKey] = tog.checked;
+        B.atualizarPermissoes(userId, perm);
 
         /* Update session if editing self */
         var loggedUser = getLoggedUser();
         if (loggedUser && user.email === loggedUser.email) {
-          loggedUser.permissoes = newPerm;
+          loggedUser.permissoes = perm;
           sessionStorage.setItem('jane-admin-user', JSON.stringify(loggedUser));
           filterSidebar();
         }
 
-        showToast('Permissão atualizada', cb.getAttribute('data-perm-key') + ': ' + (cb.checked ? 'Ativado' : 'Desativado'), null);
+        showToast('Permissão', modKey + '.' + subKey + ': ' + (tog.checked ? 'Ativado' : 'Desativado'), null);
       });
     });
   }
@@ -5720,6 +5874,8 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!email) { alert('Informe o e-mail.'); return; }
     if (!senha || senha.length < 6) { alert('A senha deve ter pelo menos 6 caracteres.'); return; }
     if (!B) { alert('Sistema não carregado.'); return; }
+    var loggedUser = getLoggedUser();
+    if (!loggedUser || !loggedUser.isAdmin) { alert('Apenas administradores podem cadastrar usuários.'); return; }
     B.criarUsuario(nome, email, senha, nivel).then(function (result) {
       if (result.erro) { alert(result.erro); return; }
       document.getElementById('usr-nome').value = '';
