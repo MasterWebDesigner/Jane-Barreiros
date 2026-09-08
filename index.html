@@ -687,6 +687,9 @@
 
   <main>
 
+    <!-- Announcement Bar (populado via Firebase) -->
+    <div id="announcement-bar" class="hidden bg-gold/15 border-b border-gold/30 py-2.5 text-center text-sm font-semibold text-gold transition-all"></div>
+
     <!-- ==============================================================
          2. HERO
     =============================================================== -->
@@ -1480,6 +1483,19 @@
           siteConfig = snap.val() || {};
           applyBlockVisibility();
           if (typeof renderInsta === 'function') renderInsta();
+        });
+        /* Banner / Aviso */
+        db.ref('jane-booking/configuracoes/textos/banner').once('value').then(function (snap) {
+          var b = snap.val();
+          if (b && b.texto) {
+            var bar = document.getElementById('announcement-bar');
+            if (bar) {
+              var estiloClasses = { gold:'bg-gold/15 text-gold border-gold/30', green:'bg-green-500/15 text-green-400 border-green-500/30', blue:'bg-blue-500/15 text-blue-400 border-blue-500/30', red:'bg-red-500/15 text-red-400 border-red-500/30' };
+              bar.className = 'py-2.5 text-center text-sm font-semibold border-b transition-all ' + (estiloClasses[b.estilo] || estiloClasses.gold);
+              bar.textContent = b.texto;
+              bar.classList.remove('hidden');
+            }
+          }
         });
       } catch (e) {}
 

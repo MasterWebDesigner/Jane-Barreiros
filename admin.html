@@ -108,6 +108,38 @@
     .cfg-tab:hover { color:#D4AF37; }
     .cfg-tab.active { color:#D4AF37; border-bottom-color:#D4AF37; }
 
+    /* Textos & Mensagens — Accordion */
+    .txs-accordion { background:#1E1E1E; border:1px solid rgba(212,175,55,.12); border-radius:12px; overflow:hidden; transition:border-color .2s; }
+    .txs-accordion:hover { border-color:rgba(212,175,55,.25); }
+    .txs-accordion-header { display:flex; align-items:center; justify-content:space-between; width:100%; padding:16px 20px; background:none; border:none; cursor:pointer; text-align:left; transition:background .2s; }
+    .txs-accordion-header:hover { background:rgba(212,175,55,.04); }
+    .txs-accordion-header span { font-family:'Inter',system-ui,sans-serif; font-size:15px; font-weight:600; color:#fff; }
+    .txs-accordion-body { display:none; padding:0 20px 20px 20px; }
+    .txs-accordion.open .txs-accordion-body { display:block; }
+    .txs-accordion.open .txs-chevron { transform:rotate(180deg); }
+    .txs-editor-preview { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+    @media (max-width:900px) { .txs-editor-preview { grid-template-columns:1fr; } }
+    .txs-fields { min-width:0; }
+    .txs-preview-col { min-width:0; }
+    .txs-label { display:block; font-size:12px; font-weight:600; color:#9CA3AF; margin-bottom:6px; }
+    .txs-input { width:100%; border-radius:8px; background:#121212; border:1px solid rgba(255,255,255,.08); padding:10px 12px; font-size:13px; color:#E5E7EB; outline:none; transition:border-color .2s; }
+    .txs-input:focus { border-color:#D4AF37; }
+    textarea.txs-input { resize:vertical; min-height:60px; font-family:inherit; }
+    .txs-linha-row { display:flex; align-items:center; gap:8px; }
+    .txs-linha-icon { font-size:14px; width:24px; text-align:center; flex-shrink:0; }
+    .txs-linha-del { background:none; border:none; color:#6B7280; font-size:18px; cursor:pointer; padding:2px 6px; border-radius:4px; line-height:1; transition:all .15s; flex-shrink:0; }
+    .txs-linha-del:hover { color:#EF4444; background:rgba(239,68,68,.1); }
+    .txs-preview-title { font-size:12px; font-weight:600; color:#9CA3AF; margin-bottom:10px; text-transform:uppercase; letter-spacing:.5px; }
+
+    /* WhatsApp Bubble Preview */
+    .txs-whatsapp-frame { border-radius:12px; overflow:hidden; border:1px solid rgba(255,255,255,.08); background:#0B141A; }
+    .txs-whatsapp-header { display:flex; align-items:center; gap:10px; padding:10px 14px; background:#1F2C34; border-bottom:1px solid rgba(255,255,255,.06); }
+    .txs-whatsapp-body { padding:16px 12px; min-height:180px; background:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5l5 10-5 3-5-3z' fill='rgba(255,255,255,.02)'/%3E%3C/svg%3E"); }
+    .txs-whatsapp-bubble { background:#005C4B; border-radius:8px 8px 8px 0; padding:8px 12px; max-width:92%; margin-left:0; box-shadow:0 1px 2px rgba(0,0,0,.3); position:relative; }
+    .txs-whatsapp-text { font-size:13px; color:#E9EDEF; line-height:1.55; word-wrap:break-word; white-space:pre-line; font-family:'Inter',system-ui,sans-serif; }
+    .txs-whatsapp-text b, .txs-whatsapp-text strong { font-weight:700; }
+    .txs-whatsapp-time { text-align:right; font-size:10px; color:rgba(255,255,255,.45); margin-top:4px; }
+
     /* Guide cards */
     .guide-card { background:#1E1E1E; border:1px solid rgba(212,175,55,.12); border-radius:12px; padding:20px; cursor:pointer; transition:all .25s; position:relative; overflow:hidden; }
     .guide-card:hover { border-color:rgba(212,175,55,.4); transform:translateY(-2px); box-shadow:0 8px 24px rgba(212,175,55,.08); }
@@ -1068,6 +1100,7 @@
         <button class="cfg-tab" data-cfg-tab="cms">📝 Conteúdo</button>
         <button class="cfg-tab" data-cfg-tab="usuarios">👤 Usuários</button>
         <button class="cfg-tab" data-cfg-tab="sobre">ℹ️ Sobre</button>
+        <button class="cfg-tab" data-cfg-tab="textos">💬 Textos e Mensagens</button>
       </div>
 
       <!-- TAB: Guia Rápido -->
@@ -1107,6 +1140,195 @@
           <h3 class="font-display text-lg font-semibold text-white mb-4">Lista de Espera</h3>
           <div id="cfg-espera" class="space-y-3"></div>
           <p id="cfg-espera-vazio" class="text-sm text-gray-500">Nenhuma pessoa na lista de espera.</p>
+        </div>
+      </div>
+
+      <!-- TAB: Textos e Mensagens do Sistema -->
+      <div id="cfg-tab-textos" class="cfg-tab-panel hidden">
+        <p class="text-sm text-gray-400 mb-6">Edite os textos e mensagens usados pelo sistema. As alterações são salvas no Firebase e aplicadas imediatamente.</p>
+
+        <!-- Accordion: WhatsApp Template -->
+        <div class="txs-accordion mb-4">
+          <button class="txs-accordion-header" data-txs-toggle="whatsapp">
+            <span>💬 Template de Solicitação de Agendamento (WhatsApp)</span>
+            <svg class="txs-chevron h-5 w-5 text-gray-400 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="txs-accordion-body" id="txs-section-whatsapp">
+            <div class="txs-editor-preview">
+              <!-- Campos de edição -->
+              <div class="txs-fields space-y-4">
+                <div>
+                  <label class="txs-label">Saudação</label>
+                  <input id="txs-msg-saudacao" type="text" class="txs-input" placeholder="✨ *Studio Jane Barreiros*">
+                </div>
+                <div>
+                  <label class="txs-label">Título</label>
+                  <input id="txs-msg-titulo" type="text" class="txs-input" placeholder="📌 *Solicitação de Agendamento*">
+                </div>
+                <div class="border-b border-dark-300/30 pb-3">
+                  <label class="txs-label mb-2">Linhas da Mensagem</label>
+                  <div class="space-y-2" id="txs-msg-linhas">
+                    <div class="txs-linha-row flex items-center gap-2">
+                      <span class="txs-linha-icon">💇‍♀️</span>
+                      <input type="text" class="txs-input txs-linha-input flex-1" value="💇‍♀️ *Serviço:* {servico}" data-idx="0">
+                      <button class="txs-linha-del" data-del="0" title="Remover linha">×</button>
+                    </div>
+                    <div class="txs-linha-row flex items-center gap-2">
+                      <span class="txs-linha-icon">💇‍♀️</span>
+                      <input type="text" class="txs-input txs-linha-input flex-1" value="💇‍♀️ *Profissional:* {profissional}" data-idx="1">
+                      <button class="txs-linha-del" data-del="1" title="Remover linha">×</button>
+                    </div>
+                    <div class="txs-linha-row flex items-center gap-2">
+                      <span class="txs-linha-icon">📅</span>
+                      <input type="text" class="txs-input txs-linha-input flex-1" value="📅 *Data:* {data}" data-idx="2">
+                      <button class="txs-linha-del" data-del="2" title="Remover linha">×</button>
+                    </div>
+                    <div class="txs-linha-row flex items-center gap-2">
+                      <span class="txs-linha-icon">⏰</span>
+                      <input type="text" class="txs-input txs-linha-input flex-1" value="⏰ *Horário:* {horario}" data-idx="3">
+                      <button class="txs-linha-del" data-del="3" title="Remover linha">×</button>
+                    </div>
+                    <div class="txs-linha-row flex items-center gap-2">
+                      <span class="txs-linha-icon">👤</span>
+                      <input type="text" class="txs-input txs-linha-input flex-1" value="👤 *Cliente:* {nome} ({whatsapp})" data-idx="4">
+                      <button class="txs-linha-del" data-del="4" title="Remover linha">×</button>
+                    </div>
+                    <div class="txs-linha-row flex items-center gap-2">
+                      <span class="txs-linha-icon">💳</span>
+                      <input type="text" class="txs-input txs-linha-input flex-1" value="💳 *Pagamento:* {pagamento}" data-idx="5">
+                      <button class="txs-linha-del" data-del="5" title="Remover linha">×</button>
+                    </div>
+                    <div class="txs-linha-row flex items-center gap-2">
+                      <span class="txs-linha-icon">💰</span>
+                      <input type="text" class="txs-input txs-linha-input flex-1" value="💰 *Valor:* {valor}" data-idx="6">
+                      <button class="txs-linha-del" data-del="6" title="Remover linha">×</button>
+                    </div>
+                    <div class="txs-linha-row flex items-center gap-2">
+                      <span class="txs-linha-icon">📝</span>
+                      <input type="text" class="txs-input txs-linha-input flex-1" value="📝 Obs: {obs}" data-idx="7">
+                      <button class="txs-linha-del" data-del="7" title="Remover linha">×</button>
+                    </div>
+                  </div>
+                  <button id="txs-add-linha" class="mt-2 text-xs font-semibold text-gold hover:text-gold/80 transition-colors">+ Adicionar linha</button>
+                </div>
+                <div>
+                  <label class="txs-label">Separador</label>
+                  <input id="txs-msg-separador" type="text" class="txs-input" placeholder="━━━━━━━━━━━━━━━━━━━━">
+                </div>
+                <div>
+                  <label class="txs-label">Mensagem Final</label>
+                  <textarea id="txs-msg-final" rows="2" class="txs-input" placeholder="Olá, Jane! Fiz a solicitação do agendamento pelo site e aguardo sua confirmação."></textarea>
+                </div>
+                <p class="text-[10px] text-gray-500">Variáveis: {'{nome}'}, {'{whatsapp}'}, {'{servico}'}, {'{profissional}'}, {'{data}'}, {'{horario}'}, {'{pagamento}'}, {'{valor}'}, {'{obs}'}</p>
+              </div>
+              <!-- Preview WhatsApp -->
+              <div class="txs-preview-col">
+                <p class="txs-preview-title">Pré-visualização</p>
+                <div class="txs-whatsapp-frame">
+                  <div class="txs-whatsapp-header">
+                    <svg class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    <div class="flex flex-col">
+                      <span class="text-xs font-semibold text-white">Studio Jane</span>
+                      <span class="text-[10px] text-green-300">online</span>
+                    </div>
+                  </div>
+                  <div class="txs-whatsapp-body" id="txs-whatsapp-preview">
+                    <div class="txs-whatsapp-bubble">
+                      <div class="txs-whatsapp-text" id="txs-whatsapp-text"></div>
+                      <div class="txs-whatsapp-time">09:41</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 flex items-center gap-3">
+              <button id="txs-msg-save" class="rounded-xl bg-green-500/20 px-5 py-2.5 text-sm font-semibold text-green-400 hover:bg-green-500/30 transition-colors">Salvar Template</button>
+              <button id="txs-msg-reset" class="rounded-xl bg-dark-600 px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white transition-colors">Restaurar Padrão</button>
+              <span id="txs-msg-status" class="text-xs text-gray-500"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accordion: Banner do Site -->
+        <div class="txs-accordion mb-4">
+          <button class="txs-accordion-header" data-txs-toggle="banner">
+            <span>📢 Banner / Aviso do Site</span>
+            <svg class="txs-chevron h-5 w-5 text-gray-400 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="txs-accordion-body" id="txs-section-banner">
+            <div class="txs-editor-preview">
+              <div class="txs-fields space-y-4">
+                <div>
+                  <label class="txs-label">Texto do Banner</label>
+                  <input id="txs-banner-texto" type="text" class="txs-input" placeholder="Atendimento de Terça a Sábado das 09h às 19h">
+                  <p class="mt-1 text-[10px] text-gray-500">Aparece como barra de aviso no topo da landing page.</p>
+                </div>
+                <div>
+                  <label class="txs-label">Estilo</label>
+                  <select id="txs-banner-estilo" class="txs-input">
+                    <option value="gold">Dourado (padrão)</option>
+                    <option value="green">Verde</option>
+                    <option value="blue">Azul</option>
+                    <option value="red">Vermelho (urgente)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="txs-preview-col">
+                <p class="txs-preview-title">Pré-visualização</p>
+                <div class="rounded-xl bg-dark-800 p-4 border border-dark-300/30">
+                  <div id="txs-banner-preview" class="rounded-lg px-4 py-2.5 text-center text-sm font-semibold bg-gold/15 text-gold border border-gold/30">
+                    Atendimento de Terça a Sábado das 09h às 19h
+                  </div>
+                  <div class="mt-3 space-y-2">
+                    <div class="h-3 w-3/4 rounded bg-dark-600"></div>
+                    <div class="h-3 w-1/2 rounded bg-dark-600"></div>
+                    <div class="h-8 w-full rounded-lg bg-dark-700 mt-3"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 flex items-center gap-3">
+              <button id="txs-banner-save" class="rounded-xl bg-green-500/20 px-5 py-2.5 text-sm font-semibold text-green-400 hover:bg-green-500/30 transition-colors">Salvar Banner</button>
+              <span id="txs-banner-status" class="text-xs text-gray-500"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accordion: Política de Agendamento -->
+        <div class="txs-accordion">
+          <button class="txs-accordion-header" data-txs-toggle="politica">
+            <span>📋 Política de Agendamento / Cancelamento</span>
+            <svg class="txs-chevron h-5 w-5 text-gray-400 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="txs-accordion-body" id="txs-section-politica">
+            <div class="txs-editor-preview">
+              <div class="txs-fields space-y-4">
+                <div>
+                  <label class="txs-label">Texto da Política</label>
+                  <textarea id="txs-politica-texto" rows="5" class="txs-input" placeholder="Ao agendar, você confirma que está ciente dos nossos termos..."></textarea>
+                  <p class="mt-1 text-[10px] text-gray-500">Exibido para o cliente antes de confirmar o agendamento.</p>
+                </div>
+              </div>
+              <div class="txs-preview-col">
+                <p class="txs-preview-title">Pré-visualização</p>
+                <div class="rounded-xl bg-dark-800 p-4 border border-dark-300/30">
+                  <div class="rounded-lg bg-amber-500/10 border border-amber-500/30 p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                      <span class="text-amber-400 text-lg">📋</span>
+                      <span class="text-sm font-semibold text-amber-400">Política de Agendamento</span>
+                    </div>
+                    <div id="txs-politica-preview" class="text-xs text-gray-300 leading-relaxed whitespace-pre-line">
+                      Ao agendar, você confirma que está ciente dos nossos termos...
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 flex items-center gap-3">
+              <button id="txs-politica-save" class="rounded-xl bg-green-500/20 px-5 py-2.5 text-sm font-semibold text-green-400 hover:bg-green-500/30 transition-colors">Salvar Política</button>
+              <span id="txs-politica-status" class="text-xs text-gray-500"></span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -4860,6 +5082,272 @@ document.addEventListener('DOMContentLoaded', function () {
     renderUsuarios();
     renderLandingConfig();
     loadCms();
+    renderTextos();
+  }
+
+  /* --- Textos e Mensagens do Sistema --- */
+  var _txsData = { msg: { linhas: [] }, banner: {}, politica: {} };
+  var _txsDefaultMsg = {
+    saudacao: '✨ *Studio Jane Barreiros*',
+    titulo: '📌 *Solicitação de Agendamento*',
+    linhas: [
+      '💇‍♀️ *Serviço:* {servico}',
+      '💇‍♀️ *Profissional:* {profissional}',
+      '📅 *Data:* {data}',
+      '⏰ *Horário:* {horario}',
+      '👤 *Cliente:* {nome} ({whatsapp})',
+      '💳 *Pagamento:* {pagamento}',
+      '💰 *Valor:* {valor}',
+      '📝 Obs: {obs}'
+    ],
+    separador: '━━━━━━━━━━━━━━━━━━━━',
+    final: 'Olá, Jane! Fiz a solicitação do agendamento pelo site e aguardo sua confirmação.'
+  };
+
+  function renderTextos() {
+    /* Accordion toggle */
+    document.querySelectorAll('[data-txs-toggle]').forEach(function (btn) {
+      if (btn._bound) return;
+      btn._bound = true;
+      btn.addEventListener('click', function () {
+        var acc = btn.closest('.txs-accordion');
+        acc.classList.toggle('open');
+      });
+    });
+
+    /* Load from Firebase */
+    try {
+      var _dbRef = firebase.database().ref('jane-booking/configuracoes/textos');
+      _dbRef.once('value').then(function (snap) {
+        var val = snap.val();
+        if (val) {
+          _txsData.msg = val.msg || _txsDefaultMsg;
+          _txsData.banner = val.banner || {};
+          _txsData.politica = val.politica || {};
+        }
+        _txsPopulateFields();
+      }).catch(function () {
+        _txsPopulateFields();
+      });
+    } catch (e) {
+      _txsPopulateFields();
+    }
+
+    /* Bind live preview on all inputs */
+    document.querySelectorAll('#cfg-tab-textos .txs-input, #cfg-tab-textos textarea').forEach(function (el) {
+      if (el._bound) return;
+      el._bound = true;
+      el.addEventListener('input', _txsUpdatePreviews);
+    });
+
+    /* Add linha button */
+    var addBtn = document.getElementById('txs-add-linha');
+    if (addBtn && !addBtn._bound) {
+      addBtn._bound = true;
+      addBtn.addEventListener('click', function () {
+        var container = document.getElementById('txs-msg-linhas');
+        var idx = container.querySelectorAll('.txs-linha-row').length;
+        var row = document.createElement('div');
+        row.className = 'txs-linha-row flex items-center gap-2';
+        row.innerHTML = '<span class="txs-linha-icon">•</span>' +
+          '<input type="text" class="txs-input txs-linha-input flex-1" value="" data-idx="' + idx + '" placeholder="Ex: 📝 *Obs:* {obs}">' +
+          '<button class="txs-linha-del" data-del="' + idx + '" title="Remover linha">×</button>';
+        container.appendChild(row);
+        row.querySelector('input').addEventListener('input', _txsUpdatePreviews);
+        row.querySelector('.txs-linha-del').addEventListener('click', function () {
+          row.remove();
+          _txsReindexLinhas();
+          _txsUpdatePreviews();
+        });
+        row.querySelector('input').focus();
+      });
+    }
+
+    /* Delete linha buttons */
+    document.querySelectorAll('.txs-linha-del').forEach(function (btn) {
+      if (btn._bound) return;
+      btn._bound = true;
+      btn.addEventListener('click', function () {
+        btn.closest('.txs-linha-row').remove();
+        _txsReindexLinhas();
+        _txsUpdatePreviews();
+      });
+    });
+
+    /* Save buttons */
+    _txsBindSave('txs-msg-save', 'msg');
+    _txsBindSave('txs-banner-save', 'banner');
+    _txsBindSave('txs-politica-save', 'politica');
+
+    /* Reset button */
+    var resetBtn = document.getElementById('txs-msg-reset');
+    if (resetBtn && !resetBtn._bound) {
+      resetBtn._bound = true;
+      resetBtn.addEventListener('click', function () {
+        if (!confirm('Restaurar o template padrão da mensagem?')) return;
+        _txsData.msg = JSON.parse(JSON.stringify(_txsDefaultMsg));
+        _txsPopulateFields();
+        _txsUpdatePreviews();
+        _txsSaveFirebase('msg');
+      });
+    }
+
+    _txsUpdatePreviews();
+  }
+
+  function _txsPopulateFields() {
+    var m = _txsData.msg || _txsDefaultMsg;
+    document.getElementById('txs-msg-saudacao').value = m.saudacao || '';
+    document.getElementById('txs-msg-titulo').value = m.titulo || '';
+    document.getElementById('txs-msg-separador').value = m.separador || '';
+    document.getElementById('txs-msg-final').value = m['final'] || '';
+
+    /* Populate linhas */
+    var container = document.getElementById('txs-msg-linhas');
+    container.innerHTML = '';
+    var linhas = m.linhas && m.linhas.length ? m.linhas : _txsDefaultMsg.linhas;
+    linhas.forEach(function (texto, i) {
+      var icon = (texto.match(/^[\u{1F300}-\u{1FADF}\u{2600}-\u{27BF}\u{1F900}-\u{1F9FF}\u{200D}\u{20E3}•▷▸▹►→➜⇒»➥]/u) || ['•'])[0];
+      var row = document.createElement('div');
+      row.className = 'txs-linha-row flex items-center gap-2';
+      row.innerHTML = '<span class="txs-linha-icon">' + esc(icon) + '</span>' +
+        '<input type="text" class="txs-input txs-linha-input flex-1" value="' + esc(texto) + '" data-idx="' + i + '">' +
+        '<button class="txs-linha-del" data-del="' + i + '" title="Remover linha">×</button>';
+      container.appendChild(row);
+      row.querySelector('input').addEventListener('input', _txsUpdatePreviews);
+      row.querySelector('.txs-linha-del').addEventListener('click', function () {
+        row.remove();
+        _txsReindexLinhas();
+        _txsUpdatePreviews();
+      });
+    });
+
+    /* Banner */
+    var b = _txsData.banner || {};
+    document.getElementById('txs-banner-texto').value = b.texto || '';
+    document.getElementById('txs-banner-estilo').value = b.estilo || 'gold';
+
+    /* Política */
+    var p = _txsData.politica || {};
+    document.getElementById('txs-politica-texto').value = p.texto || '';
+  }
+
+  function _txsReindexLinhas() {
+    var rows = document.querySelectorAll('#txs-msg-linhas .txs-linha-row');
+    rows.forEach(function (row, i) {
+      var input = row.querySelector('input');
+      var del = row.querySelector('.txs-linha-del');
+      input.setAttribute('data-idx', i);
+      del.setAttribute('data-del', i);
+    });
+  }
+
+  function _txsUpdatePreviews() {
+    var sample = {
+      nome: 'Maria Silva',
+      whatsapp: '(11) 99876-5432',
+      servico: 'Coloração',
+      profissional: 'Ana',
+      data: '15/09/2026',
+      horario: '14:00',
+      pagamento: 'Pix',
+      valor: 'R$ 250,00',
+      obs: 'Primeira vez'
+    };
+
+    /* WhatsApp preview */
+    var saudacao = document.getElementById('txs-msg-saudacao').value || _txsDefaultMsg.saudacao;
+    var titulo = document.getElementById('txs-msg-titulo').value || _txsDefaultMsg.titulo;
+    var separador = document.getElementById('txs-msg-separador').value || _txsDefaultMsg.separador;
+    var final = document.getElementById('txs-msg-final').value || _txsDefaultMsg['final'];
+    var linhasInputs = document.querySelectorAll('#txs-msg-linhas .txs-linha-input');
+    var linhas = [];
+    linhasInputs.forEach(function (inp) { if (inp.value.trim()) linhas.push(inp.value); });
+
+    var msg = saudacao + '\n' + separador + '\n\n' + titulo + '\n\n';
+    linhas.forEach(function (l) { msg += l + '\n'; });
+    msg += '\n' + separador + '\n' + final;
+
+    /* Replace sample data */
+    var rendered = msg;
+    Object.keys(sample).forEach(function (k) {
+      rendered = rendered.split('{' + k + '}').join(sample[k]);
+    });
+
+    var previewEl = document.getElementById('txs-whatsapp-text');
+    if (previewEl) {
+      /* Convert *bold* to <b> for display */
+      var html = esc(rendered).replace(/\*([^*]+)\*/g, '<b>$1</b>');
+      previewEl.innerHTML = html;
+    }
+
+    /* Banner preview */
+    var bannerTexto = document.getElementById('txs-banner-texto').value || 'Seu aviso aqui...';
+    var bannerEstilo = document.getElementById('txs-banner-estilo').value;
+    var bannerEl = document.getElementById('txs-banner-preview');
+    if (bannerEl) {
+      var estiloClasses = {
+        gold: 'bg-gold/15 text-gold border-gold/30',
+        green: 'bg-green-500/15 text-green-400 border-green-500/30',
+        blue: 'bg-blue-500/15 text-blue-400 border-blue-500/30',
+        red: 'bg-red-500/15 text-red-400 border-red-500/30'
+      };
+      bannerEl.className = 'rounded-lg px-4 py-2.5 text-center text-sm font-semibold border ' + (estiloClasses[bannerEstilo] || estiloClasses.gold);
+      bannerEl.textContent = bannerTexto;
+    }
+
+    /* Política preview */
+    var politicaTexto = document.getElementById('txs-politica-texto').value || 'Texto da política aparecerá aqui...';
+    var politicaEl = document.getElementById('txs-politica-preview');
+    if (politicaEl) politicaEl.textContent = politicaTexto;
+  }
+
+  function _txsGatherData() {
+    var linhasInputs = document.querySelectorAll('#txs-msg-linhas .txs-linha-input');
+    var linhas = [];
+    linhasInputs.forEach(function (inp) { if (inp.value.trim()) linhas.push(inp.value.trim()); });
+    return {
+      msg: {
+        saudacao: document.getElementById('txs-msg-saudacao').value.trim(),
+        titulo: document.getElementById('txs-msg-titulo').value.trim(),
+        linhas: linhas,
+        separador: document.getElementById('txs-msg-separador').value.trim(),
+        'final': document.getElementById('txs-msg-final').value.trim()
+      },
+      banner: {
+        texto: document.getElementById('txs-banner-texto').value.trim(),
+        estilo: document.getElementById('txs-banner-estilo').value
+      },
+      politica: {
+        texto: document.getElementById('txs-politica-texto').value.trim()
+      }
+    };
+  }
+
+  function _txsSaveFirebase(section) {
+    var data = _txsGatherData();
+    _txsData[section] = data[section];
+    try {
+      firebase.database().ref('jane-booking/configuracoes/textos/' + section).set(data[section]).then(function () {
+        var statusEl = document.getElementById('txs-' + section + '-status');
+        if (statusEl) { statusEl.textContent = '✓ Salvo'; statusEl.className = 'text-xs text-green-400'; }
+        setTimeout(function () { if (statusEl) statusEl.textContent = ''; }, 2500);
+      }).catch(function (e) {
+        var statusEl = document.getElementById('txs-' + section + '-status');
+        if (statusEl) { statusEl.textContent = '✗ Erro ao salvar'; statusEl.className = 'text-xs text-red-400'; }
+      });
+    } catch (e) {
+      var statusEl = document.getElementById('txs-' + section + '-status');
+      if (statusEl) { statusEl.textContent = '✗ Firebase indisponível'; statusEl.className = 'text-xs text-red-400'; }
+    }
+  }
+
+  function _txsBindSave(btnId, section) {
+    var btn = document.getElementById(btnId);
+    if (btn && !btn._bound) {
+      btn._bound = true;
+      btn.addEventListener('click', function () { _txsSaveFirebase(section); });
+    }
   }
 
   /* --- Usuários --- */

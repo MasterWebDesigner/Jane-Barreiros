@@ -1118,23 +1118,69 @@ var APP_VERSION = '1.3.2';
   /* ================================================================
      WHATSAPP — MENSAGEM DE CONFIRMAÇÃO
      ================================================================ */
+  var _textosData = null;
+  var _textosLoaded = false;
+
+  function _loadTextosTemplate() {
+    if (_textosLoaded) return;
+    _textosLoaded = true;
+    try {
+      _db.ref('jane-booking/configuracoes/textos').once('value').then(function (snap) {
+        _textosData = snap.val() || null;
+      }).catch(function () {});
+    } catch (e) {}
+  }
+
   function montarMsgWhatsApp(ag) {
-    var linha = '━━━━━━━━━━━━━━━━━━━━';
-    var msg = '✨ *Studio Jane Barreiros*\n' + linha + '\n\n';
-    msg += '📌 *Solicitação de Agendamento*\n\n';
-    msg += '💇‍♀️ *Serviço:* ' + ag.servico + '\n';
-    if (ag.profissional) msg += '💇‍♀️ *Profissional:* ' + ag.profissional + '\n';
-    msg += '📅 *Data:* ' + fmtDataBR(ag.data) + '\n';
-    msg += '⏰ *Horário:* ' + ag.horario + '\n';
-    msg += '👤 *Cliente:* ' + ag.cliente_nome + '* (' + (ag.cliente_whatsapp || '') + ')\n';
-    if (ag.forma_pagamento) msg += '💳 *Pagamento:* ' + ag.forma_pagamento + '\n';
-    var svc = getServicoPorNome(ag.servico);
-    if (svc && svc.preco && svc.preco !== 'Consulte') {
-      msg += '💰 *Valor:* ' + svc.preco + '\n';
+    _loadTextosTemplate();
+    var t = _textosData && _textosData.msg;
+    var linha = (t && t.separador) || '━━━━━━━━━━━━━━━━━━━━';
+    var msg = '';
+    msg += (t && t.saudacao ? t.saudacao : '✨ *Studio Jane Barreiros*') + '\n' + linha + '\n\n';
+    msg += (t && t.titulo ? t.titulo : '📌 *Solicitação de Agendamento*') + '\n\n';
+
+    var linhas = (t && t.linhas && t.linhas.length) ? t.linhas : null;
+    if (linhas) {
+      var svc = getServicoPorNome(ag.servico);
+      var vals = {
+        servico: ag.servico || '',
+        profissional: ag.profissional || '',
+        data: fmtDataBR(ag.data) || ag.data || '',
+        horario: ag.horario || '',
+        nome: ag.cliente_nome || '',
+        whatsapp: ag.cliente_whatsapp || '',
+        pagamento: ag.forma_pagamento || '',
+        valor: (svc && svc.preco && svc.preco !== 'Consulte') ? svc.preco : '',
+        obs: ag.observacoes || ''
+      };
+      linhas.forEach(function (l) {
+        var line = l;
+        Object.keys(vals).forEach(function (k) {
+          line = line.split('{' + k + '}').join(vals[k]);
+        });
+        /* Skip line if it still contains unresolved {var} AND all resolved vars are empty */
+        var hasResolvedValue = false;
+        Object.keys(vals).forEach(function (k) { if (vals[k] && l.indexOf('{' + k + '}') !== -1) hasResolvedValue = true; });
+        var hasStaticText = line.replace(/\{[^}]+\}/g, '').trim().length > 0;
+        if (hasResolvedValue || hasStaticText) msg += line + '\n';
+      });
+    } else {
+      /* Fallback: hardcoded template */
+      msg += '💇‍♀️ *Serviço:* ' + ag.servico + '\n';
+      if (ag.profissional) msg += '💇‍♀️ *Profissional:* ' + ag.profissional + '\n';
+      msg += '📅 *Data:* ' + fmtDataBR(ag.data) + '\n';
+      msg += '⏰ *Horário:* ' + ag.horario + '\n';
+      msg += '👤 *Cliente:* ' + ag.cliente_nome + '* (' + (ag.cliente_whatsapp || '') + ')\n';
+      if (ag.forma_pagamento) msg += '💳 *Pagamento:* ' + ag.forma_pagamento + '\n';
+      var svcFb = getServicoPorNome(ag.servico);
+      if (svcFb && svcFb.preco && svcFb.preco !== 'Consulte') {
+        msg += '💰 *Valor:* ' + svcFb.preco + '\n';
+      }
+      if (ag.observacoes) msg += '📝 Obs: ' + ag.observacoes + '\n';
     }
-    if (ag.observacoes) msg += '📝 Obs: ' + ag.observacoes + '\n';
+
     msg += '\n' + linha + '\n';
-    msg += 'Olá, Jane! Fiz a solicitação do agendamento pelo site e aguardo sua confirmação.';
+    msg += (t && t['final']) || 'Olá, Jane! Fiz a solicitação do agendamento pelo site e aguardo sua confirmação.';
     return msg;
   }
 
