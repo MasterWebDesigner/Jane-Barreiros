@@ -5982,123 +5982,167 @@ document.addEventListener('DOMContentLoaded', function () {
   var GUIDE_DATA = [
     {
       id:'dashboard', icon:'🏠', iconBg:'rgba(59,130,246,.15)', title:'Dashboard',
-      desc:'Visão geral do dia — agendamentos, faturamento e clientes.',
+      desc:'Visão geral do dia — agendamentos, faturamento, clientes e ações rápidas.',
       page:'dashboard',
       steps:[
-        {t:'Os <strong>4 cards no topo</strong> mostram: Atendimentos do Dia, Faturamento Hoje, Clientes Únicos e Lista de Espera.'},
-        {t:'Clique no badge <strong>"N pendente(s)"</strong> para ir direto à aba Agendamentos com filtro de pendentes.'},
-        {t:'Use <strong>"+ Agendamento Encaixe"</strong> para criar um agendamento presencial (o cliente está no salão).'},
-        {t:'Use <strong>"+ Venda Balcão"</strong> para registrar uma venda de produto sem agendamento (ex: cliente compra shampoo).'},
-        {t:'Na lista de agendamentos do dia, use os <strong>botões de status</strong> para mudar o fluxo: 🟡 Aguardando → 🔵 Em Atendimento → 🟢 Concluir.'},
-        {t:'Para <strong>concluir</strong>, o sistema pede o valor e mostra produtos de revenda para registrar a venda junto.'},
-        {t:'Clique em <strong>WhatsApp</strong> para abrir conversa com o cliente.'}
+        {t:'<strong>4 cards no topo</strong> — <strong>Atendimentos do Dia</strong> (total sem cancelados), <strong>Faturamento Hoje</strong> (soma dos concluídos), <strong>Clientes Únicos</strong> (quantidade de pessoas diferentes) e <strong>Lista de Espera</strong> (pessoas aguardando horário).'},
+        {t:'<strong>Badge "N pendente(s)"</strong> — fica ao lado do título. Clique nele para ir direto à aba Agendamentos já filtrado por pendentes, sem precisar configurar filtro manualmente.'},
+        {t:'<strong>"Agendamentos de Hoje"</strong> — lista todos os agendamentos do dia com nome, serviço, valor e botões de status. Cada card mostra: 🟡 Aguardando → 🔵 Em Atendimento → 🟢 Concluir → 🔴 Cancelar.'},
+        {t:'<strong>Fluxo de status</strong> — clique nos botões coloridos para avançar o atendimento. Ao clicar 🟢 <strong>Concluir</strong>, abre um modal pedindo o valor do serviço e exibindo produtos de revenda para registrar venda junto.'},
+        {t:'<strong>"Próximos Agendamentos"</strong> — mostra agendamentos futuros (hoje em diante) com status pendente ou confirmado. Cada card tem botão <strong>Editar</strong> para alterar data, horário, serviço ou profissional.'},
+        {t:'<strong>"+ Agendamento Encaixe"</strong> — use quando o cliente está presencialmente no salão. Abre modal com: nome, WhatsApp, seleção de serviço, profissional, data, horário, forma de pagamento e observações.'},
+        {t:'<strong>"+ Venda Balcão"</strong> — para vendas de produtos sem agendamento (ex: cliente compra shampoo). Seleciona os produtos, informa nome, WhatsApp e pagamento. Registra como "agendamento virtual" e baixa estoque automaticamente.'},
+        {t:'<strong>"Venda Curso"</strong> — registra uma venda do curso online (R$ 37,90 de lucro). Apenas confirma e o valor é adicionado ao faturamento do mês.'},
+        {t:'<strong>Botão WhatsApp</strong> — em cada card de agendamento, clique para abrir conversa direta com o cliente no WhatsApp Web, pré-preenchendo mensagem de confirmação.'},
+        {t:'<strong>Calendário</strong> — no canto superior, selecione um dia específico para ver agendamentos de outra data. Dias com agendamentos pendentes têm um <strong>ponto verde pulsante</strong>.'},
+        {t:'<strong>Moeda e Privacidade</strong> — clique no ícone 🙈/👁️ na sidebar para ativar o Modo Discreto, que oculta todos os valores financeiros (aparece "R$ •••••"). Útil quando há pessoas por perto.'}
       ],
-      tip:'O badge verde pulsante no calendário indica dias com agendamentos pendentes.'
+      tip:'Dica: Para um fluxo rápido, comece pelo Dashboard. Ele mostra tudo que precisa ser feito hoje de uma vez.'
     },
     {
       id:'agendamentos', icon:'📅', iconBg:'rgba(168,85,247,.15)', title:'Agendamentos',
-      desc:'Gerenciar todos os agendamentos — visualizar, filtrar, aceitar e alterar status.',
+      desc:'Gerenciar todos os agendamentos — visualizar, filtrar, aceitar, recusar, editar e alterar status.',
       page:'agendamentos',
       steps:[
-        {t:'Escolha a <strong>visualização</strong>: Dia (timeline), Grade (mensal) ou Lista (completa).'},
-        {t:'Use os <strong>filtros</strong> no topo: Profissional, Origem (Online/Recepção) e Status (Pendente/Confirmado/Concluído/Cancelado).'},
-        {t:'A <strong>busca</strong> no rodapé procura por nome, serviço ou telefone em tempo real.'},
-        {t:'Para agendamentos <strong>pendentes</strong> (online), clique ✅ <strong>Aceitar</strong> para confirmar ou ❌ <strong>Recusar</strong> para cancelar — ambos enviam WhatsApp automaticamente.'},
-        {t:'Clique no botão <strong>Editar</strong> (caneta) em qualquer agendamento para alterar data, horário, serviço ou valor.'},
-        {t:'O botão <strong>Hoje</strong> no rodapé reseta todos os filtros e volta para o dia atual.'}
+        {t:'<strong>3 visualizações</strong> — <strong>Dia</strong> (timeline vertical com horários), <strong>Grade</strong> (calendário mensal com pontos indicadores) e <strong>Lista</strong> (tabela completa com todos os agendamentos ativos).'},
+        {t:'<strong>Filtros no topo</strong> — <strong>Profissional</strong> (filtrar por atendente), <strong>Origem</strong> (Online = site, Recepção = presencial) e <strong>Status</strong> (Pendente, Confirmado, Em Atendimento, Concluído, Cancelado).'},
+        {t:'<strong>Busca em tempo real</strong> — campo no rodapé. Busca por nome do cliente, nome do serviço ou número de telefone. Atualiza a lista automaticamente ao digitar.'},
+        {t:'<strong>Agendamentos pendentes</strong> (online) — aparecem com borda amarela e card destacado. Clique ✅ <strong>Aceitar</strong> para confirmar (envia WhatsApp automático com template de confirmação) ou ❌ <strong>Recusar</strong> para cancelar (envia WhatsApp informando que o horário não está disponível).'},
+        {t:'<strong>Botão Editar</strong> — disponível em todos os agendamentos. Permite alterar: data, horário, serviço, profissional, valor informado, status e forma de pagamento. Após salvar, recalcula automaticamente.'},
+        {t:'<strong>Concluir atendimento</strong> — ao clicar 🟢, abre modal perguntando o valor cobrado. Se houver produtos de revenda vendidos junto, selecione-os. O sistema baixa do estoque automaticamente e registra a venda.'},
+        {t:'<strong>View Grade (Calendário)</strong> — mostra todos os dias do mês. Dias com agendamentos têm <strong>pontos dourados</strong>. Dias com pendentes têm <strong>ponto verde</strong>. Clique em um dia para ver os detalhes.'},
+        {t:'<strong>Botão "Hoje"</strong> — no rodapé, reseta todos os filtros (profissional, origem, status, data) e volta para o dia atual automaticamente.'},
+        {t:'<strong>Legenda de cores</strong> — 🟡 Aguardando (pendente/confirmado), 🔵 Em Atendimento, 🟢 Concluído, 🔴 Cancelado. Cada cor facilita a identificação rápida do status.'},
+        {t:'<strong>Agendamento cancelado</strong> — não aparece na view Dia nem na Lista, mas pode ser visto na Grade e no Histórico. Não contabiliza nos KPIs do Dashboard.'}
       ],
-      tip:'Na view Grade, os dias com pontos dourados têm agendamentos. O ponto verde indica pendentes.'
+      tip:'Atalho rápido: Clique no badge "N pendentes" no Dashboard para ir direto à aba Agendamentos com filtro ativo.'
     },
     {
       id:'servicos', icon:'💇', iconBg:'rgba(236,72,153,.15)', title:'Serviços',
-      desc:'Cadastrar e organizar serviços, profissionais e seções do salão.',
+      desc:'Cadastrar e organizar serviços, profissionais e seções do salão. Controla o que aparece no site e no agendamento online.',
       page:'servicos',
       steps:[
-        {t:'Na tab <strong>Serviços</strong>, clique "+ Criar Novo Serviço" para adicionar. Preencha nome, tipo, categoria, duração, preço e dias de retorno.'},
-        {t:'Use as <strong>setas ↑↓</strong> para reordenar os serviços na ordem que aparece no site.'},
-        {t:'Clique <strong>Duplicar</strong> para clonar um serviço (útil para variações de preço).'},
-        {t:'Na tab <strong>Profissionais</strong>, cadastre as funcionárias com nome, especialidade e status (Ativo/Inativo).'},
-        {t:'Na tab <strong>Seções</strong>, organize os serviços em grupos (Cabelo, Coloração, Tratamento, etc.) com ordem de exibição.'},
-        {t:'O campo <strong>"Dias para Retorno"</strong> alimenta o módulo de Retenção — calcula quando o cliente deveria voltar.'}
+        {t:'<strong>Tab Serviços</strong> — lista todos os serviços cadastrados. Cada card mostra: nome, preço, duração, dias de retorno e nota. Use as <strong>setas ↑↓</strong> para reordenar (afeta a ordem no site público).'},
+        {t:'<strong>"+ Criar Novo Serviço"</strong> — preencha: <strong>Nome</strong> (ex: "Corte Feminino"), <strong>Tipo</strong> (Cabelo, Unha, Estética), <strong>Categoria</strong> (para organização), <strong>Duração</strong> (em minutos — importante para calcular horários disponíveis), <strong>Preço</strong> (a partir de R$ XX,00) e <strong>Dias para Retorno</strong> (alimenta o módulo de Retenção).'},
+        {t:'<strong>Duplicar</strong> — clonar um serviço existente. Útil quando tem variações de preço (ex: "Corte Simples" e "Corte + Escova"). Basta duplicar e alterar nome/preço.'},
+        {t:'<strong>Excluir</strong> — remove o serviço. Não afeta agendamentos já feitos — eles continuam no histórico.'},
+        {t:'<strong>Nota do serviço</strong> — campo opcional. Aparece como observação no catálogo público. Use para informar: "Valores a partir de...", "Consulte antes de agendar", etc.'},
+        {t:'<strong>Tab Profissionais</strong> — cadastre as funcionárias com: <strong>Nome</strong>, <strong>Especialidade</strong> (Cabelo, Coloração, etc.) e <strong>Status</strong> (Ativo/Inativo). Profissionais inativos não aparecem no seletor do agendamento.'},
+        {t:'<strong>Tab Seções</strong> — organize os serviços em grupos visuais (ex: "Cabelo", "Coloração", "Tratamento", "Escova"). Cada seção tem nome e ordem de exibição. Os serviços são atribuídos a seções no cadastro.'},
+        {t:'<strong>Impacto no site</strong> — a ordem dos serviços aqui define a ordem no catálogo público. Seções definem como agrupam. Profissionais ativos aparecem no formulário de agendamento online.'},
+        {t:'<strong>"Dias para Retorno"</strong> — campo crucial para Retenção. Se um serviço tem retorno de 30 dias, o sistema calcula que o cliente deveria voltar em 30 dias após o atendimento. Configure corretamente para o módulo de Retenção funcionar.'},
+        {t:'<strong>Preço "A partir de"</strong> — o campo preço é informativo. O valor final é informado no momento do atendimento (campo "valor informado" no agendamento). Não bloqueia agendamentos.'}
       ],
-      tip:'Marcar um serviço como "Inativo" remove ele do catálogo público sem excluir os dados.'
+      tip:'Importante: Sempre configure "Dias para Retorno" nos serviços. Sem esse valor, o módulo de Retenção não consegue calcular quando o cliente deveria voltar.'
     },
     {
       id:'estoque', icon:'📦', iconBg:'rgba(34,197,94,.15)', title:'Estoque',
-      desc:'Controlar produtos, entradas, saídas e alertas de estoque baixo.',
+      desc:'Controlar produtos, entradas, saídas, alertas de estoque baixo e vendas de revenda.',
       page:'produtos',
       steps:[
-        {t:'Os <strong>3 cards</strong> no topo mostram: Total de Produtos, Estoque Baixo e Valor Total em Estoque.'},
-        {t:'Clique <strong>"+ Novo Produto"</strong> para cadastrar. Preencha nome, categoria (Uso Interno ou Revenda), quantidades e preços.'},
-        {t:'Use os botões <strong>+1</strong> e <strong>-1</strong> na tabela para dar entrada ou saída rápida de estoque.'},
-        {t:'Use os <strong>filtros</strong> (busca, categoria, status) para localizar produtos rapidamente.'},
-        {t:'Produtos com estoque abaixo do mínimo são destacados com <strong>badge vermelho "Estoque Baixo"</strong>.'}
+        {t:'<strong>3 KPIs no topo</strong> — <strong>Total de Produtos</strong> (quantidade de itens cadastrados), <strong>Estoque Baixo</strong> (produtos abaixo do mínimo — badge vermelho), <strong>Valor Total</strong> (soma de custo × quantidade).'},
+        {t:'<strong>"+ Novo Produto"</strong> — preencha: <strong>Nome</strong>, <strong>Categoria</strong> (Uso Interno = para o salão, Revenda = para vender ao cliente), <strong>Quantidade</strong> atual, <strong>Estoque Mínimo</strong> (para alertas), <strong>Preço de Custo</strong> e <strong>Preço de Venda</strong>.'},
+        {t:'<strong>Botões +1 e -1</strong> — na tabela, cada produto tem botões para entrada e saída rápida. +1 aumenta 1 unidade, -1 diminui. Não precisa abrir modal.'},
+        {t:'<strong>Editar</strong> — clique para alterar qualquer dado do produto (nome, categoria, quantidades, preços).'},
+        {t:'<strong>Excluir</strong> — remove o produto permanentemente. Não afeta vendas já registradas.'},
+        {t:'<strong>Filtros</strong> — busca por nome, filtro por categoria (Uso Interno/Revenda) e filtro por status (Todos/Baixo/OK).'},
+        {t:'<strong>Estoque Baixo</strong> — quando a quantidade cai abaixo do mínimo configurado, o produto aparece com <strong>badge vermelho "Estoque Baixo"</strong> e borda destacada. No topo, o KPI mostra quantos produtos estão nessa situação.'},
+        {t:'<strong>Produtos de Revenda</strong> — aparecem no modal de conclusão de agendamento (🟢 Concluir). Quando o profissional vende um produto junto com o serviço, selecione-o e o estoque é baixado automaticamente.'},
+        {t:'<strong>Venda Balcão</strong> — no Dashboard, clique "+ Venda Balcão" para vender produtos sem agendamento. Selecione os produtos, informe cliente e pagamento. Baixa estoque automaticamente.'},
+        {t:'<strong>Categorias</strong> — organize por tipo: Shampoo, Condicionador, Máscara, Tintura, Ferramentas, etc. Ajuda na filtragem e no relatório financeiro (despesas de estoque).'}
       ],
-      tip:'Produtos de "Revenda" aparecem no modal de conclusão de agendamento para registrar vendas junto com o serviço.'
+      tip:'Dica: Use "Estoque Mínimo" em todos os produtos. Assim o sistema avisa quando precisa repor antes que acabe.'
     },
     {
       id:'financeiro', icon:'💰', iconBg:'rgba(251,191,36,.15)', title:'Financeiro',
-      desc:'Controle de entradas, saídas, lucro líquido e despesas do salão.',
+      desc:'Controle completo de entradas, saídas, lucro líquido, despesas e relatórios financeiros.',
       page:'faturamento',
       steps:[
-        {t:'Os <strong>4 cards</strong> mostram: Entradas (serviços + vendas), Saídas (despesas), Lucro Líquido e Faturamento Previsto.'},
-        {t:'Use as <strong>setas ← →</strong> para navegar entre meses.'},
-        {t:'Clique <strong>"+ Lançar Despesa"</strong> para registrar uma saída: descrição, categoria, valor, data e status (Pago/Pendente).'},
-        {t:'Na <strong>tabela de despesas</strong>, use os filtros de Categoria e Status. Clique ✓ para marcar como pago, ✎ para editar, ✕ para excluir.'},
-        {t:'O <strong>gráfico de barras</strong> mostra a distribuição de saídas por categoria (Salários, Custos Fixos, Estoque, etc.).'},
-        {t:'As abas <strong>Mês / Ano / Total</strong> alternam o período de análise das entradas.'}
+        {t:'<strong>4 KPIs</strong> — <strong>Entradas</strong> (soma de serviços concluídos + vendas balcão + vendas curso), <strong>Saídas</strong> (despesas pagas), <strong>Lucro Líquido</strong> (entradas − saídas) e <strong>Faturamento Previsto</strong> (entradas confirmadas + pendentes + despesas pendentes).'},
+        {t:'<strong>Navegação por período</strong> — use as <strong>setas ← →</strong> para voltar/avançar meses. Botões <strong>Dia / Mês / Ano</strong> mudam a granularidade. Dia = apenas hoje, Mês = mês selecionado, Ano = janeiro a dezembro.'},
+        {t:'<strong>"+ Lançar Despesa"</strong> — abra o modal e preencha: <strong>Descrição</strong> (ex: "Aluguel", "Compra de Tintura"), <strong>Categoria</strong> (Salários/Pró-Labore, Comissões da Equipe, Custos Fixos, Estoque/Insumos, Ativos/Equipamentos, Outros), <strong>Valor</strong>, <strong>Data</strong> e <strong>Status</strong> (Pago ou Pendente).'},
+        {t:'<strong>Tabela de despesas</strong> — lista todas as despesas do período. Use os filtros de Categoria e Status para localizar. Cada linha mostra descrição, categoria, valor, data e status.'},
+        {t:'<strong>Ações na tabela</strong> — <strong>✓ Pago</strong> (marca como pago — muda cor para verde), <strong>✎ Editar</strong> (altera dados da despesa), <strong>✕ Excluir</strong> (remove permanentemente).'},
+        {t:'<strong>Gráfico de Distribuição</strong> — pizza/ barras mostrando quanto saiu por categoria. Visual rápido de onde vai o dinheiro (Salários, Custos Fixos, Estoque, etc.).'},
+        {t:'<strong>Despesas Pendentes</strong> — despesas com status "Pendente" entram no cálculo do "Faturamento Previsto". Quando marcadas como "Pago", saem do previsto e entram no realizado.'},
+        {t:'<strong>Relatório Mensal</strong> — abaixo dos KPIs, há um resumo comparativo com gráfico de barras mostrando entradas vs saídas mês a mês. Identifique tendências e sazonalidades.'},
+        {t:'<strong>Categorias de despesa</strong> — <strong>Salários/Pró-Labore</strong> (remuneração da equipe), <strong>Comissões</strong> (percentual sobre serviços), <strong>Custos Fixos</strong> (aluguel, luz, água), <strong>Estoque/Insumos</strong> (compras de produto), <strong>Ativos/Equipamentos</strong> (secador, cadeira), <strong>Outros</strong> (despesas diversas).'},
+        {t:'<strong>Lucro real</strong> — o Lucro Líquido é calculado como: Entradas (serviços + vendas) − Saídas (despesas pagas). Despesas pendentes não entram no lucro realizado, apenas no previsto.'}
       ],
-      tip:'Despesas "Pendentes" são consideradas no cálculo do "Faturamento Previsto" junto com agendamentos pendentes.'
+      tip:'Categorias organizam sua contabilidade. Use sempre a categoria correta para saber exatamente para onde vai o dinheiro do salão.'
     },
     {
       id:'clientes', icon:'👥', iconBg:'rgba(99,102,241,.15)', title:'Clientes',
-      desc:'Base de dados de clientes — busca, histórico e edição.',
+      desc:'Base de dados completa — busca, histórico detalhado, tags e edição de dados.',
       page:'clientes',
       steps:[
-        {t:'A <strong>tabela</strong> lista todos os clientes cadastrados com nome, WhatsApp, total de visitas e último serviço.'},
-        {t:'Use a <strong>busca</strong> para encontrar por nome ou número de WhatsApp.'},
-        {t:'Clique em <strong>WhatsApp</strong> para abrir conversa direta com o cliente.'},
-        {t:'Clique em <strong>Hist</strong> para ver o histórico completo do cliente: total gasto, agendamentos e timeline por mês.'},
-        {t:'Clique no <strong>ícone de edição</strong> para alterar dados ou tag do cliente (Nova, Ativa, Frequente, VIP, Aniversariante).'}
+        {t:'<strong>Tabela de clientes</strong> — lista todos cadastrados com: <strong>Nome</strong>, <strong>WhatsApp</strong>, <strong>Total de Visitas</strong> (agendamentos concluídos), <strong>Último Serviço</strong> (data + nome), <strong>Tag</strong> e <strong>Valor Estimado</strong> (soma de tudo que gastou).'},
+        {t:'<strong>Busca</strong> — campo no topo. Busca por nome ou número de WhatsApp em tempo real. Não diferencia maiúsculas/minúsculas.'},
+        {t:'<strong>Tags</strong> — classifique clientes: <strong>Nova</strong> (primeira vez), <strong>Ativa</strong> (frequente), <strong>Frequente</strong> (muitas visitas), <strong>VIP</strong> (alto gasto), <strong>Aniversariante</strong> (mês atual), <strong>Promoção</strong> (em promoção). Ajuda para ações de marketing.'},
+        {t:'<strong>Botão WhatsApp</strong> — abre conversa direta com o cliente no WhatsApp Web. Útil para confirmações, lembretes ou follow-ups.'},
+        {t:'<strong>Botão Hist</strong> — abre painel lateral com histórico completo: valor total gasto, quantidade de atendimentos, timeline mês a mês com cada serviço, profissional e valor.'},
+        {t:'<strong>Editar (ícone ✎)</strong> — altere nome, WhatsApp, email ou tag do cliente. O nome é formatado automaticamente (primeira e última palavra em maiúscula).'},
+        {t:'<strong>"+ Novo Cliente"</strong> — cadastro rápido com nome e WhatsApp. Útil quando o cliente chega presencialmente e ainda não está no sistema.'},
+        {t:'<strong>Valor Estimado</strong> — calculado automaticamente baseado em todos os agendamentos concluídos do cliente. Atualiza a cada novo atendimento.'},
+        {t:'<strong>Detecção de duplicatas</strong> — o sistema impede cadastro de cliente com mesmo número de WhatsApp. Se tentar, mostra alerta "E-mail/telefone já cadastrado".'},
+        {t:'<strong>Dados automáticos</strong> — quando um agendamento online é feito, o cliente é cadastrado automaticamente. Nome e WhatsApp vêm do formulário de agendamento.'}
       ],
-      tip:'O histórico do cliente é recalculado automaticamente a cada novo agendamento concluído.'
+      tip:'Dica: Use as Tags para segmentar. "VIP" para clientes de alto gasto, "Aniversariante" para promoções no mês, "Nova" para follow-up pós-primera-visita.'
     },
     {
       id:'historico', icon:'📊', iconBg:'rgba(20,184,166,.15)', title:'Histórico',
-      desc:'Relatório completo de atendimentos com filtros e exportação.',
+      desc:'Relatório completo de todos os atendimentos com filtros avançados e exportação para planilha.',
       page:'historico',
       steps:[
-        {t:'Os <strong>6 cards</strong> mostram: Atendimentos, Cancelados, Faturamento, Ticket Médio, Serviço Top e Cliente Top.'},
-        {t:'Use os <strong>filtros</strong>: Período (Este Mês, Últimos 30/90 dias, Este Ano, Todos), Status e Tipo (Serviços ou Vendas Balcão).'},
-        {t:'A <strong>busca</strong> procura por nome, serviço, telefone ou nome de produto vendido.'},
-        {t:'A <strong>timeline</strong> mostra todos os atendimentos agrupados por data, com ícone, serviço, profissional e valor.'},
-        {t:'Clique <strong>"Exportar CSV"</strong> para baixar todos os registros filtrados em planilha.'}
+        {t:'<strong>6 KPIs</strong> — <strong>Atendimentos</strong> (total concluídos), <strong>Cancelados</strong> (total cancelados), <strong>Faturamento</strong> (soma dos valores), <strong>Ticket Médio</strong> (faturamento ÷ atendimentos), <strong>Serviço Top</strong> (mais realizado) e <strong>Cliente Top</strong> (mais gastou).'},
+        {t:'<strong>Filtros de período</strong> — <strong>Este Mês</strong>, <strong>Últimos 30 Dias</strong>, <strong>Últimos 90 Dias</strong>, <strong>Este Ano</strong> e <strong>Todos</strong>. O período afeta todos os KPIs e a timeline.'},
+        {t:'<strong>Filtro de status</strong> — mostre apenas Concluídos, Cancelados ou ambos. Útil para analisar taxa de cancelamento.'},
+        {t:'<strong>Filtro por tipo</strong> — <strong>Serviços</strong> (apenas atendimentos), <strong>Vendas Balcão</strong> (apenas vendas de produto) ou <strong>Todos</strong>.'},
+        {t:'<strong>Busca</strong> — encontre registros por nome do cliente, nome do serviço, telefone ou nome do produto vendido. Atualiza em tempo real.'},
+        {t:'<strong>Timeline</strong> — lista cronológica com: ícone de status, data, horário, cliente, serviço/produto, profissional e valor. Cada registro tem cor diferente por status.'},
+        {t:'<strong>Paginação</strong> — a timeline mostra 20 registros por página. Use os botões "Anterior" e "Próximo" no rodapé para navegar.'},
+        {t:'<strong>Exportar CSV</strong> — baixa todos os registros filtrados em planilha. Inclui: data, cliente, serviço, profissional, valor, status, forma de pagamento. Arquivo abre direto no Excel com acentos corretos (BOM UTF-8).'},
+        {t:'<strong>Análise de tendências</strong> — compare períodos diferentes. Se o ticket médio caiu, pode indicar mudanças no mix de serviços. Se cancelamentos aumentaram, verifique a qualidade do atendimento.'}
       ],
-      tip:'O CSV inclui BOM UTF-8 para abrir corretamente no Excel com acentos.'
+      tip:'O CSV é ótimo para análises externas. Importe no Excel ou Google Sheets para criar gráficos personalizados e comparativos mensais.'
     },
     {
       id:'retencao', icon:'🔄', iconBg:'rgba(244,114,182,.15)', title:'Retenção',
-      desc:'Acompanhar clientes que estão sem retornar e enviar lembretes.',
+      desc:'Acompanhar clientes que estão sem retornar e enviar lembretes automáticos de WhatsApp.',
       page:'retencao',
       steps:[
-        {t:'Os <strong>4 cards</strong> mostram: Total de Clientes, Atrasados, Próximos de Vencer e Em Dia.'},
-        {t:'O sistema calcula automaticamente com base nos <strong>"Dias para Retorno"</strong> configurados em cada serviço.'},
-        {t:'Use o <strong>filtro</strong> por status: Atrasados, Próximos de vencer ou Em dia.'},
-        {t:'Clique em <strong>"Lembrete"</strong> (WhatsApp) para enviar mensagem automática com link de agendamento para o cliente.'}
+        {t:'<strong>4 KPIs</strong> — <strong>Total de Clientes</strong> (clientes únicos com pelo menos 1 atendimento), <strong>Atrasados</strong> (já passaram da data prevista de retorno), <strong>Próximos de Vencer</strong> (voltam nos próximos 7 dias) e <strong>Em Dia</strong> (dentro do prazo).'},
+        {t:'<strong>Como funciona</strong> — o sistema pega a data do último atendimento do cliente + os "Dias para Retorno" do serviço realizado. Se o cliente não voltou dentro desse prazo, entra na lista de retenção.'},
+        {t:'<strong>"Dias para Retorno"</strong> — configurados em cada serviço (aba Serviços). Exemplo: "Hidratação" = 15 dias significa que o cliente deveria voltar em 15 dias para manter o tratamento.'},
+        {t:'<strong>Filtros</strong> — <strong>Atrasados</strong> (passou do prazo — prioridade máxima), <strong>Próximos</strong> (vence em até 7 dias — ação preventiva), <strong>Em Dia</strong> (tudo OK).'},
+        {t:'<strong>Card do cliente</strong> — mostra: nome, WhatsApp, último serviço realizado, data do último atendimento, dias sem retornar, serviço recomendado para retorno.'},
+        {t:'<strong>Botão Lembrete (WhatsApp)</strong> — envia mensagem automática personalizada com: nome do cliente, data do último atendimento e link para agendar. Template editável na aba Textos e Mensagens.'},
+        {t:'<strong>Como reter</strong> — envie lembretes para atrasados primeiro (urgente), depois para os próximos de vencer (preventivo). Clientes em dia não precisam de ação.'},
+        {t:'<strong>Template de lembrete</strong> — editável em Configurações → Textos e Mensagens → "Lembrete de Retenção". Use variáveis: {nome}, {servico}, {data}, {horario}.'},
+        {t:'<strong>Métrica de sucesso</strong> — compare o número de "Atrasados" ao longo dos meses. Se diminui, sua retenção está funcionando.'}
       ],
-      tip:'Configure "Dias para Retorno" nos Serviços para que o cálculo funcione corretamente.'
+      tip:'Configuração essencial: Sempre defina "Dias para Retorno" ao cadastrar serviços. Sem isso, o módulo de Retenção não funciona.'
     },
     {
       id:'config', icon:'⚙️', iconBg:'rgba(156,163,175,.15)', title:'Configurações',
-      desc:'Bloquear dias, WhatsApp do salão e lista de espera.',
+      desc:'Configurações gerais — bloquear dias, WhatsApp, textos do sistema, landing page, CMS e gestão de usuários.',
       page:'config',
       steps:[
-        {t:'<strong>Bloquear Dias</strong>: selecione uma data e clique "Bloquear Dia" para impedir agendamentos (feriados, férias, etc.).'},
-        {t:'Dias bloqueados aparecem como tags vermelhas. Clique no <strong>×</strong> para desbloquear.'},
-        {t:'<strong>WhatsApp Studio Jane</strong>: configure o número do salão (formato: 11930657871). Usado em lembretes e links.'},
-        {t:'<strong>Lista de Espera</strong>: quando não há horários disponíveis, o cliente pode entrar na fila. Clique WhatsApp para contatar ou Remover para tirar da lista.'}
+        {t:'<strong>Bloquear Dias</strong> — selecione uma data no campo e clique "Bloquear Dia". Impede agendamentos nessa data (feriados, férias, obras). Dias bloqueados aparecem como tags vermelhas. Clique no × para desbloquear.'},
+        {t:'<strong>WhatsApp Studio Jane</strong> — configure o número do salão no formato 11930657871 (DDD + 9 dígitos, sem espaços). Usado em mensagens automáticas, lembretes e links de agendamento.'},
+        {t:'<strong>Lista de Espera</strong> — quando não há horários disponíveis, o cliente pode entrar na fila. A lista mostra quem está aguardando. Clique WhatsApp para contatar ou Remover para tirar da fila.'},
+        {t:'<strong>Textos e Mensagens</strong> — aba com 6 seções editáveis: <strong>Solicitação de Agendamento</strong> (template WhatsApp para pedidos online), <strong>Banner/ Aviso</strong> (barra de anúncio no topo do site), <strong>Política de Cancelamento</strong> (exibida no passo 5 do agendamento), <strong>Confirmação</strong> (mensagem ao aceitar), <strong>Recusa</strong> (mensagem ao recusar), <strong>Lembrete</strong> (mensagem de retenção).'},
+        {t:'<strong>Variáveis nos templates</strong> — use: {nome} (nome do cliente), {servico} (nome do serviço), {data} (data por extenso), {horario}, {profissional}, {endereco} (endereço do salão). O sistema substitui automaticamente.'},
+        {t:'<strong>Preview WhatsApp</strong> — ao editar um template, o painel lateral mostra como ficará a mensagem no WhatsApp (balão verde escuro). Atualiza em tempo real ao digitar.'},
+        {t:'<strong>Landing Page</strong> — abas de configuração do site público: <strong>Blocos</strong> (mostrar/esconder Hero, Sobre, Instagram, Serviços, Curso, Contato) e <strong>Conteúdo</strong> (textos, imagens, links).'},
+        {t:'<strong>CMS (Content Management)</strong> — edite textos do site: slogan, WhatsApp exibido, link do Hotmart, links de agendamento, textos da seção Sobre, posts do Instagram. Tudo salva no Firebase em tempo real.'},
+        {t:'<strong>Guia Rápido</strong> — esta aba que você está lendo! Clique em qualquer card para ver detalhes e clique "Ir para [módulo]" para navegar até lá.'},
+        {t:'<strong>Gestão de Usuários</strong> — abra o accordion de cada usuário para ver/editar permissões. Apenas admins podem: criar usuários, excluir, alterar permissões e togglar status de admin.'},
+        {t:'<strong>Permissões Granulares</strong> — cada módulo tem sub-permissões: <strong>Financeiro</strong> (Visualizar, Lançar Despesa, Ver Lucro), <strong>Agendamentos</strong> (Visualizar, Criar/Editar, Aprovar/Recusar), <strong>Estoque</strong> (Visualizar, Dar Baixa, Editar Preços), <strong>Clientes</strong> (Visualizar, Editar), <strong>Configurações</strong> (Editar Landing Page, Gerenciar Usuários).'},
+        {t:'<strong>Toggle "Acesso Total de Administrador"</strong> — ao ativar, todas as permissões são liberadas automaticamente ao usuário. Ao desativar, o usuário volta a ter apenas as permissões que estavam configuradas.'},
+        {t:'<strong>Modo Discreto (Privacidade)</strong> — na sidebar, clique 🙈 para ocultar todos os valores financeiros. Atalho: Shift+P. Útil quando há clientes ou pessoas não-autorizadas por perto. Volte ao clicar 👁️.'}
       ],
-      tip:'O número do WhatsApp deve ter DDD + 9 dígitos, sem espaços ou traços.'
+      tip:'Organize seu trabalho: bloqueie dias de feriado no início do mês, revise os textos do WhatsApp periodicamente e mantenha as permissões dos usuários atualizadas.'
     }
   ];
 
