@@ -559,7 +559,7 @@
     <section id="page-servicos" class="admin-page p-6 lg:p-8 hidden">
       <div class="flex items-center justify-between mb-6">
         <h1 class="font-display text-2xl font-semibold text-white">Serviços</h1>
-        <button id="btn-novo-servico" class="gold-btn rounded-xl px-5 py-2.5 text-sm flex items-center gap-2">
+        <button id="btn-novo-servico" class="gold-btn rounded-xl px-5 py-2.5 text-sm flex items-center gap-2" style="display:none">
           <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Criar Novo Serviço
         </button>
@@ -582,7 +582,7 @@
       <div id="svc-tab-profissionais" class="svc-tab-content hidden">
         <div class="flex items-center justify-between mb-4">
           <p class="text-sm text-gray-400">Gerencie as profissionais do salão.</p>
-          <button id="prof-novo-btn" class="gold-btn rounded-xl px-4 py-2 text-sm">+ Nova Profissional</button>
+          <button id="prof-novo-btn" class="gold-btn rounded-xl px-4 py-2 text-sm" style="display:none">+ Nova Profissional</button>
         </div>
         <div id="prof-lista" class="space-y-3"></div>
         <p id="prof-vazio" class="hidden text-center text-gray-500 py-12">Nenhuma profissional cadastrada.</p>
@@ -592,7 +592,7 @@
       <div id="svc-tab-secoes" class="svc-tab-content hidden">
         <div class="flex items-center justify-between mb-4">
           <p class="text-sm text-gray-400">Organize os serviços por seção/categoria.</p>
-          <button id="sec-novo-btn" class="gold-btn rounded-xl px-4 py-2 text-sm">+ Nova Seção</button>
+          <button id="sec-novo-btn" class="gold-btn rounded-xl px-4 py-2 text-sm" style="display:none">+ Nova Seção</button>
         </div>
         <div id="sec-lista" class="space-y-3"></div>
         <p id="sec-vazio" class="hidden text-center text-gray-500 py-12">Nenhuma seção cadastrada.</p>
@@ -2800,6 +2800,16 @@ document.addEventListener('DOMContentLoaded', function () {
     var h = hoje();
     document.getElementById('dash-date').textContent = nomeDia(h) + ', ' + fmtBR(h);
 
+    /* A) Dashboard Encaixe Button — permission visibility */
+    var _encaixeBtn = document.getElementById('dash-encaixe-btn');
+    if (_encaixeBtn && !hasPermission('agendamentos.criarEditar')) { _encaixeBtn.style.display = 'none'; }
+    /* B) Dashboard Venda Balcao Button — permission visibility */
+    var _vbBtn = document.getElementById('dash-venda-balcao-btn');
+    if (_vbBtn && !hasPermission('agendamentos.criarEditar')) { _vbBtn.style.display = 'none'; }
+    /* B2) Dashboard Venda Curso Button — permission visibility */
+    var _vcBtn = document.getElementById('dash-venda-curso-btn');
+    if (_vcBtn && !hasPermission('financeiro.lancarDespesa')) { _vcBtn.style.display = 'none'; }
+
     var agora = new Date();
     var hhmm = (agora.getHours()<10?'0':'') + agora.getHours() + ':' + (agora.getMinutes()<10?'0':'') + agora.getMinutes();
     document.getElementById('dash-hora-agora').textContent = 'Horário atual: ' + hhmm;
@@ -2918,9 +2928,14 @@ document.addEventListener('DOMContentLoaded', function () {
       lista.appendChild(card);
     });
 
+    /* C) Dashboard Today Appointments — hide status buttons if no permission */
+    if (!hasPermission('agendamentos.aprovarRecusar')) {
+      lista.querySelectorAll('.status-btn').forEach(function (b) { b.style.display = 'none'; });
+    }
     /* Status buttons */
     lista.querySelectorAll('.status-btn').forEach(function (btn) {
       btn.addEventListener('click', function () {
+        if (!hasPermission('agendamentos.aprovarRecusar')) { alert('Sem permissão para alterar status.'); return; }
         var agId = btn.getAttribute('data-st-ag');
         var newStatus = btn.getAttribute('data-st');
         if (newStatus === 'cancelado' && !confirm('Cancelar este agendamento?')) return;
@@ -3004,9 +3019,17 @@ document.addEventListener('DOMContentLoaded', function () {
           '</div>';
         allLista.appendChild(card);
       });
+      /* D) Dashboard Upcoming — hide status/edit buttons if no permission */
+      if (!hasPermission('agendamentos.aprovarRecusar')) {
+        allLista.querySelectorAll('.status-btn').forEach(function (b) { b.style.display = 'none'; });
+      }
+      if (!hasPermission('agendamentos.criarEditar')) {
+        allLista.querySelectorAll('.ag-edit-btn').forEach(function (b) { b.style.display = 'none'; });
+      }
       /* Status buttons na lista completa */
       allLista.querySelectorAll('.status-btn').forEach(function (btn) {
         btn.addEventListener('click', function () {
+          if (!hasPermission('agendamentos.aprovarRecusar')) { alert('Sem permissão para alterar status.'); return; }
           var agId = btn.getAttribute('data-st-ag');
           var newStatus = btn.getAttribute('data-st');
           if (newStatus === 'cancelado' && !confirm('Cancelar este agendamento?')) return;
@@ -3022,6 +3045,7 @@ document.addEventListener('DOMContentLoaded', function () {
       /* Edit buttons na lista completa */
       allLista.querySelectorAll('.ag-edit-btn').forEach(function (btn) {
         btn.addEventListener('click', function () {
+          if (!hasPermission('agendamentos.criarEditar')) { alert('Sem permissão para editar agendamentos.'); return; }
           var agId = btn.getAttribute('data-ag-id');
           var ag = B ? B.getAgendamentos().find(function (a) { return a.id === agId; }) || null : null;
           if (!ag) return;
@@ -3113,6 +3137,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function abrir() {
+      if (!hasPermission('agendamentos.criarEditar')) { alert('Sem permissão para criar agendamentos.'); return; }
       /* Preencher serviços */
       var servicos = B ? B.getServicos() : [];
       selServico.innerHTML = '<option value="">Selecione o serviço</option>';
@@ -3151,6 +3176,7 @@ document.addEventListener('DOMContentLoaded', function () {
     modal.addEventListener('click', function (e) { if (e.target === modal) fechar(); });
 
     btnSalvar.addEventListener('click', function () {
+      if (!hasPermission('agendamentos.criarEditar')) { alert('Sem permissão para criar agendamentos.'); return; }
       var nome = document.getElementById('enc-nome').value.trim();
       var whatsapp = formatarTel(inputWhatsApp.value);
       var servico = selServico.value;
@@ -3524,15 +3550,17 @@ document.addEventListener('DOMContentLoaded', function () {
       /* Footer: Status buttons */
       '<div class="flex items-center gap-2 mt-3 pt-3 border-t border-dark-300/30">' +
         (ag.status === 'pendente'
-          ? '<button data-aceitar="' + ag.id + '" class="aceitar-btn rounded-lg px-4 py-1.5 text-[11px] font-bold transition-all duration-200 text-white border hover:scale-105" style="background:#10b981;border-color:#10b981;box-shadow:0 0 12px rgba(16,185,129,0.35);">✅ Aceitar Agendamento</button>' +
-            '<button data-recusar="' + ag.id + '" class="recusar-btn rounded-lg px-3 py-1.5 text-[11px] font-semibold transition-colors bg-dark-600 text-red-400/70 border border-dark-300/30 hover:text-red-400 hover:border-red-500/30">❌ Recusar</button>'
-          : '<button data-st="' + ag.id + '" data-stv="confirmado" class="status-btn rounded-lg px-2.5 py-1 text-[10px] font-semibold transition-colors ' + (ag.status==='confirmado'?'bg-yellow-500/25 text-yellow-300 border border-yellow-500/40':'bg-dark-500 text-gray-500 hover:text-yellow-400') + '" title="Aguardando">🟡 Aguardando</button>' +
+          ? (hasPermission('agendamentos.aprovarRecusar') ? '<button data-aceitar="' + ag.id + '" class="aceitar-btn rounded-lg px-4 py-1.5 text-[11px] font-bold transition-all duration-200 text-white border hover:scale-105" style="background:#10b981;border-color:#10b981;box-shadow:0 0 12px rgba(16,185,129,0.35);">✅ Aceitar Agendamento</button>' +
+            '<button data-recusar="' + ag.id + '" class="recusar-btn rounded-lg px-3 py-1.5 text-[11px] font-semibold transition-colors bg-dark-600 text-red-400/70 border border-dark-300/30 hover:text-red-400 hover:border-red-500/30">❌ Recusar</button>' : '')
+          : (hasPermission('agendamentos.aprovarRecusar') ?
+            '<button data-st="' + ag.id + '" data-stv="confirmado" class="status-btn rounded-lg px-2.5 py-1 text-[10px] font-semibold transition-colors ' + (ag.status==='confirmado'?'bg-yellow-500/25 text-yellow-300 border border-yellow-500/40':'bg-dark-500 text-gray-500 hover:text-yellow-400') + '" title="Aguardando">🟡 Aguardando</button>' +
             '<button data-st="' + ag.id + '" data-stv="em_atendimento" class="status-btn rounded-lg px-2.5 py-1 text-[10px] font-semibold transition-colors ' + (ag.status==='em_atendimento'?'bg-blue-500/25 text-blue-300 border border-blue-500/40':'bg-dark-500 text-gray-500 hover:text-blue-400') + '" title="Em Atendimento">🔵 Atender</button>' +
             '<button data-st="' + ag.id + '" data-stv="concluido" class="status-btn rounded-lg px-2.5 py-1 text-[10px] font-semibold transition-colors ' + (ag.status==='concluido'?'bg-green-500/25 text-green-300 border border-green-500/40':'bg-dark-500 text-gray-500 hover:text-green-400') + '" title="Concluído">🟢 Concluir</button>' +
             '<button data-st="' + ag.id + '" data-stv="cancelado" class="status-btn rounded-lg px-2.5 py-1 text-[10px] font-semibold transition-colors ' + (ag.status==='cancelado'?'bg-red-500/25 text-red-300 border border-red-500/40':'bg-dark-500 text-gray-500 hover:text-red-400') + '" title="Cancelado">🔴 Cancelar</button>'
+            : '')
         ) +
         (tel ? '<a href="https://wa.me/55' + tel + '" target="_blank" rel="noopener" class="ml-auto rounded-lg bg-green-500/15 px-2.5 py-1 text-[10px] font-semibold text-green-400 hover:bg-green-500/25 transition-colors">WhatsApp</a>' : '') +
-        '<button class="ag-edit-btn shrink-0 rounded-lg bg-blue-500/15 px-2.5 py-1 text-[10px] font-semibold text-blue-400 hover:bg-blue-500/25 transition-colors" data-ag-id="' + ag.id + '">Editar</button>' +
+        (hasPermission('agendamentos.criarEditar') ? '<button class="ag-edit-btn shrink-0 rounded-lg bg-blue-500/15 px-2.5 py-1 text-[10px] font-semibold text-blue-400 hover:bg-blue-500/25 transition-colors" data-ag-id="' + ag.id + '">Editar</button>' : '') +
       '</div>';
     return card;
   }
@@ -3724,6 +3752,7 @@ document.addEventListener('DOMContentLoaded', function () {
     container.querySelectorAll('.status-btn').forEach(function (btn) {
       btn.addEventListener('click', function (e) {
         e.stopPropagation();
+        if (!hasPermission('agendamentos.aprovarRecusar')) { alert('Sem permissão para alterar status.'); return; }
         var agId = btn.getAttribute('data-st');
         var newStatus = btn.getAttribute('data-stv');
         if (newStatus === 'cancelado' && !confirm('Cancelar este agendamento?')) return;
@@ -3746,6 +3775,7 @@ document.addEventListener('DOMContentLoaded', function () {
     container.querySelectorAll('.aceitar-btn').forEach(function (btn) {
       btn.addEventListener('click', function (e) {
         e.stopPropagation();
+        if (!hasPermission('agendamentos.aprovarRecusar')) { alert('Sem permissão para aceitar agendamentos.'); return; }
         var agId = btn.getAttribute('data-aceitar');
         var ag = B ? B.getAgendamentos().find(function (a) { return a.id === agId; }) || null : null;
         if (!ag) return;
@@ -3773,6 +3803,7 @@ document.addEventListener('DOMContentLoaded', function () {
     container.querySelectorAll('.recusar-btn').forEach(function (btn) {
       btn.addEventListener('click', function (e) {
         e.stopPropagation();
+        if (!hasPermission('agendamentos.aprovarRecusar')) { alert('Sem permissão para recusar agendamentos.'); return; }
         var agId = btn.getAttribute('data-recusar');
         var ag = B ? B.getAgendamentos().find(function (a) { return a.id === agId; }) || null : null;
         if (!ag) return;
@@ -3798,6 +3829,7 @@ document.addEventListener('DOMContentLoaded', function () {
     container.querySelectorAll('.ag-edit-btn').forEach(function (btn) {
       btn.addEventListener('click', function (e) {
         e.stopPropagation();
+        if (!hasPermission('agendamentos.criarEditar')) { alert('Sem permissão para editar agendamentos.'); return; }
         var agId = btn.getAttribute('data-ag-id');
         var ag = B ? B.getAgendamentos().find(function (a) { return a.id === agId; }) || null : null;
         if (!ag) return;
@@ -3979,11 +4011,11 @@ document.addEventListener('DOMContentLoaded', function () {
           (svc.nota ? '<p class="mt-1 text-xs text-gray-500 truncate">' + esc(svc.nota) + '</p>' : '') +
         '</div>' +
         '<div class="flex items-center gap-1 shrink-0">' +
-          (idx > 0 ? '<button data-move-up="' + idx + '" class="rounded-lg p-2 text-gray-400 hover:bg-dark-500 hover:text-white" title="Mover para cima">&#9650;</button>' : '') +
-          (idx < lista.length - 1 ? '<button data-move-down="' + idx + '" class="rounded-lg p-2 text-gray-400 hover:bg-dark-500 hover:text-white" title="Mover para baixo">&#9660;</button>' : '') +
-          '<button data-edit="' + idx + '" class="rounded-lg px-3 py-1.5 text-xs font-semibold text-gold hover:bg-gold/10">Editar</button>' +
-          '<button data-dup="' + idx + '" class="rounded-lg px-3 py-1.5 text-xs font-semibold text-blue-400 hover:bg-blue-500/10">Duplicar</button>' +
-          '<button data-del="' + idx + '" class="rounded-lg px-3 py-1.5 text-xs font-semibold text-red-400 hover:bg-red-500/10">Excluir</button>' +
+          (hasPermission('configuracoes.editarLandingPage') ? (idx > 0 ? '<button data-move-up="' + idx + '" class="rounded-lg p-2 text-gray-400 hover:bg-dark-500 hover:text-white" title="Mover para cima">&#9650;</button>' : '') : '') +
+          (hasPermission('configuracoes.editarLandingPage') ? (idx < lista.length - 1 ? '<button data-move-down="' + idx + '" class="rounded-lg p-2 text-gray-400 hover:bg-dark-500 hover:text-white" title="Mover para baixo">&#9660;</button>' : '') : '') +
+          (hasPermission('configuracoes.editarLandingPage') ? '<button data-edit="' + idx + '" class="rounded-lg px-3 py-1.5 text-xs font-semibold text-gold hover:bg-gold/10">Editar</button>' : '') +
+          (hasPermission('configuracoes.editarLandingPage') ? '<button data-dup="' + idx + '" class="rounded-lg px-3 py-1.5 text-xs font-semibold text-blue-400 hover:bg-blue-500/10">Duplicar</button>' : '') +
+          (hasPermission('configuracoes.editarLandingPage') ? '<button data-del="' + idx + '" class="rounded-lg px-3 py-1.5 text-xs font-semibold text-red-400 hover:bg-red-500/10">Excluir</button>' : '') +
         '</div>';
       container.appendChild(card);
     });
@@ -3991,6 +4023,7 @@ document.addEventListener('DOMContentLoaded', function () {
     /* Mover para cima */
     container.querySelectorAll('[data-move-up]').forEach(function (btn) {
       btn.addEventListener('click', function () {
+        if (!hasPermission('configuracoes.editarLandingPage')) { alert('Sem permissão para reordenar serviços.'); return; }
         var idx = parseInt(btn.getAttribute('data-move-up'));
         var l = getServicos();
         if (idx <= 0) return;
@@ -4002,6 +4035,7 @@ document.addEventListener('DOMContentLoaded', function () {
     /* Mover para baixo */
     container.querySelectorAll('[data-move-down]').forEach(function (btn) {
       btn.addEventListener('click', function () {
+        if (!hasPermission('configuracoes.editarLandingPage')) { alert('Sem permissão para reordenar serviços.'); return; }
         var idx = parseInt(btn.getAttribute('data-move-down'));
         var l = getServicos();
         if (idx >= l.length - 1) return;
@@ -4013,6 +4047,7 @@ document.addEventListener('DOMContentLoaded', function () {
     /* Editar */
     container.querySelectorAll('[data-edit]').forEach(function (btn) {
       btn.addEventListener('click', function () {
+        if (!hasPermission('configuracoes.editarLandingPage')) { alert('Sem permissão para editar serviços.'); return; }
         var idx = parseInt(btn.getAttribute('data-edit'));
         openSvcModal(getServicos()[idx], idx);
       });
@@ -4021,6 +4056,7 @@ document.addEventListener('DOMContentLoaded', function () {
     /* Duplicar */
     container.querySelectorAll('[data-dup]').forEach(function (btn) {
       btn.addEventListener('click', function () {
+        if (!hasPermission('configuracoes.editarLandingPage')) { alert('Sem permissão para duplicar serviços.'); return; }
         var idx = parseInt(btn.getAttribute('data-dup'));
         var l = getServicos();
         var clone = JSON.parse(JSON.stringify(l[idx]));
@@ -4032,6 +4068,7 @@ document.addEventListener('DOMContentLoaded', function () {
     /* Excluir */
     container.querySelectorAll('[data-del]').forEach(function (btn) {
       btn.addEventListener('click', function () {
+        if (!hasPermission('configuracoes.editarLandingPage')) { alert('Sem permissão para excluir serviços.'); return; }
         if (!confirm('Excluir este serviço?')) return;
         var idx = parseInt(btn.getAttribute('data-del'));
         var l = getServicos(); l.splice(idx, 1);
@@ -4070,13 +4107,17 @@ document.addEventListener('DOMContentLoaded', function () {
     modal.classList.remove('flex');
   }
 
-  document.getElementById('btn-novo-servico').addEventListener('click', function () { openSvcModal(null); });
+  document.getElementById('btn-novo-servico').addEventListener('click', function () {
+    if (!hasPermission('configuracoes.editarLandingPage')) { alert('Sem permissão para criar serviços.'); return; }
+    openSvcModal(null);
+  });
   document.getElementById('svc-modal-close').addEventListener('click', closeSvcModal);
   document.getElementById('svc-cancelar').addEventListener('click', closeSvcModal);
   document.getElementById('svc-modal').addEventListener('click', function (e) { if (e.target.id === 'svc-modal') closeSvcModal(); });
 
   document.getElementById('svc-form').addEventListener('submit', function (e) {
     e.preventDefault();
+    if (!hasPermission('configuracoes.editarLandingPage')) { alert('Sem permissão para salvar serviços.'); return; }
     var nome = document.getElementById('svc-nome').value.trim();
     if (!nome) { alert('Informe o nome do serviço.'); return; }
 
@@ -4177,8 +4218,8 @@ document.addEventListener('DOMContentLoaded', function () {
           '</div>' +
         '</div>' +
         '<div class="flex items-center gap-1 shrink-0">' +
-          '<button class="prof-edit-btn rounded-lg px-3 py-1.5 text-xs font-semibold text-gold hover:bg-gold/10" data-idx="' + idx + '">Editar</button>' +
-          '<button class="prof-del-btn rounded-lg px-3 py-1.5 text-xs font-semibold text-red-400 hover:bg-red-500/10" data-idx="' + idx + '">Excluir</button>' +
+          (hasPermission('configuracoes.editarLandingPage') ? '<button class="prof-edit-btn rounded-lg px-3 py-1.5 text-xs font-semibold text-gold hover:bg-gold/10" data-idx="' + idx + '">Editar</button>' : '') +
+          (hasPermission('configuracoes.editarLandingPage') ? '<button class="prof-del-btn rounded-lg px-3 py-1.5 text-xs font-semibold text-red-400 hover:bg-red-500/10" data-idx="' + idx + '">Excluir</button>' : '') +
         '</div>';
       container.appendChild(card);
     });
@@ -4199,13 +4240,17 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('prof-modal').classList.remove('flex');
   }
 
-  document.getElementById('prof-novo-btn').addEventListener('click', function () { openProfModal(); });
+  document.getElementById('prof-novo-btn').addEventListener('click', function () {
+    if (!hasPermission('configuracoes.editarLandingPage')) { alert('Sem permissão para criar profissionais.'); return; }
+    openProfModal();
+  });
   document.getElementById('prof-modal-close').addEventListener('click', closeProfModal);
   document.getElementById('prof-cancelar').addEventListener('click', closeProfModal);
   document.getElementById('prof-modal').addEventListener('click', function (e) { if (e.target.id === 'prof-modal') closeProfModal(); });
 
   document.getElementById('prof-form').addEventListener('submit', function (e) {
     e.preventDefault();
+    if (!hasPermission('configuracoes.editarLandingPage')) { alert('Sem permissão para salvar profissionais.'); return; }
     var nome = document.getElementById('prof-nome').value.trim();
     if (!nome) { alert('Informe o nome da profissional.'); return; }
     var data = {
@@ -4234,6 +4279,7 @@ document.addEventListener('DOMContentLoaded', function () {
   document.addEventListener('click', function (e) {
     var editBtn = e.target.closest('.prof-edit-btn');
     if (editBtn) {
+      if (!hasPermission('configuracoes.editarLandingPage')) { alert('Sem permissão para editar profissionais.'); return; }
       var idx = parseInt(editBtn.getAttribute('data-idx'));
       var lista = B ? B.getProfissionais() : [];
       if (lista[idx]) openProfModal(lista[idx], lista[idx].id);
@@ -4241,6 +4287,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     var delBtn = e.target.closest('.prof-del-btn');
     if (delBtn) {
+      if (!hasPermission('configuracoes.editarLandingPage')) { alert('Sem permissão para excluir profissionais.'); return; }
       if (!confirm('Excluir esta profissional?')) return;
       var delIdx = parseInt(delBtn.getAttribute('data-idx'));
       var delLista = B ? B.getProfissionais() : [];
@@ -4273,8 +4320,8 @@ document.addEventListener('DOMContentLoaded', function () {
           '</div>' +
         '</div>' +
         '<div class="flex items-center gap-1 shrink-0">' +
-          '<button class="sec-edit-btn rounded-lg px-3 py-1.5 text-xs font-semibold text-gold hover:bg-gold/10" data-idx="' + idx + '">Editar</button>' +
-          '<button class="sec-del-btn rounded-lg px-3 py-1.5 text-xs font-semibold text-red-400 hover:bg-red-500/10" data-idx="' + idx + '">Excluir</button>' +
+          (hasPermission('configuracoes.editarLandingPage') ? '<button class="sec-edit-btn rounded-lg px-3 py-1.5 text-xs font-semibold text-gold hover:bg-gold/10" data-idx="' + idx + '">Editar</button>' : '') +
+          (hasPermission('configuracoes.editarLandingPage') ? '<button class="sec-del-btn rounded-lg px-3 py-1.5 text-xs font-semibold text-red-400 hover:bg-red-500/10" data-idx="' + idx + '">Excluir</button>' : '') +
         '</div>';
       container.appendChild(card);
     });
@@ -4294,13 +4341,17 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('sec-modal').classList.remove('flex');
   }
 
-  document.getElementById('sec-novo-btn').addEventListener('click', function () { openSecModal(); });
+  document.getElementById('sec-novo-btn').addEventListener('click', function () {
+    if (!hasPermission('configuracoes.editarLandingPage')) { alert('Sem permissão para criar seções.'); return; }
+    openSecModal();
+  });
   document.getElementById('sec-modal-close').addEventListener('click', closeSecModal);
   document.getElementById('sec-cancelar').addEventListener('click', closeSecModal);
   document.getElementById('sec-modal').addEventListener('click', function (e) { if (e.target.id === 'sec-modal') closeSecModal(); });
 
   document.getElementById('sec-form').addEventListener('submit', function (e) {
     e.preventDefault();
+    if (!hasPermission('configuracoes.editarLandingPage')) { alert('Sem permissão para salvar seções.'); return; }
     var nome = document.getElementById('sec-nome').value.trim();
     if (!nome) { alert('Informe o nome da seção.'); return; }
     var data = {
@@ -4328,6 +4379,7 @@ document.addEventListener('DOMContentLoaded', function () {
   document.addEventListener('click', function (e) {
     var editBtn = e.target.closest('.sec-edit-btn');
     if (editBtn) {
+      if (!hasPermission('configuracoes.editarLandingPage')) { alert('Sem permissão para editar seções.'); return; }
       var idx = parseInt(editBtn.getAttribute('data-idx'));
       var lista = B ? B.getSecoes() : [];
       if (lista[idx]) openSecModal(lista[idx], lista[idx].id);
@@ -4335,6 +4387,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     var delBtn = e.target.closest('.sec-del-btn');
     if (delBtn) {
+      if (!hasPermission('configuracoes.editarLandingPage')) { alert('Sem permissão para excluir seções.'); return; }
       if (!confirm('Excluir esta seção?')) return;
       var delIdx = parseInt(delBtn.getAttribute('data-idx'));
       var delLista = B ? B.getSecoes() : [];
@@ -4349,6 +4402,8 @@ document.addEventListener('DOMContentLoaded', function () {
      ESTOQUE / PRODUTOS
      ============================================================ */
   function renderEstoque(busca, filtroCat, filtroStatus) {
+    var _estBtn = document.getElementById('est-novo-btn');
+    if (_estBtn && !hasPermission('estoque.editarPrecos')) { _estBtn.style.display = 'none'; }
     var tbody = document.getElementById('est-tbody');
     var vazio = document.getElementById('est-vazio');
     var kpisDiv = document.getElementById('est-kpis');
@@ -4425,10 +4480,8 @@ document.addEventListener('DOMContentLoaded', function () {
         '<td class="px-4 py-3 text-right font-numeric text-gray-300">' + precoVendaFmt + '</td>' +
         '<td class="px-4 py-3 text-center">' +
           '<div class="flex items-center justify-center gap-1">' +
-            '<button class="est-entrada-btn rounded-lg bg-green-500/15 px-2 py-1 text-xs font-bold text-green-400 hover:bg-green-500/25" data-id="' + p.id + '" title="Entrada +1">+1</button>' +
-            '<button class="est-saida-btn rounded-lg bg-amber-500/15 px-2 py-1 text-xs font-bold text-amber-400 hover:bg-amber-500/25" data-id="' + p.id + '" title="Saída -1">-1</button>' +
-            '<button class="est-edit-btn rounded-lg px-2 py-1 text-xs font-semibold text-gold hover:bg-gold/10" data-id="' + p.id + '">Editar</button>' +
-            '<button class="est-del-btn rounded-lg px-2 py-1 text-xs font-semibold text-red-400 hover:bg-red-500/10" data-id="' + p.id + '">Excluir</button>' +
+            (hasPermission('estoque.darBaixaVenda') ? '<button class="est-entrada-btn rounded-lg bg-green-500/15 px-2 py-1 text-xs font-bold text-green-400 hover:bg-green-500/25" data-id="' + p.id + '" title="Entrada +1">+1</button>' + '<button class="est-saida-btn rounded-lg bg-amber-500/15 px-2 py-1 text-xs font-bold text-amber-400 hover:bg-amber-500/25" data-id="' + p.id + '" title="Saída -1">-1</button>' : '') +
+            (hasPermission('estoque.editarPrecos') ? '<button class="est-edit-btn rounded-lg px-2 py-1 text-xs font-semibold text-gold hover:bg-gold/10" data-id="' + p.id + '">Editar</button>' + '<button class="est-del-btn rounded-lg px-2 py-1 text-xs font-semibold text-red-400 hover:bg-red-500/10" data-id="' + p.id + '">Excluir</button>' : '') +
           '</div>' +
         '</td>';
       tbody.appendChild(tr);
@@ -4465,13 +4518,17 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('est-modal').classList.remove('flex');
   }
 
-  document.getElementById('est-novo-btn').addEventListener('click', function () { openEstModal(); });
+  document.getElementById('est-novo-btn').addEventListener('click', function () {
+    if (!hasPermission('estoque.editarPrecos')) { alert('Sem permissão para criar ou editar produtos.'); return; }
+    openEstModal();
+  });
   document.getElementById('est-modal-close').addEventListener('click', closeEstModal);
   document.getElementById('est-cancelar').addEventListener('click', closeEstModal);
   document.getElementById('est-modal').addEventListener('click', function (e) { if (e.target.id === 'est-modal') closeEstModal(); });
 
   document.getElementById('est-form').addEventListener('submit', function (e) {
     e.preventDefault();
+    if (!hasPermission('estoque.editarPrecos')) { alert('Sem permissão para salvar produtos.'); return; }
     var nome = document.getElementById('est-nome').value.trim();
     if (!nome) { alert('Informe o nome do produto.'); return; }
     var data = {
@@ -4503,6 +4560,7 @@ document.addEventListener('DOMContentLoaded', function () {
   document.addEventListener('click', function (e) {
     var entradaBtn = e.target.closest('.est-entrada-btn');
     if (entradaBtn) {
+      if (!hasPermission('estoque.darBaixaVenda')) { alert('Sem permissão para dar baixa no estoque.'); return; }
       var id = entradaBtn.getAttribute('data-id');
       var lista = B.getEstoque();
       var prod = lista.find(function (p) { return p.id === id; });
@@ -4514,6 +4572,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     var saidaBtn = e.target.closest('.est-saida-btn');
     if (saidaBtn) {
+      if (!hasPermission('estoque.darBaixaVenda')) { alert('Sem permissão para dar baixa no estoque.'); return; }
       var id = saidaBtn.getAttribute('data-id');
       var lista = B.getEstoque();
       var prod = lista.find(function (p) { return p.id === id; });
@@ -4526,6 +4585,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     var editBtn = e.target.closest('.est-edit-btn');
     if (editBtn) {
+      if (!hasPermission('estoque.editarPrecos')) { alert('Sem permissão para editar produtos.'); return; }
       var id = editBtn.getAttribute('data-id');
       var lista = B.getEstoque();
       var prod = lista.find(function (p) { return p.id === id; });
@@ -4534,6 +4594,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     var delBtn = e.target.closest('.est-del-btn');
     if (delBtn) {
+      if (!hasPermission('estoque.editarPrecos')) { alert('Sem permissão para excluir produtos.'); return; }
       if (!confirm('Excluir este produto?')) return;
       var id = delBtn.getAttribute('data-id');
       var lista = B.getEstoque();
@@ -4546,6 +4607,8 @@ document.addEventListener('DOMContentLoaded', function () {
      CLIENTES
      ============================================================ */
   function renderClientes(filtro) {
+    var _cliBtn = document.getElementById('cli-novo-btn');
+    if (_cliBtn && !hasPermission('clientes.editar')) { _cliBtn.style.display = 'none'; }
     var clientes = B ? B.getClientes() : [];
     if (filtro) {
       var f = filtro.toLowerCase();
@@ -4581,7 +4644,7 @@ document.addEventListener('DOMContentLoaded', function () {
         '<td class="px-4 py-3 text-right font-numeric font-semibold text-green-400">' + (valorEstimado > 0 ? fmtBRL(valorEstimado) : '—') + '</td>' +
         '<td class="px-4 py-3 text-xs text-gray-400">' + ultimoAg + '</td>' +
         '<td class="px-4 py-3"><span class="badge ' + tagClass + '">' + (c.tag||'Nova') + '</span></td>' +
-        '<td class="px-4 py-3 text-center"><div class="flex items-center justify-center gap-1.5"><a href="' + telLink + '" target="_blank" class="inline-flex items-center gap-1 rounded-lg bg-green-500/15 px-3 py-1.5 text-xs font-semibold text-green-400 hover:bg-green-500/25"><svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492l4.638-1.218A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.82c-2.168 0-4.18-.584-5.913-1.597l-.422-.253-2.752.722.736-2.682-.276-.44A9.79 9.79 0 012.18 12c0-5.422 4.398-9.82 9.82-9.82S21.82 6.578 21.82 12s-4.398 9.82-9.82 9.82z"/></svg> WhatsApp</a><button class="cli-history-btn inline-flex items-center gap-1 rounded-lg bg-purple-500/15 px-3 py-1.5 text-xs font-semibold text-purple-400 hover:bg-purple-500/25" data-cli-whatsapp="' + (c.whatsapp||'').replace(/"/g,'&quot;') + '" data-cli-nome="' + (c.nome||'').replace(/"/g,'&quot;') + '">Hist</button><button class="cli-edit-btn inline-flex items-center gap-1 rounded-lg bg-blue-500/15 px-3 py-1.5 text-xs font-semibold text-blue-400 hover:bg-blue-500/25" data-cli-id="' + c.id + '" data-cli-nome="' + (c.nome||'').replace(/"/g,'&quot;') + '" data-cli-whatsapp="' + (c.whatsapp||'').replace(/"/g,'&quot;') + '" data-cli-email="' + (c.email||'').replace(/"/g,'&quot;') + '" data-cli-tag="' + (c.tag||'Nova').replace(/"/g,'&quot;') + '"><svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg> Editar</button></div></td>';
+        '<td class="px-4 py-3 text-center"><div class="flex items-center justify-center gap-1.5"><a href="' + telLink + '" target="_blank" class="inline-flex items-center gap-1 rounded-lg bg-green-500/15 px-3 py-1.5 text-xs font-semibold text-green-400 hover:bg-green-500/25"><svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492l4.638-1.218A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.82c-2.168 0-4.18-.584-5.913-1.597l-.422-.253-2.752.722.736-2.682-.276-.44A9.79 9.79 0 012.18 12c0-5.422 4.398-9.82 9.82-9.82S21.82 6.578 21.82 12s-4.398 9.82-9.82 9.82z"/></svg> WhatsApp</a><button class="cli-history-btn inline-flex items-center gap-1 rounded-lg bg-purple-500/15 px-3 py-1.5 text-xs font-semibold text-purple-400 hover:bg-purple-500/25" data-cli-whatsapp="' + (c.whatsapp||'').replace(/"/g,'&quot;') + '" data-cli-nome="' + (c.nome||'').replace(/"/g,'&quot;') + '">Hist</button>' + (hasPermission('clientes.editar') ? '<button class="cli-edit-btn inline-flex items-center gap-1 rounded-lg bg-blue-500/15 px-3 py-1.5 text-xs font-semibold text-blue-400 hover:bg-blue-500/25" data-cli-id="' + c.id + '" data-cli-nome="' + (c.nome||'').replace(/"/g,'&quot;') + '" data-cli-whatsapp="' + (c.whatsapp||'').replace(/"/g,'&quot;') + '" data-cli-email="' + (c.email||'').replace(/"/g,'&quot;') + '" data-cli-tag="' + (c.tag||'Nova').replace(/"/g,'&quot;') + '"><svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg> Editar</button>' : '') + '</div></td>';
       tbody.appendChild(tr);
     });
   }
@@ -5153,7 +5216,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* --- Novo Cliente --- */
   var _cliNovoMode = false;
-  document.getElementById('cli-novo-btn').addEventListener('click', function () {
+  var _cliNovoBtn = document.getElementById('cli-novo-btn');
+  if (_cliNovoBtn && !hasPermission('clientes.editar')) {
+    _cliNovoBtn.style.display = 'none';
+  }
+  _cliNovoBtn.addEventListener('click', function () {
+    if (!hasPermission('clientes.editar')) { alert('Sem permissão para criar ou editar clientes.'); return; }
     _cliNovoMode = true;
     document.getElementById('cli-edit-id').value = '';
     document.getElementById('cli-edit-nome').value = '';
@@ -5168,6 +5236,7 @@ document.addEventListener('DOMContentLoaded', function () {
   document.addEventListener('click', function (e) {
     var btn = e.target.closest('.cli-edit-btn');
     if (!btn) return;
+    if (!hasPermission('clientes.editar')) { alert('Sem permissão para criar ou editar clientes.'); return; }
     _cliNovoMode = false;
     document.getElementById('cli-edit-id').value = btn.getAttribute('data-cli-id');
     document.getElementById('cli-edit-nome').value = btn.getAttribute('data-cli-nome');
@@ -5181,6 +5250,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('cli-edit-modal').classList.add('hidden');
   });
   document.getElementById('cli-edit-save').addEventListener('click', function () {
+    if (!hasPermission('clientes.editar')) { alert('Sem permissão para criar ou editar clientes.'); return; }
     var id = document.getElementById('cli-edit-id').value;
     var nome = document.getElementById('cli-edit-nome').value.trim();
     var whatsapp = document.getElementById('cli-edit-whatsapp').value.trim();
@@ -5215,6 +5285,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('ag-edit-modal').classList.add('hidden');
   });
   document.getElementById('ag-edit-save').addEventListener('click', function () {
+    if (!hasPermission('agendamentos.criarEditar')) { alert('Sem permissão para editar agendamentos.'); return; }
     var id = document.getElementById('ag-edit-id').value;
     var data = document.getElementById('ag-edit-data').value;
     var horario = document.getElementById('ag-edit-horario').value;
@@ -5272,6 +5343,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (cfgBloqBtn && !cfgBloqBtn._bound) {
       cfgBloqBtn._bound = true;
       cfgBloqBtn.addEventListener('click', function () {
+        if (!hasPermission('configuracoes.editarLandingPage')) { alert('Sem permissão para bloquear dias.'); return; }
         var input = document.getElementById('cfg-bloq-dia');
         console.log('[Bloq] Botão clicado, input.value:', input.value, '| B:', !!B);
         if (!input || !input.value) { alert('Selecione um dia.'); return; }
@@ -5642,6 +5714,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function _txsSaveFirebase(section) {
+    if (!hasPermission('configuracoes.editarLandingPage')) { alert('Sem permissão para salvar textos.'); return; }
     var data = _txsGatherData();
     _txsData[section] = data[section];
     try {
@@ -5824,6 +5897,7 @@ document.addEventListener('DOMContentLoaded', function () {
     container.querySelectorAll('[data-usr-del]').forEach(function (btn) {
       btn.addEventListener('click', function (e) {
         e.stopPropagation();
+        if (!hasPermission('configuracoes.gerenciarUsuarios')) { alert('Sem permissão para excluir usuários.'); return; }
         if (!confirm('Excluir este usuário?')) return;
         B.excluirUsuario(btn.getAttribute('data-usr-del'));
         renderUsuarios();
@@ -5834,6 +5908,7 @@ document.addEventListener('DOMContentLoaded', function () {
     /* Admin toggle handlers */
     container.querySelectorAll('[data-usr-admin-toggle]').forEach(function (tog) {
       tog.addEventListener('change', function () {
+        if (!hasPermission('configuracoes.gerenciarUsuarios')) { alert('Sem permissão para alterar status de admin.'); tog.checked = !tog.checked; return; }
         var userId = tog.getAttribute('data-usr-admin-toggle');
         var newIsAdmin = tog.checked;
         var result = B.setAdminStatus(userId, newIsAdmin);
@@ -5855,6 +5930,7 @@ document.addEventListener('DOMContentLoaded', function () {
     /* Permission toggle handlers */
     container.querySelectorAll('[data-perm-mod]').forEach(function (tog) {
       tog.addEventListener('change', function () {
+        if (!hasPermission('configuracoes.gerenciarUsuarios')) { alert('Sem permissão para alterar permissões.'); tog.checked = !tog.checked; return; }
         var userId = tog.getAttribute('data-perm-user');
         var modKey = tog.getAttribute('data-perm-mod');
         var subKey = tog.getAttribute('data-perm-sub');
@@ -6145,6 +6221,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var cfgWhatsSave = document.getElementById('cfg-whatsapp-save');
   if (cfgWhatsSave) {
     cfgWhatsSave.addEventListener('click', function () {
+      if (!hasPermission('configuracoes.editarLandingPage')) { alert('Sem permissão para alterar WhatsApp.'); return; }
       var val = (document.getElementById('cfg-whatsapp').value || '').replace(/\D/g, '');
       if (!val || val.length < 10) { showToast('Erro', 'Número inválido. Use o formato: 11930657871', null); return; }
       localStorage.setItem('jane-whatsapp-salao', val);
@@ -6167,6 +6244,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   document.getElementById('cfg-landing-save').addEventListener('click', function () {
+    if (!hasPermission('configuracoes.editarLandingPage')) { alert('Sem permissão para salvar Landing Page.'); return; }
     if (!B || !B.setConfigSite) return;
     B.getConfigSite(function (config) {
       config.blocos = {
@@ -6261,6 +6339,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   document.getElementById('cms-insta-add').addEventListener('click', function () {
+    if (!hasPermission('configuracoes.editarLandingPage')) { alert('Sem permissão para adicionar post Instagram.'); return; }
     var posts = (cmsData.instagram = cmsData.instagram || {}).posts = cmsData.instagram.posts || [];
     var nextOrd = posts.length ? Math.max.apply(null, posts.map(function (p) { return p.ordem; })) + 1 : 1;
     posts.push({ ordem: nextOrd, imagem: 'Instagram/Instagram.png', titulo: '', link: '', video: '', ocultar: false });
@@ -6268,6 +6347,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   document.getElementById('cms-save').addEventListener('click', function () {
+    if (!hasPermission('configuracoes.editarLandingPage')) { alert('Sem permissão para salvar CMS.'); return; }
     var g = function (id) { var el = document.getElementById(id); return el ? el.value : ''; };
     cmsData.site = {
       slogan: g('cms-sobre-hero_subtitulo'),
@@ -6348,7 +6428,10 @@ document.addEventListener('DOMContentLoaded', function () {
       container.appendChild(tag);
     });
     container.querySelectorAll('[data-unblock]').forEach(function (btn) {
-      btn.addEventListener('click', function () { B.desbloquearDia(btn.getAttribute('data-unblock')); renderDiasBloq(); });
+      btn.addEventListener('click', function () {
+        if (!hasPermission('configuracoes.editarLandingPage')) { alert('Sem permissão para desbloquear dias.'); return; }
+        B.desbloquearDia(btn.getAttribute('data-unblock')); renderDiasBloq();
+      });
     });
   }
 
@@ -6372,7 +6455,10 @@ document.addEventListener('DOMContentLoaded', function () {
       container.appendChild(card);
     });
     container.querySelectorAll('[data-rm-espera]').forEach(function (btn) {
-      btn.addEventListener('click', function () { B.removerListaEspera(btn.getAttribute('data-rm-espera')); renderEspera(); });
+      btn.addEventListener('click', function () {
+        if (!hasPermission('configuracoes.editarLandingPage')) { alert('Sem permissão para remover da lista de espera.'); return; }
+        B.removerListaEspera(btn.getAttribute('data-rm-espera')); renderEspera();
+      });
     });
   }
 
@@ -6633,6 +6719,7 @@ document.addEventListener('DOMContentLoaded', function () {
     vazio.classList.add('hidden'); tbody.parentElement.classList.remove('hidden');
 
     var catCores = { 'Salários/Pró-Labore': 'text-blue-400 bg-blue-500/15', 'Comissões da Equipe': 'text-rose-400 bg-rose-500/15', 'Custos Fixos': 'text-amber-400 bg-amber-500/15', 'Estoque/Insumos': 'text-purple-400 bg-purple-500/15', 'Ativos/Equipamentos': 'text-cyan-400 bg-cyan-500/15', 'Outros': 'text-gray-400 bg-gray-500/15' };
+    var _canDesp = hasPermission('financeiro.lancarDespesa');
     filtradas.forEach(function (d) {
       var tr = document.createElement('tr');
       /* Alerta visual baseado no prazo */
@@ -6679,16 +6766,17 @@ document.addEventListener('DOMContentLoaded', function () {
         }()) + '</td>' +
         '<td class="px-3 py-2.5 text-center">' + statusBadge + '</td>' +
         '<td class="px-3 py-2.5 text-center">' +
-          (d.status !== 'pago' ? '<button data-desp-pago="' + d.id + '" class="rounded-lg bg-green-500/15 px-2 py-1 text-[10px] font-semibold text-green-400 hover:bg-green-500/25 mr-1" title="Marcar como pago">✓ Pago</button>' : '') +
-          '<button data-desp-edit="' + d.id + '" class="rounded-lg bg-dark-600 px-2 py-1 text-[10px] font-semibold text-gray-400 hover:text-white mr-1" title="Editar">✎</button>' +
-          '<button data-desp-del="' + d.id + '" class="rounded-lg bg-red-500/15 px-2 py-1 text-[10px] font-semibold text-red-400 hover:bg-red-500/25" title="Excluir">✕</button>' +
+          (_canDesp && d.status !== 'pago' ? '<button data-desp-pago="' + d.id + '" class="rounded-lg bg-green-500/15 px-2 py-1 text-[10px] font-semibold text-green-400 hover:bg-green-500/25 mr-1" title="Marcar como pago">✓ Pago</button>' : '') +
+          (_canDesp ? '<button data-desp-edit="' + d.id + '" class="rounded-lg bg-dark-600 px-2 py-1 text-[10px] font-semibold text-gray-400 hover:text-white mr-1" title="Editar">✎</button>' : '') +
+          (_canDesp ? '<button data-desp-del="' + d.id + '" class="rounded-lg bg-red-500/15 px-2 py-1 text-[10px] font-semibold text-red-400 hover:bg-red-500/25" title="Excluir">✕</button>' : '') +
         '</td>';
       tbody.appendChild(tr);
     });
 
-    /* Ações */
+    /* Ações — with permission checks */
     tbody.querySelectorAll('[data-desp-pago]').forEach(function (btn) {
       btn.addEventListener('click', function () {
+        if (!_canDesp) { alert('Sem permissão para alterar despesas.'); return; }
         var id = btn.getAttribute('data-desp-pago');
         var lista = B ? B.getDespesas() : [];
         var d = lista.find(function (x) { return x.id === id; });
@@ -6697,6 +6785,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     tbody.querySelectorAll('[data-desp-edit]').forEach(function (btn) {
       btn.addEventListener('click', function () {
+        if (!_canDesp) { alert('Sem permissão para editar despesas.'); return; }
         var id = btn.getAttribute('data-desp-edit');
         var lista = B ? B.getDespesas() : [];
         var d = lista.find(function (x) { return x.id === id; });
@@ -6705,6 +6794,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     tbody.querySelectorAll('[data-desp-del]').forEach(function (btn) {
       btn.addEventListener('click', function () {
+        if (!_canDesp) { alert('Sem permissão para excluir despesas.'); return; }
         var id = btn.getAttribute('data-desp-del');
         if (!confirm('Excluir esta despesa?')) return;
         var lista = B ? B.getDespesas() : [];
@@ -6737,12 +6827,38 @@ document.addEventListener('DOMContentLoaded', function () {
     modal.classList.remove('flex');
   }
 
-  document.getElementById('fat-lancar-despesa-btn').addEventListener('click', function () { _abrirModalDespesa(null); });
+  /* Permission: hide expense button if no lancarDespesa */
+  var _fatDespBtn = document.getElementById('fat-lancar-despesa-btn');
+  if (_fatDespBtn && !hasPermission('financeiro.lancarDespesa')) {
+    _fatDespBtn.style.display = 'none';
+  }
+
+  /* Permission: hide servicos CRUD buttons if no editarLandingPage */
+  if (hasPermission('configuracoes.editarLandingPage')) {
+    var _svcNovo = document.getElementById('btn-novo-servico');
+    if (_svcNovo) _svcNovo.style.display = '';
+    var _profNovo = document.getElementById('prof-novo-btn');
+    if (_profNovo) _profNovo.style.display = '';
+    var _secNovo = document.getElementById('sec-novo-btn');
+    if (_secNovo) _secNovo.style.display = '';
+  }
+
+  /* Permission: hide estoque buttons */
+  var _estNovoBtn = document.getElementById('est-novo-btn');
+  if (_estNovoBtn && !hasPermission('estoque.editarPrecos')) { _estNovoBtn.style.display = 'none'; }
+  var _dashVendaBalcaoBtn = document.getElementById('dash-venda-balcao-btn');
+  if (_dashVendaBalcaoBtn && !hasPermission('estoque.darBaixaVenda')) { _dashVendaBalcaoBtn.style.display = 'none'; }
+
+  document.getElementById('fat-lancar-despesa-btn').addEventListener('click', function () {
+    if (!hasPermission('financeiro.lancarDespesa')) { alert('Sem permissão para lançar despesas.'); return; }
+    _abrirModalDespesa(null);
+  });
   document.getElementById('desp-close').addEventListener('click', _fecharModalDespesa);
   document.getElementById('desp-cancelar').addEventListener('click', _fecharModalDespesa);
   document.getElementById('modal-despesa').addEventListener('click', function (e) { if (e.target.id === 'modal-despesa') _fecharModalDespesa(); });
 
   document.getElementById('desp-confirmar').addEventListener('click', function () {
+    if (!hasPermission('financeiro.lancarDespesa')) { alert('Sem permissão para lançar despesas.'); return; }
     var descricao = document.getElementById('desp-descricao').value.trim();
     var categoria = document.getElementById('desp-categoria').value;
     var valorStr = document.getElementById('desp-valor').value.replace(/\./g, '').replace(',', '.');
@@ -7088,6 +7204,7 @@ document.addEventListener('DOMContentLoaded', function () {
     showToast('Atendimento concluído', 'Valor do serviço registrado.', null);
   });
   document.getElementById('pv-confirmar').addEventListener('click', function () {
+    if (!hasPermission('agendamentos.aprovarRecusar')) { alert('Sem permissão para concluir atendimentos.'); return; }
     var totalProdutos = 0;
     var itens = [];
     Object.keys(_pvProdutos).forEach(function (pid) {
@@ -7112,7 +7229,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /* Baixa no estoque */
-    if (itens.length > 0 && B) {
+    if (itens.length > 0 && B && hasPermission('estoque.darBaixaVenda')) {
       var estoque = B.getEstoque();
       itens.forEach(function (item) {
         var prod = estoque.find(function (p) { return p.id === item.id; });
@@ -7216,6 +7333,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function abrirModalVendaAvulsa() {
+    if (!hasPermission('agendamentos.criarEditar')) { alert('Sem permissão para vendas balcão.'); return; }
     _vaProdutos = {};
     document.getElementById('va-nome').value = '';
     document.getElementById('va-whatsapp').value = '';
@@ -7233,8 +7351,12 @@ document.addEventListener('DOMContentLoaded', function () {
     modal.classList.remove('flex');
   }
 
-  document.getElementById('dash-venda-balcao-btn').addEventListener('click', abrirModalVendaAvulsa);
+  document.getElementById('dash-venda-balcao-btn').addEventListener('click', function () {
+    if (!hasPermission('estoque.darBaixaVenda') || !hasPermission('agendamentos.criarEditar')) { alert('Sem permissão para venda balcão.'); return; }
+    abrirModalVendaAvulsa();
+  });
   document.getElementById('dash-venda-curso-btn').addEventListener('click', function () {
+    if (!hasPermission('financeiro.lancarDespesa')) { alert('Sem permissão para registrar venda do curso.'); return; }
     if (!confirm('Registrar venda do curso (R$ 37,90 lucro)?')) return;
     var data = B.registrarVendaCurso();
     renderDashboard();
@@ -7246,6 +7368,7 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('modal-produtos-venda').addEventListener('click', function (e) { if (e.target.id === 'modal-produtos-venda') fecharModalProdutosVenda(); });
 
   document.getElementById('va-confirmar').addEventListener('click', function () {
+    if (!hasPermission('estoque.darBaixaVenda') || !hasPermission('agendamentos.criarEditar')) { alert('Sem permissão para registrar venda balcão.'); return; }
     var nome = document.getElementById('va-nome').value.trim();
     var whatsapp = document.getElementById('va-whatsapp').value.trim();
     var pagamento = document.getElementById('va-pagamento').value;
